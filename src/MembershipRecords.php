@@ -128,6 +128,7 @@ class MembershipRecords
                 $table->addColumn("value",  "text");
                 $table->setPrimaryKey(array("id"));
                 $table->addIndex(array("userid"));
+                $table->addIndex(array("meta"));
 
                 return $table;
             }
