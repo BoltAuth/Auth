@@ -1,0 +1,33 @@
+{
+	"name" : "bolt/membership",
+	"type" : "bolt-extension",
+	"keywords" : [
+		"profiles"
+	],
+	"require" : {
+		"bolt/bolt" : ">=2.0.0,<3.0.0",
+		"bolt/clientlogin" : ">=2.0.0"
+	},
+	"license" : "GPL",
+	"authors" : [{
+			"name" : "Gawain Lynch",
+			"email" : "gawain.lynch@gmail.com"
+		}
+	],
+	"autoload" : {
+		"files" : [
+			"init.php"
+		],
+		"psr-4" : {
+			"Bolt\\Extension\\Bolt\\Membership\\" : [
+				"",
+				"src/"
+			]
+		}
+	},
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "2.0.*-dev"
+		}
+	}
+}
