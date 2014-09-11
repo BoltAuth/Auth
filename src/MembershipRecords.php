@@ -36,9 +36,64 @@ class MembershipRecords
         $this->config = $this->app['extensions.' . Extension::NAME]->config;
     }
 
+    /**
+     * Get a membership record from the database
+     *
+     * @param  int           $userid
+     * @param  string        $meta
+     * @return boolean|array
+     */
+    public function getRecord($userid, $meta)
+    {
+        $query = "SELECT * FROM " . $this->getTableName() .
+                 " WHERE userid = :userid and meta = :meta";
 
+        $map = array(
+            ':userid' => $userid,
+            ':meta' => $meta
+        );
 
+        $record = $this->app['db']->fetchAssoc($query, $map);
 
+        if (empty($record['id'])) {
+            return false;
+        } else {
+            return $record;
+        }
+    }
+
+    /**
+     * Update/insert a record in the database
+     *
+     * @param  int     $userid
+     * @param  string  $meta
+     * @param  string  $value
+     * @return boolean
+     */
+    public function updateRecord($userid, $meta, $value)
+    {
+        $data = array(
+            'userid' => $userid,
+            'meta'   => $meta,
+            'value'  => $value
+        );
+
+        if ($this->getRecord($userid, $meta)) {
+            $result = $this->app['db']->update($this->getTableName(), $data, array(
+                'userid' => $userid,
+                'meta'   => $meta
+            ));
+        } else {
+            $result = $this->app['db']->insert($this->getTableName(), $data);
+        }
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
     /**
      * Get the name of the user record table
