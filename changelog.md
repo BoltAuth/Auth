@@ -1,4 +1,4 @@
-# Changelog for Membership
+# Changelog for Members
 
 * 2.0.0 (2014-08-17)
 

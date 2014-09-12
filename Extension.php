@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Membership;
+namespace Bolt\Extension\Bolt\Members;
 
 use \Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
 
@@ -14,10 +14,10 @@ class Extension extends \Bolt\BaseExtension
     /**
      * @var string Extension name
      */
-    const NAME = 'Membership';
+    const NAME = 'Members';
 
     /**
-     * @var Membership\Controller
+     * @var Members\Controller
      */
     private $controller;
 
@@ -33,7 +33,7 @@ class Extension extends \Bolt\BaseExtension
          */
         if ($this->app['config']->getWhichEnd() == 'backend') {
             // Check & create database tables if required
-            $records = new MembershipRecords($this->app);
+            $records = new MembersRecords($this->app);
             $records->dbCheck();
         }
 
@@ -80,9 +80,9 @@ class Extension extends \Bolt\BaseExtension
         $userdata = $event->getUser();
         $key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
 
-        $membership = new Membership($this->app);
+        $members = new Members($this->app);
 
-        if ($membership->isMember($key)) {
+        if ($members->isMember($key)) {
             //
         }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Membership;
+namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
 
 /**
  *
  */
-class MembershipRecords
+class MembersRecords
 {
     /**
      * @var Silex\Application
@@ -26,7 +26,7 @@ class MembershipRecords
     }
 
     /**
-     * Get a membership record from the database
+     * Get a members record from the database
      *
      * @param  string        $field The field to query on (id, username or email)
      * @param  string        $value The value to match
@@ -51,7 +51,7 @@ class MembershipRecords
     }
 
     /**
-     * Get a membership meta record from the database
+     * Get a members meta record from the database
      *
      * @param  int           $userid
      * @param  string        $meta
@@ -198,7 +198,7 @@ class MembershipRecords
             $this->prefix .= "_";
         }
 
-        return $this->prefix . 'membership';
+        return $this->prefix . 'members';
     }
 
     /**
@@ -215,7 +215,7 @@ class MembershipRecords
             $this->prefix .= "_";
         }
 
-        return $this->prefix . 'membership_meta';
+        return $this->prefix . 'members_meta';
     }
 
     /**
@@ -223,7 +223,7 @@ class MembershipRecords
      */
     public function dbCheck()
     {
-        // Membership table
+        // Members table
         $table_name = $this->getTableName();
         $this->app['integritychecker']->registerExtensionTable(
             function ($schema) use ($table_name) {

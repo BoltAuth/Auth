@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Membership;
+namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
 
 /**
  *
  */
-class Membership
+class Members
 {
     /**
      * @var Silex\Application
@@ -22,7 +22,7 @@ class Membership
     private $config;
 
     /**
-     * @var MembershipRecords
+     * @var MembersRecords
      */
     private $records;
 
@@ -30,7 +30,7 @@ class Membership
     {
         $this->app = $app;
         $this->config = $this->app['extensions.' . Extension::NAME]->config;
-        $this->records = new MembershipRecords($this->app);
+        $this->records = new MembersRecords($this->app);
     }
 
     /**

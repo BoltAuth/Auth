@@ -1,5 +1,5 @@
 {
-	"name" : "bolt/membership",
+	"name" : "bolt/members",
 	"type" : "bolt-extension",
 	"keywords" : [
 		"profiles"
@@ -19,7 +19,7 @@
 			"init.php"
 		],
 		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\Membership\\" : [
+			"Bolt\\Extension\\Bolt\\Members\\" : [
 				"",
 				"src/"
 			]

@@ -1,6 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Membership;
+namespace Bolt\Extension\Bolt\Members;
+
+use Silex;
 
 /**
  *
@@ -20,23 +22,25 @@ class Controller
     private $config;
 
     /**
-     * @var Membership
+     * @var Members
      */
-    private $membership;
+    private $members;
 
     public function __construct(Silex\Application $app)
     {
         $this->app = $app;
         $this->config = $this->app['extensions.' . Extension::NAME]->config;
-        $this->membership = new Membership($this->app);
+        $this->members = new Members($this->app);
     }
 
     public function getMemberNew()
     {
+        return 'New user page';
     }
 
     public function getMemberProfile()
     {
+        return 'User profile page';
     }
 
 }
