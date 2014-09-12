@@ -84,4 +84,15 @@ class Members
         return false;
     }
 
+    public function newMember()
+    {
+        //
+
+        // Event dispatcher
+        if ($this->app['dispatcher']->hasListeners('members.New')) {
+            $event = new MembersEvent();
+            $this->app['dispatcher']->dispatch('members.New', $event);
+        }
+    }
+
 }
