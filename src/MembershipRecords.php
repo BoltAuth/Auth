@@ -10,17 +10,6 @@ use Silex;
 class MembershipRecords
 {
     /**
-     *
-     * @var array User's profile record
-     */
-    public $user = false;
-
-    /**
-     * @var array User's session record
-     */
-    public $session = false;
-
-    /**
      * @var Silex\Application
      */
     private $app;
@@ -43,9 +32,34 @@ class MembershipRecords
      * @param  string        $meta
      * @return boolean|array
      */
-    public function getRecord($userid, $meta)
+    public function getMember($userid)
     {
         $query = "SELECT * FROM " . $this->getTableName() .
+                 " WHERE userid = :userid";
+
+        $map = array(
+            ':userid' => $userid
+        );
+
+        $record = $this->app['db']->fetchAssoc($query, $map);
+
+        if (empty($record['id'])) {
+            return false;
+        } else {
+            return $record;
+        }
+    }
+
+    /**
+     * Get a membership meta record from the database
+     *
+     * @param  int           $userid
+     * @param  string        $meta
+     * @return boolean|array
+     */
+    public function getMemberMeta($userid, $meta)
+    {
+        $query = "SELECT * FROM " . $this->getTableNameMeta() .
                  " WHERE userid = :userid and meta = :meta";
 
         $map = array(
@@ -63,28 +77,21 @@ class MembershipRecords
     }
 
     /**
-     * Update/insert a record in the database
+     * Update/insert a member record in the database
      *
      * @param  int     $userid
      * @param  string  $meta
      * @param  string  $value
      * @return boolean
      */
-    public function updateRecord($userid, $meta, $value)
+    public function updateMember($userid, $values)
     {
-        $data = array(
-            'userid' => $userid,
-            'meta'   => $meta,
-            'value'  => $value
-        );
-
-        if ($this->getRecord($userid, $meta)) {
-            $result = $this->app['db']->update($this->getTableName(), $data, array(
-                'userid' => $userid,
-                'meta'   => $meta
+        if ($this->getMember($userid)) {
+            $result = $this->app['db']->update($this->getTableName(), $values, array(
+                'userid' => $userid
             ));
         } else {
-            $result = $this->app['db']->insert($this->getTableName(), $data);
+            $result = $this->app['db']->insert($this->getTableName(), $values);
         }
 
         if ($result) {
@@ -92,7 +99,38 @@ class MembershipRecords
         } else {
             return false;
         }
+    }
 
+    /**
+     * Update/insert a member's meta record in the database
+     *
+     * @param  int     $userid
+     * @param  string  $meta
+     * @param  string  $value
+     * @return boolean
+     */
+    public function updateMemberMeta($userid, $meta, $value)
+    {
+        $data = array(
+            'userid' => $userid,
+            'meta'   => $meta,
+            'value'  => $value
+        );
+
+        if ($this->getMemberMeta($userid, $meta)) {
+            $result = $this->app['db']->update($this->getTableNameMeta(), $data, array(
+                'userid' => $userid,
+                'meta'   => $meta
+            ));
+        } else {
+            $result = $this->app['db']->insert($this->getTableNameMeta(), $data);
+        }
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -113,12 +151,52 @@ class MembershipRecords
     }
 
     /**
+     * Get the name of the user record table
+     *
+     * @return string
+     */
+    public function getTableNameMeta()
+    {
+        $this->prefix = $this->app['config']->get('general/database/prefix', "bolt_");
+
+        // Make sure prefix ends in '_'. Prefixes without '_' are lame..
+        if ($this->prefix[ strlen($this->prefix)-1 ] != "_") {
+            $this->prefix .= "_";
+        }
+
+        return $this->prefix . 'membership_meta';
+    }
+
+    /**
      * Create/update database tables
      */
     public function dbCheck()
     {
-        // User/client provider table
+        // Membership table
         $table_name = $this->getTableName();
+        $this->app['integritychecker']->registerExtensionTable(
+            function ($schema) use ($table_name) {
+                $table = $schema->createTable($table_name);
+
+                $table->addColumn('id',          'integer',  array('autoincrement' => true));
+                $table->addColumn('username',    'string',   array('length' => 32));
+                $table->addColumn('password',    'string',   array('length' => 128));
+                $table->addColumn('email',       'string',   array('length' => 128));
+                $table->addColumn('lastseen',    'datetime', array('default' => '0000-00-00 00:00:00'));
+                $table->addColumn('lastip',      'string',   array('length' => 32, 'default' => ''));
+                $table->addColumn('displayname', 'string',   array('length' => 32));
+                $table->addColumn('enabled',     'boolean',  array('default' => 0));
+                $table->addColumn('roles',       'string',   array('length' => 1024, 'default' => ''));
+                $table->setPrimaryKey(array('id'));
+                $table->addIndex(array('username'));
+                $table->addIndex(array('enabled'));
+
+                return $table;
+            }
+        );
+
+        // Member meta
+        $table_name = $this->getTableNameMeta();
         $this->app['integritychecker']->registerExtensionTable(
             function ($schema) use ($table_name) {
                 $table = $schema->createTable($table_name);
