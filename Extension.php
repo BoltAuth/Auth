@@ -111,7 +111,8 @@ class Extension extends \Bolt\BaseExtension
                 'parent'  => 'members.twig',
                 'new'     => 'members_new.twig',
                 'profile' => 'members_profile.twig'
-            )
+            ),
+            'registration' => true
         );
     }
 }

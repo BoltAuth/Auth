@@ -15,7 +15,7 @@ class MembersEvent extends Event
     private $user;
 
     /**
-     * @param array  $user
+     * @param array $user
      */
     public function __construct($user)
     {

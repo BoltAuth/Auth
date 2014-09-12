@@ -37,7 +37,7 @@ class Members
     /**
      * Check if we have this ClientLogin as a member
      *
-     * @param  string      $clientloginmeta In for format 'provider:identifier'
+     * @param  string      $key In for format 'provider:identifier'
      * @return int|boolean The user ID of the member or false if not found
      */
     public function isMemberClientLogin($key)
