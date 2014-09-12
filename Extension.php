@@ -82,7 +82,9 @@ class Extension extends \Bolt\BaseExtension
 
         $members = new Members($this->app);
 
-        if ($members->isMember($key)) {
+        if ($members->isMemberClientLogin($key)) {
+            //
+        } else {
             //
         }
 

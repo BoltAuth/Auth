@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
+use Bolt\Extension\Bolt\ClientLogin\Session;
 
 /**
  *
@@ -39,11 +40,28 @@ class Members
      * @param  string      $clientloginmeta In for format 'provider:identifier'
      * @return int|boolean The user ID of the member or false if not found
      */
-    public function isMember($key)
+    public function isMemberClientLogin($key)
     {
         $record = $this->records->getMetaRecords('clientlogin_key', $key, true);
         if ($record) {
             return $record['userid'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Check to see if a member is currently authenticated
+     *
+     * @return boolean
+     */
+    public function isMemberClientLoginAuth()
+    {
+        //
+        $session = new Session();
+
+        if ($session->doCheckLogin()) {
+            return true;
         }
 
         return false;
