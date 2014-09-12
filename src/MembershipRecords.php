@@ -28,17 +28,17 @@ class MembershipRecords
     /**
      * Get a membership record from the database
      *
-     * @param  int           $userid
-     * @param  string        $meta
+     * @param  string        $field The field to query on (id, username or email)
+     * @param  string        $value The value to match
      * @return boolean|array
      */
-    public function getMember($userid)
+    public function getMember($field, $value)
     {
-        $query = "SELECT * FROM " . $this->getTableName() .
-                 " WHERE userid = :userid";
+        $query = "SELECT * FROM " . $this->getTableName() . " WHERE {$field} = :value";
 
         $map = array(
-            ':userid' => $userid
+            ':field' => $field,
+            ':value' => $value
         );
 
         $record = $this->app['db']->fetchAssoc($query, $map);
@@ -57,19 +57,70 @@ class MembershipRecords
      * @param  string        $meta
      * @return boolean|array
      */
-    public function getMemberMeta($userid, $meta)
+    public function getMemberMeta($userid, $meta = false)
     {
-        $query = "SELECT * FROM " . $this->getTableNameMeta() .
-                 " WHERE userid = :userid and meta = :meta";
+        if ($meta) {
+            $query = "SELECT * FROM " . $this->getTableNameMeta() .
+                     " WHERE userid = :userid and meta = :meta";
 
-        $map = array(
-            ':userid' => $userid,
-            ':meta' => $meta
-        );
+            $map = array(
+                ':userid' => $userid,
+                ':meta' => $meta
+            );
 
-        $record = $this->app['db']->fetchAssoc($query, $map);
+            $record = $this->app['db']->fetchAssoc($query, $map);
+        } else {
+            $query = "SELECT * FROM " . $this->getTableNameMeta() .
+                     " WHERE userid = :userid";
 
-        if (empty($record['id'])) {
+            $map = array(
+                ':userid' => $userid
+            );
+
+            $record = $this->app['db']->fetchAll($query, $map);
+        }
+
+        if (empty($record)) {
+            return false;
+        } else {
+            return $record;
+        }
+    }
+
+    /**
+     * Get meta records from the database
+     *
+     * @param  string        $meta   Key name to search for
+     * @param  string        $value  Optional meta value to narrow the match
+     * @param  boolean       $single Only return the first result
+     * @return boolean|array
+     */
+    public function getMetaRecords($meta, $value = false, $single = false)
+    {
+        if ($value) {
+            $query = "SELECT * FROM " . $this->getTableNameMeta() .
+                     " WHERE meta = :meta AND value = :value";
+
+            $map = array(
+                ':meta' => $meta,
+                ':value' => $value
+            );
+        } else {
+            $query = "SELECT * FROM " . $this->getTableNameMeta() .
+                     " WHERE meta = :meta";
+
+            $map = array(
+                ':meta' => $meta
+            );
+        }
+
+        if ($single) {
+            $record = $this->app['db']->fetchAssoc($query, $map);
+        } else {
+            $record = $this->app['db']->fetchAll($query, $map);
+        }
+
+        if (empty($record)) {
             return false;
         } else {
             return $record;
