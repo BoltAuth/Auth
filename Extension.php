@@ -104,7 +104,12 @@ class Extension extends \Bolt\BaseExtension
     protected function getDefaultConfig()
     {
         return array(
-            'basepath' => 'members'
+            'basepath' => 'members',
+            'templates' => array(
+                'parent'  => 'members.twig',
+                'new'     => 'members_new.twig',
+                'profile' => 'members_profile.twig'
+            )
         );
     }
 }

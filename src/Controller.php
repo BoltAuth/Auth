@@ -35,12 +35,39 @@ class Controller
 
     public function getMemberNew()
     {
-        return 'New user page';
+        // Add assets to Twig path
+        $this->addTwigPath();
+
+        $view = '';
+
+        $html = $this->app['render']->render(
+            $this->config['templates']['new'], array(
+                'form' => $view,
+                'twigparent' => $this->config['templates']['parent']
+        ));
+
+        return new \Twig_Markup($html, 'UTF-8');
     }
 
     public function getMemberProfile()
     {
-        return 'User profile page';
+        // Add assets to Twig path
+        $this->addTwigPath();
+
+        $view = '';
+
+        $html = $this->app['render']->render(
+            $this->config['templates']['profile'], array(
+                'form' => $view,
+                'twigparent' => $this->config['templates']['parent']
+        ));
+
+        return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    private function addTwigPath()
+    {
+        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
     }
 
 }
