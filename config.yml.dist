@@ -1,0 +1,24 @@
+##
+## Bolt Members configuration options
+##
+
+
+## Registration
+#
+# If regsitration should be allowed [true|false]
+registration: true
+
+
+## Template overrides
+# 
+# The template names that you wish to use in your theme to override the defaults
+templates:
+  parent: members.twig
+  new: members_new.twig
+  profile: members_profile.twig
+
+ 
+## Routing
+#
+# The base URI path for member pages (new members and profile view/edits)
+#basepath: members
