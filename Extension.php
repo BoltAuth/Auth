@@ -61,8 +61,8 @@ class Extension extends \Bolt\BaseExtension
         $this->controller = new Controller($this->app);
 
         // New member
-        $this->app->match("{$this->config['basepath']}/new", array($this->controller, 'getMemberNew'))
-                    ->bind('getMemberNew')
+        $this->app->match("{$this->config['basepath']}/register", array($this->controller, 'getMemberRegister'))
+                    ->bind('getMemberRegister')
                     ->method('GET|POST');
 
         // Member profile
@@ -72,6 +72,7 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
+     * Hook for ClientLogin login events
      *
      * @param ClientLoginEvent $event
      */
@@ -103,18 +104,17 @@ class Extension extends \Bolt\BaseExtension
 
             // Some providers (looking at you Twitter) don't supply an email
             if (empty($userdata['email'])) {
-                //
+                // Redirect to the 'new' page
+                simpleredirect("/{$this->config['basepath']}/register");
             } else {
                 //
             }
-
-            // Redirect to the 'new' page
-            simpleredirect("/{$this->config['basepath']}/new");
         }
 
     }
 
     /**
+     * Hook for ClientLogin logout events
      *
      * @param ClientLoginEvent $event
      */
@@ -132,9 +132,9 @@ class Extension extends \Bolt\BaseExtension
         return array(
             'basepath' => 'members',
             'templates' => array(
-                'parent'  => 'members.twig',
-                'new'     => 'members_new.twig',
-                'profile' => 'members_profile.twig'
+                'parent'   => 'members.twig',
+                'register' => 'members_register.twig',
+                'profile'  => 'members_profile.twig'
             ),
             'registration' => true
         );
