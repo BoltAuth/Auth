@@ -143,7 +143,9 @@ class Members
             $create = $this->records->updateMember(false, array(
                 'username'    => $form['username'],
                 'email'       => $form['email'],
-                'displayname' => $form['displayname']
+                'displayname' => $form['displayname'],
+                'lastseen'    => date('Y-m-d H:i:s'),
+                'lastip'      => $this->app['request']->getClientIp()
             ));
 
             if ($create) {
@@ -162,6 +164,14 @@ class Members
         }
 
         return true;
+    }
+
+    public function updateMemberLogin($userid)
+    {
+        $this->records->updateMember($userid, array(
+            'lastseen' => date('Y-m-d H:i:s'),
+            'lastip'   => $this->app['request']->getClientIp()
+        ));
     }
 
 }
