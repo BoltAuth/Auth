@@ -57,7 +57,7 @@ class Controller
                                                                  'data'  => $userdata['displayName'],
                                                                  'label' => __('Publicly visible name:')))
                             ->add('email',       'text',   array('constraints' => new Assert\Email(array(
-                                                                    'message' => 'The email "{{ value }}" is not a valid email.',
+                                                                    'message' => 'The address "{{ value }}" is not a valid email.',
                                                                     'checkMX' => true)),
                                                                  'data'  => $userdata['email'],
                                                                  'label' => __('Email:')))
@@ -67,21 +67,14 @@ class Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $submit = $request->get('form');
-
-            if (true) {
-                //
-                $this->app['session']->getFlashBag()->set('error', 'The user name you chose already exists.');
-            } else {
-                // Create new Member record and go back to where we came from
-                if ($this->members->newMember($submit)) {
-                    // Redirect
-                    if (empty($redirect)) {
-                        $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
-                        simpleredirect($returnpage);
-                    } else {
-                        simpleredirect($this->app['paths']['hosturl']);
-                    }
+            // Create new Member record and go back to where we came from
+            if ($this->members->newMember($request->get('form'))) {
+                // Redirect
+                if (empty($redirect)) {
+                    simpleredirect($this->app['paths']['hosturl']);
+                } else {
+                    $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
+                    simpleredirect($returnpage);
                 }
             }
         }
