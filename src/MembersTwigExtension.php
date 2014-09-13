@@ -53,7 +53,7 @@ class MembersTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'members' => new \Twig_Function_Method($this, 'members'),
+            'member' => new \Twig_Function_Method($this, 'member'),
         );
     }
 
@@ -64,11 +64,15 @@ class MembersTwigExtension extends \Twig_Extension
      * @param boolean $meta [Optional] Return user meta
      * @return \Twig_Markup
      */
-    public function members($id = false, $meta = false)
+    public function member($id = false, $meta = false)
     {
+        $member = $this->members->getMember('id', $id);
 
+        if ($meta) {
+            $member['meta'] = $this->members->getMemberMeta($id);
+        }
 
-        return new \Twig_Markup($html, 'UTF-8');
+        return new \Twig_Markup($member, 'UTF-8');
     }
 
 }
