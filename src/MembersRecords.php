@@ -137,6 +137,10 @@ class MembersRecords
      */
     public function updateMember($userid, $values)
     {
+        /*
+         * Only do an update if there is a valid ID and the member exists
+         * Only do an insert if we have a username, displayname and values to add
+         */
         if (! empty($userid) && $this->getMember('id', $userid)) {
             $result = $this->app['db']->update($this->getTableName(), $values, array(
                 'id' => $userid
