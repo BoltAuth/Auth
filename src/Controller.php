@@ -44,7 +44,7 @@ class Controller
 
         // Get session data we need from ClientLogin
         $redirect = $this->app['session']->get('pending');
-        $userdata = $this->app['session']->get('clientlogin');
+        $clientlogin = $this->app['session']->get('clientlogin');
         $userdata = json_decode($userdata['providerdata'], true);
 
         $data = array();
@@ -61,6 +61,8 @@ class Controller
                                                                     'checkMX' => true)),
                                                                  'data'  => $userdata['email'],
                                                                  'label' => __('Email:')))
+                            ->add('provider',    'hidden', array('data'  => $clientlogin['provider']))
+                            ->add('identifier',  'hidden', array('data'  => $clientlogin['identifier']))
                             ->add('submit',      'submit', array('label' => __('Save & continue')))
                             ->getForm();
 
@@ -68,7 +70,7 @@ class Controller
 
         if ($form->isValid()) {
             // Create new Member record and go back to where we came from
-            if ($this->members->newMember($request->get('form'))) {
+            if ($this->members->addMember($request->get('form'))) {
                 // Redirect
                 if (empty($redirect)) {
                     simpleredirect($this->app['paths']['hosturl']);

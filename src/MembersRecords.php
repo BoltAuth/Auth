@@ -137,7 +137,7 @@ class MembersRecords
      */
     public function updateMember($userid, $values)
     {
-        if ($this->getMember($userid)) {
+        if (! empty($userid) && $this->getMember($userid)) {
             $result = $this->app['db']->update($this->getTableName(), $values, array(
                 'userid' => $userid
             ));

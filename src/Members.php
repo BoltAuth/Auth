@@ -70,22 +70,6 @@ class Members
     }
 
     /**
-     * Find user ID by email address
-     *
-     * @param string $email
-     * @return integer|boolean - ID if exists, false otherwise
-     */
-    public function isMemberEmail($email)
-    {
-        $member = $this->records->getMember('email', $email);
-        if ($member['id']) {
-            return $member['id'];
-        }
-
-        return false;
-    }
-
-    /**
      * Get a member record
      *
      * @param  string        $field The user field to lookup the user by (id, username or email)
@@ -143,11 +127,34 @@ class Members
         // Remember to look up email address and match new ClientLogin profiles
         // with existing Members
 
-        // Event dispatcher
-        if ($this->app['dispatcher']->hasListeners('members.New')) {
-            $event = new MembersEvent();
-            $this->app['dispatcher']->dispatch('members.New', $event);
+        $member = $this->getMember('email', $form['email']);
+
+        if ($member) {
+            // We already have them, just link the profile
+            $this->addMemberClientLoginProfile($member['id'], $form['provider'], $form['identifier']);
+        } else {
+            //
+            $create = $this->records->updateMember(false, array(
+                'username'    => $form['username'],
+                'email'       => $form['email'],
+                'displayname' => $form['displayname']
+            ));
+
+            if ($create) {
+                // Get the new record
+                $member = $this->getMember('email', $form['email']);
+
+                // Add the provider info to meta
+                $this->addMemberClientLoginProfile($member['id'], $form['provider'], $form['identifier']);
+
+                // Event dispatcher
+                if ($this->app['dispatcher']->hasListeners('members.New')) {
+                    $event = new MembersEvent();
+                    $this->app['dispatcher']->dispatch('members.New', $event);
+                }
+            }
         }
+
     }
 
 }

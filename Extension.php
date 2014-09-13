@@ -106,12 +106,12 @@ class Extension extends \Bolt\BaseExtension
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
             } else {
-                $member = $members->isMemberEmail($providerdata['email']);
+                $member = $members->getMember('email', $providerdata['email']);
 
                 if ($member) {
                     // This is an existing user (based on email) so just associate
                     // this login with their Members profile
-                    $members->addMemberClientLoginProfile($member, $userdata['provider'], $userdata['identifier']);
+                    $members->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
                 } else {
                     // Add the member to our database
                     $members->addMember($providerdata);
