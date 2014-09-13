@@ -101,21 +101,15 @@ class Extension extends \Bolt\BaseExtension
 
             $providerdata = json_decode($userdata['providerdata'], true);
 
-            // Some providers (looking at you Twitter) don't supply an email
-            if (empty($providerdata['email']) || empty($providerdata['displayName'])) {
+            // Check to see if there is already a member with this email
+            $member = $members->getMember('email', $providerdata['email']);
+
+            if ($member) {
+                // Associate this login with their Members profile
+                $members->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
+            } else {
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
-            } else {
-                // Check to see if there is already a member with this email
-                $member = $members->getMember('email', $providerdata['email']);
-
-                if ($member) {
-                    // Associate this login with their Members profile
-                    $members->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
-                } else {
-                    // Add the member to our database
-                    $members->addMember($providerdata);
-                }
             }
         }
 
