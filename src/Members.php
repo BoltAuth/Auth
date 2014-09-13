@@ -43,7 +43,7 @@ class Members
      */
     public function isMemberClientLogin($provider, $identifier)
     {
-        $key = 'clientlogin_' . strtolower($provider);
+        $key = 'clientlogin_id_' . strtolower($provider);
         $record = $this->records->getMetaRecords($key, $identifier, true);
         if ($record) {
             return $record['userid'];
@@ -129,7 +129,7 @@ class Members
     public function addMemberClientLoginProfile($userid, $provider, $identifier)
     {
         if ($this->records->getMember('id', $userid)) {
-            $key = 'clientlogin_' . strtolower($provider);
+            $key = 'clientlogin_id_' . strtolower($provider);
             $this->records->updateMemberMeta($userid, $key, $identifier);
 
             return true;

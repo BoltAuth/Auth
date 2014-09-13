@@ -83,9 +83,6 @@ class Extension extends \Bolt\BaseExtension
         // Get the ClientLogin user data from the event
         $userdata = $event->getUser();
 
-// Build a query key
-//$key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
-
         // See if we have this in our database
         $id = $members->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
 
