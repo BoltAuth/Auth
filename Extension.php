@@ -102,12 +102,23 @@ class Extension extends \Bolt\BaseExtension
             $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
             $this->app['session']->set('clientlogin', $userdata);
 
+            $providerdata = json_decode($userdata['providerdata'], true);
+
             // Some providers (looking at you Twitter) don't supply an email
-            if (empty($userdata['email'])) {
+            if (empty($providerdata['email'])) {
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
             } else {
-                //
+                $member = $members->isMemberEmail($providerdata['email']);
+
+                if ($member) {
+                    // This is an existing user (based on email) so just associate
+                    // this login with their Members profile
+                    $members->addMemberClientLoginProfile($member, $key);
+                } else {
+                    // Add the member to our database
+                    $members->addMember($providerdata);
+                }
             }
         }
 

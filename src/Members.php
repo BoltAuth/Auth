@@ -68,6 +68,22 @@ class Members
     }
 
     /**
+     * Find user ID by email address
+     *
+     * @param string $email
+     * @return integer|boolean - ID if exists, false otherwise
+     */
+    public function isMemberEmail($email)
+    {
+        $member = $this->records->getMember('email', $email);
+        if ($member['id']) {
+            return $member['id'];
+        }
+
+        return false;
+    }
+
+    /**
      * Get a member record
      *
      * @param  string        $field The user field to lookup the user by (id, username or email)
@@ -102,9 +118,27 @@ class Members
         return false;
     }
 
-    public function newMember()
+    /**
+     * Add a ClientLogin key to a user's profile
+     *
+     * @param integer $userid A user's ID
+     * @param string  $key    The ClientLogin key in the format 'provider:identifier'
+     */
+    public function addMemberClientLoginProfile($userid, $key)
     {
-        //
+        if ($this->records->getMember('id', $userid)) {
+            $this->records->updateMemberMeta($userid, 'clientlogin_key', $key);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function addMember($form)
+    {
+        // Remember to look up email address and match new ClientLogin profiles
+        // with existing Members
 
         // Event dispatcher
         if ($this->app['dispatcher']->hasListeners('members.New')) {
