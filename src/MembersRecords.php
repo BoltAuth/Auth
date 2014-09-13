@@ -137,11 +137,11 @@ class MembersRecords
      */
     public function updateMember($userid, $values)
     {
-        if (! empty($userid) && $this->getMember($userid)) {
+        if (! empty($userid) && $this->getMember('id', $userid)) {
             $result = $this->app['db']->update($this->getTableName(), $values, array(
-                'userid' => $userid
+                'id' => $userid
             ));
-        } else {
+        } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['values'])) {
             $result = $this->app['db']->insert($this->getTableName(), $values);
         }
 

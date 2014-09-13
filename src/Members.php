@@ -78,9 +78,11 @@ class Members
      */
     public function getMember($field, $value)
     {
-        $record = $this->records->getMember($field, $value);
-        if ($record) {
-            return $record;
+        if (! empty($field) && ! empty($value)) {
+            $record = $this->records->getMember($field, $value);
+            if ($record) {
+                return $record;
+            }
         }
 
         return false;
