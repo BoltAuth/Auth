@@ -82,6 +82,8 @@ class Controller
                     $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
                     simpleredirect($returnpage);
                 }
+            } else {
+                // Soemthing is wrong here
             }
         }
 

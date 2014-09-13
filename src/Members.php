@@ -122,6 +122,12 @@ class Members
         return false;
     }
 
+    /**
+     * Add a new member to the database
+     *
+     * @param array $form
+     * @return boolean
+     */
     public function addMember($form)
     {
         // Remember to look up email address and match new ClientLogin profiles
@@ -155,6 +161,7 @@ class Members
             }
         }
 
+        return true;
     }
 
 }

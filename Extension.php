@@ -102,15 +102,15 @@ class Extension extends \Bolt\BaseExtension
             $providerdata = json_decode($userdata['providerdata'], true);
 
             // Some providers (looking at you Twitter) don't supply an email
-            if (empty($providerdata['email'])) {
+            if (empty($providerdata['email'] || $providerdata['displayName'])) {
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
             } else {
+                // Check to see if there is already a member with this email
                 $member = $members->getMember('email', $providerdata['email']);
 
                 if ($member) {
-                    // This is an existing user (based on email) so just associate
-                    // this login with their Members profile
+                    // Associate this login with their Members profile
                     $members->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
                 } else {
                     // Add the member to our database
