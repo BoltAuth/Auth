@@ -37,12 +37,14 @@ class Members
     /**
      * Check if we have this ClientLogin as a member
      *
-     * @param  string      $key In for format 'provider:identifier'
+     * @param  string      $provider   The provider, e.g. 'Google'
+     * @param  string      $identifier The providers ID for the account
      * @return int|boolean The user ID of the member or false if not found
      */
-    public function isMemberClientLogin($key)
+    public function isMemberClientLogin($provider, $identifier)
     {
-        $record = $this->records->getMetaRecords('clientlogin_key', $key, true);
+        $key = 'clientlogin_' . strtolower($provider);
+        $record = $this->records->getMetaRecords($key, $identifier, true);
         if ($record) {
             return $record['userid'];
         }
@@ -124,10 +126,11 @@ class Members
      * @param integer $userid A user's ID
      * @param string  $key    The ClientLogin key in the format 'provider:identifier'
      */
-    public function addMemberClientLoginProfile($userid, $key)
+    public function addMemberClientLoginProfile($userid, $provider, $identifier)
     {
         if ($this->records->getMember('id', $userid)) {
-            $this->records->updateMemberMeta($userid, 'clientlogin_key', $key);
+            $key = 'clientlogin_' . strtolower($provider);
+            $this->records->updateMemberMeta($userid, $key, $identifier);
 
             return true;
         }

@@ -83,11 +83,11 @@ class Extension extends \Bolt\BaseExtension
         // Get the ClientLogin user data from the event
         $userdata = $event->getUser();
 
-        // Build a query key
-        $key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
+// Build a query key
+//$key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
 
         // See if we have this in our database
-        $id = $members->isMemberClientLogin($key);
+        $id = $members->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
 
         if ($id) {
             //
@@ -114,7 +114,7 @@ class Extension extends \Bolt\BaseExtension
                 if ($member) {
                     // This is an existing user (based on email) so just associate
                     // this login with their Members profile
-                    $members->addMemberClientLoginProfile($member, $key);
+                    $members->addMemberClientLoginProfile($member, $userdata['provider'], $userdata['identifier']);
                 } else {
                     // Add the member to our database
                     $members->addMember($providerdata);
