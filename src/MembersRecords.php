@@ -231,7 +231,6 @@ class MembersRecords
 
                 $table->addColumn('id',          'integer',  array('autoincrement' => true));
                 $table->addColumn('username',    'string',   array('length' => 32));
-                $table->addColumn('password',    'string',   array('length' => 128));
                 $table->addColumn('email',       'string',   array('length' => 128));
                 $table->addColumn('lastseen',    'datetime', array('default' => '0000-00-00 00:00:00'));
                 $table->addColumn('lastip',      'string',   array('length' => 32, 'default' => ''));
