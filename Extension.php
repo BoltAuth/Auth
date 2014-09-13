@@ -77,15 +77,39 @@ class Extension extends \Bolt\BaseExtension
      */
     public function loginCallback(ClientLoginEvent $event)
     {
-        $userdata = $event->getUser();
-        $key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
-
         $members = new Members($this->app);
 
-        if ($members->isMemberClientLogin($key)) {
+        // Get the ClientLogin user data from the event
+        $userdata = $event->getUser();
+
+        // Build a query key
+        $key = strtolower($userdata['provider']) . ':' . $userdata['identifier'];
+
+        // See if we have this in our database
+        $id = $members->isMemberClientLogin($key);
+
+        if ($id) {
             //
         } else {
-            //
+            // If registration is closed, don't do anything
+            if (! $this->config['registration']) {
+// @TODO handle this properly
+                return;
+            }
+
+            // Save any redirect that ClientLogin has pending
+            $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
+            $this->app['session']->set('clientlogin', $userdata);
+
+            // Some providers (looking at you Twitter) don't supply an email
+            if (empty($userdata['email'])) {
+                //
+            } else {
+                //
+            }
+
+            // Redirect to the 'new' page
+            simpleredirect("/{$this->config['basepath']}/new");
         }
 
     }
