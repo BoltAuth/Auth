@@ -75,6 +75,10 @@ class Controller
         if ($form->isValid()) {
             // Create new Member record and go back to where we came from
             if ($this->members->addMember($request->get('form'))) {
+                // Clear any redirect that ClientLogin has pending
+                $this->app['session']->remove('pending');
+                $this->app['session']->remove('clientlogin');
+
                 // Redirect
                 if (empty($redirect)) {
                     simpleredirect($this->app['paths']['hosturl']);
