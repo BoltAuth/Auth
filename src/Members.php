@@ -168,10 +168,12 @@ class Members
 
     public function updateMemberLogin($userid)
     {
-        $this->records->updateMember($userid, array(
-            'lastseen' => date('Y-m-d H:i:s'),
-            'lastip'   => $this->app['request']->getClientIp()
-        ));
+        if ($this->records->getMember('id', $userid)) {
+            $this->records->updateMember($userid, array(
+                'lastseen' => date('Y-m-d H:i:s'),
+                'lastip'   => $this->app['request']->getClientIp()
+            ));
+        }
     }
 
 }
