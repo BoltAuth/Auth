@@ -37,7 +37,7 @@ class Controller
         $this->members = new Members($this->app);
     }
 
-    public function getMemberNew(Request $request)
+    public function getMemberRegister(Request $request)
     {
         // Add assets to Twig path
         $this->addTwigPath();
@@ -82,7 +82,7 @@ class Controller
         $view = $form->createView();
 
         $html = $this->app['render']->render(
-            $this->config['templates']['new'], array(
+            $this->config['templates']['register'], array(
                 'form' => $view,
                 'twigparent' => $this->config['templates']['parent']
         ));
