@@ -14,7 +14,7 @@ registration: true
 # The template names that you wish to use in your theme to override the defaults
 templates:
   parent: members.twig
-  new: members_new.twig
+  register: members_register.twig
   profile: members_profile.twig
 
  
