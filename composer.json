@@ -29,5 +29,6 @@
 		"branch-alias" : {
 			"dev-master" : "2.0.*-dev"
 		}
-	}
+	},
+	"description" : "Membership creation and management for Bolt"
 }
