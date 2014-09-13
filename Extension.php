@@ -84,10 +84,10 @@ class Extension extends \Bolt\BaseExtension
         $userdata = $event->getUser();
 
         // See if we have this in our database
-        $userid = $members->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
+        $member = $members->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
 
-        if ($userid) {
-            $members->updateMemberLogin($userid);
+        if ($member) {
+            $members->updateMemberLogin($member['id']);
         } else {
             // If registration is closed, don't do anything
             if (! $this->config['registration']) {
