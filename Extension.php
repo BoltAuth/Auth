@@ -102,7 +102,7 @@ class Extension extends \Bolt\BaseExtension
             $providerdata = json_decode($userdata['providerdata'], true);
 
             // Some providers (looking at you Twitter) don't supply an email
-            if (empty($providerdata['email'] || $providerdata['displayName'])) {
+            if (empty($providerdata['email']) || empty($providerdata['displayName'])) {
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
             } else {
