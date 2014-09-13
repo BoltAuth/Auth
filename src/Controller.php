@@ -42,10 +42,14 @@ class Controller
         // Add assets to Twig path
         $this->addTwigPath();
 
-        // Get session data we need from ClientLogin
+        // Get redirect that is set for ClientLogin
         $redirect = $this->app['session']->get('pending');
+
+        // Get session data we need from ClientLogin
         $clientlogin = $this->app['session']->get('clientlogin');
-        $userdata = json_decode($userdata['providerdata'], true);
+
+        // Expand the JSON array
+        $userdata = json_decode($clientlogin['providerdata'], true);
 
         $data = array();
         $form = $this->app['form.factory']
