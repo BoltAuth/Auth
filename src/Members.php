@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
 use Bolt\Extension\Bolt\ClientLogin\Session;
+use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 
 /**
  *
@@ -168,6 +169,11 @@ class Members
         return true;
     }
 
+    /**
+     * Update a members login meta
+     *
+     * @param integer $userid
+     */
     public function updateMemberLogin($userid)
     {
         if ($this->records->getMember('id', $userid)) {
@@ -176,6 +182,36 @@ class Members
                 'lastip'   => $this->app['request']->getClientIp()
             ));
         }
+    }
+
+    /**
+     * Test if a user has a valid ClientLogin session AND is a valid member
+     *
+     * @return boolean
+     */
+    public function isAuth()
+    {
+        // First check for ClientLogin auth
+        $session = new Session($this->app);
+        if (! $session->doCheckLogin()) {
+            return false;
+        }
+
+        // Get their ClientLogin records
+        $records = new ClientRecords($this->app);
+        $record = $records->getUserProfileBySession($session->token);
+        if (! $record) {
+            return false;
+        }
+
+        $record = json_decode($record, true);
+
+        // Look them up internally
+        if ($this->isMemberClientLogin($record['provider'], $record['identifier'])) {
+            return true;
+        }
+
+        return false;
     }
 
 }

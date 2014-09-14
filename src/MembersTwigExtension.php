@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+
 /**
  * Twig functions
  */
@@ -53,7 +54,8 @@ class MembersTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'member' => new \Twig_Function_Method($this, 'member'),
+            'member'     => new \Twig_Function_Method($this, 'member'),
+            'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
         );
     }
 
@@ -73,6 +75,11 @@ class MembersTwigExtension extends \Twig_Extension
         }
 
         return new \Twig_Markup($member, 'UTF-8');
+    }
+
+    public function memberAuth()
+    {
+        return $this->members->isAuth();
     }
 
 }
