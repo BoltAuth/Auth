@@ -148,7 +148,8 @@ class Members
                 'email'       => $form['email'],
                 'displayname' => $form['displayname'],
                 'lastseen'    => date('Y-m-d H:i:s'),
-                'lastip'      => $this->app['request']->getClientIp()
+                'lastip'      => $this->app['request']->getClientIp(),
+                'enabled'     => 1
             ));
 
             if ($create) {
