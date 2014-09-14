@@ -187,7 +187,7 @@ class Members
     /**
      * Test if a user has a valid ClientLogin session AND is a valid member
      *
-     * @return boolean
+     * @return boolean|integer Member ID, or false
      */
     public function isAuth()
     {
@@ -205,11 +205,7 @@ class Members
         }
 
         // Look them up internally
-        if ($this->isMemberClientLogin($records->user['provider'], $records->user['identifier'])) {
-            return true;
-        }
-
-        return false;
+        return $this->isMemberClientLogin($records->user['provider'], $records->user['identifier']);
     }
 
 }
