@@ -204,10 +204,8 @@ class Members
             return false;
         }
 
-        $record = json_decode($record, true);
-
         // Look them up internally
-        if ($this->isMemberClientLogin($record['provider'], $record['identifier'])) {
+        if ($this->isMemberClientLogin($records->user['provider'], $records->user['identifier'])) {
             return true;
         }
 
