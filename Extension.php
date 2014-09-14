@@ -141,7 +141,8 @@ class Extension extends \Bolt\BaseExtension
                 'register' => 'members_register.twig',
                 'profile'  => 'members_profile.twig'
             ),
-            'registration' => true
+            'registration' => true,
+            'csrf'         => true
         );
     }
 }
