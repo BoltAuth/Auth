@@ -43,6 +43,9 @@ class Extension extends \Bolt\BaseExtension
         if ($this->app['config']->getWhichEnd() == 'frontend') {
             // Set up routes
             $this->setController();
+
+            // Twig functions
+            $this->app['twig']->addExtension(new MembersTwigExtension($this->app));
         }
 
         /*
