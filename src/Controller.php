@@ -70,24 +70,28 @@ class Controller
                             ->add('submit',      'submit', array('label' => __('Save & continue')))
                             ->getForm();
 
+        // Handle the form request data
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            // Create new Member record and go back to where we came from
-            if ($this->members->addMember($request->get('form'))) {
-                // Clear any redirect that ClientLogin has pending
-                $this->app['session']->remove('pending');
-                $this->app['session']->remove('clientlogin');
+        // If we're in a POST, validate the form
+        if ($request->getMethod() == 'POST') {
+            if ($form->isValid()) {
+                // Create new Member record and go back to where we came from
+                if ($this->members->addMember($request->get('form'))) {
+                    // Clear any redirect that ClientLogin has pending
+                    $this->app['session']->remove('pending');
+                    $this->app['session']->remove('clientlogin');
 
-                // Redirect
-                if (empty($redirect)) {
-                    simpleredirect($this->app['paths']['hosturl']);
+                    // Redirect
+                    if (empty($redirect)) {
+                        simpleredirect($this->app['paths']['hosturl']);
+                    } else {
+                        $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
+                        simpleredirect($returnpage);
+                    }
                 } else {
-                    $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
-                    simpleredirect($returnpage);
+                    // Something is wrong here
                 }
-            } else {
-                // Soemthing is wrong here
             }
         }
 
