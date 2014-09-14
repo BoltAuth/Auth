@@ -88,6 +88,24 @@ class MembersRecords
     }
 
     /**
+     * Return the value of a single meta record for a user
+     *
+     * @param integer $userid
+     * @param string  $meta
+     * @return array|boolean
+     */
+    public function getMemberMetaValue($userid, $meta)
+    {
+        $record = $this->getMemberMeta($userid, $meta);
+
+        if ($record) {
+            return $record['value'];
+        }
+
+        return false;
+    }
+
+    /**
      * Get meta records from the database
      *
      * @param  string        $meta   Key name to search for
