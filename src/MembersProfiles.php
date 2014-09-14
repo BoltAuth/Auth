@@ -24,8 +24,8 @@ class MembersProfiles
         $member = $records->getMember('id', $userid);
 
         if ($member) {
-            $member['avatar']   = $records->getMemberMeta($userid, 'avatar');
-            $member['location'] = $records->getMemberMeta($userid, 'location');
+            $member['avatar']   = $records->getMemberMetaValue($userid, 'avatar');
+            $member['location'] = $records->getMemberMetaValue($userid, 'location');
 
             return $member;
         }
