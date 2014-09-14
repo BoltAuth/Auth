@@ -110,8 +110,9 @@ class Members
     /**
      * Add a ClientLogin key to a user's profile
      *
-     * @param integer $userid A user's ID
-     * @param string  $key    The ClientLogin key in the format 'provider:identifier'
+     * @param integer $userid     A user's ID
+     * @param string  $provider   The login provider
+     * @param string  $identifier Provider's unique ID for the user
      */
     public function addMemberClientLoginProfile($userid, $provider, $identifier)
     {
@@ -129,9 +130,10 @@ class Members
      * Add a new member to the database
      *
      * @param array $form
+     * @param array $userdata The array of user data from ClientLogin
      * @return boolean
      */
-    public function addMember($form)
+    public function addMember($form, $userdata)
     {
         // Remember to look up email address and match new ClientLogin profiles
         // with existing Members
@@ -158,6 +160,9 @@ class Members
 
                 // Add the provider info to meta
                 $this->addMemberClientLoginProfile($member['id'], $form['provider'], $form['identifier']);
+
+                // Add meta data from CLientLogin
+                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['photoURL']);
 
                 // Event dispatcher
                 if ($this->app['dispatcher']->hasListeners('members.New')) {
