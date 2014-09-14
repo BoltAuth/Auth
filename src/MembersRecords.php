@@ -163,7 +163,7 @@ class MembersRecords
             $result = $this->app['db']->update($this->getTableName(), $values, array(
                 'id' => $userid
             ));
-        } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['values'])) {
+        } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
             $result = $this->app['db']->insert($this->getTableName(), $values);
         }
 
