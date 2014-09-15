@@ -2,9 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
-use Bolt\Extension\Bolt\ClientLogin\Session;
-
 /**
  * Members Profiles
  *

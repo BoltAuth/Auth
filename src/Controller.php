@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Maid\Maid;
 use Silex;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -112,9 +111,6 @@ class Controller
         $this->addTwigPath();
 
         $view = '';
-
-
-
 
         $html = $this->app['render']->render(
             $this->config['templates']['profile'], array(

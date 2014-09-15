@@ -54,7 +54,7 @@ class Members
     }
 
     /**
-     * Check to see if a member is currently authenticated
+     * Check to see if a member is currently authenticated via ClientLogin
      *
      * @return boolean
      */
@@ -129,8 +129,8 @@ class Members
     /**
      * Add a new member to the database
      *
-     * @param array $form
-     * @param array $userdata The array of user data from ClientLogin
+     * @param  array   $form
+     * @param  array   $userdata The array of user data from ClientLogin
      * @return boolean
      */
     public function addMember($form, $userdata)

@@ -90,8 +90,8 @@ class MembersRecords
     /**
      * Return the value of a single meta record for a user
      *
-     * @param integer $userid
-     * @param string  $meta
+     * @param  integer       $userid
+     * @param  string        $meta
      * @return array|boolean
      */
     public function getMemberMetaValue($userid, $meta)

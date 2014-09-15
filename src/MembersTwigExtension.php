@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-
 /**
  * Twig functions
  */
@@ -62,8 +61,8 @@ class MembersTwigExtension extends \Twig_Extension
     /**
      * Return Twig suitable array for a member, or current session
      *
-     * @param integer $id   [Optional] ID of member to look up
-     * @param boolean $meta [Optional] Return user meta
+     * @param  integer      $id   [Optional] ID of member to look up
+     * @param  boolean      $meta [Optional] Return user meta
      * @return \Twig_Markup
      */
     public function member($id = false, $meta = false)
