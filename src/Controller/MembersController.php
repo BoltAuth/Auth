@@ -16,11 +16,6 @@ use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
 class MembersController implements ControllerProviderInterface
 {
     /**
-     * @var Silex\Application
-     */
-    private $app;
-
-    /**
      * Extension config array
      *
      * @var array
@@ -32,11 +27,16 @@ class MembersController implements ControllerProviderInterface
      */
     private $members;
 
+    /**
+     *
+     * @param Silex\Application $app
+     * @return \Silex\ControllerCollection
+     */
     public function connect(Silex\Application $app)
     {
         $this->app = $app;
-        $this->config = $this->app['extensions.' . Extension::NAME]->config;
-        $this->members = new Members($this->app);
+        $this->config = $app['extensions.' . Extension::NAME]->config;
+        $this->members = new Members($app);
 
         /**
          * @var $ctr \Silex\ControllerCollection
@@ -56,22 +56,28 @@ class MembersController implements ControllerProviderInterface
         return $ctr;
     }
 
-    public function register(Request $request)
+    /**
+     *
+     * @param Silex\Application $app
+     * @param Symfony\Component\HttpFoundation\Request $request
+     * @return \Twig_Markup
+     */
+    public function register(Silex\Application $app, Request $request)
     {
         // Add assets to Twig path
-        $this->addTwigPath();
+        $this->addTwigPath($app);
 
         // Get redirect that is set for ClientLogin
-        $redirect = $this->app['session']->get('pending');
+        $redirect = $app['session']->get('pending');
 
         // Get session data we need from ClientLogin
-        $clientlogin = $this->app['session']->get('clientlogin');
+        $clientlogin = $app['session']->get('clientlogin');
 
         // Expand the JSON array
         $userdata = json_decode($clientlogin['providerdata'], true);
 
         $data = array();
-        $form = $this->app['form.factory']
+        $form = $app['form.factory']
                         ->createBuilder('form', $data,  array('csrf_protection' => $this->config['csrf']))
                             ->add('username',    'text',   array('constraints' => new ValidUsername(),
                                                                  'data'  => makeSlug($userdata['displayName'], 32),
@@ -98,14 +104,14 @@ class MembersController implements ControllerProviderInterface
                 // Create new Member record and go back to where we came from
                 if ($this->members->addMember($request->get('form'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
-                    $this->app['session']->remove('pending');
-                    $this->app['session']->remove('clientlogin');
+                    $app['session']->remove('pending');
+                    $app['session']->remove('clientlogin');
 
                     // Redirect
                     if (empty($redirect)) {
-                        simpleredirect($this->app['paths']['hosturl']);
+                        simpleredirect($app['paths']['hosturl']);
                     } else {
-                        $returnpage = str_replace($this->app['paths']['hosturl'], '', $redirect);
+                        $returnpage = str_replace($app['paths']['hosturl'], '', $redirect);
                         simpleredirect($returnpage);
                     }
                 } else {
@@ -116,7 +122,7 @@ class MembersController implements ControllerProviderInterface
 
         $view = $form->createView();
 
-        $html = $this->app['render']->render(
+        $html = $app['render']->render(
             $this->config['templates']['register'], array(
                 'form' => $view,
                 'twigparent' => $this->config['templates']['parent']
@@ -125,14 +131,20 @@ class MembersController implements ControllerProviderInterface
         return new \Twig_Markup($html, 'UTF-8');
     }
 
-    public function profile(Request $request)
+    /**
+     *
+     * @param Silex\Application $app
+     * @param Symfony\Component\HttpFoundation\Request $request
+     * @return \Twig_Markup
+     */
+    public function profile(Silex\Application $app, Request $request)
     {
         // Add assets to Twig path
-        $this->addTwigPath();
+        $this->addTwigPath($app);
 
         $view = '';
 
-        $html = $this->app['render']->render(
+        $html = $app['render']->render(
             $this->config['templates']['profile'], array(
                 'form' => $view,
                 'twigparent' => $this->config['templates']['parent']
@@ -141,9 +153,13 @@ class MembersController implements ControllerProviderInterface
         return new \Twig_Markup($html, 'UTF-8');
     }
 
-    private function addTwigPath()
+    /**
+     *
+     * @param Silex\Application $app
+     */
+    private function addTwigPath(Silex\Application $app)
     {
-        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
+        $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
     }
 
 }
