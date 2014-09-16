@@ -14,28 +14,28 @@ class RegisterType extends AbstractType
     {
         $builder
             ->add('username',    'text',   array(
-                'label' => __('User name:'),
-                'data'  => $options['data']['username'],
+                'label'       => __('User name:'),
+                'data'        => $options['data']['username'],
                 'constraints' => array(
                     new ValidUsername(),
                     new Assert\NotBlank()
                 )))
             ->add('displayname', 'text',   array(
-                'label' => __('Publicly visible name:'),
-                'data'  => $options['data']['displayname'],
+                'label'       => __('Publicly visible name:'),
+                'data'        => $options['data']['displayname'],
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 2))
                 )))
             ->add('email',       'text',   array(
-                'label' => __('Email:'),
-                'data'  => $options['data']['email'],
+                'label'       => __('Email:'),
+                'data'        => $options['data']['email'],
                 'constraints' => new Assert\Email(array(
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true)
                 )))
             ->add('submit',      'submit', array(
-                'label' => __('Save & continue')
+                'label'       => __('Save & continue')
                 ));
     }
 
