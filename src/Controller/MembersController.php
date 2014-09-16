@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Silex;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
@@ -72,6 +73,11 @@ class MembersController implements ControllerProviderInterface
 
         // Get session data we need from ClientLogin
         $clientlogin = $app['session']->get('clientlogin');
+
+        // If there is no ClientLogin data in the session, they shouldn't be here
+        if (empty($clientlogin)) {
+            return new Response('No!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+        }
 
         // Expand the JSON array
         $userdata = json_decode($clientlogin['providerdata'], true);
