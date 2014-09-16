@@ -35,7 +35,6 @@ class MembersController implements ControllerProviderInterface
      */
     public function connect(Silex\Application $app)
     {
-        $this->app = $app;
         $this->config = $app['extensions.' . Extension::NAME]->config;
         $this->members = new Members($app);
 
@@ -45,14 +44,20 @@ class MembersController implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
 
         // New member
-        $ctr->match("/register", array($this, 'register'))
+        $ctr->match('/register', array($this, 'register'))
             ->bind('register')
             ->method('GET|POST');
 
-        // Member profile
-        $ctr->match("/profile", array($this, 'profile'))
-            ->bind('profile')
+        // My profile
+        $ctr->match('/profile', array($this, 'myprofile'))
+            ->bind('myprofile')
             ->method('GET|POST');
+
+        // Member profile
+        $ctr->match('/profile/{id}', array($this, 'userprofile'))
+            ->bind('userprofile')
+            ->assert('id', '\d*')
+            ->method('GET');
 
         return $ctr;
     }
@@ -143,7 +148,29 @@ class MembersController implements ControllerProviderInterface
      * @param Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function profile(Silex\Application $app, Request $request)
+    public function myprofile(Silex\Application $app, Request $request)
+    {
+        // Add assets to Twig path
+        $this->addTwigPath($app);
+
+        $view = '';
+
+        $html = $app['render']->render(
+            $this->config['templates']['profile'], array(
+                'form' => $view,
+                'twigparent' => $this->config['templates']['parent']
+        ));
+
+        return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     *
+     * @param Silex\Application $app
+     * @param Symfony\Component\HttpFoundation\Request $request
+     * @return \Twig_Markup
+     */
+    public function userprofile(Silex\Application $app, Request $request)
     {
         // Add assets to Twig path
         $this->addTwigPath($app);
