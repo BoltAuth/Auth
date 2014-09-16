@@ -44,19 +44,19 @@ class MembersController implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
 
         // New member
-        $ctr->match("/register", array($this, 'getMemberRegister'))
-            ->bind('getMemberRegister')
+        $ctr->match("/register", array($this, 'register'))
+            ->bind('register')
             ->method('GET|POST');
 
         // Member profile
-        $ctr->match("/profile", array($this, 'getMemberProfile'))
-            ->bind('getMemberProfile')
+        $ctr->match("/profile", array($this, 'profile'))
+            ->bind('profile')
             ->method('GET|POST');
 
         return $ctr;
     }
 
-    public function getMemberRegister(Request $request)
+    public function register(Request $request)
     {
         // Add assets to Twig path
         $this->addTwigPath();
@@ -125,7 +125,7 @@ class MembersController implements ControllerProviderInterface
         return new \Twig_Markup($html, 'UTF-8');
     }
 
-    public function getMemberProfile(Request $request)
+    public function profile(Request $request)
     {
         // Add assets to Twig path
         $this->addTwigPath();
