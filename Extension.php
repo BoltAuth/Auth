@@ -17,9 +17,11 @@ class Extension extends \Bolt\BaseExtension
     const NAME = 'Members';
 
     /**
-     * @var Members\Controller
+     * Extension's container
+     *
+     * @var string
      */
-    private $controller;
+    const CONTAINER = 'extensions.Members';
 
     public function getName()
     {

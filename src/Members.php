@@ -31,7 +31,7 @@ class Members
     public function __construct(Silex\Application $app)
     {
         $this->app = $app;
-        $this->config = $this->app['extensions.' . Extension::NAME]->config;
+        $this->config = $this->app[Extension::CONTAINER]->config;
         $this->records = new MembersRecords($this->app);
     }
 

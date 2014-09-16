@@ -10,7 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
+use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Entity\Register;
+use Bolt\Extension\Bolt\Members\Form\ProfileType;
 use Bolt\Extension\Bolt\Members\Form\RegisterType;
 
 /**
@@ -37,7 +39,7 @@ class MembersController implements ControllerProviderInterface
      */
     public function connect(Silex\Application $app)
     {
-        $this->config = $app['extensions.' . Extension::NAME]->config;
+        $this->config = $app[Extension::CONTAINER]->config;
         $this->members = new Members($app);
 
         /**
@@ -146,6 +148,15 @@ class MembersController implements ControllerProviderInterface
      */
     public function myprofile(Silex\Application $app, Request $request)
     {
+        $members = new Members($app);
+        $member = $members->isAuth();
+
+        if (! $member) {
+            return '';
+        } else{
+            $member = $members->getMember('id', $member);
+        }
+
         // Add assets to Twig path
         $this->addTwigPath($app);
 
@@ -154,9 +165,9 @@ class MembersController implements ControllerProviderInterface
         $data = array(
             'csrf_protection' => $this->config['csrf'],
             'data' => array(
-                'username'    => '',
-                'displayname' => '',
-                'email'       => '',
+                'username'    => $member['username'],
+                'displayname' => $member['displayname'],
+                'email'       => $member['email'],
                 'allowsave'   => true
             )
         );
@@ -166,7 +177,7 @@ class MembersController implements ControllerProviderInterface
 
         $html = $app['render']->render(
             $this->config['templates']['profile'], array(
-                'form' => $view,
+                'form' => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
 
