@@ -1,16 +1,19 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Silex;
+use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
+use Bolt\Extension\Bolt\Members\Extension;
+use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
 
 /**
  *
  */
-class Controller
+class MembersController implements ControllerProviderInterface
 {
     /**
      * @var Silex\Application
@@ -29,11 +32,28 @@ class Controller
      */
     private $members;
 
-    public function __construct(Silex\Application $app)
+    public function connect(Silex\Application $app)
     {
         $this->app = $app;
         $this->config = $this->app['extensions.' . Extension::NAME]->config;
         $this->members = new Members($this->app);
+
+        /**
+         * @var $ctr \Silex\ControllerCollection
+         */
+        $ctr = $app['controllers_factory'];
+
+        // New member
+        $ctr->match("/register", array($this, 'getMemberRegister'))
+            ->bind('getMemberRegister')
+            ->method('GET|POST');
+
+        // Member profile
+        $ctr->match("/profile", array($this, 'getMemberProfile'))
+            ->bind('getMemberProfile')
+            ->method('GET|POST');
+
+        return $ctr;
     }
 
     public function getMemberRegister(Request $request)
@@ -123,7 +143,7 @@ class Controller
 
     private function addTwigPath()
     {
-        $this->app['twig.loader.filesystem']->addPath(dirname(__DIR__) . '/assets');
+        $this->app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
     }
 
 }

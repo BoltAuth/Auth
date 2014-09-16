@@ -41,8 +41,8 @@ class Extension extends \Bolt\BaseExtension
          * Frontend
          */
         if ($this->app['config']->getWhichEnd() == 'frontend') {
-            // Set up routes
-            $this->setController();
+            // Set up controller routes
+            $this->app->mount('/' . $this->config['basepath'], new Controller\MembersController());
 
             // Twig functions
             $this->app['twig']->addExtension(new MembersTwigExtension($this->app));
@@ -53,25 +53,6 @@ class Extension extends \Bolt\BaseExtension
          */
         $this->app['dispatcher']->addListener('clientlogin.Login',  array($this, 'loginCallback'));
         $this->app['dispatcher']->addListener('clientlogin.Logout', array($this, 'logoutCallback'));
-    }
-
-    /**
-     * Create controller and define routes
-     */
-    private function setController()
-    {
-        // Create controller object
-        $this->controller = new Controller($this->app);
-
-        // New member
-        $this->app->match("{$this->config['basepath']}/register", array($this->controller, 'getMemberRegister'))
-                    ->bind('getMemberRegister')
-                    ->method('GET|POST');
-
-        // Member profile
-        $this->app->match("{$this->config['basepath']}/profile", array($this->controller, 'getMemberProfile'))
-                    ->bind('getMemberProfile')
-                    ->method('GET|POST');
     }
 
     /**
