@@ -1,0 +1,24 @@
+{#
+ # Passed in variables:
+ #
+ #}
+{% extends twigparent %}
+
+{% block members %}
+    <div class="row">
+        <h4>Member Profile</h4>
+    </div>
+
+    <div class="row profile">
+
+        <div class="small-12 columns">
+
+            {{ form_start(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.displayname) }}
+                {{ form_row(form.email) }}
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+{% endblock %}

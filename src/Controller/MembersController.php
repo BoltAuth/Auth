@@ -176,7 +176,7 @@ class MembersController implements ControllerProviderInterface
                                     ->getForm();
 
         $html = $app['render']->render(
-            $this->config['templates']['profile'], array(
+            $this->config['templates']['profile_edit'], array(
                 'form' => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
@@ -218,7 +218,7 @@ class MembersController implements ControllerProviderInterface
                                     ->getForm();
 
         $html = $app['render']->render(
-            $this->config['templates']['profile'], array(
+            $this->config['templates']['profile_view'], array(
                 'form' => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));

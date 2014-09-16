@@ -120,9 +120,10 @@ class Extension extends \Bolt\BaseExtension
         return array(
             'basepath' => 'members',
             'templates' => array(
-                'parent'   => 'members.twig',
-                'register' => 'members_register.twig',
-                'profile'  => 'members_profile.twig'
+                'parent'        => 'members.twig',
+                'register'      => 'members_register.twig',
+                'profile_edit'  => 'members_profile_edit.twig',
+                'profile_view'  => 'members_profile_view.twig'
             ),
             'registration' => true,
             'csrf'         => true
