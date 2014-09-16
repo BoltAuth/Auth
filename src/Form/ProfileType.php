@@ -24,6 +24,7 @@ class ProfileType extends AbstractType
             ->add('displayname', 'text',   array(
                 'label'       => __('Publicly visible name:'),
                 'data'        => $options['data']['displayname'],
+                'read_only'   => $options['data']['allowsave'],
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 2))
@@ -31,6 +32,7 @@ class ProfileType extends AbstractType
             ->add('email',       'text',   array(
                 'label'       => __('Email:'),
                 'data'        => $options['data']['email'],
+                'read_only'   => $options['data']['allowsave'],
                 'constraints' => new Assert\Email(array(
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true)
