@@ -90,6 +90,7 @@ class MembersController implements ControllerProviderInterface
         $userdata = json_decode($clientlogin['providerdata'], true);
         $userdata['provider'] = $clientlogin['provider'];
 
+        // Create new register form
         $register = new Register();
         $data = array(
             'csrf_protection' => $this->config['csrf'],
@@ -100,7 +101,6 @@ class MembersController implements ControllerProviderInterface
             )
         );
 
-        // Create new register form
         $form = $app['form.factory']->createBuilder(new RegisterType(), $register, $data)
                                     ->getForm();
 
@@ -149,7 +149,20 @@ class MembersController implements ControllerProviderInterface
         // Add assets to Twig path
         $this->addTwigPath($app);
 
-        $view = '';
+        // Create new register form
+        $profile = new Profile();
+        $data = array(
+            'csrf_protection' => $this->config['csrf'],
+            'data' => array(
+                'username'    => '',
+                'displayname' => '',
+                'email'       => '',
+                'allowsave'   => true
+            )
+        );
+
+        $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
+                                    ->getForm();
 
         $html = $app['render']->render(
             $this->config['templates']['profile'], array(
