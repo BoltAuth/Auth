@@ -53,13 +53,13 @@ class MembersController implements ControllerProviderInterface
             ->method('GET|POST');
 
         // My profile
-        $ctr->match('/profile', array($this, 'myprofile'))
-            ->bind('myprofile')
+        $ctr->match('/profile', array($this, 'profileedit'))
+            ->bind('profileedit')
             ->method('GET|POST');
 
         // Member profile
-        $ctr->match('/profile/{id}', array($this, 'userprofile'))
-            ->bind('userprofile')
+        $ctr->match('/profile/{id}', array($this, 'profileview'))
+            ->bind('profileview')
             ->assert('id', '\d*')
             ->method('GET');
 
@@ -146,7 +146,7 @@ class MembersController implements ControllerProviderInterface
      * @param Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function myprofile(Silex\Application $app, Request $request)
+    public function profileedit(Silex\Application $app, Request $request)
     {
         $members = new Members($app);
         $member = $members->isAuth();
@@ -190,7 +190,7 @@ class MembersController implements ControllerProviderInterface
      * @param Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function userprofile(Silex\Application $app, Request $request, $id)
+    public function profileview(Silex\Application $app, Request $request, $id)
     {
         $members = new Members($app);
         $member = $members->getMember('id', $id);
