@@ -10,6 +10,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
+use Bolt\Extension\Bolt\Members\Entity\Register;
+use Bolt\Extension\Bolt\Members\Form\RegisterType;
 
 /**
  *
@@ -87,24 +89,19 @@ class MembersController implements ControllerProviderInterface
         // Expand the JSON array
         $userdata = json_decode($clientlogin['providerdata'], true);
 
-        $data = array();
-        $form = $app['form.factory']
-                        ->createBuilder('form', $data,  array('csrf_protection' => $this->config['csrf']))
-                            ->add('username',    'text',   array('constraints' => new ValidUsername(),
-                                                                 'data'  => makeSlug($userdata['displayName'], 32),
-                                                                 'label' => __('User name:')))
-                            ->add('displayname', 'text',   array('constraints' => new Assert\NotBlank(),
-                                                                 'data'  => $userdata['displayName'],
-                                                                 'label' => __('Publicly visible name:')))
-                            ->add('email',       'text',   array('constraints' => new Assert\Email(array(
-                                                                    'message' => 'The address "{{ value }}" is not a valid email.',
-                                                                    'checkMX' => true)),
-                                                                 'data'  => $userdata['email'],
-                                                                 'label' => __('Email:')))
-                            ->add('provider',    'hidden', array('data'  => $clientlogin['provider']))
-                            ->add('identifier',  'hidden', array('data'  => $clientlogin['identifier']))
-                            ->add('submit',      'submit', array('label' => __('Save & continue')))
-                            ->getForm();
+        $register = new Register();
+        $data = array(
+            'csrf_protection' => $this->config['csrf'],
+            'data' => array(
+                'username'    => makeSlug($userdata['displayName'], 32),
+                'displayname' => $userdata['displayName'],
+                'email'       => $userdata['email']
+            )
+        );
+
+        // Create new register form
+        $form = $app['form.factory']->createBuilder(new RegisterType(), $register, $data)
+                                    ->getForm();
 
         // Handle the form request data
         $form->handleRequest($request);
@@ -131,11 +128,9 @@ class MembersController implements ControllerProviderInterface
             }
         }
 
-        $view = $form->createView();
-
         $html = $app['render']->render(
             $this->config['templates']['register'], array(
-                'form' => $view,
+                'form' => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
 
