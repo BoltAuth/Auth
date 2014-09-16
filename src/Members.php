@@ -142,7 +142,7 @@ class Members
 
         if ($member) {
             // We already have them, just link the profile
-            $this->addMemberClientLoginProfile($member['id'], $form['provider'], $form['identifier']);
+            $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
         } else {
             //
             $create = $this->records->updateMember(false, array(
@@ -159,7 +159,7 @@ class Members
                 $member = $this->getMember('email', $form['email']);
 
                 // Add the provider info to meta
-                $this->addMemberClientLoginProfile($member['id'], $form['provider'], $form['identifier']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
 
                 // Add meta data from CLientLogin
                 $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['photoURL']);

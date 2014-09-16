@@ -88,6 +88,7 @@ class MembersController implements ControllerProviderInterface
 
         // Expand the JSON array
         $userdata = json_decode($clientlogin['providerdata'], true);
+        $userdata['provider'] = $clientlogin['provider'];
 
         $register = new Register();
         $data = array(
@@ -110,7 +111,7 @@ class MembersController implements ControllerProviderInterface
         if ($request->getMethod() == 'POST') {
             if ($form->isValid()) {
                 // Create new Member record and go back to where we came from
-                if ($this->members->addMember($request->get('form'), $userdata)) {
+                if ($this->members->addMember($request->get('register'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
                     $app['session']->remove('pending');
                     $app['session']->remove('clientlogin');
