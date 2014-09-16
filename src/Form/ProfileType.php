@@ -38,7 +38,7 @@ class ProfileType extends AbstractType
                     'checkMX' => true)
                 )));
 
-        if ($options['data']['allowsave']) {
+        if (! $options['data']['readonly']) {
             $builder
                 ->add('submit',      'submit', array(
                     'label'   => __('Save & continue')
