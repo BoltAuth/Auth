@@ -18,9 +18,7 @@
                 {{ form_row(form.displayname) }}
                 {{ form_row(form.email) }}
                 <br>
-                {% if form.submit is not null %}
-                    {{ form_row(form.submit) }}
-                {% endif %}
+                {{ form_row(form.submit) }}
             {{ form_end(form) }}
         </div>
 

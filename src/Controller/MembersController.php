@@ -168,7 +168,7 @@ class MembersController implements ControllerProviderInterface
                 'username'    => $member['username'],
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
-                'allowsave'   => true
+                'readonly'    => false
             )
         );
 
@@ -210,7 +210,7 @@ class MembersController implements ControllerProviderInterface
                 'username'    => $member['username'],
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
-                'allowsave'   => false
+                'readonly'    => true
             )
         );
 
