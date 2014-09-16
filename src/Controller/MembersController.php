@@ -190,16 +190,36 @@ class MembersController implements ControllerProviderInterface
      * @param Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function userprofile(Silex\Application $app, Request $request)
+    public function userprofile(Silex\Application $app, Request $request, $id)
     {
+        $members = new Members($app);
+        $member = $members->getMember('id', $id);
+
+        if (! $member) {
+            return '';
+        }
+
         // Add assets to Twig path
         $this->addTwigPath($app);
 
-        $view = '';
+        // Create new register form
+        $profile = new Profile();
+        $data = array(
+            'csrf_protection' => $this->config['csrf'],
+            'data' => array(
+                'username'    => $member['username'],
+                'displayname' => $member['displayname'],
+                'email'       => $member['email'],
+                'allowsave'   => false
+            )
+        );
+
+        $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
+                                    ->getForm();
 
         $html = $app['render']->render(
             $this->config['templates']['profile'], array(
-                'form' => $view,
+                'form' => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
 
