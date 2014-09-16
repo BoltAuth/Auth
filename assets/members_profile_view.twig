@@ -6,18 +6,18 @@
 
 {% block members %}
     <div class="row">
-        <h4>Member Profile</h4>
+        <h4>Member Profile — {{ displayname }}</h4>
     </div>
 
     <div class="row profile">
 
-        <div class="small-12 columns">
+        <div class="small-3 columns">
+            <img alt="{{ displayname }}" src="{{ avatar }}">
+        </div>
 
-            {{ form_start(form) }}
-                {{ form_row(form.username) }}
-                {{ form_row(form.displayname) }}
-                {{ form_row(form.email) }}
-            {{ form_end(form) }}
+        <div class="small-9 columns">
+            <p>{{ displayname }}</p>
+            <p>{{ email }}</p>
         </div>
 
     </div>

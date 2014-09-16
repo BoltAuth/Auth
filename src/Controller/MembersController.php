@@ -197,30 +197,19 @@ class MembersController implements ControllerProviderInterface
 
         if (! $member) {
             return '';
+        } else {
+            $member['avatar'] = $members->getMemberMeta($id, 'avatar');
         }
 
         // Add assets to Twig path
         $this->addTwigPath($app);
 
-        // Create new register form
-        $profile = new Profile();
-        $data = array(
-            'csrf_protection' => $this->config['csrf'],
-            'data' => array(
-                'username'    => $member['username'],
-                'displayname' => $member['displayname'],
-                'email'       => $member['email'],
-                'readonly'    => true
-            )
-        );
-
-        $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
-                                    ->getForm();
-
         $html = $app['render']->render(
             $this->config['templates']['profile_view'], array(
-                'form' => $form->createView(),
-                'twigparent' => $this->config['templates']['parent']
+                'displayname' => $member['displayname'],
+                'email'       => $member['email'],
+                'avatar'      => $member['avatar']['value'],
+                'twigparent'  => $this->config['templates']['parent']
         ));
 
         return new \Twig_Markup($html, 'UTF-8');
