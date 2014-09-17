@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

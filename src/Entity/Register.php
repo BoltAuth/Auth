@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Entity;
 
-use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

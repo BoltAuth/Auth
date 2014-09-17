@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
-use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
 use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Entity\Register;
 use Bolt\Extension\Bolt\Members\Form\ProfileType;
@@ -54,7 +53,7 @@ class MembersController implements ControllerProviderInterface
 
     /**
      *
-     * @param Silex\Application $app
+     * @param  Silex\Application           $app
      * @return \Silex\ControllerCollection
      */
     public function connect(Silex\Application $app)
@@ -88,8 +87,8 @@ class MembersController implements ControllerProviderInterface
 
     /**
      *
-     * @param Silex\Application $app
-     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param  Silex\Application                        $app
+     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
     public function register(Silex\Application $app, Request $request)
@@ -162,8 +161,8 @@ class MembersController implements ControllerProviderInterface
 
     /**
      *
-     * @param Silex\Application $app
-     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param  Silex\Application                        $app
+     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
     public function profileedit(Silex\Application $app, Request $request)
@@ -173,7 +172,7 @@ class MembersController implements ControllerProviderInterface
 
         if (! $member) {
             return '';
-        } else{
+        } else {
             $member = $members->getMember('id', $member);
             $id = $member['id'];
         }
@@ -225,8 +224,8 @@ class MembersController implements ControllerProviderInterface
 
     /**
      *
-     * @param Silex\Application $app
-     * @param Symfony\Component\HttpFoundation\Request $request
+     * @param  Silex\Application                        $app
+     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
     public function profileview(Silex\Application $app, Request $request, $id)
