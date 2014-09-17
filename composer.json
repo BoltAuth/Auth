@@ -1,5 +1,6 @@
 {
 	"name" : "bolt/members",
+	"description" : "Membership creation and management for Bolt",
 	"type" : "bolt-extension",
 	"keywords" : [
 		"profiles"
@@ -29,6 +30,5 @@
 		"branch-alias" : {
 			"dev-master" : "2.0.*-dev"
 		}
-	},
-	"description" : "Membership creation and management for Bolt"
+	}
 }
