@@ -14,6 +14,7 @@ use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Entity\Register;
 use Bolt\Extension\Bolt\Members\Form\ProfileType;
 use Bolt\Extension\Bolt\Members\Form\RegisterType;
+use Bolt\Extension\Bolt\Members\MembersRecords;
 
 /**
  *
@@ -155,6 +156,7 @@ class MembersController implements ControllerProviderInterface
             return '';
         } else{
             $member = $members->getMember('id', $member);
+            $id = $member['id'];
         }
 
         // Add assets to Twig path
@@ -174,6 +176,24 @@ class MembersController implements ControllerProviderInterface
 
         $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
                                     ->getForm();
+
+        // Handle the form request data
+        $form->handleRequest($request);
+
+        // If we're in a POST, validate the form
+        if ($request->getMethod() == 'POST') {
+            if ($form->isValid()) {
+                $reponse = $request->get('profile');
+
+                $records = new MembersRecords($app);
+                $records->updateMember($id, array(
+                    'displayname' => $reponse['displayname'],
+                    'email'       => $reponse['email']
+                ));
+
+                simpleredirect($app['paths']['hosturl']);
+            }
+        }
 
         $html = $app['render']->render(
             $this->config['templates']['profile_edit'], array(
