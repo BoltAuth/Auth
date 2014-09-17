@@ -18,8 +18,6 @@ class ProfileType extends AbstractType
                 'data'        => $options['data']['username'],
                 'read_only'   => true,
                 'constraints' => array(
-                    new ValidUsername(),
-                    new Assert\NotBlank()
                 )))
             ->add('displayname', 'text',   array(
                 'label'       => __('Publicly visible name:'),
