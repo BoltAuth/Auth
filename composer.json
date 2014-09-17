@@ -6,7 +6,7 @@
 	],
 	"require" : {
 		"bolt/bolt" : ">=2.0.0,<3.0.0",
-		"bolt/clientlogin" : ">=2.0.0"
+		"bolt/clientlogin" : "dev-master"
 	},
 	"license" : "GPL",
 	"authors" : [{
