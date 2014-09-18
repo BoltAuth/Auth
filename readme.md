@@ -67,3 +67,18 @@ files you create:
 
 **NOTE:** To use different names, and/or subdirectories in your theme directory, see the `templates:` 
 section in your `Members.yml` file.
+
+Member Pages
+------------
+
+#### Logged in user
+
+```
+http://example.com/members/profile
+```
+
+### User profile by ID
+
+```
+http://example.com/members/profile/{id}
+```
