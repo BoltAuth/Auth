@@ -210,6 +210,19 @@ class Members
     }
 
     /**
+     * Add/update a member's meta record
+     *
+     * @param  int     $userid
+     * @param  string  $meta
+     * @param  string  $value
+     * @return boolean
+     */
+    public function updateMemberMeta($userid, $meta, $value)
+    {
+        return $this->records->updateMemberMeta($userid, $meta, $value);
+    }
+
+    /**
      * Test if a user has a valid ClientLogin session AND is a valid member
      *
      * @return boolean|integer Member ID, or false
