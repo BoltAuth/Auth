@@ -68,6 +68,33 @@ files you create:
 **NOTE:** To use different names, and/or subdirectories in your theme directory, see the `templates:` 
 section in your `Members.yml` file.
 
+Authentication & Twig Functions
+-------------------------------
+
+Members supplies two Twig functions for use in your templates:
+  * `memberauth()` 
+  * `member(id, meta)`
+
+The `memberauth()` function returns a boolean `FALSE` is the current session is unauthenticated/invalid, 
+or a members ID if they are logged in.
+
+An example of how can be used:
+
+```
+{% if memberauth() %}
+    {{ displaylogout(true) }}
+{% else %}
+    {{ displaylogin(true) }}
+{% endif %}
+```
+
+The `member()` function takes two **optional** parameters:
+ * `id`   - [integer] ID of member to look up
+ * `meta` - [boolean] Return user metadata
+
+Members allows, mostly via the API, to store additional metadata about a member that, if exists, will
+be returned by the `meta` parameters being set to `true`
+
 Member Pages
 ------------
 
