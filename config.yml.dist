@@ -15,9 +15,9 @@ registration: true
 templates:
   parent: members.twig
   register: members_register.twig
-  profile: members_profile.twig
+  profile_edit: members_profile_edit.twig
+  profile_view: members_profile_view.twig
 
- 
 ## Routing
 #
 # The base URI path for member pages (new members and profile view/edits)
