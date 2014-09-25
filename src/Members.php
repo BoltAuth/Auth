@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
 use Bolt\Extension\Bolt\ClientLogin\Session;
-use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 
 /**
  * Member interface class
@@ -111,27 +110,9 @@ class Members
      */
     public function isAuth()
     {
-        // First check for ClientLogin auth
-        $session = new Session($this->app);
-        if (! $session->doCheckLogin()) {
-            return false;
-        }
+        $auth = new Authenticate($this->app);
 
-        // Get their ClientLogin records
-        $records = new ClientRecords($this->app);
-        $record = $records->getUserProfileBySession($session->token);
-        if (! $record) {
-            return false;
-        }
-
-        // Look them up internally
-        $key = 'clientlogin_id_' . strtolower($records->user['provider']);
-        $record = $this->records->getMetaRecords($key, $records->user['identifier'], true);
-        if ($record) {
-            return $record['userid'];
-        }
-
-        return false;
+        return $auth->isAuth();
     }
 
 }

@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
 
-
 /**
  * Member authentication interface class
  *
@@ -30,7 +29,7 @@ use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Authenticate
+class Authenticate extends Controller\MembersController
 {
     /**
      * @var Silex\Application
@@ -67,10 +66,10 @@ class Authenticate
         $userdata = $event->getUser();
 
         // See if we have this in our database
-        $member = $this->app['members']->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
+        $member = $this->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
 
         if ($member) {
-            $this->app['members']->updateMemberLogin($member);
+            $this->updateMemberLogin($member);
         } else {
             // If registration is closed, don't do anything
             if (! $this->config['registration']) {
@@ -89,7 +88,7 @@ class Authenticate
 
             if ($member) {
                 // Associate this login with their Members profile
-                $this->app['members']->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
             } else {
                 // Redirect to the 'new' page
                 simpleredirect("/{$this->config['basepath']}/register");
@@ -104,9 +103,31 @@ class Authenticate
      */
     public function logout(ClientLoginEvent $event)
     {
-        //
     }
 
+    /**
+     * Test if a user has a valid ClientLogin session AND is a valid member
+     *
+     * @return boolean|integer Member ID, or false
+     */
+    public function isAuth()
+    {
+        // First check for ClientLogin auth
+        $session = new Session($this->app);
+        if (! $session->doCheckLogin()) {
+            return false;
+        }
+
+        // Get their ClientLogin records
+        $records = new ClientRecords($this->app);
+        $record = $records->getUserProfileBySession($session->token);
+        if (! $record) {
+            return false;
+        }
+
+        // Look them up internally
+        return $this->isMemberClientLogin($records->user['provider'], $records->user['identifier']);
+    }
 
     /**
      * Check if we have this ClientLogin as a member
@@ -169,12 +190,12 @@ class Authenticate
      * @param  array   $userdata The array of user data from ClientLogin
      * @return boolean
      */
-    private function addMember($form, $userdata)
+    protected function addMember($form, $userdata)
     {
         // Remember to look up email address and match new ClientLogin profiles
         // with existing Members
 
-        $member = $this->getMember('email', $form['email']);
+        $member = $this->app['members']->getMember('email', $form['email']);
 
         if ($member) {
             // We already have them, just link the profile
@@ -192,7 +213,7 @@ class Authenticate
 
             if ($create) {
                 // Get the new record
-                $member = $this->getMember('email', $form['email']);
+                $member = $this->app['members']->getMember('email', $form['email']);
 
                 // Add the provider info to meta
                 $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
@@ -224,30 +245,6 @@ class Authenticate
                 'lastip'   => $this->app['request']->getClientIp()
             ));
         }
-    }
-
-    /**
-     * Test if a user has a valid ClientLogin session AND is a valid member
-     *
-     * @return boolean|integer Member ID, or false
-     */
-    private function isAuth()
-    {
-        // First check for ClientLogin auth
-        $session = new Session($this->app);
-        if (! $session->doCheckLogin()) {
-            return false;
-        }
-
-        // Get their ClientLogin records
-        $records = new ClientRecords($this->app);
-        $record = $records->getUserProfileBySession($session->token);
-        if (! $record) {
-            return false;
-        }
-
-        // Look them up internally
-        return $this->isMemberClientLogin($records->user['provider'], $records->user['identifier']);
     }
 
 }

@@ -85,7 +85,7 @@ class Extension extends \Bolt\BaseExtension
     public function loginCallback(ClientLoginEvent $event)
     {
         $auth = new Authenticate($this->app);
-        $auth->login();
+        $auth->login($event);
     }
 
     /**
@@ -96,7 +96,7 @@ class Extension extends \Bolt\BaseExtension
     public function logoutCallback(ClientLoginEvent $event)
     {
         $auth = new Authenticate($this->app);
-        $auth->logout();
+        $auth->logout($event);
     }
 
     /**
