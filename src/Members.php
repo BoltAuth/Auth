@@ -55,41 +55,6 @@ class Members
     }
 
     /**
-     * Check if we have this ClientLogin as a member
-     *
-     * @param  string      $provider   The provider, e.g. 'Google'
-     * @param  string      $identifier The providers ID for the account
-     * @return int|boolean The user ID of the member or false if not found
-     */
-    public function isMemberClientLogin($provider, $identifier)
-    {
-        $key = 'clientlogin_id_' . strtolower($provider);
-        $record = $this->records->getMetaRecords($key, $identifier, true);
-        if ($record) {
-            return $record['userid'];
-        }
-
-        return false;
-    }
-
-    /**
-     * Check to see if a member is currently authenticated via ClientLogin
-     *
-     * @return boolean
-     */
-    public function isMemberClientLoginAuth()
-    {
-        //
-        $session = new Session();
-
-        if ($session->doCheckLogin()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get a member record
      *
      * @param  string        $field The user field to lookup the user by (id, username or email)
@@ -127,89 +92,6 @@ class Members
     }
 
     /**
-     * Add a ClientLogin key to a user's profile
-     *
-     * @param integer $userid     A user's ID
-     * @param string  $provider   The login provider
-     * @param string  $identifier Provider's unique ID for the user
-     */
-    public function addMemberClientLoginProfile($userid, $provider, $identifier)
-    {
-        if ($this->records->getMember('id', $userid)) {
-            $key = 'clientlogin_id_' . strtolower($provider);
-            $this->records->updateMemberMeta($userid, $key, $identifier);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Add a new member to the database
-     *
-     * @param  array   $form
-     * @param  array   $userdata The array of user data from ClientLogin
-     * @return boolean
-     */
-    public function addMember($form, $userdata)
-    {
-        // Remember to look up email address and match new ClientLogin profiles
-        // with existing Members
-
-        $member = $this->getMember('email', $form['email']);
-
-        if ($member) {
-            // We already have them, just link the profile
-            $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
-        } else {
-            //
-            $create = $this->records->updateMember(false, array(
-                'username'    => $form['username'],
-                'email'       => $form['email'],
-                'displayname' => $form['displayname'],
-                'lastseen'    => date('Y-m-d H:i:s'),
-                'lastip'      => $this->app['request']->getClientIp(),
-                'enabled'     => 1
-            ));
-
-            if ($create) {
-                // Get the new record
-                $member = $this->getMember('email', $form['email']);
-
-                // Add the provider info to meta
-                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
-
-                // Add meta data from CLientLogin
-                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['photoURL']);
-
-                // Event dispatcher
-                if ($this->app['dispatcher']->hasListeners('members.New')) {
-                    $event = new MembersEvent();
-                    $this->app['dispatcher']->dispatch('members.New', $event);
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Update a members login meta
-     *
-     * @param integer $userid
-     */
-    public function updateMemberLogin($userid)
-    {
-        if ($this->records->getMember('id', $userid)) {
-            $this->records->updateMember($userid, array(
-                'lastseen' => date('Y-m-d H:i:s'),
-                'lastip'   => $this->app['request']->getClientIp()
-            ));
-        }
-    }
-
-    /**
      * Add/update a member's meta record
      *
      * @param  int     $userid
@@ -243,7 +125,13 @@ class Members
         }
 
         // Look them up internally
-        return $this->isMemberClientLogin($records->user['provider'], $records->user['identifier']);
+        $key = 'clientlogin_id_' . strtolower($records->user['provider']);
+        $record = $this->records->getMetaRecords($key, $records->user['identifier'], true);
+        if ($record) {
+            return $record['userid'];
+        }
+
+        return false;
     }
 
 }
