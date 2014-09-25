@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Twig;
 
+use Bolt\Extension\Bolt\Members;
+
 /**
  * Twig functions
  *
