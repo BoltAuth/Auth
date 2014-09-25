@@ -24,7 +24,7 @@ namespace Bolt\Extension\Bolt\Members;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class MembersProfiles
+class Profiles
 {
     public function __construct(\Bolt\Application $app)
     {
@@ -33,7 +33,7 @@ class MembersProfiles
 
     public function getMembersProfiles($userid)
     {
-        $records = new MembersRecords($this->app);
+        $records = new Records($this->app);
 
         $member = $records->getMember('id', $userid);
 

@@ -13,7 +13,7 @@ use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Entity\Register;
 use Bolt\Extension\Bolt\Members\Form\ProfileType;
 use Bolt\Extension\Bolt\Members\Form\RegisterType;
-use Bolt\Extension\Bolt\Members\MembersRecords;
+use Bolt\Extension\Bolt\Members\Records;
 
 /**
  * Members extension controller
@@ -203,7 +203,7 @@ class MembersController implements ControllerProviderInterface
             if ($form->isValid()) {
                 $reponse = $request->get('profile');
 
-                $records = new MembersRecords($app);
+                $records = new Records($app);
                 $records->updateMember($id, array(
                     'displayname' => $reponse['displayname'],
                     'email'       => $reponse['email']

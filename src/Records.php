@@ -30,7 +30,7 @@ use Silex;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class MembersRecords
+class Records
 {
     /**
      * @var Silex\Application

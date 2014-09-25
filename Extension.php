@@ -52,7 +52,7 @@ class Extension extends \Bolt\BaseExtension
          */
         if ($this->app['config']->getWhichEnd() == 'backend') {
             // Check & create database tables if required
-            $records = new MembersRecords($this->app);
+            $records = new Records($this->app);
             $records->dbCheck();
         }
 
@@ -60,11 +60,14 @@ class Extension extends \Bolt\BaseExtension
          * Frontend
          */
         if ($this->app['config']->getWhichEnd() == 'frontend') {
+            // Register ourselves as a service
+            $this->app->register(new Provider\MembersServiceProvider($this->app));
+
             // Set up controller routes
             $this->app->mount('/' . $this->config['basepath'], new Controller\MembersController());
 
             // Twig functions
-            $this->app['twig']->addExtension(new MembersTwigExtension($this->app));
+            $this->app['twig']->addExtension(new Twig\MembersExtension($this->app));
         }
 
         /*

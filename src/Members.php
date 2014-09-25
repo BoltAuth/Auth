@@ -43,7 +43,7 @@ class Members
     private $config;
 
     /**
-     * @var MembersRecords
+     * @var Records
      */
     private $records;
 
@@ -51,7 +51,7 @@ class Members
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
-        $this->records = new MembersRecords($this->app);
+        $this->records = new Records($this->app);
     }
 
     /**

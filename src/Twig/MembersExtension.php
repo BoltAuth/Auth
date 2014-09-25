@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\Bolt\Members\Twig;
 
 /**
  * Twig functions
@@ -24,7 +24,7 @@ namespace Bolt\Extension\Bolt\Members;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class MembersTwigExtension extends \Twig_Extension
+class MembersExtension extends \Twig_Extension
 {
     /**
      * @var Application
