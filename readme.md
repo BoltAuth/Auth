@@ -113,29 +113,27 @@ http://example.com/members/profile/{id}
 API
 ---
 
-API use should be done via `Bolt\Extension\Bolt\Members\Members` only. 
+Members registers its API as a Symfony Application service and can be accessed via  
+`$this->app['members']`
+ 
 
 ```php
-use Bolt\Extension\Bolt\Members\Members;
-
-$members = new Members($this->app);
-
 // Check to see if the current session is an active member and retrive their ID
-$id = $members->isAuth();
+$id = $this->app['members']->isAuth();
 
 // Get a member record by ID
-$record = $members->getMember('id', $value);
+$record = $this->app['members']->getMember('id', $value);
 
 // Get a member record by email
-$record = $members->getMember('email', $value);
+$record = $this->app['members']->getMember('email', $value);
 
 // Get all of a members metadata records
-$meta = $members->getMemberMeta($id)
+$meta = $this->app['members']->getMemberMeta($id)
 
 // Get a members avatar metadata record
-$avatar = $members->getMemberMeta($id, 'avatar')
+$avatar = $this->app['members']->getMemberMeta($id, 'avatar')
 
 // Create/update a meta value called 'something'
-$members->updateMemberMeta($id, 'something', $value)
+$this->app['members']->updateMemberMeta($id, 'something', $value)
  
 ```
