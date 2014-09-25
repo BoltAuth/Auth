@@ -7,6 +7,7 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
+use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Entity\Profile;
@@ -14,6 +15,7 @@ use Bolt\Extension\Bolt\Members\Entity\Register;
 use Bolt\Extension\Bolt\Members\Form\ProfileType;
 use Bolt\Extension\Bolt\Members\Form\RegisterType;
 use Bolt\Extension\Bolt\Members\Records;
+use Bolt\Extension\Bolt\Members\Authenticate;
 
 /**
  * Members extension controller
@@ -92,8 +94,11 @@ class MembersController implements ControllerProviderInterface
      */
     public function register(Silex\Application $app, Request $request)
     {
-        // Add assets to Twig path
-        $this->addTwigPath($app);
+        // Ensure we have a valid Client Login session
+        $session = new Session($this->app);
+        if (! $session->doCheckLogin()) {
+            return new Response('No valid CLient Login session!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+        }
 
         // Get redirect that is set for ClientLogin
         $redirect = $app['session']->get('pending');
@@ -103,7 +108,7 @@ class MembersController implements ControllerProviderInterface
 
         // If there is no ClientLogin data in the session, they shouldn't be here
         if (empty($clientlogin)) {
-            return new Response('No!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+            return new Response('Invalid session referral!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
         }
 
         // Expand the JSON array
@@ -131,7 +136,8 @@ class MembersController implements ControllerProviderInterface
         if ($request->getMethod() == 'POST') {
             if ($form->isValid()) {
                 // Create new Member record and go back to where we came from
-                if ($this->app['members']->addMember($request->get('register'), $userdata)) {
+                $auth = new Authenticate($app);
+                if ($auth->addMember($request->get('register'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
                     $app['session']->remove('pending');
                     $app['session']->remove('clientlogin');
@@ -148,6 +154,9 @@ class MembersController implements ControllerProviderInterface
                 }
             }
         }
+
+        // Add assets to Twig path
+        $this->addTwigPath($app);
 
         $html = $app['render']->render(
             $this->config['templates']['register'], array(
@@ -169,14 +178,11 @@ class MembersController implements ControllerProviderInterface
         $member = $app['members']->isAuth();
 
         if (! $member) {
-            return '';
+            return new Response('Invalid profile session!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
         } else {
             $member = $app['members']->getMember('id', $member);
             $id = $member['id'];
         }
-
-        // Add assets to Twig path
-        $this->addTwigPath($app);
 
         // Create new register form
         $profile = new Profile();
@@ -211,6 +217,9 @@ class MembersController implements ControllerProviderInterface
             }
         }
 
+        // Add assets to Twig path
+        $this->addTwigPath($app);
+
         $html = $app['render']->render(
             $this->config['templates']['profile_edit'], array(
                 'form' => $form->createView(),
@@ -231,7 +240,7 @@ class MembersController implements ControllerProviderInterface
         $member = $app['members']->getMember('id', $id);
 
         if (! $member) {
-            return '';
+            return new Response('Invalid profile!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
         } else {
             $member['avatar'] = $app['members']->getMemberMeta($id, 'avatar');
         }
