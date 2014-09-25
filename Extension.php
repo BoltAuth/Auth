@@ -84,41 +84,8 @@ class Extension extends \Bolt\BaseExtension
      */
     public function loginCallback(ClientLoginEvent $event)
     {
-        $members = new Members($this->app);
-
-        // Get the ClientLogin user data from the event
-        $userdata = $event->getUser();
-
-        // See if we have this in our database
-        $member = $members->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
-
-        if ($member) {
-            $members->updateMemberLogin($member);
-        } else {
-            // If registration is closed, don't do anything
-            if (! $this->config['registration']) {
-// @TODO handle this properly
-                return;
-            }
-
-            // Save any redirect that ClientLogin has pending
-            $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
-            $this->app['session']->set('clientlogin', $userdata);
-
-            $providerdata = json_decode($userdata['providerdata'], true);
-
-            // Check to see if there is already a member with this email
-            $member = $members->getMember('email', $providerdata['email']);
-
-            if ($member) {
-                // Associate this login with their Members profile
-                $members->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
-            } else {
-                // Redirect to the 'new' page
-                simpleredirect("/{$this->config['basepath']}/register");
-            }
-        }
-
+        $auth = new Authenticate($this->app);
+        $auth->login();
     }
 
     /**
@@ -128,6 +95,8 @@ class Extension extends \Bolt\BaseExtension
      */
     public function logoutCallback(ClientLoginEvent $event)
     {
+        $auth = new Authenticate($this->app);
+        $auth->logout();
     }
 
     /**

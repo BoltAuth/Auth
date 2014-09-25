@@ -59,7 +59,6 @@ class MembersController implements ControllerProviderInterface
     public function connect(Silex\Application $app)
     {
         $this->config = $app[Extension::CONTAINER]->config;
-        $this->members = new Members($app);
 
         /**
          * @var $ctr \Silex\ControllerCollection
@@ -132,7 +131,7 @@ class MembersController implements ControllerProviderInterface
         if ($request->getMethod() == 'POST') {
             if ($form->isValid()) {
                 // Create new Member record and go back to where we came from
-                if ($this->members->addMember($request->get('register'), $userdata)) {
+                if ($this->app['members']->addMember($request->get('register'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
                     $app['session']->remove('pending');
                     $app['session']->remove('clientlogin');
@@ -167,13 +166,12 @@ class MembersController implements ControllerProviderInterface
      */
     public function profileedit(Silex\Application $app, Request $request)
     {
-        $members = new Members($app);
-        $member = $members->isAuth();
+        $member = $app['members']->isAuth();
 
         if (! $member) {
             return '';
         } else {
-            $member = $members->getMember('id', $member);
+            $member = $app['members']->getMember('id', $member);
             $id = $member['id'];
         }
 
@@ -230,13 +228,12 @@ class MembersController implements ControllerProviderInterface
      */
     public function profileview(Silex\Application $app, Request $request, $id)
     {
-        $members = new Members($app);
-        $member = $members->getMember('id', $id);
+        $member = $app['members']->getMember('id', $id);
 
         if (! $member) {
             return '';
         } else {
-            $member['avatar'] = $members->getMemberMeta($id, 'avatar');
+            $member['avatar'] = $app['members']->getMemberMeta($id, 'avatar');
         }
 
         // Add assets to Twig path

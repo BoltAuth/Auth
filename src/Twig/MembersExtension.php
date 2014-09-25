@@ -50,7 +50,6 @@ class MembersExtension extends \Twig_Extension
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
-        $this->members = new Members($app);
     }
 
     public function initRuntime(\Twig_Environment $environment)
@@ -86,10 +85,10 @@ class MembersExtension extends \Twig_Extension
      */
     public function member($id = false, $meta = false)
     {
-        $member = $this->members->getMember('id', $id);
+        $member = $this->app['members']->getMember('id', $id);
 
         if ($meta) {
-            $member['meta'] = $this->members->getMemberMeta($id);
+            $member['meta'] = $this->app['members']->getMemberMeta($id);
         }
 
         return new \Twig_Markup($member, 'UTF-8');
@@ -97,7 +96,7 @@ class MembersExtension extends \Twig_Extension
 
     public function memberAuth()
     {
-        return $this->members->isAuth();
+        return $this->app['members']->isAuth();
     }
 
 }
