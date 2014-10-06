@@ -95,7 +95,7 @@ class MembersController implements ControllerProviderInterface
     public function register(Silex\Application $app, Request $request)
     {
         // Ensure we have a valid Client Login session
-        $session = new Session($this->app);
+        $session = new Session($app);
         if (! $session->doCheckLogin()) {
             return new Response('No valid CLient Login session!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
         }
