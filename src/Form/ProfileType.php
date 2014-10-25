@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Bolt\Translation\Translation as Trans;
 
 /**
  * Profile type
@@ -34,27 +35,27 @@ class ProfileType extends AbstractType
     {
         $builder
             ->add('username',    'text',   array(
-                'label'       => __('User name:'),
+                'label'       => Trans::__('User name:'),
                 'data'        => $options['data']['username'],
                 'read_only'   => true,
                 'constraints' => array(
                 )))
             ->add('displayname', 'text',   array(
-                'label'       => __('Publicly visible name:'),
+                'label'       => Trans::__('Publicly visible name:'),
                 'data'        => $options['data']['displayname'],
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 2))
                 )))
             ->add('email',       'text',   array(
-                'label'       => __('Email:'),
+                'label'       => Trans::__('Email:'),
                 'data'        => $options['data']['email'],
                 'constraints' => new Assert\Email(array(
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true)
                 )))
             ->add('submit',      'submit', array(
-                    'label'   => __('Save & continue')
+                    'label'   => Trans::__('Save & continue')
                 ));
     }
 
