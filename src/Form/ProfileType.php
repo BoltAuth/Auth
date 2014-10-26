@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Bolt\Translation\Translation as Trans;
+use Bolt\Translation\Translator as Trans;
 
 /**
  * Profile type
