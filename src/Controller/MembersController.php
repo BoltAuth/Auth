@@ -7,6 +7,7 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
+use Bolt\String;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
@@ -120,7 +121,7 @@ class MembersController implements ControllerProviderInterface
         $data = array(
             'csrf_protection' => $this->config['csrf'],
             'data' => array(
-                'username'    => makeSlug($userdata['displayName'], 32),
+                'username'    => String::slug($userdata['displayName'], 32),
                 'displayname' => $userdata['displayName'],
                 'email'       => $userdata['email']
             )
