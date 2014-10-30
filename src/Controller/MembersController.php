@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Helpers\String;
+use Bolt\Library as Lib;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Extension\Bolt\Members\Members;
@@ -145,10 +146,10 @@ class MembersController implements ControllerProviderInterface
 
                     // Redirect
                     if (empty($redirect)) {
-                        simpleredirect($app['paths']['hosturl']);
+                        Lib::simpleredirect($app['paths']['hosturl']);
                     } else {
                         $returnpage = str_replace($app['paths']['hosturl'], '', $redirect);
-                        simpleredirect($returnpage);
+                        Lib::simpleredirect($returnpage);
                     }
                 } else {
                     // Something is wrong here
@@ -214,7 +215,7 @@ class MembersController implements ControllerProviderInterface
                     'email'       => $reponse['email']
                 ));
 
-                simpleredirect($app['paths']['hosturl']);
+                Lib::simpleredirect($app['paths']['hosturl']);
             }
         }
 

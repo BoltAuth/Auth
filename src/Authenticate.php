@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
+use Bolt\Library as Lib;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
@@ -91,7 +92,7 @@ class Authenticate extends Controller\MembersController
                 $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
             } else {
                 // Redirect to the 'new' page
-                simpleredirect("/{$this->config['basepath']}/register");
+                Lib::simpleredirect("/{$this->config['basepath']}/register");
             }
         }
     }
