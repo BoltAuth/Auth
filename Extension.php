@@ -54,6 +54,9 @@ class Extension extends \Bolt\BaseExtension
             // Check & create database tables if required
             $records = new Records($this->app);
             $records->dbCheck();
+
+            // Create the admin page and routes
+            $this->adminController();
         }
 
         /*
@@ -100,6 +103,30 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
+     * Conditionally load the admin controller if the user has the valid role
+     */
+    private function adminController()
+    {
+        // check if user has allowed role(s)
+        $user    = $this->app['users']->getCurrentUser();
+        $userid  = $user['id'];
+
+        $this->authorized = false;
+
+        foreach ($this->config['admin_roles'] as $role) {
+            if ($this->app['users']->hasRole($userid, $role)) {
+                $this->authorized = true;
+                break;
+            }
+        }
+
+        if ($this->authorized) {
+            $path = $this->app['config']->get('general/branding/path') . '/extensions/members';
+            $this->app->mount($path, new Controller\MembersAdminController());
+        }
+    }
+
+    /**
      * Default config options
      *
      * @return array
@@ -107,15 +134,16 @@ class Extension extends \Bolt\BaseExtension
     protected function getDefaultConfig()
     {
         return array(
-            'basepath' => 'members',
-            'templates' => array(
+            'basepath'     => 'members',
+            'templates'    => array(
                 'parent'        => 'members.twig',
                 'register'      => 'members_register.twig',
                 'profile_edit'  => 'members_profile_edit.twig',
                 'profile_view'  => 'members_profile_view.twig'
             ),
             'registration' => true,
-            'csrf'         => true
+            'csrf'         => true,
+            'admin_roles'  => array('root', 'admin', 'developer', 'chief-editor')
         );
     }
 }

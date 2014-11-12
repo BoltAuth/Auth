@@ -22,3 +22,6 @@ templates:
 #
 # The base URI path for member pages (new members and profile view/edits)
 #basepath: members
+
+# Access role(s) required to access the Members Administation page
+admin_roles: [ 'root', 'admin', 'developer', 'chief-editor' ]
