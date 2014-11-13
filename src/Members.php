@@ -115,4 +115,23 @@ class Members
         return $auth->isAuth();
     }
 
+    /**
+     * Test a member record to see if they have a specific role
+     *
+     * @param  string  $field The user field to lookup the user by (id, username or email)
+     * @param  string  $value Lookup value
+     * @param  string  $role  The role to test
+     * @return boolean
+     */
+    public function hasRole($field, $value, $role)
+    {
+        $member = $this->getMember($field, $value);
+
+        if (is_array($member['roles']) && in_array($role, $member['roles'])) {
+                return true;
+        }
+
+        return false;
+    }
+
 }
