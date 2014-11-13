@@ -75,6 +75,7 @@ class MembersExtension extends \Twig_Extension
         return array(
             'member'     => new \Twig_Function_Method($this, 'member'),
             'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
+            'hasrole'     => new \Twig_Function_Method($this, 'hasRole')
         );
     }
 
@@ -96,9 +97,38 @@ class MembersExtension extends \Twig_Extension
         return new \Twig_Markup($member, 'UTF-8');
     }
 
+    /**
+     * Test if a user has a valid ClientLogin session AND is a valid member
+     *
+     * @return boolean|integer Member ID, or false
+     */
     public function memberAuth()
     {
         return $this->app['members']->isAuth();
+    }
+
+    /**
+     * Test a member record to see if they have a specific role
+     *
+     * @param  string  $role
+     * @param  string  $id
+     * @return boolean
+     */
+    public function hasRole($role, $id = false)
+    {
+        if ($id === false) {
+            $member = $this->app['members']->isAuth();
+
+            if ($member) {
+                $id = $member['id'];
+            }
+        }
+
+        if ($id) {
+            return $this->app['members']->hasRole('id', $id, $role);
+        }
+
+        return false;
     }
 
 }

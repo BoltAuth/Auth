@@ -71,9 +71,10 @@ section in your `Members.yml` file.
 Authentication & Twig Functions
 -------------------------------
 
-Members supplies two Twig functions for use in your templates:
-  * `memberauth()` 
+Members supplies some Twig functions for use in your templates:
   * `member(id, meta)`
+  * `memberauth()` 
+  * `hasRole(role)`
 
 The `memberauth()` function returns a boolean `FALSE` is the current session is unauthenticated/invalid, 
 or a members ID if they are logged in.
