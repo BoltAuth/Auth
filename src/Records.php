@@ -42,6 +42,16 @@ class Records
      */
     private $config;
 
+    /**
+     * @var string
+     */
+    private $tablename = null;
+
+    /**
+     * @var string
+     */
+    private $tablename_meta = null;
+
     public function __construct(Silex\Application $app)
     {
         $this->app = $app;
@@ -236,14 +246,18 @@ class Records
      */
     public function getTableName()
     {
-        $this->prefix = $this->app['config']->get('general/database/prefix', "bolt_");
-
-        // Make sure prefix ends in '_'. Prefixes without '_' are lame..
-        if ($this->prefix[ strlen($this->prefix)-1 ] != "_") {
-            $this->prefix .= "_";
+        if ($this->tablename) {
+            return $this->tablename;
         }
 
-        return $this->prefix . 'members';
+        $prefix = $this->app['config']->get('general/database/prefix', "bolt_");
+        if ($prefix[ strlen($prefix)-1 ] != "_") {
+            $prefix .= "_";
+        }
+
+        $this->tablename = $prefix . 'members';
+
+        return $this->tablename;
     }
 
     /**
@@ -253,14 +267,18 @@ class Records
      */
     public function getTableNameMeta()
     {
-        $this->prefix = $this->app['config']->get('general/database/prefix', "bolt_");
-
-        // Make sure prefix ends in '_'. Prefixes without '_' are lame..
-        if ($this->prefix[ strlen($this->prefix)-1 ] != "_") {
-            $this->prefix .= "_";
+        if ($this->tablename_meta) {
+            return $this->tablename_meta;
         }
 
-        return $this->prefix . 'members_meta';
+        $prefix = $this->app['config']->get('general/database/prefix', "bolt_");
+        if ($prefix[ strlen($prefix)-1 ] != "_") {
+            $prefix .= "_";
+        }
+
+        $this->tablename_meta = $prefix . 'members_meta';
+
+        return $this->tablename_meta;
     }
 
     /**
