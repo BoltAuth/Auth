@@ -71,17 +71,14 @@ class MembersController implements ControllerProviderInterface
 
         // New member
         $ctr->match('/register', array($this, 'register'))
-            ->bind('register')
             ->method('GET|POST');
 
         // My profile
         $ctr->match('/profile', array($this, 'profileedit'))
-            ->bind('profileedit')
             ->method('GET|POST');
 
         // Member profile
         $ctr->match('/profile/{id}', array($this, 'profileview'))
-            ->bind('profileview')
             ->assert('id', '\d*')
             ->method('GET');
 

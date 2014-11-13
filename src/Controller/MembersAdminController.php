@@ -69,13 +69,11 @@ class MembersAdminController implements ControllerProviderInterface
         // Admin page
         $ctr->match('/', array($this, 'admin'))
             ->before(array($this, 'before'))
-            ->bind('admin')
             ->method('GET');
 
         // AJAX requests
         $ctr->match('/ajax', array($this, 'ajax'))
             ->before(array($this, 'before'))
-            ->bind('ajax')
             ->method('GET|POST');
 
         $app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $app['paths']['bolt'] . 'extensions/members', "fa:users");
