@@ -79,6 +79,10 @@ class Records
         if (empty($record['id'])) {
             return false;
         } else {
+            if (isset($record['roles'])) {
+                $record['roles'] = json_decode($record['roles'], true);
+            }
+
             return $record;
         }
     }
