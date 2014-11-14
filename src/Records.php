@@ -186,8 +186,7 @@ class Records
      * Update/insert a member record in the database
      *
      * @param  int     $userid
-     * @param  string  $meta
-     * @param  string  $value
+     * @param  array   $values
      * @return boolean
      */
     public function updateMember($userid, $values)
