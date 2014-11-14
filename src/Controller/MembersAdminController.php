@@ -74,7 +74,6 @@ class MembersAdminController implements ControllerProviderInterface
 
         // AJAX requests
         $ctr->match('/ajax', array($this, 'ajax'))
-            ->before(array($this, 'before'))
             ->method('GET|POST');
 
         $app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $app['paths']['bolt'] . 'extensions/members', "fa:users");
@@ -95,6 +94,10 @@ class MembersAdminController implements ControllerProviderInterface
 
         // Add our JS & CSS
         $app[Extension::CONTAINER]->addJavascript('js/members.admin.js', true);
+
+        // Temporary until I fork to it's own extension
+        $app[Extension::CONTAINER]->addCss('css/sweet-alert.css', true);
+        $app[Extension::CONTAINER]->addJavascript('js/sweet-alert.min.js', true);
     }
 
     /**
@@ -127,9 +130,9 @@ class MembersAdminController implements ControllerProviderInterface
     {
         if ($request->getMethod() == "POST" && $app['request']->get('task')) {
 
-            if (!$this->app['users']->checkAntiCSRFToken()) {
-               $app->abort(400, Trans::__("Something went wrong"));
-            }
+//             if (!$app['users']->checkAntiCSRFToken()) {
+//                $app->abort(400, Trans::__("Something went wrong"));
+//             }
 
             //
             $values = array(
@@ -151,6 +154,28 @@ class MembersAdminController implements ControllerProviderInterface
             } elseif ($app['request']->get('task') == 'userDel') {
                 /*
                  * Delete a user
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            } elseif ($app['request']->get('task') == 'userEnable') {
+                /*
+                 * Enable a user
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            } elseif ($app['request']->get('task') == 'userDisable') {
+                /*
+                 * Disable a user
                  */
                 try {
                     //
