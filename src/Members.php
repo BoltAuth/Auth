@@ -71,12 +71,17 @@ class Members
     /**
      * Add a role
      *
-     * @param string $role
+     * @param string $role The internal name for the role
+     * @param string $name The user friendly name for the role
      */
-    public function addRole($role)
+    public function addRole($role, $name = '')
     {
+        if ($name == '') {
+            $name = $role;
+        }
+
         try {
-            array_push($this->roles, (string) $role);
+            $this->roles[$role] = $name;
         } catch (Exception $e) {
         }
     }
