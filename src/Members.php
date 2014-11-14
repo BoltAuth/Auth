@@ -124,6 +124,18 @@ class Members
     }
 
     /**
+    * Update/insert a member record in the database
+    *
+    * @param  int     $userid
+    * @param  array   $values
+    * @return boolean
+    */
+    public function updateMember($userid, $values)
+    {
+        return $this->records->updateMember($userid, $values);
+    }
+
+    /**
      * Add/update a member's meta record
      *
      * @param  int     $userid
@@ -167,4 +179,27 @@ class Members
         return false;
     }
 
+    /**
+     * Get a set of members record from the database
+     *
+     * @return boolean|array
+     */
+    protected function getMembers()
+    {
+        $query = "SELECT * FROM " . $this->records->getTableName();
+
+        $records = $this->app['db']->fetchAll($query);
+
+        if (empty($records)) {
+            return false;
+        } else {
+            foreach ($records as $key => $record) {
+                if (isset($record['roles'])) {
+                    $records[$key]['roles'] = json_decode($record['roles'], true);
+                }
+            }
+
+            return $records;
+        }
+    }
 }

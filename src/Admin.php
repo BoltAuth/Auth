@@ -28,7 +28,7 @@ use Bolt\Translation\Translator as Trans;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Admin
+class Admin extends Members
 {
     /**
      * @var Application
@@ -49,31 +49,11 @@ class Admin
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
-        $this->records = new Records($this->app);
     }
 
-    /**
-     * Get a set of members record from the database
-     *
-     * @return boolean|array
-     */
     public function getMembers()
     {
-        $query = "SELECT * FROM " . $this->records->getTableName();
-
-        $records = $this->app['db']->fetchAll($query);
-
-        if (empty($records)) {
-            return false;
-        } else {
-            foreach ($records as $key => $record) {
-                if (isset($record['roles'])) {
-                    $records[$key]['roles'] = json_decode($record['roles'], true);
-                }
-            }
-
-            return $records;
-        }
+        return $this->app['members']->getMembers();
     }
 
     /**
@@ -83,7 +63,7 @@ class Admin
      */
     public function getSubscribedRoles()
     {
-        return $this->app['members.events.roles']->getRoles();
+        return $this->app['members']->getRoles();
     }
 
     /**
@@ -93,7 +73,7 @@ class Admin
      */
     public function memberEnable($id)
     {
-        //
+        return $this->app['members']->updateMember($id, array('enabled' => 1));
     }
 
     /**
@@ -103,13 +83,13 @@ class Admin
      */
     public function memberDisable($id)
     {
-        //
+        return $this->app['members']->updateMember($id, array('enabled' => 0));
     }
 
     /**
      * Add roles for a member
      *
-     * @param integer $id
+     * @param integer      $id
      * @param string|array $roles
      */
     public function memberRolesAdd($id, $roles)
@@ -120,7 +100,7 @@ class Admin
     /**
      * Remove roles for a member
      *
-     * @param integer $id
+     * @param integer      $id
      * @param string|array $roles
      */
     public function memberRolesRemove($id, $roles)
