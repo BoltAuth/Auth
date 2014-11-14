@@ -42,7 +42,7 @@ Manage Site Membership Roles
 
                         {% for member in members %}
                             <tr id="members-member[{{ member.id }}]">
-                                <td class="member-forum-cb">
+                                <td class="member-cb">
                                     <label>
                                         <input type="checkbox"
                                                id="form_members_{{ loop.index0 }}"
@@ -87,7 +87,7 @@ Manage Site Membership Roles
                                 </a>
                             </div>
                             <div class="col-md-6">
-                                <a class="btn btn-tertiary" data-action="members-user-remove">
+                                <a class="btn btn-tertiary" data-action="members-user-del">
                                     <i class="fa fa-wrench"></i> {{ __('Delete User') }}
                                 </a>
                             </div>
@@ -118,7 +118,7 @@ Manage Site Membership Roles
                                 </a>
                             </div>
                             <div class="col-md-6">
-                                <a class="btn btn-tertiary" data-action="members-role-remove">
+                                <a class="btn btn-tertiary" data-action="members-role-del">
                                     <i class="fa fa-minus-square-o"></i> {{ __('Remove role') }}
                                 </a>
                             </div>
@@ -154,7 +154,9 @@ Manage Site Membership Roles
         jQuery(document).ready(function($) {
             var boltExt = new MembersAdmin();
             boltExt.setMessage('useradd', '{{__('Adding user...')}}' );
-            boltExt.setMessage('userdel', '{{__('Removing user...')}}');
+            boltExt.setMessage('userdel', '{{__('Removing user(s)...')}}');
+            boltExt.setMessage('userenable', '{{__('Enabling user(s)...')}}' );
+            boltExt.setMessage('userdisable', '{{__('Disabling user(s)...')}}');
             boltExt.setMessage('roleadd', '{{__('Adding role...')}}');
             boltExt.setMessage('roledel', '{{__('Removing role...')}}');
         });
