@@ -40,9 +40,51 @@ class Admin
      */
     private $config;
 
+    /**
+     * @var Records
+     */
+    private $records;
+
     public function __construct(Silex\Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->records = new Records($this->app);
+    }
+
+    /**
+     * Get a set of members record from the database
+     *
+     * @param  string        $field The field to query on (id, username or email)
+     * @param  string        $value The value to match
+     * @return boolean|array
+     */
+    public function getMembers($field, $value)
+    {
+        $query = "SELECT * FROM " . $this->records->getTableName();
+
+        $records = $this->app['db']->fetchAll($query);
+
+        if (empty($records)) {
+            return false;
+        } else {
+            foreach ($records as $key => $record) {
+                if (isset($record['roles'])) {
+                    $records[$key]['roles'] = json_decode($record['roles'], true);
+                }
+            }
+
+            return $records;
+        }
+    }
+
+    /**
+     * Return the roles added by extensions to our service
+     *
+     * @return array
+     */
+    public function getSubscribedRoles()
+    {
+        return $this->app['members.events.roles']->getRoles();
     }
 }
