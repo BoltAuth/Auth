@@ -46,11 +46,39 @@ class Members
      */
     private $records;
 
+    /**
+     * @var array
+     */
+    private $roles = array();
+
     public function __construct(Silex\Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
         $this->records = new Records($this->app);
+    }
+
+    /**
+     * Roles currently set
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Add a role
+     *
+     * @param string $role
+     */
+    public function addRole($role)
+    {
+        try {
+            array_push($this->roles, (string) $role);
+        } catch (Exception $e) {
+        }
     }
 
     /**

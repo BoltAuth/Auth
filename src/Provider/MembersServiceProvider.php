@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
-use \Bolt\Extension\Bolt\Members\Members;
+use Bolt\Extension\Bolt\Members\Members;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 

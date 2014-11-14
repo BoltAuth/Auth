@@ -48,6 +48,11 @@ class Extension extends \Bolt\BaseExtension
     public function initialize()
     {
         /*
+         * Provider
+         */
+        $this->app->register(new Provider\MembersServiceProvider());
+
+        /*
          * Backend
          */
         if ($this->app['config']->getWhichEnd() == 'backend') {
