@@ -55,11 +55,9 @@ class Admin
     /**
      * Get a set of members record from the database
      *
-     * @param  string        $field The field to query on (id, username or email)
-     * @param  string        $value The value to match
      * @return boolean|array
      */
-    public function getMembers($field, $value)
+    public function getMembers()
     {
         $query = "SELECT * FROM " . $this->records->getTableName();
 
@@ -86,5 +84,47 @@ class Admin
     public function getSubscribedRoles()
     {
         return $this->app['members.events.roles']->getRoles();
+    }
+
+    /**
+     * Enable a member
+     *
+     * @param integer $id
+     */
+    public function memberEnable($id)
+    {
+        //
+    }
+
+    /**
+     * Disable a member
+     *
+     * @param integer $id
+     */
+    public function memberDisable($id)
+    {
+        //
+    }
+
+    /**
+     * Add roles for a member
+     *
+     * @param integer $id
+     * @param string|array $roles
+     */
+    public function memberRolesAdd($id, $roles)
+    {
+        //
+    }
+
+    /**
+     * Remove roles for a member
+     *
+     * @param integer $id
+     * @param string|array $roles
+     */
+    public function memberRolesRemove($id, $roles)
+    {
+        //
     }
 }
