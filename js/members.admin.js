@@ -106,8 +106,7 @@ var MembersAdmin = Object.extend(Object, {
 
         $.post(baseurl + '/ajax?task=userEnable', {members: data}, function(data){})
             .done(function() {
-            	swal({ title: "", text: "Feature coming soon!", type: "info" });
-//              location.reload(true);
+            	location.reload(true);
                 })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
@@ -126,8 +125,7 @@ var MembersAdmin = Object.extend(Object, {
 
         $.post(baseurl + '/ajax?task=userDisable', {members: data}, function(data){})
             .done(function() {
-            	swal({ title: "", text: "Feature coming soon!", type: "info" });
-//              location.reload(true);
+            	location.reload(true);
                 })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });

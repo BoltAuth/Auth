@@ -112,8 +112,8 @@ class MembersAdminController implements ControllerProviderInterface
         $this->addTwigPath($app);
 
         $html = $app['render']->render('members.twig', array(
-            'members' => $this->admin->getMembers(false, false),
-            'roles'   => $app['members']->getRoles()
+            'members' => $this->admin->getMembers(),
+            'roles'   => $app['members']->getAvailableRoles()
         ));
 
         return new \Twig_Markup($html, 'UTF-8');
@@ -145,7 +145,7 @@ class MembersAdminController implements ControllerProviderInterface
                  * Add a user
                  */
                 try {
-                    //
+                    //$app['members']->
                 } catch (Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
@@ -167,7 +167,9 @@ class MembersAdminController implements ControllerProviderInterface
                  * Enable a user
                  */
                 try {
-                    //
+                    foreach ($request->request->get('members') as $id) {
+                        $this->admin->memberEnable($id);
+                    }
                 } catch (Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
@@ -178,7 +180,9 @@ class MembersAdminController implements ControllerProviderInterface
                  * Disable a user
                  */
                 try {
-                    //
+                    foreach ($request->request->get('members') as $id) {
+                        $this->admin->memberDisable($id);
+                    }
                 } catch (Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
