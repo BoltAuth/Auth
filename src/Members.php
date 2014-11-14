@@ -63,7 +63,7 @@ class Members
      *
      * @return array
      */
-    public function getRoles()
+    public function getAvailableRoles()
     {
         return $this->roles;
     }
@@ -74,7 +74,7 @@ class Members
      * @param string $role The internal name for the role
      * @param string $name The user friendly name for the role
      */
-    public function addRole($role, $name = '')
+    public function addAvailableRole($role, $name = '')
     {
         if ($name == '') {
             $name = $role;
