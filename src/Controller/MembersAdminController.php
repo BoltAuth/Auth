@@ -68,6 +68,7 @@ class MembersAdminController implements ControllerProviderInterface
 
         // Admin page
         $ctr->match('/', array($this, 'admin'))
+            ->bind('MembersAdmin')
             ->before(array($this, 'before'))
             ->method('GET');
 
@@ -108,6 +109,8 @@ class MembersAdminController implements ControllerProviderInterface
         $this->addTwigPath($app);
 
         $html = $app['render']->render('members.twig', array(
+            'members' => $this->admin->getMembers(false, false),
+            'roles'   => $app['members']->getRoles()
         ));
 
         return new \Twig_Markup($html, 'UTF-8');
@@ -124,9 +127,68 @@ class MembersAdminController implements ControllerProviderInterface
     {
         if ($request->getMethod() == "POST" && $app['request']->get('task')) {
 
-            // Yeah, nah
-            return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
+            if (!$this->app['users']->checkAntiCSRFToken()) {
+               $app->abort(400, Trans::__("Something went wrong"));
+            }
+
+            //
+            $values = array(
+                'job' => $app['request']->get('task'),
+                'result' => true
+            );
+
+            if ($app['request']->get('task') == 'userAdd') {
+                /*
+                 * Add a user
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            } elseif ($app['request']->get('task') == 'userDel') {
+                /*
+                 * Delete a user
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            } elseif ($app['request']->get('task') == 'roleAdd') {
+                /*
+                 * Add a role to user(s)
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            } elseif ($app['request']->get('task') == 'roleDel') {
+                /*
+                 * Delete a role from user(s)
+                 */
+                try {
+                    //
+                } catch (Exception $e) {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                }
+
+                return new JsonResponse($values);
+            }
+
+        } elseif ($request->getMethod() == "GET" && $app['request']->get('task')) {
+
         }
+
+        // Yeah, nah
+        return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
     }
 
     private function addTwigPath(Silex\Application $app)
