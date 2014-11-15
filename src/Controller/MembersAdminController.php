@@ -146,7 +146,7 @@ class MembersAdminController implements ControllerProviderInterface
                  */
                 try {
                     //$app['members']->
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
@@ -157,7 +157,7 @@ class MembersAdminController implements ControllerProviderInterface
                  */
                 try {
                     //
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
@@ -170,7 +170,7 @@ class MembersAdminController implements ControllerProviderInterface
                     foreach ($request->request->get('members') as $id) {
                         $this->admin->memberEnable($id);
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
@@ -183,7 +183,7 @@ class MembersAdminController implements ControllerProviderInterface
                     foreach ($request->request->get('members') as $id) {
                         $this->admin->memberDisable($id);
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
@@ -194,7 +194,7 @@ class MembersAdminController implements ControllerProviderInterface
                  */
                 try {
                     //
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
@@ -205,7 +205,7 @@ class MembersAdminController implements ControllerProviderInterface
                  */
                 try {
                     //
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
                 }
 
