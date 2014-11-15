@@ -128,19 +128,22 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function ajax(Silex\Application $app, Request $request)
     {
-        if ($request->getMethod() == "POST" && $app['request']->get('task')) {
+        // Get the task name
+        $task = $app['request']->get('task');
 
+        if ($request->getMethod() == "POST" && $task) {
 //             if (!$app['users']->checkAntiCSRFToken()) {
 //                $app->abort(400, Trans::__("Something went wrong"));
 //             }
 
-            //
+            // Default set of return values
             $values = array(
-                'job' => $app['request']->get('task'),
-                'result' => true
+                'job'    => $task,
+                'result' => true,
+                'data'   => ''
             );
 
-            if ($app['request']->get('task') == 'userAdd') {
+            if ($task == 'userAdd') {
                 /*
                  * Add a user
                  */
@@ -151,7 +154,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($values);
-            } elseif ($app['request']->get('task') == 'userDel') {
+            } elseif ($task == 'userDel') {
                 /*
                  * Delete a user
                  */
@@ -162,7 +165,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($values);
-            } elseif ($app['request']->get('task') == 'userEnable') {
+            } elseif ($task == 'userEnable') {
                 /*
                  * Enable a user
                  */
@@ -175,7 +178,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($values);
-            } elseif ($app['request']->get('task') == 'userDisable') {
+            } elseif ($task == 'userDisable') {
                 /*
                  * Disable a user
                  */
@@ -188,7 +191,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($values);
-            } elseif ($app['request']->get('task') == 'roleAdd') {
+            } elseif ($task == 'roleAdd') {
                 /*
                  * Add a role to user(s)
                  */
@@ -199,7 +202,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($values);
-            } elseif ($app['request']->get('task') == 'roleDel') {
+            } elseif ($task == 'roleDel') {
                 /*
                  * Delete a role from user(s)
                  */
@@ -212,7 +215,7 @@ class MembersAdminController implements ControllerProviderInterface
                 return new JsonResponse($values);
             }
 
-        } elseif ($request->getMethod() == "GET" && $app['request']->get('task')) {
+        } elseif ($request->getMethod() == "GET" && $task) {
 
         }
 
