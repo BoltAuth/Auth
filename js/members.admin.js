@@ -34,15 +34,6 @@ var MembersAdmin = Object.extend(Object, {
     constructor: function(){
         jQuery(this.selector).on("change", this, this.events.change);
         jQuery(this.selector).on("click", this, this.events.click);
-        
-        jQuery(document).ajaxStart(function() {
-            // show loader on start
-            active_interval = setInterval(function(){
-                active_console.append(".");
-            },1000);
-        }).ajaxSuccess(function() {
-            clearInterval(active_interval);
-        });       
     },
     
     find: function(selector) {
@@ -102,6 +93,11 @@ var MembersAdmin = Object.extend(Object, {
             data.push($(this).val());
         });
         
+        if (data == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
+            return;
+        }
+        
         console.debug("Enabling user(s): " + data);
 
         $.post(baseurl + '/ajax?task=userEnable', {members: data}, function(data){})
@@ -121,6 +117,11 @@ var MembersAdmin = Object.extend(Object, {
             data.push($(this).val());
         });
         
+        if (data == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
+            return;
+        }
+        
         console.debug("Disabling user(s): " + data);
 
         $.post(baseurl + '/ajax?task=userDisable', {members: data}, function(data){})
@@ -139,6 +140,11 @@ var MembersAdmin = Object.extend(Object, {
         $.each($("input[name='form[members][]']:checked"), function () {
             data.push($(this).val());
         });
+        
+        if (data == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
+            return;
+        }
         
         console.debug("Adding role to user(s): " + data);
 
@@ -160,6 +166,11 @@ var MembersAdmin = Object.extend(Object, {
             data.push($(this).val());
         });
         
+        if (data == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
+            return;
+        }
+        
         console.debug("Removing role from user(s): " + data);
 
         $.post(baseurl + '/ajax?task=roleDel', {members: data}, function(data){})
@@ -175,7 +186,6 @@ var MembersAdmin = Object.extend(Object, {
     events: {
         change: function(e, t){
             var controller = e.data;
-            
         },
         
         click: function(e, t){
