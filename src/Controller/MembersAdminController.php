@@ -136,13 +136,6 @@ class MembersAdminController implements ControllerProviderInterface
 //                $app->abort(400, Trans::__("Something went wrong"));
 //             }
 
-            // Default set of return values
-            $values = array(
-                'job'    => $task,
-                'result' => true,
-                'data'   => ''
-            );
-
             if ($task == 'userAdd') {
                 /*
                  * Add a user
@@ -150,10 +143,10 @@ class MembersAdminController implements ControllerProviderInterface
                 try {
                     //$app['members']->
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             } elseif ($task == 'userDel') {
                 /*
                  * Delete a user
@@ -161,10 +154,10 @@ class MembersAdminController implements ControllerProviderInterface
                 try {
                     //
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             } elseif ($task == 'userEnable') {
                 /*
                  * Enable a user
@@ -174,10 +167,10 @@ class MembersAdminController implements ControllerProviderInterface
                         $this->admin->memberEnable($id);
                     }
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             } elseif ($task == 'userDisable') {
                 /*
                  * Disable a user
@@ -187,10 +180,10 @@ class MembersAdminController implements ControllerProviderInterface
                         $this->admin->memberDisable($id);
                     }
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             } elseif ($task == 'roleAdd') {
                 /*
                  * Add a role to user(s)
@@ -198,10 +191,10 @@ class MembersAdminController implements ControllerProviderInterface
                 try {
                     //
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             } elseif ($task == 'roleDel') {
                 /*
                  * Delete a role from user(s)
@@ -209,10 +202,10 @@ class MembersAdminController implements ControllerProviderInterface
                 try {
                     //
                 } catch (\Exception $e) {
-                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, array('content-type' => 'text/html'));
+                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
 
-                return new JsonResponse($values);
+                return new JsonResponse($this->getResult($task));
             }
 
         } elseif ($request->getMethod() == "GET" && $task) {
@@ -223,6 +216,34 @@ class MembersAdminController implements ControllerProviderInterface
         return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     *
+     * @param  string     $task
+     * @param  \Exception $e
+     * @return array
+     */
+    private function getResult($task, \Exception $e = null)
+    {
+        if (is_null($e)) {
+            return array(
+                'job'    => $task,
+                'result' => true,
+                'data'   => ''
+            );
+        }
+
+        return array(
+            'job'    => $task,
+            'result' => true,
+            'data'   => $e->getMessage()
+        );
+    }
+
+    /**
+     * Set our Twig template path
+     *
+     * @param Silex\Application $app
+     */
     private function addTwigPath(Silex\Application $app)
     {
         $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets/admin');
