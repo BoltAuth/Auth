@@ -173,7 +173,7 @@ class Members
         $member = $this->getMember($field, $value);
 
         if (is_array($member['roles']) && in_array($role, $member['roles'])) {
-                return true;
+            return true;
         }
 
         return false;
