@@ -120,7 +120,7 @@ class MembersExtension extends \Twig_Extension
             $member = $this->app['members']->isAuth();
 
             if ($member) {
-                $id = $member['id'];
+                $id = $member;
             }
         }
 
