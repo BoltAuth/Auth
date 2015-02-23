@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\Bolt\Members\Event;
 
 use Bolt;
 use Symfony\Component\EventDispatcher\Event;

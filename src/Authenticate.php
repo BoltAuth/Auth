@@ -224,7 +224,7 @@ class Authenticate extends Controller\MembersController
 
                 // Event dispatcher
                 if ($this->app['dispatcher']->hasListeners('members.New')) {
-                    $event = new MembersEvent();
+                    $event = new Event\MembersEvent();
                     $this->app['dispatcher']->dispatch('members.New', $event);
                 }
             }
