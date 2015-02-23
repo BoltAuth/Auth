@@ -2,22 +2,21 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\ClientLogin\Session;
+use Bolt\Extension\Bolt\Members\Authenticate;
+use Bolt\Extension\Bolt\Members\Entity\Profile;
+use Bolt\Extension\Bolt\Members\Entity\Register;
+use Bolt\Extension\Bolt\Members\Extension;
+use Bolt\Extension\Bolt\Members\Form\ProfileType;
+use Bolt\Extension\Bolt\Members\Form\RegisterType;
+use Bolt\Extension\Bolt\Members\Members;
+use Bolt\Extension\Bolt\Members\Records;
+use Bolt\Library as Lib;
 use Silex;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
-use Bolt\Helpers\String;
-use Bolt\Library as Lib;
-use Bolt\Extension\Bolt\ClientLogin\Session;
-use Bolt\Extension\Bolt\Members\Extension;
-use Bolt\Extension\Bolt\Members\Members;
-use Bolt\Extension\Bolt\Members\Entity\Profile;
-use Bolt\Extension\Bolt\Members\Entity\Register;
-use Bolt\Extension\Bolt\Members\Form\ProfileType;
-use Bolt\Extension\Bolt\Members\Form\RegisterType;
-use Bolt\Extension\Bolt\Members\Records;
-use Bolt\Extension\Bolt\Members\Authenticate;
 
 /**
  * Members extension controller
@@ -119,7 +118,7 @@ class MembersController implements ControllerProviderInterface
         $data = array(
             'csrf_protection' => $this->config['csrf'],
             'data' => array(
-                'username'    => String::slug($userdata['displayName'], 32),
+                'username'    => substr($this->app['slugify']->slugify($userdata['displayName']), 0, 32),
                 'displayname' => $userdata['displayName'],
                 'email'       => $userdata['email']
             )
