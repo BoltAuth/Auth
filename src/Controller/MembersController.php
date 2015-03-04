@@ -118,7 +118,7 @@ class MembersController implements ControllerProviderInterface
         $data = array(
             'csrf_protection' => $this->config['csrf'],
             'data' => array(
-                'username'    => substr($this->app['slugify']->slugify($userdata['displayName']), 0, 32),
+                'username'    => substr($app['slugify']->slugify($userdata['displayName']), 0, 32),
                 'displayname' => $userdata['displayName'],
                 'email'       => $userdata['email']
             )
