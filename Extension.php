@@ -62,9 +62,6 @@ class Extension extends \Bolt\BaseExtension
             $records = new Records($this->app);
             $records->dbCheck();
 
-            // Set authorized
-            $this->checkAuthorized();
-
             // Create the admin page
             $this->adminMenu();
         }
