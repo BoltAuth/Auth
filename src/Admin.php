@@ -2,9 +2,9 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Silex;
 use Bolt\Helpers\String;
-use Bolt\Translation\Translator as Trans;
+use Silex;
+use Silex\Application;
 
 /**
  * BoltBB administration functions
@@ -45,7 +45,10 @@ class Admin extends Members
      */
     private $records;
 
-    public function __construct(Silex\Application $app)
+    /**
+     * @param \Silex\Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;

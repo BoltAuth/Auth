@@ -2,8 +2,9 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Silex;
 use Bolt\Extension\Bolt\ClientLogin\Session;
+use Silex;
+use Silex\Application;
 
 /**
  * Member interface class
@@ -51,7 +52,10 @@ class Members
      */
     private $roles = array();
 
-    public function __construct(Silex\Application $app)
+    /**
+     * @param \Silex\Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
@@ -89,8 +93,9 @@ class Members
     /**
      * Get a member record
      *
-     * @param  string        $field The user field to lookup the user by (id, username or email)
-     * @param  string        $value Lookup value
+     * @param string $field The user field to lookup the user by (id, username or email)
+     * @param string $value Lookup value
+     *
      * @return array|boolean
      */
     public function getMember($field, $value)
@@ -108,8 +113,9 @@ class Members
     /**
      * Get a member's meta records
      *
-     * @param  integer       $id   The user's ID
-     * @param  string        $meta Optional meta value to limit to
+     * @param integer $id   The user's ID
+     * @param string  $meta Optional meta value to limit to
+     *
      * @return array|boolean
      */
     public function getMemberMeta($id, $meta = false)
@@ -124,12 +130,13 @@ class Members
     }
 
     /**
-    * Update/insert a member record in the database
-    *
-    * @param  int     $userid
-    * @param  array   $values
-    * @return boolean
-    */
+     * Update/insert a member record in the database
+     *
+     * @param int   $userid
+     * @param array $values
+     *
+     * @return boolean
+     */
     public function updateMember($userid, $values)
     {
         return $this->records->updateMember($userid, $values);
@@ -138,9 +145,10 @@ class Members
     /**
      * Add/update a member's meta record
      *
-     * @param  int     $userid
-     * @param  string  $meta
-     * @param  string  $value
+     * @param int    $userid
+     * @param string $meta
+     * @param string $value
+     *
      * @return boolean
      */
     public function updateMemberMeta($userid, $meta, $value)
@@ -163,9 +171,10 @@ class Members
     /**
      * Test a member record to see if they have a specific role
      *
-     * @param  string  $field The user field to lookup the user by (id, username or email)
-     * @param  string  $value Lookup value
-     * @param  string  $role  The role to test
+     * @param string $field The user field to lookup the user by (id, username or email)
+     * @param string $value Lookup value
+     * @param string $role  The role to test
+     *
      * @return boolean
      */
     public function hasRole($field, $value, $role)

@@ -2,9 +2,10 @@
 
 namespace Bolt\Extension\Bolt\Members\Validator\Constraints;
 
+use Bolt\Configuration\ResourceManager;
+use Bolt\Extension\Bolt\Members\Records;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Bolt\Extension\Bolt\Members\Records;
 
 /**
  * Simple validator to check if a user name exists
@@ -33,7 +34,7 @@ class ValidUsernameValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         // Get Bolt
-        $app = \Bolt\Configuration\ResourceManager::getApp();
+        $app = ResourceManager::getApp();
 
         // Get our records interface
         $records = new Records($app);

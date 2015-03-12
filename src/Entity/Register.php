@@ -78,5 +78,4 @@ class Register
     {
         $this->email = $email;
     }
-
 }

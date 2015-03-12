@@ -3,10 +3,10 @@
 namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\Validator\Constraints\ValidUsername;
+use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Bolt\Translation\Translator as Trans;
 
 /**
  * User registration type
@@ -65,5 +65,4 @@ class RegisterType extends AbstractType
     {
         return 'register';
     }
-
 }

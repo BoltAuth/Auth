@@ -2,11 +2,12 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Silex;
-use Bolt\Library as Lib;
-use Bolt\Extension\Bolt\ClientLogin\Session;
-use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
+use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
+use Bolt\Extension\Bolt\ClientLogin\Session;
+use Bolt\Library as Lib;
+use Silex;
+use Silex\Application;
 
 /**
  * Member authentication interface class
@@ -49,7 +50,10 @@ class Authenticate extends Controller\MembersController
      */
     private $records;
 
-    public function __construct(Silex\Application $app)
+    /**
+     * @param \Silex\Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
@@ -133,8 +137,9 @@ class Authenticate extends Controller\MembersController
     /**
      * Check if we have this ClientLogin as a member
      *
-     * @param  string      $provider   The provider, e.g. 'Google'
-     * @param  string      $identifier The providers ID for the account
+     * @param string $provider   The provider, e.g. 'Google'
+     * @param string $identifier The providers ID for the account
+     *
      * @return int|boolean The user ID of the member or false if not found
      */
     private function isMemberClientLogin($provider, $identifier)
@@ -187,8 +192,9 @@ class Authenticate extends Controller\MembersController
     /**
      * Add a new member to the database
      *
-     * @param  array   $form
-     * @param  array   $userdata The array of user data from ClientLogin
+     * @param array $form
+     * @param array $userdata The array of user data from ClientLogin
+     *
      * @return boolean
      */
     protected function addMember($form, $userdata)
@@ -247,5 +253,4 @@ class Authenticate extends Controller\MembersController
             ));
         }
     }
-
 }

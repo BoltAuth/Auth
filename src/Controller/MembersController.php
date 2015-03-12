@@ -13,6 +13,7 @@ use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Records;
 use Bolt\Library as Lib;
 use Silex;
+use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,11 +56,11 @@ class MembersController implements ControllerProviderInterface
     private $members;
 
     /**
+     * @param \Silex\Application $app
      *
-     * @param  Silex\Application           $app
      * @return \Silex\ControllerCollection
      */
-    public function connect(Silex\Application $app)
+    public function connect(Application $app)
     {
         $this->config = $app[Extension::CONTAINER]->config;
 
@@ -85,12 +86,12 @@ class MembersController implements ControllerProviderInterface
     }
 
     /**
+     * @param \Silex\Application                        $app
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @param  Silex\Application                        $app
-     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function register(Silex\Application $app, Request $request)
+    public function register(Application $app, Request $request)
     {
         // Ensure we have a valid Client Login session
         $session = new Session($app);
@@ -117,7 +118,7 @@ class MembersController implements ControllerProviderInterface
         $register = new Register();
         $data = array(
             'csrf_protection' => $this->config['csrf'],
-            'data' => array(
+            'data'            => array(
                 'username'    => substr($app['slugify']->slugify($userdata['displayName']), 0, 32),
                 'displayname' => $userdata['displayName'],
                 'email'       => $userdata['email']
@@ -158,7 +159,7 @@ class MembersController implements ControllerProviderInterface
 
         $html = $app['render']->render(
             $this->config['templates']['register'], array(
-                'form' => $form->createView(),
+                'form'       => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
 
@@ -166,12 +167,12 @@ class MembersController implements ControllerProviderInterface
     }
 
     /**
+     * @param \Silex\Application                        $app
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @param  Silex\Application                        $app
-     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function profileedit(Silex\Application $app, Request $request)
+    public function profileedit(Application $app, Request $request)
     {
         $member = $app['members']->isAuth();
 
@@ -186,7 +187,7 @@ class MembersController implements ControllerProviderInterface
         $profile = new Profile();
         $data = array(
             'csrf_protection' => $this->config['csrf'],
-            'data' => array(
+            'data'            => array(
                 'username'    => $member['username'],
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
@@ -220,7 +221,7 @@ class MembersController implements ControllerProviderInterface
 
         $html = $app['render']->render(
             $this->config['templates']['profile_edit'], array(
-                'form' => $form->createView(),
+                'form'       => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
         ));
 
@@ -228,12 +229,12 @@ class MembersController implements ControllerProviderInterface
     }
 
     /**
+     * @param \Silex\Application                        $app
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @param  Silex\Application                        $app
-     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return \Twig_Markup
      */
-    public function profileview(Silex\Application $app, Request $request, $id)
+    public function profileview(Application $app, Request $request, $id)
     {
         $member = $app['members']->getMember('id', $id);
 
@@ -258,12 +259,10 @@ class MembersController implements ControllerProviderInterface
     }
 
     /**
-     *
      * @param Silex\Application $app
      */
     private function addTwigPath(Silex\Application $app)
     {
         $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets');
     }
-
 }

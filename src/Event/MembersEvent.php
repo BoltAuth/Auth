@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Event;
 
-use Bolt;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -29,11 +28,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class MembersEvent extends Event
 {
-    /**
-     * The user record
-     *
-     * @var array
-     */
+    /** @var array The user record */
     private $user;
 
     /**

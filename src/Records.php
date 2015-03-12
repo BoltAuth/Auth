@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Silex;
+use Silex\Application;
 
 /**
  * Members record class
@@ -52,7 +53,10 @@ class Records
      */
     private $tablename_meta = null;
 
-    public function __construct(Silex\Application $app)
+    /**
+     * @param \Silex\Application $app
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
         $this->config = $this->app[Extension::CONTAINER]->config;
@@ -61,8 +65,9 @@ class Records
     /**
      * Get a members record from the database
      *
-     * @param  string        $field The field to query on (id, username or email)
-     * @param  string        $value The value to match
+     * @param string $field The field to query on (id, username or email)
+     * @param string $value The value to match
+     *
      * @return boolean|array
      */
     public function getMember($field, $value)
@@ -90,8 +95,9 @@ class Records
     /**
      * Get a members meta record from the database
      *
-     * @param  int           $userid
-     * @param  string        $meta
+     * @param int    $userid
+     * @param string $meta
+     *
      * @return boolean|array
      */
     public function getMemberMeta($userid, $meta = false)
@@ -102,7 +108,7 @@ class Records
 
             $map = array(
                 ':userid' => $userid,
-                ':meta' => $meta
+                ':meta'   => $meta
             );
 
             $record = $this->app['db']->fetchAssoc($query, $map);
@@ -127,8 +133,9 @@ class Records
     /**
      * Return the value of a single meta record for a user
      *
-     * @param  integer       $userid
-     * @param  string        $meta
+     * @param integer $userid
+     * @param string  $meta
+     *
      * @return array|boolean
      */
     public function getMemberMetaValue($userid, $meta)
@@ -145,9 +152,10 @@ class Records
     /**
      * Get meta records from the database
      *
-     * @param  string        $meta   Key name to search for
-     * @param  string        $value  Optional meta value to narrow the match
-     * @param  boolean       $single Only return the first result
+     * @param string  $meta   Key name to search for
+     * @param string  $value  Optional meta value to narrow the match
+     * @param boolean $single Only return the first result
+     *
      * @return boolean|array
      */
     public function getMetaRecords($meta, $value = false, $single = false)
@@ -157,7 +165,7 @@ class Records
                      " WHERE meta = :meta AND value = :value";
 
             $map = array(
-                ':meta' => $meta,
+                ':meta'  => $meta,
                 ':value' => $value
             );
         } else {
@@ -185,8 +193,9 @@ class Records
     /**
      * Update/insert a member record in the database
      *
-     * @param  int     $userid
-     * @param  array   $values
+     * @param int   $userid
+     * @param array $values
+     *
      * @return boolean
      */
     public function updateMember($userid, $values)
@@ -213,9 +222,10 @@ class Records
     /**
      * Update/insert a member's meta record in the database
      *
-     * @param  int     $userid
-     * @param  string  $meta
-     * @param  string  $value
+     * @param int    $userid
+     * @param string $meta
+     * @param string $value
+     *
      * @return boolean
      */
     public function updateMemberMeta($userid, $meta, $value)

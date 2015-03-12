@@ -2,15 +2,14 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\Members\Admin;
+use Bolt\Extension\Bolt\Members\Extension;
 use Silex;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Bolt\Translation\Translator as Trans;
-use Bolt\Extension\Bolt\Members\Extension;
-use Bolt\Extension\Bolt\Members\Admin;
 
 /**
  * Members admin area controller
@@ -52,11 +51,11 @@ class MembersAdminController implements ControllerProviderInterface
     private $admin;
 
     /**
+     * @param \Silex\Application $app
      *
-     * @param Silex\Application $app
      * @return \Silex\ControllerCollection
      */
-    public function connect(Silex\Application $app)
+    public function connect(Application $app)
     {
         $this->config = $app[Extension::CONTAINER]->config;
         $this->admin = new Admin($app);
@@ -82,10 +81,10 @@ class MembersAdminController implements ControllerProviderInterface
     /**
      * Controller before render
      *
-     * @param Request           $request
-     * @param \Bolt\Application $app
+     * @param Request            $request
+     * @param \Silex\Application $app
      */
-    public function before(Request $request, \Bolt\Application $app)
+    public function before(Request $request, Application $app)
     {
         // Enable HTML snippets in our routes so that JS & CSS gets inserted
         $app['htmlsnippets'] = true;
@@ -101,11 +100,12 @@ class MembersAdminController implements ControllerProviderInterface
     /**
      * The main admin page
      *
-     * @param Silex\Application $app
-     * @param Request $request
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
      * @return \Twig_Markup
      */
-    public function admin(Silex\Application $app, Request $request)
+    public function admin(Application $app, Request $request)
     {
         $this->addTwigPath($app);
 
@@ -120,18 +120,18 @@ class MembersAdminController implements ControllerProviderInterface
     /**
      * Members Admin AJAX controller
      *
-     * @param Silex\Application $app
-     * @param Request $request
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response|\Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function ajax(Silex\Application $app, Request $request)
+    public function ajax(Application $app, Request $request)
     {
         // Get the task name
         $task = $app['request']->get('task');
 
-        if ($request->getMethod() == "POST" && $task) {
-
-            if ($task == 'userAdd') {
+        if ($request->getMethod() === 'POST' && $task) {
+            if ($task === 'userAdd') {
                 /*
                  * Add a user
                  */
@@ -142,7 +142,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($this->getResult($task));
-            } elseif ($task == 'userDel') {
+            } elseif ($task === 'userDel') {
                 /*
                  * Delete a user
                  */
@@ -153,7 +153,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($this->getResult($task));
-            } elseif ($task == 'userEnable') {
+            } elseif ($task === 'userEnable') {
                 /*
                  * Enable a user
                  */
@@ -166,7 +166,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($this->getResult($task));
-            } elseif ($task == 'userDisable') {
+            } elseif ($task === 'userDisable') {
                 /*
                  * Disable a user
                  */
@@ -179,7 +179,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($this->getResult($task));
-            } elseif ($task == 'roleAdd') {
+            } elseif ($task === 'roleAdd') {
                 /*
                  * Add a role to user(s)
                  */
@@ -190,7 +190,7 @@ class MembersAdminController implements ControllerProviderInterface
                 }
 
                 return new JsonResponse($this->getResult($task));
-            } elseif ($task == 'roleDel') {
+            } elseif ($task === 'roleDel') {
                 /*
                  * Delete a role from user(s)
                  */
@@ -202,9 +202,7 @@ class MembersAdminController implements ControllerProviderInterface
 
                 return new JsonResponse($this->getResult($task));
             }
-
-        } elseif ($request->getMethod() == "GET" && $task) {
-
+        } elseif ($request->getMethod() === 'GET' && $task) {
         }
 
         // Yeah, nah
@@ -212,9 +210,9 @@ class MembersAdminController implements ControllerProviderInterface
     }
 
     /**
+     * @param string     $task
+     * @param \Exception $e
      *
-     * @param  string     $task
-     * @param  \Exception $e
      * @return array
      */
     private function getResult($task, \Exception $e = null)
@@ -237,11 +235,10 @@ class MembersAdminController implements ControllerProviderInterface
     /**
      * Set our Twig template path
      *
-     * @param Silex\Application $app
+     * @param \Silex\Application $app
      */
-    private function addTwigPath(Silex\Application $app)
+    private function addTwigPath(Application $app)
     {
         $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets/admin');
     }
-
 }

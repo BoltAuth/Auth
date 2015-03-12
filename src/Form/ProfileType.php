@@ -2,10 +2,10 @@
 
 namespace Bolt\Extension\Bolt\Members\Form;
 
+use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Bolt\Translation\Translator as Trans;
 
 /**
  * Profile type
@@ -63,5 +63,4 @@ class ProfileType extends AbstractType
     {
         return 'profile';
     }
-
 }

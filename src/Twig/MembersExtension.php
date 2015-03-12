@@ -28,24 +28,16 @@ use Bolt\Extension\Bolt\Members\Extension;
  */
 class MembersExtension extends \Twig_Extension
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
 
-    /**
-     * @var Bolt\Extension\Bolt\Members\Members
-     */
+    /** @var \Bolt\Extension\Bolt\Members\Members */
     private $members;
 
-    /**
-     * @var \Twig_Environment
-     */
+    /** @var \Twig_Environment */
     private $twig = null;
 
     public function __construct(\Silex\Application $app)
@@ -75,15 +67,16 @@ class MembersExtension extends \Twig_Extension
         return array(
             'member'     => new \Twig_Function_Method($this, 'member'),
             'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
-            'hasrole'     => new \Twig_Function_Method($this, 'hasRole')
+            'hasrole'    => new \Twig_Function_Method($this, 'hasRole')
         );
     }
 
     /**
      * Return Twig suitable array for a member, or current session
      *
-     * @param  integer      $id   [Optional] ID of member to look up
-     * @param  boolean      $meta [Optional] Return user meta
+     * @param integer $id   [Optional] ID of member to look up
+     * @param boolean $meta [Optional] Return user meta
+     *
      * @return \Twig_Markup
      */
     public function member($id = false, $meta = false)
@@ -110,8 +103,9 @@ class MembersExtension extends \Twig_Extension
     /**
      * Test a member record to see if they have a specific role
      *
-     * @param  string  $role
-     * @param  string  $id
+     * @param string $role
+     * @param string $id
+     *
      * @return boolean
      */
     public function hasRole($role, $id = false)
@@ -130,5 +124,4 @@ class MembersExtension extends \Twig_Extension
 
         return false;
     }
-
 }
