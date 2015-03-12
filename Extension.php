@@ -29,10 +29,11 @@ use Bolt\Translation\Translator as Trans;
  */
 class Extension extends \Bolt\BaseExtension
 {
-    /**
-     * @var string Extension name
-     */
+    /** @var string Extension name */
     const NAME = 'Members';
+
+    /** @var boolean */
+    private $isAdmin;
 
     /**
      * Extension's container
@@ -60,6 +61,9 @@ class Extension extends \Bolt\BaseExtension
             // Check & create database tables if required
             $records = new Records($this->app);
             $records->dbCheck();
+
+            // Set authorized
+            $this->checkAuthorized();
 
             // Create the admin page
             $this->adminMenu();
@@ -113,26 +117,52 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
+     * Determine if the user has admin rights to the page
+     *
+     * @return boolean
+     */
+    public function isAdmin()
+    {
+        if (is_null($this->isAdmin)) {
+            // check if user has allowed role(s)
+            $user    = $this->app['users']->getCurrentUser();
+            $userid  = $user['id'];
+
+            $this->isAdmin = false;
+
+            foreach ($this->config['admin_roles'] as $role) {
+                if ($this->app['users']->hasRole($userid, $role)) {
+                    $this->isAdmin = true;
+                    break;
+                }
+            }
+        }
+
+        return $this->isAdmin;
+    }
+
+    /**
      * Conditionally create the admin menu if the user has a valid role
      */
     private function adminMenu()
+    {
+        if ($this->isAdmin()) {
+            $path = $this->app['resources']->getUrl('bolt') . 'extensions/members';
+            $this->app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $path, 'fa:users');
+        }
+    }
+
+    private function checkAuthorized()
     {
         // check if user has allowed role(s)
         $user    = $this->app['users']->getCurrentUser();
         $userid  = $user['id'];
 
-        $this->authorized = false;
-
         foreach ($this->config['admin_roles'] as $role) {
             if ($this->app['users']->hasRole($userid, $role)) {
-                $this->authorized = true;
+                $this->isAdmin = true;
                 break;
             }
-        }
-
-        if ($this->authorized) {
-            $path = $this->app['resources']->getUrl('bolt') . 'extensions/members';
-            $this->app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $path, 'fa:users');
         }
     }
 

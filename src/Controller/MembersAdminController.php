@@ -4,6 +4,8 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Extension;
+use Bolt\Library as Lib;
+use Bolt\Translation\Translator as Trans;
 use Silex;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
@@ -107,6 +109,12 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function admin(Application $app, Request $request)
     {
+        if (!$app[Extension::CONTAINER]->isAdmin()) {
+            $app['session']->getFlashBag()->add('error', Trans::__('You do not have the right privileges to view that page.'));
+
+            return Lib::redirect('dashboard');
+        }
+
         $this->addTwigPath($app);
 
         $html = $app['render']->render('members.twig', array(
@@ -127,6 +135,10 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function ajax(Application $app, Request $request)
     {
+        if (!$app[Extension::CONTAINER]->isAdmin()) {
+            return new JsonResponse('No!', Response::HTTP_FORBIDDEN);
+        }
+
         // Get the task name
         $task = $app['request']->get('task');
 
