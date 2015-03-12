@@ -35,11 +35,7 @@ class Extension extends \Bolt\BaseExtension
     /** @var boolean */
     private $isAdmin;
 
-    /**
-     * Extension's container
-     *
-     * @var string
-     */
+    /** @var string Extension's container */
     const CONTAINER = 'extensions.Members';
 
     public function getName()
