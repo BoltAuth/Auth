@@ -2,7 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use \Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
+use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
+use Bolt\Translation\Translator as Trans;
 
 /**
  * Membership management extension for Bolt
@@ -60,8 +61,8 @@ class Extension extends \Bolt\BaseExtension
             $records = new Records($this->app);
             $records->dbCheck();
 
-            // Create the admin page and routes
-            $this->adminController();
+            // Create the admin page
+            $this->adminMenu();
         }
 
         /*
@@ -71,12 +72,16 @@ class Extension extends \Bolt\BaseExtension
             // Register ourselves as a service
             $this->app->register(new Provider\MembersServiceProvider($this->app));
 
-            // Set up controller routes
-            $this->app->mount('/' . $this->config['basepath'], new Controller\MembersController());
-
             // Twig functions
             $this->app['twig']->addExtension(new Twig\MembersExtension($this->app));
         }
+
+        /*
+         * Controllers
+         */
+        $path = $this->app['config']->get('general/branding/path') . '/extensions/members';
+        $this->app->mount($path, new Controller\MembersAdminController());
+        $this->app->mount('/' . $this->config['basepath'], new Controller\MembersController());
 
         /*
          * Hooks
@@ -108,9 +113,9 @@ class Extension extends \Bolt\BaseExtension
     }
 
     /**
-     * Conditionally load the admin controller if the user has the valid role
+     * Conditionally create the admin menu if the user has a valid role
      */
-    private function adminController()
+    private function adminMenu()
     {
         // check if user has allowed role(s)
         $user    = $this->app['users']->getCurrentUser();
@@ -126,8 +131,8 @@ class Extension extends \Bolt\BaseExtension
         }
 
         if ($this->authorized) {
-            $path = $this->app['config']->get('general/branding/path') . '/extensions/members';
-            $this->app->mount($path, new Controller\MembersAdminController());
+            $path = $this->app['resources']->getUrl('bolt') . 'extensions/members';
+            $this->app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $path, 'fa:users');
         }
     }
 

@@ -76,8 +76,6 @@ class MembersAdminController implements ControllerProviderInterface
         $ctr->match('/ajax', array($this, 'ajax'))
             ->method('GET|POST');
 
-        $app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $app['paths']['bolt'] . 'extensions/members', "fa:users");
-
         return $ctr;
     }
 
@@ -132,9 +130,6 @@ class MembersAdminController implements ControllerProviderInterface
         $task = $app['request']->get('task');
 
         if ($request->getMethod() == "POST" && $task) {
-//             if (!$app['users']->checkAntiCSRFToken()) {
-//                $app->abort(400, Trans::__("Something went wrong"));
-//             }
 
             if ($task == 'userAdd') {
                 /*
