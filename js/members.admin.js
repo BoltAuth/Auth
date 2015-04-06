@@ -51,136 +51,156 @@ var MembersAdmin = Object.extend(Object, {
     
     doUserAdd: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
 
         console.debug("Adding a user");
 
-        $.post(baseurl + '/ajax?task=userAdd', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=userAdd', {members: selected_members}, function(selected_members){})
             .done(function() {
             	swal({ title: "", text: "Feature coming soon!", type: "info" });
 //                location.reload(true);
-                })
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
     
     doUserDel: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
         
         $.each($("input[name='form[members][]']:checked"), function () {
-            data.push($(this).val());
+        	selected_members.push($(this).val());
         });
 
-        console.debug("Deleting user(s): " + data);
+        console.debug("Deleting user(s): " + selected_members);
 
-        $.post(baseurl + '/ajax?task=userDel', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=userDel', {members: selected_members}, function(selected_members){})
             .done(function() {
             	swal({ title: "", text: "Feature coming soon!", type: "info" });
 //                location.reload(true);
-                })
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
     
     doUserEnable: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
         
         $.each($("input[name='form[members][]']:checked"), function () {
-            data.push($(this).val());
+        	selected_members.push($(this).val());
         });
         
-        if (data == '') {
+        if (selected_members == '') {
             swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
             return;
         }
         
-        console.debug("Enabling user(s): " + data);
+        console.debug("Enabling user(s): " + selected_members);
 
-        $.post(baseurl + '/ajax?task=userEnable', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=userEnable', {members: selected_members}, function(selected_members){})
             .done(function() {
             	location.reload(true);
-                })
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
     
     doUserDisable: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
         
         $.each($("input[name='form[members][]']:checked"), function () {
-            data.push($(this).val());
+        	selected_members.push($(this).val());
         });
         
-        if (data == '') {
+        if (selected_members == '') {
             swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
             return;
         }
         
-        console.debug("Disabling user(s): " + data);
+        console.debug("Disabling user(s): " + selected_members);
 
-        $.post(baseurl + '/ajax?task=userDisable', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=userDisable', {members: selected_members}, function(selected_members){})
             .done(function() {
             	location.reload(true);
-                })
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
     
     doRoleAdd: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
+        var selected_role = $("#members-role-select option:selected").val();
         
         $.each($("input[name='form[members][]']:checked"), function () {
-            data.push($(this).val());
+        	selected_members.push($(this).val());
         });
         
-        if (data == '') {
+        if (selected_members == '') {
             swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
             return;
         }
         
-        console.debug("Adding role to user(s): " + data);
+        if (selected_role == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a role.", type: "warning" });
+            return;
+        }
+        
+        console.debug("Adding role '" + selected_role +  "' to user(s): " + selected_members);
 
-        $.post(baseurl + '/ajax?task=roleAdd', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=roleAdd', {members: selected_members, role: selected_role}, function(selected_members, selected_role){})
             .done(function() {
-            	swal({ title: "", text: "Feature coming soon!", type: "info" });
-//              location.reload(true);
-                })
+            	swal({ title: "", text: "Added role: " + selected_role, type: "info" },
+            	function(isConfirm){
+            		if (isConfirm) {
+            			location.reload(true);
+            		}
+            	});
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
     
     doRoleDel: function(e) {
         var controller = this;
-        var data = new Array();
+        var selected_members = new Array();
+        var selected_role = $("#members-role-select option:selected").val();
         
         $.each($("input[name='form[members][]']:checked"), function () {
-            data.push($(this).val());
+        	selected_members.push($(this).val());
         });
         
-        if (data == '') {
+        if (selected_members == '') {
             swal({ title: "Nothing Selected!", text: "You need to chose a member.", type: "warning" });
             return;
         }
         
-        console.debug("Removing role from user(s): " + data);
+        if (selected_role == '') {
+            swal({ title: "Nothing Selected!", text: "You need to chose a role.", type: "warning" });
+            return;
+        }
+        
+        console.debug("Removing role '" + selected_role + "' from user(s): " + selected_members);
 
-        $.post(baseurl + '/ajax?task=roleDel', {members: data}, function(data){})
+        $.post(baseurl + '/ajax?task=roleDel', {members: selected_members, role: selected_role}, function(selected_members, selected_role){})
             .done(function() {
-            	swal({ title: "", text: "Feature coming soon!", type: "info" });
-//              location.reload(true);
-                })
+            	swal({ title: "", text: "Removed role: " + selected_role, type: "info" },
+            	function(isConfirm) {
+            		if (isConfirm) {
+            			location.reload(true);
+            		}
+            	});
+            })
             .fail(function() {
                 swal({ title: "Error!", text: "The server returned an error.", type: "error" });
-                })
+            })
     },
         
     events: {

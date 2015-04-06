@@ -97,7 +97,16 @@ class Admin extends Members
      */
     public function memberRolesAdd($id, $roles)
     {
-        //
+        if (!$member = $this->app['members']->getMember('id', $id)) {
+            return false;
+        }
+
+        $member = $this->app['members']->getMember('id', $id);
+        $currentRoles = isset($member['roles']) && !empty($member['roles']) ? $member['roles'] : [];
+        $currentRoles = json_encode(array_unique(array_merge((array) $currentRoles, (array) $roles)));
+        array_map('trim', $currentRoles);
+
+        return $this->app['members']->updateMember($id, ['roles' => $currentRoles]);
     }
 
     /**
@@ -108,6 +117,19 @@ class Admin extends Members
      */
     public function memberRolesRemove($id, $roles)
     {
-        //
+        if (!$member = $this->app['members']->getMember('id', $id)) {
+            return false;
+        }
+
+        $member = $this->app['members']->getMember('id', $id);
+        $roles = (array) $roles;
+
+        foreach ($roles as $role) {
+            foreach (array_keys($member['roles'], $role, true) as $key) {
+                unset($member['roles'][$key]);
+            }
+        }
+
+        return $this->app['members']->updateMember($id, ['roles' => json_encode($member['roles'])]);
     }
 }

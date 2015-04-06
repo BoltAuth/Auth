@@ -1,5 +1,9 @@
 # Changelog for Members
 
+* 2.2.0 (2015-xx-xx)
+
+ * Enable add/remove of custom roles in admin
+
 * 2.1.1 (2015-03-12)
 
  * More updates for Bolt 2.1

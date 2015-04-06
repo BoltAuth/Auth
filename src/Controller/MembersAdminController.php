@@ -196,7 +196,9 @@ class MembersAdminController implements ControllerProviderInterface
                  * Add a role to user(s)
                  */
                 try {
-                    //
+                    foreach ($request->request->get('members') as $id) {
+                        $this->admin->memberRolesAdd($id, $request->request->get('role'));
+                    }
                 } catch (\Exception $e) {
                     return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
@@ -207,7 +209,9 @@ class MembersAdminController implements ControllerProviderInterface
                  * Delete a role from user(s)
                  */
                 try {
-                    //
+                    foreach ($request->request->get('members') as $id) {
+                        $this->admin->memberRolesRemove($id, $request->request->get('role'));
+                    }
                 } catch (\Exception $e) {
                     return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
