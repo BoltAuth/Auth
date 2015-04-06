@@ -24,7 +24,8 @@
 			"Bolt\\Extension\\Bolt\\Members\\" : [
 				"",
 				"src/"
-			]
+			],
+            "Bolt\\Extension\\Bolt\\Members\\Tests\\" : "tests/"
 		}
 	}
 }
