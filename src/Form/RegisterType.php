@@ -35,30 +35,33 @@ class RegisterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username',    'text',   array(
+            ->add('username',    'text',   [
                 'label'       => Trans::__('User name:'),
                 'data'        => $options['data']['username'],
-                'constraints' => array(
+                'constraints' => [
                     new ValidUsername(),
                     new Assert\NotBlank()
-                )))
-            ->add('displayname', 'text',   array(
+                ]
+            ])
+            ->add('displayname', 'text',   [
                 'label'       => Trans::__('Publicly visible name:'),
                 'data'        => $options['data']['displayname'],
-                'constraints' => array(
+                'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(array('min' => 2))
-                )))
-            ->add('email',       'text',   array(
+                    new Assert\Length(['min' => 2])
+                ]
+            ])
+            ->add('email',       'text',   [
                 'label'       => Trans::__('Email:'),
                 'data'        => $options['data']['email'],
-                'constraints' => new Assert\Email(array(
+                'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
-                    'checkMX' => true)
-                )))
-            ->add('submit',      'submit', array(
+                    'checkMX' => true
+                ])
+            ])
+            ->add('submit',      'submit', [
                 'label'       => Trans::__('Save & continue')
-                ));
+            ]);
     }
 
     public function getName()

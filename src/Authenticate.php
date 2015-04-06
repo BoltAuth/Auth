@@ -203,14 +203,14 @@ class Authenticate extends Controller\MembersController
             $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
         } else {
             //
-            $create = $this->records->updateMember(false, array(
+            $create = $this->records->updateMember(false, [
                 'username'    => $form['username'],
                 'email'       => $form['email'],
                 'displayname' => $form['displayname'],
                 'lastseen'    => date('Y-m-d H:i:s'),
                 'lastip'      => $this->app['request']->getClientIp(),
                 'enabled'     => 1
-            ));
+            ]);
 
             if ($create) {
                 // Get the new record
@@ -241,10 +241,10 @@ class Authenticate extends Controller\MembersController
     private function updateMemberLogin($userid)
     {
         if ($this->records->getMember('id', $userid)) {
-            $this->records->updateMember($userid, array(
+            $this->records->updateMember($userid, [
                 'lastseen' => date('Y-m-d H:i:s'),
                 'lastip'   => $this->app['request']->getClientIp()
-            ));
+            ]);
         }
     }
 }

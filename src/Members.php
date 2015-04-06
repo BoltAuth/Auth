@@ -50,7 +50,7 @@ class Members
     /**
      * @var array
      */
-    private $roles = array();
+    private $roles = [];
 
     /**
      * @param \Silex\Application $app

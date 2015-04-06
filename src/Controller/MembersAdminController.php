@@ -68,13 +68,13 @@ class MembersAdminController implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
 
         // Admin page
-        $ctr->match('/', array($this, 'admin'))
+        $ctr->match('/', [$this, 'admin'])
             ->bind('MembersAdmin')
-            ->before(array($this, 'before'))
+            ->before([$this, 'before'])
             ->method('GET');
 
         // AJAX requests
-        $ctr->match('/ajax', array($this, 'ajax'))
+        $ctr->match('/ajax', [$this, 'ajax'])
             ->method('GET|POST');
 
         return $ctr;
@@ -117,10 +117,10 @@ class MembersAdminController implements ControllerProviderInterface
 
         $this->addTwigPath($app);
 
-        $html = $app['render']->render('members.twig', array(
+        $html = $app['render']->render('members.twig', [
             'members' => $this->admin->getMembers(),
             'roles'   => $app['members']->getAvailableRoles()
-        ));
+        ]);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
@@ -230,18 +230,18 @@ class MembersAdminController implements ControllerProviderInterface
     private function getResult($task, \Exception $e = null)
     {
         if (is_null($e)) {
-            return array(
+            return [
                 'job'    => $task,
                 'result' => true,
                 'data'   => ''
-            );
+            ];
         }
 
-        return array(
+        return [
             'job'    => $task,
             'result' => true,
             'data'   => $e->getMessage()
-        );
+        ];
     }
 
     /**

@@ -76,7 +76,7 @@ class Admin extends Members
      */
     public function memberEnable($id)
     {
-        return $this->app['members']->updateMember($id, array('enabled' => 1));
+        return $this->app['members']->updateMember($id, ['enabled' => 1]);
     }
 
     /**
@@ -86,7 +86,7 @@ class Admin extends Members
      */
     public function memberDisable($id)
     {
-        return $this->app['members']->updateMember($id, array('enabled' => 0));
+        return $this->app['members']->updateMember($id, ['enabled' => 0]);
     }
 
     /**

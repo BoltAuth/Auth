@@ -66,7 +66,7 @@ class Profiles
      */
     private function getDeletedUser()
     {
-        return array(
+        return [
             'id'          => -1,
             'username'    => 'deleted',
             'email'       => '',
@@ -77,6 +77,6 @@ class Profiles
             'roles'       => '',
             'avatar'      => 'http://placehold.it/350x150&text=Deleted+User',
             'location'    => 'Unknown'
-        );
+        ];
     }
 }

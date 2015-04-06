@@ -74,10 +74,10 @@ class Records
     {
         $query = "SELECT * FROM " . $this->getTableName() . " WHERE {$field} = :value";
 
-        $map = array(
+        $map = [
             ':field' => $field,
             ':value' => $value
-        );
+        ];
 
         $record = $this->app['db']->fetchAssoc($query, $map);
 
@@ -106,19 +106,19 @@ class Records
             $query = "SELECT * FROM " . $this->getTableNameMeta() .
                      " WHERE userid = :userid and meta = :meta";
 
-            $map = array(
+            $map = [
                 ':userid' => $userid,
                 ':meta'   => $meta
-            );
+            ];
 
             $record = $this->app['db']->fetchAssoc($query, $map);
         } else {
             $query = "SELECT * FROM " . $this->getTableNameMeta() .
                      " WHERE userid = :userid";
 
-            $map = array(
+            $map = [
                 ':userid' => $userid
-            );
+            ];
 
             $record = $this->app['db']->fetchAll($query, $map);
         }
@@ -164,17 +164,17 @@ class Records
             $query = "SELECT * FROM " . $this->getTableNameMeta() .
                      " WHERE meta = :meta AND value = :value";
 
-            $map = array(
+            $map = [
                 ':meta'  => $meta,
                 ':value' => $value
-            );
+            ];
         } else {
             $query = "SELECT * FROM " . $this->getTableNameMeta() .
                      " WHERE meta = :meta";
 
-            $map = array(
+            $map = [
                 ':meta' => $meta
-            );
+            ];
         }
 
         if ($single) {
@@ -205,9 +205,9 @@ class Records
          * Only do an insert if we have a username, displayname and values to add
          */
         if (! empty($userid) && $this->getMember('id', $userid)) {
-            $result = $this->app['db']->update($this->getTableName(), $values, array(
+            $result = $this->app['db']->update($this->getTableName(), $values, [
                 'id' => $userid
-            ));
+            ]);
         } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
             $result = $this->app['db']->insert($this->getTableName(), $values);
         }
@@ -230,17 +230,17 @@ class Records
      */
     public function updateMemberMeta($userid, $meta, $value)
     {
-        $data = array(
+        $data = [
             'userid' => $userid,
             'meta'   => $meta,
             'value'  => $value
-        );
+        ];
 
         if ($this->getMemberMeta($userid, $meta)) {
-            $result = $this->app['db']->update($this->getTableNameMeta(), $data, array(
+            $result = $this->app['db']->update($this->getTableNameMeta(), $data, [
                 'userid' => $userid,
                 'meta'   => $meta
-            ));
+            ]);
         } else {
             $result = $this->app['db']->insert($this->getTableNameMeta(), $data);
         }
@@ -305,17 +305,17 @@ class Records
             function ($schema) use ($table_name) {
                 $table = $schema->createTable($table_name);
 
-                $table->addColumn('id',          'integer',  array('autoincrement' => true));
-                $table->addColumn('username',    'string',   array('length' => 32));
-                $table->addColumn('email',       'string',   array('length' => 128));
-                $table->addColumn('lastseen',    'datetime', array('default' => '1900-01-01 00:00:00'));
-                $table->addColumn('lastip',      'string',   array('length' => 32, 'default' => ''));
-                $table->addColumn('displayname', 'string',   array('length' => 32));
-                $table->addColumn('enabled',     'boolean',  array('default' => 0));
-                $table->addColumn('roles',       'string',   array('length' => 1024, 'default' => ''));
-                $table->setPrimaryKey(array('id'));
-                $table->addIndex(array('username'));
-                $table->addIndex(array('enabled'));
+                $table->addColumn('id',          'integer',  ['autoincrement' => true]);
+                $table->addColumn('username',    'string',   ['length' => 32]);
+                $table->addColumn('email',       'string',   ['length' => 128]);
+                $table->addColumn('lastseen',    'datetime', ['default' => '1900-01-01 00:00:00']);
+                $table->addColumn('lastip',      'string',   ['length' => 32, 'default' => '']);
+                $table->addColumn('displayname', 'string',   ['length' => 32]);
+                $table->addColumn('enabled',     'boolean',  ['default' => 0]);
+                $table->addColumn('roles',       'string',   ['length' => 1024, 'default' => '']);
+                $table->setPrimaryKey(['id']);
+                $table->addIndex(['username']);
+                $table->addIndex(['enabled']);
 
                 return $table;
             }
@@ -326,13 +326,13 @@ class Records
         $this->app['integritychecker']->registerExtensionTable(
             function ($schema) use ($table_name) {
                 $table = $schema->createTable($table_name);
-                $table->addColumn("id",     "integer", array('autoincrement' => true));
-                $table->addColumn("userid", "integer");
-                $table->addColumn("meta",   "string",  array("length" => 64));
-                $table->addColumn("value",  "text");
-                $table->setPrimaryKey(array("id"));
-                $table->addIndex(array("userid"));
-                $table->addIndex(array("meta"));
+                $table->addColumn('id',     'integer', ['autoincrement' => true]);
+                $table->addColumn('userid', 'integer');
+                $table->addColumn('meta',   'string',  ['length' => 64]);
+                $table->addColumn('value',  'text');
+                $table->setPrimaryKey(['id']);
+                $table->addIndex(['userid']);
+                $table->addIndex(['meta']);
 
                 return $table;
             }

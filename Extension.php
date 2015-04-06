@@ -84,8 +84,8 @@ class Extension extends BaseExtension
         /*
          * Hooks
          */
-        $this->app['dispatcher']->addListener('clientlogin.Login',  array($this, 'loginCallback'));
-        $this->app['dispatcher']->addListener('clientlogin.Logout', array($this, 'logoutCallback'));
+        $this->app['dispatcher']->addListener('clientlogin.Login',  [$this, 'loginCallback']);
+        $this->app['dispatcher']->addListener('clientlogin.Logout', [$this, 'logoutCallback']);
     }
 
     /**
@@ -167,17 +167,17 @@ class Extension extends BaseExtension
      */
     protected function getDefaultConfig()
     {
-        return array(
+        return [
             'basepath'     => 'members',
-            'templates'    => array(
+            'templates'    => [
                 'parent'        => 'members.twig',
                 'register'      => 'members_register.twig',
                 'profile_edit'  => 'members_profile_edit.twig',
                 'profile_view'  => 'members_profile_view.twig'
-            ),
+            ],
             'registration' => true,
             'csrf'         => true,
-            'admin_roles'  => array('root', 'admin', 'developer', 'chief-editor')
-        );
+            'admin_roles'  => ['root', 'admin', 'developer', 'chief-editor']
+        ];
     }
 }

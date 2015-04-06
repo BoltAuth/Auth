@@ -64,11 +64,11 @@ class MembersExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
+        return [
             'member'     => new \Twig_Function_Method($this, 'member'),
             'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
             'hasrole'    => new \Twig_Function_Method($this, 'hasRole')
-        );
+        ];
     }
 
     /**

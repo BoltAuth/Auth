@@ -70,15 +70,15 @@ class MembersController implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
 
         // New member
-        $ctr->match('/register', array($this, 'register'))
+        $ctr->match('/register', [$this, 'register'])
             ->method('GET|POST');
 
         // My profile
-        $ctr->match('/profile', array($this, 'profileedit'))
+        $ctr->match('/profile', [$this, 'profileedit'])
             ->method('GET|POST');
 
         // Member profile
-        $ctr->match('/profile/{id}', array($this, 'profileview'))
+        $ctr->match('/profile/{id}', [$this, 'profileview'])
             ->assert('id', '\d*')
             ->method('GET');
 
@@ -96,7 +96,7 @@ class MembersController implements ControllerProviderInterface
         // Ensure we have a valid Client Login session
         $session = new Session($app);
         if (! $session->doCheckLogin()) {
-            return new Response('No valid CLient Login session!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+            return new Response('No valid CLient Login session!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         }
 
         // Get redirect that is set for ClientLogin
@@ -107,7 +107,7 @@ class MembersController implements ControllerProviderInterface
 
         // If there is no ClientLogin data in the session, they shouldn't be here
         if (empty($clientlogin)) {
-            return new Response('Invalid session referral!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+            return new Response('Invalid session referral!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         }
 
         // Expand the JSON array
@@ -116,14 +116,14 @@ class MembersController implements ControllerProviderInterface
 
         // Create new register form
         $register = new Register();
-        $data = array(
+        $data = [
             'csrf_protection' => $this->config['csrf'],
-            'data'            => array(
+            'data'            => [
                 'username'    => substr($app['slugify']->slugify($userdata['displayName']), 0, 32),
                 'displayname' => $userdata['displayName'],
                 'email'       => $userdata['email']
-            )
-        );
+            ]
+        ];
 
         $form = $app['form.factory']->createBuilder(new RegisterType(), $register, $data)
                                     ->getForm();
@@ -158,10 +158,10 @@ class MembersController implements ControllerProviderInterface
         $this->addTwigPath($app);
 
         $html = $app['render']->render(
-            $this->config['templates']['register'], array(
+            $this->config['templates']['register'], [
                 'form'       => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
-        ));
+        ]);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
@@ -177,7 +177,7 @@ class MembersController implements ControllerProviderInterface
         $member = $app['members']->isAuth();
 
         if (! $member) {
-            return new Response('Invalid profile session!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+            return new Response('Invalid profile session!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         } else {
             $member = $app['members']->getMember('id', $member);
             $id = $member['id'];
@@ -185,15 +185,15 @@ class MembersController implements ControllerProviderInterface
 
         // Create new register form
         $profile = new Profile();
-        $data = array(
+        $data = [
             'csrf_protection' => $this->config['csrf'],
-            'data'            => array(
+            'data'            => [
                 'username'    => $member['username'],
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
                 'readonly'    => false
-            )
-        );
+            ]
+        ];
 
         $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
                                     ->getForm();
@@ -207,10 +207,10 @@ class MembersController implements ControllerProviderInterface
                 $reponse = $request->get('profile');
 
                 $records = new Records($app);
-                $records->updateMember($id, array(
+                $records->updateMember($id, [
                     'displayname' => $reponse['displayname'],
                     'email'       => $reponse['email']
-                ));
+                ]);
 
                 Lib::simpleredirect($app['paths']['hosturl']);
             }
@@ -220,10 +220,10 @@ class MembersController implements ControllerProviderInterface
         $this->addTwigPath($app);
 
         $html = $app['render']->render(
-            $this->config['templates']['profile_edit'], array(
+            $this->config['templates']['profile_edit'], [
                 'form'       => $form->createView(),
                 'twigparent' => $this->config['templates']['parent']
-        ));
+        ]);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
@@ -239,7 +239,7 @@ class MembersController implements ControllerProviderInterface
         $member = $app['members']->getMember('id', $id);
 
         if (! $member) {
-            return new Response('Invalid profile!', Response::HTTP_FORBIDDEN, array('content-type' => 'text/html'));
+            return new Response('Invalid profile!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         } else {
             $member['avatar'] = $app['members']->getMemberMeta($id, 'avatar');
         }
@@ -248,12 +248,12 @@ class MembersController implements ControllerProviderInterface
         $this->addTwigPath($app);
 
         $html = $app['render']->render(
-            $this->config['templates']['profile_view'], array(
+            $this->config['templates']['profile_view'], [
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
                 'avatar'      => $member['avatar']['value'],
                 'twigparent'  => $this->config['templates']['parent']
-        ));
+        ]);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
