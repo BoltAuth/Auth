@@ -11,10 +11,10 @@ use Bolt\Extension\Bolt\Members\Form\ProfileType;
 use Bolt\Extension\Bolt\Members\Form\RegisterType;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\Records;
-use Bolt\Library as Lib;
 use Silex;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -119,8 +119,8 @@ class MembersController implements ControllerProviderInterface
         $data = [
             'csrf_protection' => $this->config['csrf'],
             'data'            => [
-                'username'    => substr($app['slugify']->slugify($userdata['displayName']), 0, 32),
-                'displayname' => $userdata['displayName'],
+                'username'    => substr($app['slugify']->slugify($userdata['name']), 0, 32),
+                'displayname' => $userdata['name'],
                 'email'       => $userdata['email']
             ]
         ];
@@ -132,7 +132,7 @@ class MembersController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // If we're in a POST, validate the form
-        if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() === 'POST') {
             if ($form->isValid()) {
                 // Create new Member record and go back to where we came from
                 $auth = new Authenticate($app);
@@ -143,10 +143,10 @@ class MembersController implements ControllerProviderInterface
 
                     // Redirect
                     if (empty($redirect)) {
-                        Lib::simpleredirect($app['paths']['hosturl']);
+                        return new RedirectResponse($app['resources']->getUrl('hosturl'));
                     } else {
-                        $returnpage = str_replace($app['paths']['hosturl'], '', $redirect);
-                        Lib::simpleredirect($returnpage);
+                        $returnpage = str_replace($app['resources']->getUrl('hosturl'), '', $redirect);
+                        return new RedirectResponse($returnpage);
                     }
                 } else {
                     // Something is wrong here
@@ -202,7 +202,7 @@ class MembersController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         // If we're in a POST, validate the form
-        if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() === 'POST') {
             if ($form->isValid()) {
                 $reponse = $request->get('profile');
 
@@ -212,7 +212,7 @@ class MembersController implements ControllerProviderInterface
                     'email'       => $reponse['email']
                 ]);
 
-                Lib::simpleredirect($app['paths']['hosturl']);
+                return new RedirectResponse($app['resources']->getUrl('hosturl'));
             }
         }
 

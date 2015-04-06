@@ -70,7 +70,7 @@ class Authenticate extends Controller\MembersController
         $userdata = $event->getUser();
 
         // See if we have this in our database
-        $member = $this->isMemberClientLogin($userdata['provider'], $userdata['identifier']);
+        $member = $this->isMemberClientLogin($userdata['provider'], $userdata['uid']);
 
         if ($member) {
             $this->updateMemberLogin($member);
@@ -92,7 +92,7 @@ class Authenticate extends Controller\MembersController
 
             if ($member) {
                 // Associate this login with their Members profile
-                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
             } else {
                 // Redirect to the 'new' page
                 Lib::simpleredirect("/{$this->config['basepath']}/register");
@@ -201,7 +201,7 @@ class Authenticate extends Controller\MembersController
 
         if ($member) {
             // We already have them, just link the profile
-            $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
+            $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
         } else {
             //
             $create = $this->records->updateMember(false, [
@@ -218,10 +218,10 @@ class Authenticate extends Controller\MembersController
                 $member = $this->app['members']->getMember('email', $form['email']);
 
                 // Add the provider info to meta
-                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['identifier']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
 
                 // Add meta data from CLientLogin
-                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['photoURL']);
+                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['imageUrl']);
 
                 // Event dispatcher
                 if ($this->app['dispatcher']->hasListeners('members.New')) {
