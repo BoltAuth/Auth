@@ -129,10 +129,14 @@ Manage Site Membership Roles
                         <div class="row">
                             <div class="col-md-12">
                                 <select class="form-control" id="members-role-select">
+                                {% if roles|default() is empty %}
+                                    <option value="">~~ No defined roles ~~</option>
+                                {% else %}
                                     <option value=""></option>
                                     {% for role, name in roles %}
                                     <option value="{{ role }}">{{ name }}</option>
                                     {% endfor %}
+                                {% endif %}
                                 </select>
                             </div>
                         </div>
