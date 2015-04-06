@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
+use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Library as Lib;
 use Silex;
 use Silex\Application;
@@ -121,13 +122,13 @@ class Authenticate extends Controller\MembersController
         }
 
         // Get their ClientLogin records
-        $record = $this->app['clientlogin.records']->getUserProfileBySession($this->app['clientlogin.session']->getToken());
-        if (! $record) {
+        $token = $this->app['clientlogin.session']->getToken(Session::TOKEN_SESSION);
+        if (!$record = $this->app['clientlogin.records']->getUserProfileBySession($token)) {
             return false;
         }
 
         // Look them up internally
-        return $this->isMemberClientLogin($this->app['clientlogin.records']->user['provider'], $this->app['clientlogin.records']->user['identifier']);
+        return $this->isMemberClientLogin($record['provider'], $record['identifier']);
     }
 
     /**
