@@ -195,7 +195,7 @@ class Members
      */
     protected function getMembers()
     {
-        $query = "SELECT * FROM " . $this->records->getTableName();
+        $query = "SELECT * FROM " . $this->records->getTableName() . " ORDER BY id ASC";
 
         $records = $this->app['db']->fetchAll($query);
 
