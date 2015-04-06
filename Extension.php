@@ -2,7 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
+use Bolt\BaseExtension;
+use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Translation\Translator as Trans;
 
 /**
@@ -27,7 +28,7 @@ use Bolt\Translation\Translator as Trans;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Extension extends \Bolt\BaseExtension
+class Extension extends BaseExtension
 {
     /** @var string Extension name */
     const NAME = 'Members';

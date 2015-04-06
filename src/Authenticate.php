@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\Bolt\ClientLogin\ClientLoginEvent;
+use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Extension\Bolt\ClientLogin\ClientRecords;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Library as Lib;
