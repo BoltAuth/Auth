@@ -3,6 +3,7 @@
 * 2.2.0 (2015-xx-xx)
 
  * Enable add/remove of custom roles in admin
+ * Drop support for PHP 5.3 in line with ClientLogin
 
 * 2.1.1 (2015-03-12)
 
