@@ -83,8 +83,8 @@ class Authenticate extends Controller\MembersController
             }
 
             // Save any redirect that ClientLogin has pending
-            $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
-            $this->app['session']->set('clientlogin', $userdata);
+            $this->app['clientlogin.session.handler']->set('pending',     $this->app['request']->get('redirect'));
+            $this->app['clientlogin.session.handler']->set('clientlogin', $userdata);
 
             $providerdata = json_decode($userdata->providerdata, true);
 
