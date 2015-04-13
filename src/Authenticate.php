@@ -86,10 +86,8 @@ class Authenticate extends Controller\MembersController
             $this->app['clientlogin.session.handler']->set('pending',     $this->app['request']->get('redirect'));
             $this->app['clientlogin.session.handler']->set('clientlogin', $userdata);
 
-            $providerdata = json_decode($userdata->providerdata, true);
-
             // Check to see if there is already a member with this email
-            $member = $this->app['members']->getMember('email', $providerdata['email']);
+            $member = $this->app['members']->getMember('email', $userdata->email);
 
             if ($member) {
                 // Associate this login with their Members profile
