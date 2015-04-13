@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+use Bolt\Extension\Bolt\ClientLogin\Client;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Library as Lib;
@@ -66,11 +67,11 @@ class Authenticate extends Controller\MembersController
      */
     public function login(ClientLoginEvent $event)
     {
-        // Get the ClientLogin user data from the event
+        /** @var \Bolt\Extension\Bolt\ClientLogin\Client */
         $userdata = $event->getUser();
 
         // See if we have this in our database
-        $member = $this->isMemberClientLogin($userdata['provider'], $userdata['uid']);
+        $member = $this->isMemberClientLogin($userdata->provider, $userdata->uid);
 
         if ($member) {
             $this->updateMemberLogin($member);
@@ -85,14 +86,14 @@ class Authenticate extends Controller\MembersController
             $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
             $this->app['session']->set('clientlogin', $userdata);
 
-            $providerdata = json_decode($userdata['providerdata'], true);
+            $providerdata = json_decode($userdata->providerdata, true);
 
             // Check to see if there is already a member with this email
             $member = $this->app['members']->getMember('email', $providerdata['email']);
 
             if ($member) {
                 // Associate this login with their Members profile
-                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
             } else {
                 // Redirect to the 'new' page
                 Lib::simpleredirect("/{$this->config['basepath']}/register");
@@ -187,12 +188,12 @@ class Authenticate extends Controller\MembersController
     /**
      * Add a new member to the database
      *
-     * @param array $form
-     * @param array $userdata The array of user data from ClientLogin
+     * @param array         $form
+     * @param Client $userdata The user data from ClientLogin
      *
      * @return boolean
      */
-    protected function addMember($form, $userdata)
+    protected function addMember($form, Client $userdata)
     {
         // Remember to look up email address and match new ClientLogin profiles
         // with existing Members
@@ -201,7 +202,7 @@ class Authenticate extends Controller\MembersController
 
         if ($member) {
             // We already have them, just link the profile
-            $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
+            $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
         } else {
             //
             $create = $this->records->updateMember(false, [
@@ -218,10 +219,10 @@ class Authenticate extends Controller\MembersController
                 $member = $this->app['members']->getMember('email', $form['email']);
 
                 // Add the provider info to meta
-                $this->addMemberClientLoginProfile($member['id'], $userdata['provider'], $userdata['uid']);
+                $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
 
                 // Add meta data from CLientLogin
-                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata['imageUrl']);
+                $this->records->updateMemberMeta($member['id'], 'avatar', $userdata->imageUrl);
 
                 // Event dispatcher
                 if ($this->app['dispatcher']->hasListeners('members.New')) {
