@@ -122,12 +122,12 @@ class Authenticate extends Controller\MembersController
 
         // Get their ClientLogin records
         $token = $this->app['clientlogin.session']->getToken(Session::TOKEN_SESSION);
-        if (!$record = $this->app['clientlogin.records']->getUserProfileBySession($token)) {
+        if (!$record = $this->app['clientlogin.db']->getUserProfileBySession($token)) {
             return false;
         }
 
         // Look them up internally
-        return $this->isMemberClientLogin($record['provider'], $record['identifier']);
+        return $this->isMemberClientLogin($record->provider, $record->uid);
     }
 
     /**
