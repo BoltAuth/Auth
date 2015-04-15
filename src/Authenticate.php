@@ -116,7 +116,7 @@ class Authenticate extends Controller\MembersController
     public function isAuth()
     {
         // First check for ClientLogin auth
-        if (! $this->app['clientlogin.session']->doCheckLogin()) {
+        if (! $this->app['clientlogin.session']->isLoggedIn()) {
             return false;
         }
 
@@ -157,7 +157,7 @@ class Authenticate extends Controller\MembersController
     private function isMemberClientLoginAuth()
     {
         //
-        if ($this->app['clientlogin.session']->doCheckLogin()) {
+        if ($this->app['clientlogin.session']->isLoggedIn()) {
             return true;
         }
 
