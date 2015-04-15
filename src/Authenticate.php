@@ -219,7 +219,7 @@ class Authenticate extends Controller\MembersController
                 // Add the provider info to meta
                 $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
 
-                // Add meta data from CLientLogin
+                // Add meta data from ClientLogin
                 $this->records->updateMemberMeta($member['id'], 'avatar', $userdata->imageUrl);
 
                 // Event dispatcher
