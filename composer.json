@@ -16,7 +16,7 @@
 			"email" : "gawain.lynch@gmail.com"
 		}
 	],
-    "minimum-stability" : "dev",
+	"minimum-stability" : "dev",
 	"autoload" : {
 		"files" : [
 			"init.php"
@@ -25,8 +25,12 @@
 			"Bolt\\Extension\\Bolt\\Members\\" : [
 				"",
 				"src/"
-			],
-			"Bolt\\Extension\\Bolt\\Members\\Tests\\" : "tests/"
+			]
 		}
-	}
+	},
+    "autoload-dev" : {
+        "psr-4" : {
+             "Bolt\\Extension\\Bolt\\Members\\Tests\\" : "tests/"
+         }
+     }
 }
