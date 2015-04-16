@@ -156,10 +156,9 @@ class MembersController implements ControllerProviderInterface
         // Add assets to Twig path
         $this->addTwigPath($app);
 
-        $html = $app['render']->render(
-            $this->config['templates']['register'], [
-                'form'       => $form->createView(),
-                'twigparent' => $this->config['templates']['parent']
+        $html = $app['render']->render($this->config['templates']['register'], [
+            'form'       => $form->createView(),
+            'twigparent' => $this->config['templates']['parent']
         ]);
 
         return new \Twig_Markup($html, 'UTF-8');
