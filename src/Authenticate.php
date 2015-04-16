@@ -5,9 +5,9 @@ namespace Bolt\Extension\Bolt\Members;
 use Bolt\Extension\Bolt\ClientLogin\Client;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Extension\Bolt\ClientLogin\Session;
-use Bolt\Library as Lib;
 use Silex;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Member authentication interface class
@@ -84,7 +84,7 @@ class Authenticate extends Controller\MembersController
 
             // Save any redirect that ClientLogin has pending
             $this->app['clientlogin.session.handler']->set('pending',     $this->app['request']->get('redirect'));
-            $this->app['clientlogin.session.handler']->set('clientlogin', $userdata);
+            $this->app['clientlogin.session.handler']->set('clientlogin', $userdata->id);
 
             // Check to see if there is already a member with this email
             $member = $this->app['members']->getMember('email', $userdata->email);
@@ -94,7 +94,7 @@ class Authenticate extends Controller\MembersController
                 $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
             } else {
                 // Redirect to the 'new' page
-                Lib::simpleredirect("/{$this->config['basepath']}/register");
+                $this->app['clientlogin.session']->setResponse(new RedirectResponse("/{$this->config['basepath']}/register"));
             }
         }
     }
@@ -186,7 +186,7 @@ class Authenticate extends Controller\MembersController
     /**
      * Add a new member to the database
      *
-     * @param array         $form
+     * @param array  $form
      * @param Client $userdata The user data from ClientLogin
      *
      * @return boolean

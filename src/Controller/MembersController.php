@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\ClientLogin\Client;
 use Bolt\Extension\Bolt\ClientLogin\Session;
 use Bolt\Extension\Bolt\Members\Authenticate;
 use Bolt\Extension\Bolt\Members\Entity\Profile;
@@ -94,7 +95,7 @@ class MembersController implements ControllerProviderInterface
     public function register(Application $app, Request $request)
     {
         // Ensure we have a valid Client Login session
-        if (! $app['clientlogin.session']->isLoggedIn()) {
+        if (!$app['clientlogin.session']->isLoggedIn()) {
             return new Response('No valid Client Login session!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         }
 
@@ -109,18 +110,17 @@ class MembersController implements ControllerProviderInterface
             return new Response('Invalid session referral!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         }
 
-        // Expand the JSON array
-        $userdata = json_decode($clientlogin['providerdata'], true);
-        $userdata['provider'] = $clientlogin['provider'];
+        // Get a Client object
+        $userdata = $app['clientlogin.db']->getUserProfileByID($clientlogin);
 
         // Create new register form
         $register = new Register();
         $data = [
             'csrf_protection' => $this->config['csrf'],
             'data'            => [
-                'username'    => substr($app['slugify']->slugify($userdata['name']), 0, 32),
-                'displayname' => $userdata['name'],
-                'email'       => $userdata['email']
+                'username'    => substr($app['slugify']->slugify($userdata->name), 0, 32),
+                'displayname' => $userdata->name,
+                'email'       => $userdata->email
             ]
         ];
 
@@ -175,12 +175,12 @@ class MembersController implements ControllerProviderInterface
     {
         $member = $app['members']->isAuth();
 
-        if (! $member) {
+        if (!$member) {
             return new Response('Invalid profile session!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
-        } else {
-            $member = $app['members']->getMember('id', $member);
-            $id = $member['id'];
         }
+
+        $member = $app['members']->getMember('id', $member);
+        $id = $member['id'];
 
         // Create new register form
         $profile = new Profile();
