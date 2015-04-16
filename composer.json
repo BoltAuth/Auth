@@ -16,6 +16,7 @@
 			"email" : "gawain.lynch@gmail.com"
 		}
 	],
+    "minimum-stability" : "dev",
 	"autoload" : {
 		"files" : [
 			"init.php"
