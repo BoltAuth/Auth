@@ -40,7 +40,7 @@
 		}
 	},
 	"extra" : {
-        "bolt-assets" : ["js/", "css/"],
+		"bolt-assets" : "public/",
 		"branch-alias" : {
 			"dev-master" : "2.2.x-dev"
 		}

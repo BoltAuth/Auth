@@ -92,11 +92,11 @@ class MembersAdminController implements ControllerProviderInterface
         $app['htmlsnippets'] = true;
 
         // Add our JS & CSS
-        $app[Extension::CONTAINER]->addJavascript('js/members.admin.js', true);
+        $app[Extension::CONTAINER]->addJavascript('public/js/members.admin.js', true);
 
         // Temporary until I fork to it's own extension
-        $app[Extension::CONTAINER]->addCss('css/sweet-alert.css', true);
-        $app[Extension::CONTAINER]->addJavascript('js/sweet-alert.min.js', true);
+        $app[Extension::CONTAINER]->addCss('public/css/sweet-alert.css', true);
+        $app[Extension::CONTAINER]->addJavascript('public/js/sweet-alert.min.js', true);
     }
 
     /**
