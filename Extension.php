@@ -47,31 +47,22 @@ class Extension extends BaseExtension
     public function initialize()
     {
         /*
-         * Provider
+         * Providers
          */
         $this->app->register(new Provider\MembersServiceProvider());
+        $this->app->register(new Provider\MembersServiceProvider($this->app));
+        $this->app['twig']->addExtension(new Twig\MembersExtension($this->app));
 
         /*
          * Backend
          */
-        if ($this->app['config']->getWhichEnd() == 'backend') {
+        if ($this->app['config']->getWhichEnd() === 'backend') {
             // Check & create database tables if required
             $records = new Records($this->app);
             $records->dbCheck();
 
             // Create the admin page
             $this->adminMenu();
-        }
-
-        /*
-         * Frontend
-         */
-        if ($this->app['config']->getWhichEnd() == 'frontend') {
-            // Register ourselves as a service
-            $this->app->register(new Provider\MembersServiceProvider($this->app));
-
-            // Twig functions
-            $this->app['twig']->addExtension(new Twig\MembersExtension($this->app));
         }
 
         /*
