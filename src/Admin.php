@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Helpers\String;
-use Silex;
 use Silex\Application;
 
 /**

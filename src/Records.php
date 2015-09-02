@@ -72,7 +72,7 @@ class Records
      */
     public function getMember($field, $value)
     {
-        $query = "SELECT * FROM " . $this->getTableName() . " WHERE {$field} = :value";
+        $query = 'SELECT * FROM ' . $this->getTableName() . " WHERE {$field} = :value";
 
         $map = [
             ':field' => $field,
@@ -103,8 +103,8 @@ class Records
     public function getMemberMeta($userid, $meta = false)
     {
         if ($meta) {
-            $query = "SELECT * FROM " . $this->getTableNameMeta() .
-                     " WHERE userid = :userid and meta = :meta";
+            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
+                     ' WHERE userid = :userid and meta = :meta';
 
             $map = [
                 ':userid' => $userid,
@@ -113,8 +113,8 @@ class Records
 
             $record = $this->app['db']->fetchAssoc($query, $map);
         } else {
-            $query = "SELECT * FROM " . $this->getTableNameMeta() .
-                     " WHERE userid = :userid";
+            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
+                     ' WHERE userid = :userid';
 
             $map = [
                 ':userid' => $userid
@@ -161,16 +161,16 @@ class Records
     public function getMetaRecords($meta, $value = false, $single = false)
     {
         if ($value) {
-            $query = "SELECT * FROM " . $this->getTableNameMeta() .
-                     " WHERE meta = :meta AND value = :value";
+            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
+                     ' WHERE meta = :meta AND value = :value';
 
             $map = [
                 ':meta'  => $meta,
                 ':value' => $value
             ];
         } else {
-            $query = "SELECT * FROM " . $this->getTableNameMeta() .
-                     " WHERE meta = :meta";
+            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
+                     ' WHERE meta = :meta';
 
             $map = [
                 ':meta' => $meta
@@ -263,9 +263,9 @@ class Records
             return $this->tablename;
         }
 
-        $prefix = $this->app['config']->get('general/database/prefix', "bolt_");
-        if ($prefix[ strlen($prefix)-1 ] != "_") {
-            $prefix .= "_";
+        $prefix = $this->app['config']->get('general/database/prefix', 'bolt_');
+        if ($prefix[ strlen($prefix) - 1 ] != '_') {
+            $prefix .= '_';
         }
 
         $this->tablename = $prefix . 'members';
@@ -284,9 +284,9 @@ class Records
             return $this->tablename_meta;
         }
 
-        $prefix = $this->app['config']->get('general/database/prefix', "bolt_");
-        if ($prefix[ strlen($prefix)-1 ] != "_") {
-            $prefix .= "_";
+        $prefix = $this->app['config']->get('general/database/prefix', 'bolt_');
+        if ($prefix[ strlen($prefix) - 1 ] != '_') {
+            $prefix .= '_';
         }
 
         $this->tablename_meta = $prefix . 'members_meta';

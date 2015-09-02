@@ -6,7 +6,6 @@ use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Extension;
 use Bolt\Library as Lib;
 use Bolt\Translation\Translator as Trans;
-use Silex;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
