@@ -25,5 +25,10 @@
 				"src/"
 			]
 		}
-	}
+	},
+        "extra" : {
+                "branch-alias" : {
+                        "dev-development" : "2.1.x-dev"
+                }
+        }
 }
