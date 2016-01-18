@@ -42,7 +42,7 @@ class ValidUsernameValidator extends ConstraintValidator
         if ($records->getMember('username', $value)) {
             $this->context->addViolation(
                 $constraint->message,
-                array('%string%' => $value)
+                ['%string%' => $value]
             );
         }
     }

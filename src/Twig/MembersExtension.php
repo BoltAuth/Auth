@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Twig;
 
 use Bolt\Extension\Bolt\Members\Extension;
+use Silex\Application;
 
 /**
  * Twig functions
@@ -40,10 +41,16 @@ class MembersExtension extends \Twig_Extension
     /** @var \Twig_Environment */
     private $twig = null;
 
-    public function __construct(\Silex\Application $app)
+    /**
+     * Constructor.
+     *
+     * @param Application $app
+     * @param array       $config
+     */
+    public function __construct(Application $app, array $config)
     {
         $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->config = $config;
     }
 
     public function initRuntime(\Twig_Environment $environment)
@@ -67,7 +74,7 @@ class MembersExtension extends \Twig_Extension
         return [
             'member'     => new \Twig_Function_Method($this, 'member'),
             'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
-            'hasrole'    => new \Twig_Function_Method($this, 'hasRole')
+            'hasrole'    => new \Twig_Function_Method($this, 'hasRole'),
         ];
     }
 

@@ -33,33 +33,25 @@ use Silex\Application;
  */
 class Records
 {
-    /**
-     * @var Silex\Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var Extension config array
-     */
+    /** @var array */
     private $config;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $tablename = null;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private $tablename_meta = null;
 
     /**
-     * @param \Silex\Application $app
+     * Constructor.
+     *
+     * @param Application $app
+     * @param array       $config
      */
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $config)
     {
         $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->config = $config;
     }
 
     /**
@@ -76,7 +68,7 @@ class Records
 
         $map = [
             ':field' => $field,
-            ':value' => $value
+            ':value' => $value,
         ];
 
         $record = $this->app['db']->fetchAssoc($query, $map);
@@ -108,7 +100,7 @@ class Records
 
             $map = [
                 ':userid' => $userid,
-                ':meta'   => $meta
+                ':meta'   => $meta,
             ];
 
             $record = $this->app['db']->fetchAssoc($query, $map);
@@ -117,7 +109,7 @@ class Records
                      ' WHERE userid = :userid';
 
             $map = [
-                ':userid' => $userid
+                ':userid' => $userid,
             ];
 
             $record = $this->app['db']->fetchAll($query, $map);
@@ -166,14 +158,14 @@ class Records
 
             $map = [
                 ':meta'  => $meta,
-                ':value' => $value
+                ':value' => $value,
             ];
         } else {
             $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
                      ' WHERE meta = :meta';
 
             $map = [
-                ':meta' => $meta
+                ':meta' => $meta,
             ];
         }
 
@@ -206,7 +198,7 @@ class Records
          */
         if (! empty($userid) && $this->getMember('id', $userid)) {
             $result = $this->app['db']->update($this->getTableName(), $values, [
-                'id' => $userid
+                'id' => $userid,
             ]);
         } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
             $result = $this->app['db']->insert($this->getTableName(), $values);
@@ -233,13 +225,13 @@ class Records
         $data = [
             'userid' => $userid,
             'meta'   => $meta,
-            'value'  => $value
+            'value'  => $value,
         ];
 
         if ($this->getMemberMeta($userid, $meta)) {
             $result = $this->app['db']->update($this->getTableNameMeta(), $data, [
                 'userid' => $userid,
-                'meta'   => $meta
+                'meta'   => $meta,
             ]);
         } else {
             $result = $this->app['db']->insert($this->getTableNameMeta(), $data);

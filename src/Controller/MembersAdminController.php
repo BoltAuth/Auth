@@ -36,20 +36,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MembersAdminController implements ControllerProviderInterface
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
+    /** @var Bolt\Extension\Bolt\Members\Admin */
+    private $admin;
 
     /**
-     * @var Bolt\Extension\Bolt\Members\Admin
+     * Constructor.
+     *
+     * @param array $config
      */
-    private $admin;
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * @param \Silex\Application $app
@@ -118,7 +120,7 @@ class MembersAdminController implements ControllerProviderInterface
 
         $html = $app['render']->render('members.twig', [
             'members' => $this->admin->getMembers(),
-            'roles'   => $app['members']->getAvailableRoles()
+            'roles'   => $app['members']->getAvailableRoles(),
         ]);
 
         return new \Twig_Markup($html, 'UTF-8');
@@ -236,14 +238,14 @@ class MembersAdminController implements ControllerProviderInterface
             return [
                 'job'    => $task,
                 'result' => true,
-                'data'   => ''
+                'data'   => '',
             ];
         }
 
         return [
             'job'    => $task,
             'result' => true,
-            'data'   => $e->getMessage()
+            'data'   => $e->getMessage(),
         ];
     }
 

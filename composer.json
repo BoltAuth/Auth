@@ -1,48 +1,47 @@
 {
-	"name" : "bolt/members",
-	"description" : "Membership creation and management for Bolt",
-	"type" : "bolt-extension",
-	"keywords" : [
-		"profiles"
-	],
-	"require" : {
-		"php" : ">=5.4.0",
-		"bolt/bolt" : ">=2.2.0,<3.0.0",
-		"bolt/clientlogin" : ">=2.2.0"
-	},
-	"license" : "GPL-3.0+",
-	"authors" : [{
-			"name" : "Gawain Lynch",
-			"email" : "gawain.lynch@gmail.com"
-		}
-	],
-	"minimum-stability" : "dev",
-	"repositories" : [{
-			"name" : "bolt",
-			"type" : "composer",
-			"url" : "https://extensions.bolt.cm/satis/"
-		}
-	],
-	"autoload" : {
-		"files" : [
-			"init.php"
-		],
-		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\Members\\" : [
-				"",
-				"src/"
-			]
-		}
-	},
-	"autoload-dev" : {
-		"psr-4" : {
-			"Bolt\\Extension\\Bolt\\Members\\Tests\\" : "tests/"
-		}
-	},
-	"extra" : {
-		"bolt-assets" : "public/",
-		"branch-alias" : {
-			"dev-master" : "2.2.x-dev"
-		}
-	}
+    "name": "bolt/members",
+    "description": "Membership creation and management for Bolt",
+    "type": "bolt-extension",
+    "keywords": [
+        "profiles"
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "bolt/bolt": "^3.0",
+        "bolt/clientlogin": "^3.0"
+    },
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Gawain Lynch",
+            "email": "gawain.lynch@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "name": "bolt",
+            "type": "composer",
+            "url": "https://extensions.bolt.cm/satis/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\Members\\": [
+                "src/"
+            ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\Members\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "bolt-assets": "web",
+        "bolt-class": "Bolt\\Extension\\Bolt\\Members\\MembersExtension",
+        "branch-alias": {
+            "dev-master": "3.0.x-dev"
+        }
+    }
 }

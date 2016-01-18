@@ -44,17 +44,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MembersController implements ControllerProviderInterface
 {
-    /**
-     * Extension config array
-     *
-     * @var array
-     */
+    /** @var array */
     private $config;
+    /** @var Members */
+    private $members;
 
     /**
-     * @var Members
+     * Constructor.
+     *
+     * @param array $config
      */
-    private $members;
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * @param \Silex\Application $app
@@ -63,8 +66,6 @@ class MembersController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        $this->config = $app[Extension::CONTAINER]->config;
-
         /**
          * @var $ctr \Silex\ControllerCollection
          */
@@ -120,8 +121,8 @@ class MembersController implements ControllerProviderInterface
             'data'            => [
                 'username'    => substr($app['slugify']->slugify($userdata->name), 0, 32),
                 'displayname' => $userdata->name,
-                'email'       => $userdata->email
-            ]
+                'email'       => $userdata->email,
+            ],
         ];
 
         $form = $app['form.factory']->createBuilder(new RegisterType(), $register, $data)
@@ -145,6 +146,7 @@ class MembersController implements ControllerProviderInterface
                         return new RedirectResponse($app['resources']->getUrl('hosturl'));
                     } else {
                         $returnpage = str_replace($app['resources']->getUrl('hosturl'), '', $redirect);
+
                         return new RedirectResponse($returnpage);
                     }
                 } else {
@@ -158,7 +160,7 @@ class MembersController implements ControllerProviderInterface
 
         $html = $app['render']->render($this->config['templates']['register'], [
             'form'       => $form->createView(),
-            'twigparent' => $this->config['templates']['parent']
+            'twigparent' => $this->config['templates']['parent'],
         ]);
 
         return new \Twig_Markup($html, 'UTF-8');
@@ -189,8 +191,8 @@ class MembersController implements ControllerProviderInterface
                 'username'    => $member['username'],
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
-                'readonly'    => false
-            ]
+                'readonly'    => false,
+            ],
         ];
 
         $form = $app['form.factory']->createBuilder(new ProfileType(), $profile, $data)
@@ -207,7 +209,7 @@ class MembersController implements ControllerProviderInterface
                 $records = new Records($app);
                 $records->updateMember($id, [
                     'displayname' => $reponse['displayname'],
-                    'email'       => $reponse['email']
+                    'email'       => $reponse['email'],
                 ]);
 
                 return new RedirectResponse($app['resources']->getUrl('hosturl'));
@@ -220,7 +222,7 @@ class MembersController implements ControllerProviderInterface
         $html = $app['render']->render(
             $this->config['templates']['profile_edit'], [
                 'form'       => $form->createView(),
-                'twigparent' => $this->config['templates']['parent']
+                'twigparent' => $this->config['templates']['parent'],
         ]);
 
         return new \Twig_Markup($html, 'UTF-8');
@@ -250,7 +252,7 @@ class MembersController implements ControllerProviderInterface
                 'displayname' => $member['displayname'],
                 'email'       => $member['email'],
                 'avatar'      => $member['avatar']['value'],
-                'twigparent'  => $this->config['templates']['parent']
+                'twigparent'  => $this->config['templates']['parent'],
         ]);
 
         return new \Twig_Markup($html, 'UTF-8');

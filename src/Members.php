@@ -53,12 +53,15 @@ class Members
     private $roles = [];
 
     /**
-     * @param \Silex\Application $app
+     * Constructor.
+     *
+     * @param Application $app
+     * @param array       $config
      */
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $config)
     {
         $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->config = $config;
         $this->records = new Records($this->app);
     }
 
@@ -195,7 +198,7 @@ class Members
      */
     protected function getMembers()
     {
-        $query = "SELECT * FROM " . $this->records->getTableName() . " ORDER BY id ASC";
+        $query = 'SELECT * FROM ' . $this->records->getTableName() . ' ORDER BY id ASC';
 
         $records = $this->app['db']->fetchAll($query);
 

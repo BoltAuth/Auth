@@ -40,27 +40,27 @@ class RegisterType extends AbstractType
                 'data'        => $options['data']['username'],
                 'constraints' => [
                     new ValidUsername(),
-                    new Assert\NotBlank()
-                ]
+                    new Assert\NotBlank(),
+                ],
             ])
             ->add('displayname', 'text',   [
                 'label'       => Trans::__('Publicly visible name:'),
                 'data'        => $options['data']['displayname'],
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['min' => 2])
-                ]
+                    new Assert\Length(['min' => 2]),
+                ],
             ])
             ->add('email',       'text',   [
                 'label'       => Trans::__('Email:'),
                 'data'        => $options['data']['email'],
                 'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
-                    'checkMX' => true
-                ])
+                    'checkMX' => true,
+                ]),
             ])
             ->add('submit',      'submit', [
-                'label'       => Trans::__('Save & continue')
+                'label'       => Trans::__('Save & continue'),
             ]);
     }
 

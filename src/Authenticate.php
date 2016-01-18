@@ -33,16 +33,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class Authenticate extends Controller\MembersController
 {
-    /**
-     * @var Silex\Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * Extension config array
-     *
-     * @var array
-     */
+    /** array @var array */
     private $config;
 
     /**
@@ -51,12 +44,15 @@ class Authenticate extends Controller\MembersController
     private $records;
 
     /**
-     * @param \Silex\Application $app
+     * Constructor.
+     *
+     * @param Application $app
+     * @param array       $config
      */
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $config)
     {
         $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->config = $config;
         $this->records = new Records($this->app);
     }
 
@@ -209,7 +205,7 @@ class Authenticate extends Controller\MembersController
                 'displayname' => $form['displayname'],
                 'lastseen'    => date('Y-m-d H:i:s'),
                 'lastip'      => $this->app['request']->getClientIp(),
-                'enabled'     => 1
+                'enabled'     => 1,
             ]);
 
             if ($create) {
@@ -243,7 +239,7 @@ class Authenticate extends Controller\MembersController
         if ($this->records->getMember('id', $userid)) {
             $this->records->updateMember($userid, [
                 'lastseen' => date('Y-m-d H:i:s'),
-                'lastip'   => $this->app['request']->getClientIp()
+                'lastip'   => $this->app['request']->getClientIp(),
             ]);
         }
     }

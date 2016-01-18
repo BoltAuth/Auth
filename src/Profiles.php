@@ -76,7 +76,7 @@ class Profiles
             'enabled'     => 0,
             'roles'       => '',
             'avatar'      => 'http://placehold.it/350x150&text=Deleted+User',
-            'location'    => 'Unknown'
+            'location'    => 'Unknown',
         ];
     }
 }
