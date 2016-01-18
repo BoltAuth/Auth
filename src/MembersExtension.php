@@ -2,9 +2,20 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\BaseExtension;
+use Bolt\Controller\Zone;
+use Bolt\Events\ControllerEvents;
+use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
+use Bolt\Extension\ConfigTrait;
+use Bolt\Extension\ControllerMountTrait;
+use Bolt\Extension\NutTrait;
+use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
+use Silex\Application;
+use Silex\ServiceProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Membership management extension for Bolt
@@ -28,55 +39,40 @@ use Bolt\Translation\Translator as Trans;
  * @copyright Copyright (c) 2014, Gawain Lynch
  * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
  */
-class Extension extends BaseExtension
+class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
-    /** @var string Extension name */
-    const NAME = 'Members';
-
     /** @var boolean */
     private $isAdmin;
 
-    /** @var string Extension's container */
-    const CONTAINER = 'extensions.Members';
+    use ConfigTrait;
+    use ControllerMountTrait;
+    use NutTrait;
 
-    public function getName()
+    /**
+     * {@inheritdoc}
+     */
+    final public function register(Application $app)
     {
-        return Extension::NAME;
+        $this->extendTwigService();
+        $this->extendNutService();
     }
 
-    public function initialize()
+    public function boot(Application $app)
     {
-        /*
-         * Providers
-         */
-        $this->app->register(new Provider\MembersServiceProvider());
-        $this->app->register(new Provider\MembersServiceProvider($this->app));
-        $this->app['twig']->addExtension(new Twig\MembersExtension($this->app));
+        $app->before([$this, 'before']);
+    }
 
-        /*
-         * Backend
-         */
-        if ($this->app['config']->getWhichEnd() === 'backend') {
+    /**
+     * @param Request     $request
+     * @param Application $app
+     */
+    public function before(Request $request, Application $app)
+    {
+        if (Zone::isBackend($request)) {
             // Check & create database tables if required
-            $records = new Records($this->app);
+            $records = new Records($app);
             $records->dbCheck();
-
-            // Create the admin page
-            $this->adminMenu();
         }
-
-        /*
-         * Controllers
-         */
-        $path = $this->app['config']->get('general/branding/path') . '/extensions/members';
-        $this->app->mount($path, new Controller\MembersAdminController());
-        $this->app->mount('/' . $this->config['basepath'], new Controller\MembersController());
-
-        /*
-         * Hooks
-         */
-        $this->app['dispatcher']->addListener('clientlogin.Login',  [$this, 'loginCallback']);
-        $this->app['dispatcher']->addListener('clientlogin.Logout', [$this, 'logoutCallback']);
     }
 
     /**
@@ -102,59 +98,109 @@ class Extension extends BaseExtension
     }
 
     /**
-     * Determine if the user has admin rights to the page
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
-    public function isAdmin()
+    public static function getSubscribedEvents()
     {
-        if (is_null($this->isAdmin)) {
-            // check if user has allowed role(s)
-            $user    = $this->app['users']->getCurrentUser();
-            $userid  = $user['id'];
+        return [
+            ControllerEvents::MOUNT => [
+                ['onMountControllers', 0],
+            ],
+        ];
+    }
 
-            $this->isAdmin = false;
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerMenuEntries()
+    {
+        $config = $this->getConfig();
 
-            foreach ($this->config['admin_roles'] as $role) {
-                if ($this->app['users']->hasRole($userid, $role)) {
-                    $this->isAdmin = true;
-                    break;
+        return [
+            (new MenuEntry('members', 'members'))
+                ->setLabel(Trans::__('Members'))
+                ->setIcon('fa:users')
+                ->setPermission(implode('||', $config['admin_roles'])),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getServiceProviders()
+    {
+        return [
+            $this,
+            new Provider\MembersServiceProvider($this->getContainer()),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerBackendControllers()
+    {
+        return [
+            '/members' => new Controller\MembersAdminController($this->getConfig()),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerFrontendControllers()
+    {
+        $config = $this->getConfig();
+        $base = '/' . ltrim($config['basepath'], '/');
+
+        return [
+            $base => new Controller\MembersController($this->getConfig()),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addListener('clientlogin.Login',  [$this, 'loginCallback']);
+        $dispatcher->addListener('clientlogin.Logout', [$this, 'logoutCallback']);
+    }
+
+    /**
+     * Register Twig functions.
+     */
+    private function extendTwigService()
+    {
+        /** @var Application $app */
+        $app = $this->getContainer();
+        $config = $this->getConfig();
+
+        $app['twig'] = $app->share(
+            $app->extend(
+                'twig',
+                function (\Twig_Environment $twig) use ($app, $config) {
+                    $twig->addExtension(new Twig\MembersExtension($app, $config));
+
+                    return $twig;
                 }
-            }
-        }
+            )
+        );
 
-        return $this->isAdmin;
+        $app['safe_twig'] = $app->share(
+            $app->extend(
+                'safe_twig',
+                function (\Twig_Environment $twig) use ($app, $config) {
+                    $twig->addExtension(new Twig\MembersExtension($app, $config));
+
+                    return $twig;
+                }
+            )
+        );
     }
 
     /**
-     * Conditionally create the admin menu if the user has a valid role
-     */
-    private function adminMenu()
-    {
-        if ($this->isAdmin()) {
-            $path = $this->app['resources']->getUrl('bolt') . 'extensions/members';
-            $this->app[Extension::CONTAINER]->addMenuOption(Trans::__('Members'), $path, 'fa:users');
-        }
-    }
-
-    private function checkAuthorized()
-    {
-        // check if user has allowed role(s)
-        $user    = $this->app['users']->getCurrentUser();
-        $userid  = $user['id'];
-
-        foreach ($this->config['admin_roles'] as $role) {
-            if ($this->app['users']->hasRole($userid, $role)) {
-                $this->isAdmin = true;
-                break;
-            }
-        }
-    }
-
-    /**
-     * Default config options
-     *
-     * @return array
+     * {@inheritdoc}
      */
     protected function getDefaultConfig()
     {
@@ -164,11 +210,11 @@ class Extension extends BaseExtension
                 'parent'        => 'members.twig',
                 'register'      => 'members_register.twig',
                 'profile_edit'  => 'members_profile_edit.twig',
-                'profile_view'  => 'members_profile_view.twig'
+                'profile_view'  => 'members_profile_view.twig',
             ],
             'registration' => true,
             'csrf'         => true,
-            'admin_roles'  => ['root', 'admin', 'developer', 'chief-editor']
+            'admin_roles'  => ['root', 'admin', 'developer', 'chief-editor'],
         ];
     }
 }
