@@ -29,28 +29,23 @@ use Silex\Application;
  */
 class Admin extends Members
 {
-    /**
-     * @var Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $config;
-
-    /**
-     * @var Records
-     */
+    /** @var Records */
     private $records;
 
     /**
-     * @param \Silex\Application $app
+     * Constructor.
+     *
+     * @param Application $app
+     * @param array       $config
      */
-    public function __construct(Application $app)
+    public function __construct(Application $app, array $config)
     {
         $this->app = $app;
-        $this->config = $this->app[Extension::CONTAINER]->config;
+        $this->config = $config;
     }
 
     public function getMembers()
