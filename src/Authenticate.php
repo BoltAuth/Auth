@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members;
 use Bolt\Extension\Bolt\ClientLogin\Client;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Extension\Bolt\ClientLogin\Session;
-use Silex;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -37,10 +36,7 @@ class Authenticate extends Controller\MembersController
     private $app;
     /** array @var array */
     private $config;
-
-    /**
-     * @var Records
-     */
+    /** @var Records */
     private $records;
 
     /**
@@ -51,6 +47,8 @@ class Authenticate extends Controller\MembersController
      */
     public function __construct(Application $app, array $config)
     {
+        parent::__construct($config);
+
         $this->app = $app;
         $this->config = $config;
         $this->records = new Records($this->app);
@@ -166,6 +164,8 @@ class Authenticate extends Controller\MembersController
      * @param integer $userid     A user's ID
      * @param string  $provider   The login provider
      * @param string  $identifier Provider's unique ID for the user
+     *
+     * @return bool
      */
     private function addMemberClientLoginProfile($userid, $provider, $identifier)
     {
