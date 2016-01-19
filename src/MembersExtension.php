@@ -43,7 +43,9 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     /** @var boolean */
     private $isAdmin;
 
-    use ConfigTrait;
+    use ConfigTrait {
+        getConfig as public;
+    }
     use ControllerMountTrait;
     use NutTrait;
     use MenuTrait;
@@ -131,7 +133,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerBackendControllers()
     {
         return [
-            '/members' => new Controller\MembersAdminController($this->getConfig()),
+            '/members' => new Controller\MembersAdminController($this->getContainer(), $this->getConfig()),
         ];
     }
 
