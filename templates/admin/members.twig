@@ -1,0 +1,165 @@
+{# Page: NavSecondary > Extensions > Members #}
+
+{% extends "_base/_page-nav.twig" %}
+
+{% block page_nav 'Extensions' %}
+
+{% block page_title %}
+{{ __('Members') }}
+{% endblock page_title %}
+
+{% block page_subtitle %}
+Manage Site Membership Roles
+{% endblock page_subtitle %}
+
+{# clear default messages, because we use them in a different spot, in this template #}
+{% block messages "" %}
+
+{% block page_main %}
+
+    <div class="row members-bolt-container">
+        <div class="col-md-9">
+
+            {% include '_sub/_messages.twig' %}
+
+            <section class="members-container">
+                <h3>{{ __('Members') }}</h3>
+                <div class="members-list">
+
+                    <table class="dashboardlisting table" id="members-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{ __('ID') }}</th>
+                                <th></th>
+                                <th>{{ __('Display Name') }}</th>
+                                <th>{{ __('Email') }}</th>
+                                <th>{{ __('Last Seen') }}</th>
+                                <th>{{ __('Roles') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="members-list-items">
+
+                        {% for member in members %}
+                            <tr id="members-member[{{ member.id }}]">
+                                <td class="member-cb">
+                                    <label>
+                                        <input type="checkbox"
+                                               id="form_members_{{ loop.index0 }}"
+                                               name="form[members][]"
+                                               value="{{ member.id }}">
+                                    </label>
+                                </td>
+                                <td class="members-id"><a href="" target="_blank">{{ member.id }}</a></td>
+                                <td class="members-name">
+                                    {% if member.enabled|default(0) != 1 %}
+                                    <i class="fa fa-minus-circle"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="members-name">{{ member.displayname }}</td>
+                                <td class="members-email">{{ member.email }}</td>
+                                <td class="members-seen">{{ member.lastseen }}</td>
+                                <td class="members-roles">
+                                    {% for role in member.roles|default(['-']) %}
+                                    {{ role }}<br>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <hr />
+        </div>
+
+        <aside class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Admin Options</div>
+                <div class="panel-body">
+
+                        <h4><strong>{{ __('Users') }}</strong></h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-user-add">
+                                    <i class="fa fa-wrench"></i> {{ __('Add User') }}
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-user-del">
+                                    <i class="fa fa-wrench"></i> {{ __('Delete User') }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <br><br>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-user-enable">
+                                    <i class="fa fa-wrench"></i> {{ __('Enable') }}
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-user-disable">
+                                    <i class="fa fa-wrench"></i> {{ __('Disable') }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h4><strong>{{ __('Roles') }}</strong></h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-role-add">
+                                    <i class="fa fa-check-square-o"></i> {{ __('Add role') }}
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-tertiary" data-action="members-role-del">
+                                    <i class="fa fa-minus-square-o"></i> {{ __('Remove role') }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <br>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <select class="form-control">
+                                    <option value=""></option>
+                                    {% for role, name in roles %}
+                                    <option value="{{ role }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        var baseurl = "{{paths.bolt}}extensions/members";
+
+        var active_console;
+        var active_interval;
+
+        jQuery(document).ready(function($) {
+            var boltExt = new MembersAdmin();
+            boltExt.setMessage('useradd', '{{__('Adding user...')}}' );
+            boltExt.setMessage('userdel', '{{__('Removing user(s)...')}}');
+            boltExt.setMessage('userenable', '{{__('Enabling user(s)...')}}' );
+            boltExt.setMessage('userdisable', '{{__('Disabling user(s)...')}}');
+            boltExt.setMessage('roleadd', '{{__('Adding role...')}}');
+            boltExt.setMessage('roledel', '{{__('Removing role...')}}');
+        });
+    </script>
+
+{% endblock page_main %}
