@@ -2,12 +2,12 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Controller\Zone;
 use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
+use Bolt\Extension\MenuTrait;
 use Bolt\Extension\NutTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
@@ -15,7 +15,6 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Membership management extension for Bolt
@@ -44,9 +43,12 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     /** @var boolean */
     private $isAdmin;
 
-    use ConfigTrait;
+    use ConfigTrait {
+        getConfig as public;
+    }
     use ControllerMountTrait;
     use NutTrait;
+    use MenuTrait;
 
     /**
      * {@inheritdoc}
@@ -55,24 +57,18 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         $this->extendTwigService();
         $this->extendNutService();
+        $this->extendMenuService();
     }
 
     public function boot(Application $app)
     {
-        $app->before([$this, 'before']);
-    }
+        $this->container = $app;
+        $this->container['dispatcher']->addSubscriber($this);
+        $this->subscribe($this->container['dispatcher']);
 
-    /**
-     * @param Request     $request
-     * @param Application $app
-     */
-    public function before(Request $request, Application $app)
-    {
-        if (Zone::isBackend($request)) {
-            // Check & create database tables if required
-            $records = new Records($app);
-            $records->dbCheck();
-        }
+        // Check & create database tables if required
+        $records = new Records($app, $this->getConfig());
+        $records->dbCheck();
     }
 
     /**
@@ -82,7 +78,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function loginCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->app);
+        $auth = new Authenticate($this->getContainer(), $this->getConfig());
         $auth->login($event);
     }
 
@@ -93,7 +89,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function logoutCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->app);
+        $auth = new Authenticate($this->getContainer(), $this->getConfig());
         $auth->logout($event);
     }
 
@@ -141,7 +137,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerBackendControllers()
     {
         return [
-            '/members' => new Controller\MembersAdminController($this->getConfig()),
+            '/members' => new Controller\MembersAdminController($this->getContainer(), $this->getConfig()),
         ];
     }
 

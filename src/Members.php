@@ -2,8 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\Bolt\ClientLogin\Session;
-use Silex;
+use Doctrine\DBAL\Connection;
 use Silex\Application;
 
 /**
@@ -30,26 +29,13 @@ use Silex\Application;
  */
 class Members
 {
-    /**
-     * @var Silex\Application
-     */
+    /** @var Application */
     private $app;
-
-    /**
-     * Extension config array
-     *
-     * @var array
-     */
+    /** @var array */
     private $config;
-
-    /**
-     * @var Records
-     */
+    /** @var Records */
     private $records;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $roles = [];
 
     /**
@@ -62,7 +48,7 @@ class Members
     {
         $this->app = $app;
         $this->config = $config;
-        $this->records = new Records($this->app);
+        $this->records = new Records($app, $config);
     }
 
     /**
@@ -89,7 +75,7 @@ class Members
 
         try {
             $this->roles[$role] = $name;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
     }
 
@@ -198,9 +184,14 @@ class Members
      */
     protected function getMembers()
     {
-        $query = 'SELECT * FROM ' . $this->records->getTableName() . ' ORDER BY id ASC';
-
-        $records = $this->app['db']->fetchAll($query);
+        /** @var Connection $connection */
+        $connection = $this->app['db'];
+        $query = $connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->records->getTableName())
+            ->orderBy('id', 'ASC')
+        ;
+        $records = $connection->fetchAll($query);
 
         if (empty($records)) {
             return false;

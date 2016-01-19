@@ -2,7 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Silex;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\Schema;
 use Silex\Application;
 
 /**
@@ -37,10 +38,12 @@ class Records
     private $app;
     /** @var array */
     private $config;
+    /** @var Connection */
+    private $connection;
     /** @var string */
-    private $tablename = null;
+    private $tableName = null;
     /** @var string */
-    private $tablename_meta = null;
+    private $tableNameMeta = null;
 
     /**
      * Constructor.
@@ -52,6 +55,7 @@ class Records
     {
         $this->app = $app;
         $this->config = $config;
+        $this->connection = $app['db'];
     }
 
     /**
@@ -64,14 +68,13 @@ class Records
      */
     public function getMember($field, $value)
     {
-        $query = 'SELECT * FROM ' . $this->getTableName() . " WHERE {$field} = :value";
-
-        $map = [
-            ':field' => $field,
-            ':value' => $value,
-        ];
-
-        $record = $this->app['db']->fetchAssoc($query, $map);
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTableName())
+            ->where($field . ' = :value')
+            ->setParameter(':value', $value)
+        ;
+        $record = $this->connection->fetchAssoc($query);
 
         if (empty($record['id'])) {
             return false;
@@ -87,32 +90,27 @@ class Records
     /**
      * Get a members meta record from the database
      *
-     * @param int    $userid
-     * @param string $meta
+     * @param int         $userId
+     * @param bool|string $meta
      *
-     * @return boolean|array
+     * @return array|bool
      */
-    public function getMemberMeta($userid, $meta = false)
+    public function getMemberMeta($userId, $meta = false)
     {
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTableNameMeta())
+            ->where('userid = :userid')
+            ->setParameter(':userid', $userId)
+        ;
+
         if ($meta) {
-            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
-                     ' WHERE userid = :userid and meta = :meta';
-
-            $map = [
-                ':userid' => $userid,
-                ':meta'   => $meta,
-            ];
-
-            $record = $this->app['db']->fetchAssoc($query, $map);
+            $query->andWhere('meta = :meta')
+                ->setParameter(':meta', $meta)
+            ;
+            $record = $this->connection->fetchAssoc($query);
         } else {
-            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
-                     ' WHERE userid = :userid';
-
-            $map = [
-                ':userid' => $userid,
-            ];
-
-            $record = $this->app['db']->fetchAll($query, $map);
+            $record = $this->connection->fetchAll($query);
         }
 
         if (empty($record)) {
@@ -125,14 +123,14 @@ class Records
     /**
      * Return the value of a single meta record for a user
      *
-     * @param integer $userid
+     * @param integer $userId
      * @param string  $meta
      *
      * @return array|boolean
      */
-    public function getMemberMetaValue($userid, $meta)
+    public function getMemberMetaValue($userId, $meta)
     {
-        $record = $this->getMemberMeta($userid, $meta);
+        $record = $this->getMemberMeta($userId, $meta);
 
         if ($record) {
             return $record['value'];
@@ -144,35 +142,31 @@ class Records
     /**
      * Get meta records from the database
      *
-     * @param string  $meta   Key name to search for
-     * @param string  $value  Optional meta value to narrow the match
-     * @param boolean $single Only return the first result
+     * @param string      $meta   Key name to search for
+     * @param bool|string $value  Optional meta value to narrow the match
+     * @param boolean     $single Only return the first result
      *
-     * @return boolean|array
+     * @return array|bool
      */
     public function getMetaRecords($meta, $value = false, $single = false)
     {
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTableNameMeta())
+            ->where('meta = :meta')
+            ->setParameter(':meta', $meta)
+        ;
+
         if ($value) {
-            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
-                     ' WHERE meta = :meta AND value = :value';
-
-            $map = [
-                ':meta'  => $meta,
-                ':value' => $value,
-            ];
-        } else {
-            $query = 'SELECT * FROM ' . $this->getTableNameMeta() .
-                     ' WHERE meta = :meta';
-
-            $map = [
-                ':meta' => $meta,
-            ];
+            $query->andWhere('value = :value')
+                ->setParameter(':value', $value)
+            ;
         }
 
         if ($single) {
-            $record = $this->app['db']->fetchAssoc($query, $map);
+            $record = $this->connection->fetchAssoc($query);
         } else {
-            $record = $this->app['db']->fetchAll($query, $map);
+            $record = $this->connection->fetchAll($query);
         }
 
         if (empty($record)) {
@@ -185,23 +179,24 @@ class Records
     /**
      * Update/insert a member record in the database
      *
-     * @param int   $userid
+     * @param int   $userId
      * @param array $values
      *
      * @return boolean
      */
-    public function updateMember($userid, $values)
+    public function updateMember($userId, $values)
     {
+        $result = false;
         /*
          * Only do an update if there is a valid ID and the member exists
          * Only do an insert if we have a username, displayname and values to add
          */
-        if (! empty($userid) && $this->getMember('id', $userid)) {
-            $result = $this->app['db']->update($this->getTableName(), $values, [
-                'id' => $userid,
+        if (!empty($userId) && $this->getMember('id', $userId)) {
+            $result = $this->connection->update($this->getTableName(), $values, [
+                'id' => $userId,
             ]);
         } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
-            $result = $this->app['db']->insert($this->getTableName(), $values);
+            $result = $this->connection->insert($this->getTableName(), $values);
         }
 
         if ($result) {
@@ -214,27 +209,27 @@ class Records
     /**
      * Update/insert a member's meta record in the database
      *
-     * @param int    $userid
+     * @param int    $userId
      * @param string $meta
      * @param string $value
      *
      * @return boolean
      */
-    public function updateMemberMeta($userid, $meta, $value)
+    public function updateMemberMeta($userId, $meta, $value)
     {
         $data = [
-            'userid' => $userid,
+            'userid' => $userId,
             'meta'   => $meta,
             'value'  => $value,
         ];
 
-        if ($this->getMemberMeta($userid, $meta)) {
-            $result = $this->app['db']->update($this->getTableNameMeta(), $data, [
-                'userid' => $userid,
+        if ($this->getMemberMeta($userId, $meta)) {
+            $result = $this->connection->update($this->getTableNameMeta(), $data, [
+                'userid' => $userId,
                 'meta'   => $meta,
             ]);
         } else {
-            $result = $this->app['db']->insert($this->getTableNameMeta(), $data);
+            $result = $this->connection->insert($this->getTableNameMeta(), $data);
         }
 
         if ($result) {
@@ -251,18 +246,12 @@ class Records
      */
     public function getTableName()
     {
-        if ($this->tablename) {
-            return $this->tablename;
+        if ($this->tableName) {
+            return $this->tableName;
         }
+        $this->tableName = $this->app['schema.prefix'] . 'members';
 
-        $prefix = $this->app['config']->get('general/database/prefix', 'bolt_');
-        if ($prefix[ strlen($prefix) - 1 ] != '_') {
-            $prefix .= '_';
-        }
-
-        $this->tablename = $prefix . 'members';
-
-        return $this->tablename;
+        return $this->tableName;
     }
 
     /**
@@ -272,18 +261,12 @@ class Records
      */
     public function getTableNameMeta()
     {
-        if ($this->tablename_meta) {
-            return $this->tablename_meta;
+        if ($this->tableNameMeta) {
+            return $this->tableNameMeta;
         }
+        $this->tableNameMeta = $this->app['schema.prefix'] . 'members_meta';
 
-        $prefix = $this->app['config']->get('general/database/prefix', 'bolt_');
-        if ($prefix[ strlen($prefix) - 1 ] != '_') {
-            $prefix .= '_';
-        }
-
-        $this->tablename_meta = $prefix . 'members_meta';
-
-        return $this->tablename_meta;
+        return $this->tableNameMeta;
     }
 
     /**
@@ -292,10 +275,10 @@ class Records
     public function dbCheck()
     {
         // Members table
-        $table_name = $this->getTableName();
-        $this->app['integritychecker']->registerExtensionTable(
-            function ($schema) use ($table_name) {
-                $table = $schema->createTable($table_name);
+        $tableName = $this->getTableName();
+        $this->app['schema']->registerExtensionTable(
+            function (Schema $schema) use ($tableName) {
+                $table = $schema->createTable($tableName);
 
                 $table->addColumn('id',          'integer',  ['autoincrement' => true]);
                 $table->addColumn('username',    'string',   ['length' => 32]);
@@ -314,10 +297,10 @@ class Records
         );
 
         // Member meta
-        $table_name = $this->getTableNameMeta();
+        $tableName = $this->getTableNameMeta();
         $this->app['integritychecker']->registerExtensionTable(
-            function ($schema) use ($table_name) {
-                $table = $schema->createTable($table_name);
+            function (Schema $schema) use ($tableName) {
+                $table = $schema->createTable($tableName);
                 $table->addColumn('id',     'integer', ['autoincrement' => true]);
                 $table->addColumn('userid', 'integer');
                 $table->addColumn('meta',   'string',  ['length' => 64]);

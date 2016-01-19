@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Helpers\String;
 use Silex\Application;
 
 /**
@@ -33,8 +32,6 @@ class Admin extends Members
     private $app;
     /** @var array */
     private $config;
-    /** @var Records */
-    private $records;
 
     /**
      * Constructor.
@@ -44,10 +41,15 @@ class Admin extends Members
      */
     public function __construct(Application $app, array $config)
     {
+        parent::__construct($app, $config);
+
         $this->app = $app;
         $this->config = $config;
     }
 
+    /**
+     * @return Members
+     */
     public function getMembers()
     {
         return $this->app['members']->getMembers();
@@ -88,6 +90,8 @@ class Admin extends Members
      *
      * @param integer      $id
      * @param string|array $roles
+     *
+     * @return bool
      */
     public function memberRolesAdd($id, $roles)
     {
@@ -108,6 +112,8 @@ class Admin extends Members
      *
      * @param integer      $id
      * @param string|array $roles
+     *
+     * @return bool
      */
     public function memberRolesRemove($id, $roles)
     {
