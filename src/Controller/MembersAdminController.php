@@ -3,14 +3,13 @@
 namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\Admin;
-use Bolt\Extension\Bolt\Members\Extension;
-use Bolt\Library as Lib;
-use Bolt\Translation\Translator as Trans;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Members admin area controller
@@ -40,7 +39,7 @@ class MembersAdminController implements ControllerProviderInterface
     private $app;
     /** @var array */
     private $config;
-    /** @var Bolt\Extension\Bolt\Members\Admin */
+    /** @var Admin */
     private $admin;
 
     /**
@@ -48,8 +47,9 @@ class MembersAdminController implements ControllerProviderInterface
      *
      * @param array $config
      */
-    public function __construct(array $config)
+    public function __construct(Application $app, array $config)
     {
+        $this->app = $app;
         $this->config = $config;
     }
 
@@ -60,12 +60,7 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        $this->config = $app[Extension::CONTAINER]->config;
-        $this->admin = new Admin($app);
-
-        /**
-         * @var $ctr \Silex\ControllerCollection
-         */
+        /** @var $ctr \Silex\ControllerCollection */
         $ctr = $app['controllers_factory'];
 
         // Admin page
@@ -86,18 +81,35 @@ class MembersAdminController implements ControllerProviderInterface
      *
      * @param Request            $request
      * @param \Silex\Application $app
+     *
+     * @return null|RedirectResponse
      */
     public function before(Request $request, Application $app)
     {
+
         // Enable HTML snippets in our routes so that JS & CSS gets inserted
-        $app['htmlsnippets'] = true;
+        //$app['htmlsnippets'] = true;
 
-        // Add our JS & CSS
-        $app[Extension::CONTAINER]->addJavascript('public/js/members.admin.js', true);
+        //// Add our JS & CSS
+        //$app[Extension::CONTAINER]->addJavascript('public/js/members.admin.js', true);
+        //
+        //// Temporary until I fork to it's own extension
+        //$app[Extension::CONTAINER]->addCss('public/css/sweet-alert.css', true);
+        //$app[Extension::CONTAINER]->addJavascript('public/js/sweet-alert.min.js', true);
 
-        // Temporary until I fork to it's own extension
-        $app[Extension::CONTAINER]->addCss('public/css/sweet-alert.css', true);
-        $app[Extension::CONTAINER]->addJavascript('public/js/sweet-alert.min.js', true);
+        $user    = $app['users']->getCurrentUser();
+        $userid  = $user['id'];
+
+        foreach ($this->config['admin_roles'] as $role) {
+            if ($app['users']->hasRole($userid, $role)) {
+                return null;
+            }
+        }
+
+        /** @var UrlGeneratorInterface $generator */
+        $generator = $this->app['url_generator'];
+
+        return new RedirectResponse($generator->generate('dashboard'), Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -110,16 +122,10 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function admin(Application $app, Request $request)
     {
-        if (!$app[Extension::CONTAINER]->isAdmin()) {
-            $app['session']->getFlashBag()->add('error', Trans::__('You do not have the right privileges to view that page.'));
-
-            return Lib::redirect('dashboard');
-        }
-
         $this->addTwigPath($app);
 
         $html = $app['render']->render('members.twig', [
-            'members' => $this->admin->getMembers(),
+            'members' => $this->getAdmin()->getMembers(),
             'roles'   => $app['members']->getAvailableRoles(),
         ]);
 
@@ -136,94 +142,92 @@ class MembersAdminController implements ControllerProviderInterface
      */
     public function ajax(Application $app, Request $request)
     {
-        if (!$app[Extension::CONTAINER]->isAdmin()) {
-            return new JsonResponse('No!', Response::HTTP_FORBIDDEN);
-        }
-
         // Get the task name
         $task = $app['request']->get('task');
-
-        if ($request->getMethod() === 'POST' && $task) {
-            if ($task === 'userAdd') {
-                /*
-                 * Add a user
-                 */
-                try {
-                    //$app['members']->
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            } elseif ($task === 'userDel') {
-                /*
-                 * Delete a user
-                 */
-                try {
-                    //
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            } elseif ($task === 'userEnable') {
-                /*
-                 * Enable a user
-                 */
-                try {
-                    foreach ($request->request->get('members') as $id) {
-                        $this->admin->memberEnable($id);
-                    }
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            } elseif ($task === 'userDisable') {
-                /*
-                 * Disable a user
-                 */
-                try {
-                    foreach ($request->request->get('members') as $id) {
-                        $this->admin->memberDisable($id);
-                    }
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            } elseif ($task === 'roleAdd') {
-                /*
-                 * Add a role to user(s)
-                 */
-                try {
-                    foreach ($request->request->get('members') as $id) {
-                        $this->admin->memberRolesAdd($id, $request->request->get('role'));
-                    }
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            } elseif ($task === 'roleDel') {
-                /*
-                 * Delete a role from user(s)
-                 */
-                try {
-                    foreach ($request->request->get('members') as $id) {
-                        $this->admin->memberRolesRemove($id, $request->request->get('role'));
-                    }
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
-
-                return new JsonResponse($this->getResult($task));
-            }
-        } elseif ($request->getMethod() === 'GET' && $task) {
+        if ($task === null) {
+            // Yeah, nah
+            return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
         }
 
-        // Yeah, nah
-        return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
+        if (!$request->isMethod('POST')) {
+            // Yeah, nah
+            return new Response('Invalid request parameters', Response::HTTP_BAD_REQUEST);
+        }
+        if ($task === 'userAdd') {
+            /*
+             * Add a user
+             */
+            try {
+                //$app['members']->
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        } elseif ($task === 'userDel') {
+            /*
+             * Delete a user
+             */
+            try {
+                //
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        } elseif ($task === 'userEnable') {
+            /*
+             * Enable a user
+             */
+            try {
+                foreach ($request->request->get('members') as $id) {
+                    $this->getAdmin()->memberEnable($id);
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        } elseif ($task === 'userDisable') {
+            /*
+             * Disable a user
+             */
+            try {
+                foreach ($request->request->get('members') as $id) {
+                    $this->getAdmin()->memberDisable($id);
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        } elseif ($task === 'roleAdd') {
+            /*
+             * Add a role to user(s)
+             */
+            try {
+                foreach ($request->request->get('members') as $id) {
+                    $this->getAdmin()->memberRolesAdd($id, $request->request->get('role'));
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        } elseif ($task === 'roleDel') {
+            /*
+             * Delete a role from user(s)
+             */
+            try {
+                foreach ($request->request->get('members') as $id) {
+                    $this->getAdmin()->memberRolesRemove($id, $request->request->get('role'));
+                }
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult($task, $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new JsonResponse($this->getResult($task));
+        }
     }
 
     /**
@@ -256,6 +260,18 @@ class MembersAdminController implements ControllerProviderInterface
      */
     private function addTwigPath(Application $app)
     {
-        $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/assets/admin');
+        $app['twig.loader.filesystem']->addPath(dirname(dirname(__DIR__)) . '/templates/admin');
+    }
+
+    /**
+     * @return Admin
+     */
+    private function getAdmin()
+    {
+        if ($this->admin === null) {
+            $this->admin = new Admin($this->app, $this->config);
+        }
+
+        return $this->admin;
     }
 }
