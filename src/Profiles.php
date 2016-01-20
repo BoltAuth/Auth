@@ -26,19 +26,19 @@ class Profiles
     /**
      * Get a member's profile
      *
-     * @param integer $userid
+     * @param integer $userId
      *
      * @return array
      */
-    public function getMembersProfiles($userid)
+    public function getMembersProfiles($userId)
     {
-        $records = new Records($this->app);
-
-        $member = $records->getMember('id', $userid);
+        /** @var Records $records */
+        $records = $this->app['members.records'];
+        $member = $records->getMember('id', $userId);
 
         if ($member) {
-            $member['avatar']   = $records->getMemberMetaValue($userid, 'avatar');
-            $member['location'] = $records->getMemberMetaValue($userid, 'location');
+            $member['avatar']   = $records->getMemberMetaValue($userId, 'avatar');
+            $member['location'] = $records->getMemberMetaValue($userId, 'location');
 
             return $member;
         }
@@ -49,7 +49,7 @@ class Profiles
     /**
      * Get a default array to account for a deleted user's data
      *
-     * @return multitype:number string
+     * @return array
      */
     private function getDeletedUser()
     {

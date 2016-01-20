@@ -53,9 +53,7 @@ class MembersController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        /**
-         * @var $ctr \Silex\ControllerCollection
-         */
+        /** @var $ctr \Silex\ControllerCollection */
         $ctr = $app['controllers_factory'];
 
         // New member
@@ -193,7 +191,8 @@ class MembersController implements ControllerProviderInterface
             if ($form->isValid()) {
                 $reponse = $request->get('profile');
 
-                $records = new Records($app);
+                /** @var Records $records */
+                $records = $this->app['members.records'];
                 $records->updateMember($id, [
                     'displayname' => $reponse['displayname'],
                     'email'       => $reponse['email'],

@@ -45,6 +45,33 @@ class Records
     }
 
     /**
+     * Get a set of members record from the database
+     *
+     * @return boolean|array
+     */
+    public function getMembers()
+    {
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->tableName)
+            ->orderBy('id', 'ASC')
+        ;
+        $records = $this->connection->fetchAll($query);
+
+        if (empty($records)) {
+            return false;
+        } else {
+            foreach ($records as $key => $record) {
+                if (isset($record['roles'])) {
+                    $records[$key]['roles'] = json_decode($record['roles'], true);
+                }
+            }
+
+            return $records;
+        }
+    }
+
+    /**
      * Get a members record from the database
      *
      * @param string $field The field to query on (id, username or email)

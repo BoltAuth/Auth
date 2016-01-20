@@ -23,8 +23,8 @@ class ValidUsernameValidator extends ConstraintValidator
         // Get Bolt
         $app = ResourceManager::getApp();
 
-        // Get our records interface
-        $records = new Records($app);
+        /** @var Records $records */
+        $records = $this->app['members.records'];
 
         if ($records->getMember('username', $value)) {
             $this->context->addViolation(

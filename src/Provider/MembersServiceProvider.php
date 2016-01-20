@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Provider;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Profiles;
+use Bolt\Extension\Bolt\Members\Records;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -27,6 +28,15 @@ class MembersServiceProvider implements ServiceProviderInterface
                 $profiles = new Profiles($app);
 
                 return $profiles;
+            }
+        );
+
+
+        $app['members.records'] = $app->share(
+            function ($app) {
+                $records = new Records($app);
+
+                return $records;
             }
         );
     }

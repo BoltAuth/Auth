@@ -18,10 +18,10 @@ class Members
 {
     /** @var Application */
     private $app;
-    /** @var array */
-    private $config;
     /** @var Records */
     private $records;
+    /** @var array */
+    private $config;
     /** @var array */
     private $roles = [];
 
@@ -35,7 +35,7 @@ class Members
     {
         $this->app = $app;
         $this->config = $config;
-        $this->records = new Records($app);
+        $this->records = $this->app['members.records'];
     }
 
     /**
@@ -171,25 +171,6 @@ class Members
      */
     protected function getMembers()
     {
-        /** @var Connection $connection */
-        $connection = $this->app['db'];
-        $query = $connection->createQueryBuilder()
-            ->select('*')
-            ->from($this->records->getTableName())
-            ->orderBy('id', 'ASC')
-        ;
-        $records = $connection->fetchAll($query);
-
-        if (empty($records)) {
-            return false;
-        } else {
-            foreach ($records as $key => $record) {
-                if (isset($record['roles'])) {
-                    $records[$key]['roles'] = json_decode($record['roles'], true);
-                }
-            }
-
-            return $records;
-        }
+        return $this->records->getMembers();
     }
 }
