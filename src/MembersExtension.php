@@ -54,7 +54,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $this->subscribe($this->container['dispatcher']);
 
         // Check & create database tables if required
-        $records = new Records($app, $this->getConfig());
+        $records = new Records($app);
         $records->dbCheck();
     }
 

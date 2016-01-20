@@ -35,7 +35,7 @@ class Members
     {
         $this->app = $app;
         $this->config = $config;
-        $this->records = new Records($app, $config);
+        $this->records = new Records($app);
     }
 
     /**
