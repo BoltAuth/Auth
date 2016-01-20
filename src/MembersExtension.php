@@ -49,12 +49,12 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
 
     public function boot(Application $app)
     {
-        $this->container = $app;
-        $this->container['dispatcher']->addSubscriber($this);
-        $this->subscribe($this->container['dispatcher']);
+        $app['dispatcher']->addSubscriber($this);
 
         // Check & create database tables if required
         $app['members.records']->dbCheck();
+
+        $this->container = $app;
     }
 
     /**
@@ -64,8 +64,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function loginCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->getContainer(), $this->getConfig());
-        $auth->login($event);
+        $app = $this->getContainer();
+        $app['members.authenticate']->login($event);
     }
 
     /**
@@ -75,8 +75,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function logoutCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->getContainer(), $this->getConfig());
-        $auth->logout($event);
+        $app = $this->getContainer();
+        $app['members.authenticate']->logout($event);
     }
 
     /**
@@ -113,7 +113,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new Provider\MembersServiceProvider($this->getContainer()),
+            new Provider\MembersServiceProvider(),
         ];
     }
 
@@ -138,15 +138,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         return [
             $base => new Controller\MembersController($this->getConfig()),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function subscribe(EventDispatcherInterface $dispatcher)
-    {
-        $dispatcher->addListener('clientlogin.Login',  [$this, 'loginCallback']);
-        $dispatcher->addListener('clientlogin.Logout', [$this, 'logoutCallback']);
     }
 
     /**

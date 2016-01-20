@@ -20,6 +20,8 @@ class Members
     private $app;
     /** @var Records */
     private $records;
+    /** @var Authenticate */
+    private $authenticate;
     /** @var array */
     private $config;
     /** @var array */
@@ -36,6 +38,7 @@ class Members
         $this->app = $app;
         $this->config = $config;
         $this->records = $this->app['members.records'];
+        $this->authenticate = $app['members.authenticate'];
     }
 
     /**
@@ -139,9 +142,7 @@ class Members
      */
     public function isAuth()
     {
-        $auth = new Authenticate($this->app);
-
-        return $auth->isAuth();
+        return $this->authenticate->isAuth();
     }
 
     /**

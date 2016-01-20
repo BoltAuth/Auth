@@ -119,8 +119,9 @@ class MembersController implements ControllerProviderInterface
         // If we're in a POST, validate the form
         if ($request->getMethod() === 'POST') {
             if ($form->isValid()) {
+                /** @var Authenticate $auth */
+                $auth = $app['members.authenticate'];
                 // Create new Member record and go back to where we came from
-                $auth = new Authenticate($app);
                 if ($auth->addMember($request->get('register'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
                     $app['clientlogin.session.handler']->remove('pending');
