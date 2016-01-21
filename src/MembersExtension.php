@@ -122,8 +122,9 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerBackendControllers()
     {
+        $app = $this->getContainer();
         return [
-            '/members' => new Controller\MembersAdminController($this->getContainer(), $this->getConfig()),
+            '/extend/members' => $app['members.controller.admin'],
         ];
     }
 
@@ -132,11 +133,12 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerFrontendControllers()
     {
+        $app = $this->getContainer();
         $config = $this->getConfig();
         $base = '/' . ltrim($config['basepath'], '/');
 
         return [
-            $base => new Controller\MembersController($this->getConfig()),
+            $base => $app['members.controller'],
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\Authenticate;
+use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Profiles;
@@ -48,6 +49,26 @@ class MembersServiceProvider implements ServiceProviderInterface
                 $records = new Records($app);
 
                 return $records;
+            }
+        );
+
+        $app['members.controller'] = $app->share(
+            function ($app) {
+                /** @var MembersExtension $extension */
+                $extension = $app['extensions']->get('Bolt/Members');
+                $controller = new Controller\MembersController($extension->getConfig());
+
+                return $controller;
+            }
+        );
+
+        $app['members.controller.admin'] = $app->share(
+            function ($app) {
+                /** @var MembersExtension $extension */
+                $extension = $app['extensions']->get('Bolt/Members');
+                $controller = new Controller\MembersAdminController($app, $extension->getConfig());
+
+                return $controller;
             }
         );
     }
