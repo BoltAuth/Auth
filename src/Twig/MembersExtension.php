@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Twig;
 
-use Bolt\Extension\Bolt\Members\Extension;
 use Silex\Application;
 
 /**
@@ -14,55 +13,19 @@ use Silex\Application;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersExtension extends \Twig_Extension
+class MembersExtension
 {
     /** @var Application */
     private $app;
-
-    /** @var array */
-    private $config;
-
-    /** @var \Bolt\Extension\Bolt\Members\Members */
-    private $members;
-
-    /** @var \Twig_Environment */
-    private $twig = null;
 
     /**
      * Constructor.
      *
      * @param Application $app
-     * @param array       $config
      */
-    public function __construct(Application $app, array $config)
+    public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->config = $config;
-    }
-
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        $this->twig = $environment;
-    }
-
-    /**
-     * Return the name of the extension
-     */
-    public function getName()
-    {
-        return 'members.twig';
-    }
-
-    /**
-     * The functions we add
-     */
-    public function getFunctions()
-    {
-        return [
-            'member'     => new \Twig_Function_Method($this, 'member'),
-            'memberauth' => new \Twig_Function_Method($this, 'memberAuth'),
-            'hasrole'    => new \Twig_Function_Method($this, 'hasRole'),
-        ];
     }
 
     /**
@@ -73,12 +36,12 @@ class MembersExtension extends \Twig_Extension
      *
      * @return \Twig_Markup
      */
-    public function member($id = false, $meta = false)
+    public function member($id = null, $meta = false)
     {
-        $member = $this->app['members']->getMember('id', $id);
+        $member = $this->getMembers()->getMember('id', $id);
 
         if ($meta) {
-            $member['meta'] = $this->app['members']->getMemberMeta($id);
+            $member['meta'] = $this->getMembers()->getMemberMeta($id);
         }
 
         return new \Twig_Markup($member, 'UTF-8');
@@ -91,7 +54,7 @@ class MembersExtension extends \Twig_Extension
      */
     public function memberAuth()
     {
-        return $this->app['members']->isAuth();
+        return $this->getMembers()->isAuth();
     }
 
     /**
@@ -105,7 +68,7 @@ class MembersExtension extends \Twig_Extension
     public function hasRole($role, $id = false)
     {
         if ($id === false) {
-            $member = $this->app['members']->isAuth();
+            $member = $this->getMembers()->isAuth();
 
             if ($member) {
                 $id = $member;
@@ -113,9 +76,17 @@ class MembersExtension extends \Twig_Extension
         }
 
         if ($id) {
-            return $this->app['members']->hasRole('id', $id, $role);
+            return $this->getMembers()->hasRole('id', $id, $role);
         }
 
         return false;
+    }
+
+    /**
+     * @return \Bolt\Extension\Bolt\Members\Members
+     */
+    private function getMembers()
+    {
+        return $this->app['members'];
     }
 }

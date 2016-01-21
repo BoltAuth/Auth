@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\Members\Members;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Profiles;
 use Bolt\Extension\Bolt\Members\Records;
+use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -69,6 +70,14 @@ class MembersServiceProvider implements ServiceProviderInterface
                 $controller = new Controller\MembersAdminController($app, $extension->getConfig());
 
                 return $controller;
+            }
+        );
+
+        $app['members.twig'] = $app->share(
+            function ($app) {
+                $twig = new Twig\MembersExtension($app);
+
+                return $twig;
             }
         );
     }

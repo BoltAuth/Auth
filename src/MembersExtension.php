@@ -9,6 +9,7 @@ use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\MenuTrait;
 use Bolt\Extension\NutTrait;
+use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
@@ -36,6 +37,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     use ControllerMountTrait;
     use NutTrait;
     use MenuTrait;
+    use TwigTrait;
 
     /**
      * {@inheritdoc}
@@ -143,35 +145,26 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * Register Twig functions.
+     * {@inheritdoc}
      */
-    private function extendTwigService()
+    protected function registerTwigFunctions()
     {
-        /** @var Application $app */
         $app = $this->getContainer();
-        $config = $this->getConfig();
+        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
 
-        $app['twig'] = $app->share(
-            $app->extend(
-                'twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\MembersExtension($app, $config));
+        return [
+            'member'     => [[$app['members.twig'], 'member'], $options],
+            'memberauth' => [[$app['members.twig'], 'memberAuth'], $options],
+            'hasrole'    => [[$app['members.twig'], 'hasRole'], $options],
+        ];
+    }
 
-                    return $twig;
-                }
-            )
-        );
-
-        $app['safe_twig'] = $app->share(
-            $app->extend(
-                'safe_twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\MembersExtension($app, $config));
-
-                    return $twig;
-                }
-            )
-        );
+    /**
+     * {@inheritdoc}
+     */
+    protected function isSafe()
+    {
+        return true;
     }
 
     /**
