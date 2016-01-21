@@ -75,9 +75,19 @@ class MembersServiceProvider implements ServiceProviderInterface
 
         $app['members.twig'] = $app->share(
             function ($app) {
-                $twig = new Twig\MembersExtension($app);
+                $app['twig'] = $app->share(
+                    $app->extend(
+                        'twig',
+                        function (\Twig_Environment $twig) use ($app) {
+                            $twig->addGlobal('member', $app['members.authenticate']->getMember());
+                            $twig->addGlobal('is_member', $app['members.authenticate']->isMember());
 
-                return $twig;
+                            return $twig;
+                        }
+                    )
+                );
+
+                return new Twig\MembersExtension($app);
             }
         );
     }

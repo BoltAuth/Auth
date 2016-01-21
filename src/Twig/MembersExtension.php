@@ -29,46 +29,17 @@ class MembersExtension
     }
 
     /**
-     * Return Twig suitable array for a member, or current session
-     *
-     * @param integer $id   [Optional] ID of member to look up
-     * @param boolean $meta [Optional] Return user meta
-     *
-     * @return \Twig_Markup
-     */
-    public function member($id = null, $meta = false)
-    {
-        $member = $this->getMembers()->getMember('id', $id);
-
-        if ($meta) {
-            $member['meta'] = $this->getMembers()->getMemberMeta($id);
-        }
-
-        return new \Twig_Markup($member, 'UTF-8');
-    }
-
-    /**
-     * Test if a user has a valid ClientLogin session AND is a valid member
-     *
-     * @return boolean|integer Member ID, or false
-     */
-    public function memberAuth()
-    {
-        return $this->getMembers()->isAuth();
-    }
-
-    /**
      * Test a member record to see if they have a specific role
      *
-     * @param string $role
-     * @param string $id
+     * @param string  $role
+     * @param integer $id
      *
      * @return boolean
      */
-    public function hasRole($role, $id = false)
+    public function hasRole($role, $id = null)
     {
         if ($id === false) {
-            $member = $this->getMembers()->isAuth();
+            $member = $this->getMembers()->isMember();
 
             if ($member) {
                 $id = $member;

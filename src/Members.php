@@ -136,16 +136,6 @@ class Members
     }
 
     /**
-     * Test if a user has a valid ClientLogin session AND is a valid member
-     *
-     * @return boolean|integer Member ID, or false
-     */
-    public function isAuth()
-    {
-        return $this->authenticate->isAuth();
-    }
-
-    /**
      * Test a member record to see if they have a specific role
      *
      * @param string $field The user field to lookup the user by (id, username or email)
