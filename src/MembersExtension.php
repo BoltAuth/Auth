@@ -9,6 +9,7 @@ use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\MenuTrait;
 use Bolt\Extension\NutTrait;
+use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
@@ -19,24 +20,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Membership management extension for Bolt
  *
- * Copyright (C) 2014  Gawain Lynch
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
- * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
@@ -49,6 +37,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     use ControllerMountTrait;
     use NutTrait;
     use MenuTrait;
+    use TwigTrait;
 
     /**
      * {@inheritdoc}
@@ -62,13 +51,12 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
 
     public function boot(Application $app)
     {
-        $this->container = $app;
-        $this->container['dispatcher']->addSubscriber($this);
-        $this->subscribe($this->container['dispatcher']);
+        $app['dispatcher']->addSubscriber($this);
 
         // Check & create database tables if required
-        $records = new Records($app, $this->getConfig());
-        $records->dbCheck();
+        $app['members.records']->dbCheck();
+
+        $this->container = $app;
     }
 
     /**
@@ -78,8 +66,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function loginCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->getContainer(), $this->getConfig());
-        $auth->login($event);
+        $app = $this->getContainer();
+        $app['members.authenticate']->login($event);
     }
 
     /**
@@ -89,8 +77,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function logoutCallback(ClientLoginEvent $event)
     {
-        $auth = new Authenticate($this->getContainer(), $this->getConfig());
-        $auth->logout($event);
+        $app = $this->getContainer();
+        $app['members.authenticate']->logout($event);
     }
 
     /**
@@ -127,7 +115,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new Provider\MembersServiceProvider($this->getContainer()),
+            new Provider\MembersServiceProvider(),
         ];
     }
 
@@ -136,8 +124,9 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerBackendControllers()
     {
+        $app = $this->getContainer();
         return [
-            '/members' => new Controller\MembersAdminController($this->getContainer(), $this->getConfig()),
+            '/extend/members' => $app['members.controller.admin'],
         ];
     }
 
@@ -146,53 +135,36 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerFrontendControllers()
     {
+        $app = $this->getContainer();
         $config = $this->getConfig();
         $base = '/' . ltrim($config['basepath'], '/');
 
         return [
-            $base => new Controller\MembersController($this->getConfig()),
+            $base => $app['members.controller'],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function subscribe(EventDispatcherInterface $dispatcher)
+    protected function registerTwigFunctions()
     {
-        $dispatcher->addListener('clientlogin.Login',  [$this, 'loginCallback']);
-        $dispatcher->addListener('clientlogin.Logout', [$this, 'logoutCallback']);
+        $app = $this->getContainer();
+        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
+
+        return [
+            'member'     => [[$app['members.twig'], 'member'], $options],
+            'memberauth' => [[$app['members.twig'], 'memberAuth'], $options],
+            'hasrole'    => [[$app['members.twig'], 'hasRole'], $options],
+        ];
     }
 
     /**
-     * Register Twig functions.
+     * {@inheritdoc}
      */
-    private function extendTwigService()
+    protected function isSafe()
     {
-        /** @var Application $app */
-        $app = $this->getContainer();
-        $config = $this->getConfig();
-
-        $app['twig'] = $app->share(
-            $app->extend(
-                'twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\MembersExtension($app, $config));
-
-                    return $twig;
-                }
-            )
-        );
-
-        $app['safe_twig'] = $app->share(
-            $app->extend(
-                'safe_twig',
-                function (\Twig_Environment $twig) use ($app, $config) {
-                    $twig->addExtension(new Twig\MembersExtension($app, $config));
-
-                    return $twig;
-                }
-            )
-        );
+        return true;
     }
 
     /**

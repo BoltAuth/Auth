@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+use Bolt\Storage\Database\Schema\Manager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Silex\Application;
@@ -13,33 +14,18 @@ use Silex\Application;
  * Do NOT call this class from external extensions.
  * Use Bolt\Extension\Bolt\Members\Members instead
  *
- * Copyright (C) 2014  Gawain Lynch
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
- * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 class Records
 {
-    /** @var Application */
-    private $app;
-    /** @var array */
-    private $config;
     /** @var Connection */
     private $connection;
+    /** @var Manager */
+    private $schemaManager;
     /** @var string */
     private $tableName = null;
     /** @var string */
@@ -49,13 +35,40 @@ class Records
      * Constructor.
      *
      * @param Application $app
-     * @param array       $config
      */
-    public function __construct(Application $app, array $config)
+    public function __construct(Application $app)
     {
-        $this->app = $app;
-        $this->config = $config;
         $this->connection = $app['db'];
+        $this->schemaManager = $app['schema'];
+        $this->tableName = $app['schema.prefix'] . 'members';
+        $this->tableNameMeta = $app['schema.prefix'] . 'members_meta';
+    }
+
+    /**
+     * Get a set of members record from the database
+     *
+     * @return boolean|array
+     */
+    public function getMembers()
+    {
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->tableName)
+            ->orderBy('id', 'ASC')
+        ;
+        $records = $this->connection->fetchAll($query);
+
+        if (empty($records)) {
+            return false;
+        } else {
+            foreach ($records as $key => $record) {
+                if (isset($record['roles'])) {
+                    $records[$key]['roles'] = json_decode($record['roles'], true);
+                }
+            }
+
+            return $records;
+        }
     }
 
     /**
@@ -70,13 +83,13 @@ class Records
     {
         $query = $this->connection->createQueryBuilder()
             ->select('*')
-            ->from($this->getTableName())
+            ->from($this->tableName)
             ->where($field . ' = :value')
             ->setParameter(':value', $value)
         ;
         $record = $this->connection->fetchAssoc($query);
 
-        if (empty($record['id'])) {
+        if (empty($record['guid'])) {
             return false;
         } else {
             if (isset($record['roles'])) {
@@ -99,7 +112,7 @@ class Records
     {
         $query = $this->connection->createQueryBuilder()
             ->select('*')
-            ->from($this->getTableNameMeta())
+            ->from($this->tableNameMeta)
             ->where('userid = :userid')
             ->setParameter(':userid', $userId)
         ;
@@ -142,22 +155,22 @@ class Records
     /**
      * Get meta records from the database
      *
-     * @param string      $meta   Key name to search for
-     * @param bool|string $value  Optional meta value to narrow the match
-     * @param boolean     $single Only return the first result
+     * @param string  $meta   Key name to search for
+     * @param string  $value  Optional meta value to narrow the match
+     * @param boolean $single Only return the first result
      *
      * @return array|bool
      */
-    public function getMetaRecords($meta, $value = false, $single = false)
+    public function getMetaRecords($meta, $value = null, $single = null)
     {
         $query = $this->connection->createQueryBuilder()
             ->select('*')
-            ->from($this->getTableNameMeta())
+            ->from($this->tableNameMeta)
             ->where('meta = :meta')
             ->setParameter(':meta', $meta)
         ;
 
-        if ($value) {
+        if ($value !== null) {
             $query->andWhere('value = :value')
                 ->setParameter(':value', $value)
             ;
@@ -191,12 +204,12 @@ class Records
          * Only do an update if there is a valid ID and the member exists
          * Only do an insert if we have a username, displayname and values to add
          */
-        if (!empty($userId) && $this->getMember('id', $userId)) {
-            $result = $this->connection->update($this->getTableName(), $values, [
-                'id' => $userId,
+        if (!empty($userId) && $this->getMember('guid', $userId)) {
+            $result = $this->connection->update($this->tableName, $values, [
+                'guid' => $userId,
             ]);
         } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
-            $result = $this->connection->insert($this->getTableName(), $values);
+            $result = $this->connection->insert($this->tableName, $values);
         }
 
         if ($result) {
@@ -224,12 +237,12 @@ class Records
         ];
 
         if ($this->getMemberMeta($userId, $meta)) {
-            $result = $this->connection->update($this->getTableNameMeta(), $data, [
+            $result = $this->connection->update($this->tableNameMeta, $data, [
                 'userid' => $userId,
                 'meta'   => $meta,
             ]);
         } else {
-            $result = $this->connection->insert($this->getTableNameMeta(), $data);
+            $result = $this->connection->insert($this->tableNameMeta, $data);
         }
 
         if ($result) {
@@ -240,47 +253,16 @@ class Records
     }
 
     /**
-     * Get the name of the user record table
-     *
-     * @return string
-     */
-    public function getTableName()
-    {
-        if ($this->tableName) {
-            return $this->tableName;
-        }
-        $this->tableName = $this->app['schema.prefix'] . 'members';
-
-        return $this->tableName;
-    }
-
-    /**
-     * Get the name of the user record table
-     *
-     * @return string
-     */
-    public function getTableNameMeta()
-    {
-        if ($this->tableNameMeta) {
-            return $this->tableNameMeta;
-        }
-        $this->tableNameMeta = $this->app['schema.prefix'] . 'members_meta';
-
-        return $this->tableNameMeta;
-    }
-
-    /**
      * Create/update database tables
      */
     public function dbCheck()
     {
         // Members table
-        $tableName = $this->getTableName();
-        $this->app['schema']->registerExtensionTable(
-            function (Schema $schema) use ($tableName) {
-                $table = $schema->createTable($tableName);
+        $this->schemaManager->registerExtensionTable(
+            function (Schema $schema) {
+                $table = $schema->createTable($this->tableName);
 
-                $table->addColumn('id',          'integer',  ['autoincrement' => true]);
+                $table->addColumn('guid',        'guid',     []);
                 $table->addColumn('username',    'string',   ['length' => 32]);
                 $table->addColumn('email',       'string',   ['length' => 128]);
                 $table->addColumn('lastseen',    'datetime', ['default' => '1900-01-01 00:00:00']);
@@ -288,7 +270,9 @@ class Records
                 $table->addColumn('displayname', 'string',   ['length' => 32]);
                 $table->addColumn('enabled',     'boolean',  ['default' => 0]);
                 $table->addColumn('roles',       'string',   ['length' => 1024, 'default' => '']);
-                $table->setPrimaryKey(['id']);
+
+                $table->setPrimaryKey(['guid']);
+
                 $table->addIndex(['username']);
                 $table->addIndex(['enabled']);
 
@@ -297,15 +281,16 @@ class Records
         );
 
         // Member meta
-        $tableName = $this->getTableNameMeta();
-        $this->app['integritychecker']->registerExtensionTable(
-            function (Schema $schema) use ($tableName) {
-                $table = $schema->createTable($tableName);
-                $table->addColumn('id',     'integer', ['autoincrement' => true]);
+        $this->schemaManager->registerExtensionTable(
+            function (Schema $schema) {
+                $table = $schema->createTable($this->tableNameMeta);
+                $table->addColumn('guid',   'guid',     []);
                 $table->addColumn('userid', 'integer');
                 $table->addColumn('meta',   'string',  ['length' => 64]);
                 $table->addColumn('value',  'text');
-                $table->setPrimaryKey(['id']);
+
+                $table->setPrimaryKey(['guid']);
+
                 $table->addIndex(['userid']);
                 $table->addIndex(['meta']);
 

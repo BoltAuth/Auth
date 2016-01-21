@@ -8,33 +8,22 @@ use Silex\Application;
 /**
  * Member interface class
  *
- * Copyright (C) 2014  Gawain Lynch
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2014-2016 Gawain Lynch
  *
  * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014, Gawain Lynch
- * @license   http://opensource.org/licenses/GPL-3.0 GNU Public License 3.0
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 class Members
 {
     /** @var Application */
     private $app;
-    /** @var array */
-    private $config;
     /** @var Records */
     private $records;
+    /** @var Authenticate */
+    private $authenticate;
+    /** @var array */
+    private $config;
     /** @var array */
     private $roles = [];
 
@@ -48,7 +37,8 @@ class Members
     {
         $this->app = $app;
         $this->config = $config;
-        $this->records = new Records($app, $config);
+        $this->records = $this->app['members.records'];
+        $this->authenticate = $app['members.authenticate'];
     }
 
     /**
@@ -152,9 +142,7 @@ class Members
      */
     public function isAuth()
     {
-        $auth = new Authenticate($this->app);
-
-        return $auth->isAuth();
+        return $this->authenticate->isAuth();
     }
 
     /**
@@ -184,25 +172,6 @@ class Members
      */
     protected function getMembers()
     {
-        /** @var Connection $connection */
-        $connection = $this->app['db'];
-        $query = $connection->createQueryBuilder()
-            ->select('*')
-            ->from($this->records->getTableName())
-            ->orderBy('id', 'ASC')
-        ;
-        $records = $connection->fetchAll($query);
-
-        if (empty($records)) {
-            return false;
-        } else {
-            foreach ($records as $key => $record) {
-                if (isset($record['roles'])) {
-                    $records[$key]['roles'] = json_decode($record['roles'], true);
-                }
-            }
-
-            return $records;
-        }
+        return $this->records->getMembers();
     }
 }
