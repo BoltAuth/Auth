@@ -17,6 +17,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class MembersServiceProvider implements ServiceProviderInterface, EventSubscriberInterface
 {
+    /** @var array */
+    private $config;
+
+    /**
+     * Constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * @inheritDoc

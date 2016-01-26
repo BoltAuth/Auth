@@ -3,6 +3,8 @@
 namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Extension\AbstractExtension;
+use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
+use Bolt\Extension\ConfigTrait;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
+    use ConfigTrait;
+
     /**
      * @inheritDoc
      */
@@ -44,5 +48,9 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function getServiceProviders()
     {
+        return [
+            $this,
+            new MembersServiceProvider($this->getConfig())
+        ];
     }
 }
