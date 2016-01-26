@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\Controller;
+use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -53,6 +54,20 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     public static function getSubscribedEvents()
     {
         return [];
+    }
+
+    /**
+     * Register base services for Members.
+     *
+     * @param Application $app
+     */
+    protected function registerBase(Application $app)
+    {
+        $app['members.twig'] = $app->share(
+            function () {
+                return new Twig\Functions($this->config);
+            }
+        );
     }
 
     /**

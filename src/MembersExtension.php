@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\MenuTrait;
+use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
@@ -28,6 +29,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     use ConfigTrait;
     use ControllerMountTrait;
     use MenuTrait;
+    use TwigTrait;
 
     /**
      * @inheritDoc
@@ -35,6 +37,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     public function register(Application $app)
     {
         $this->extendMenuService();
+        $this->extendTwigService();
     }
 
     /**
@@ -98,6 +101,29 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
                 ->setLabel(Trans::__('Members'))
                 ->setIcon('fa:users')
                 ->setPermission(implode('||', $config['admin_roles'])),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigPaths()
+    {
+        return ['templates'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigFunctions()
+    {
+        $app = $this->getContainer();
+        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
+
+        return [
+            'members_auth'   => [[$app['members.twig'], 'displayAuth'], $options],
+            'members_login'  => [[$app['members.twig'], 'displayLogin'], $options],
+            'members_logout' => [[$app['members.twig'], 'displayLogout'], $options],
         ];
     }
 
