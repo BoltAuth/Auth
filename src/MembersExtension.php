@@ -42,6 +42,20 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     /**
      * @inheritDoc
      */
+    protected function getDefaultConfig()
+    {
+        return [
+            'registration' => true,
+            'urls'         => [
+                'authentication' => 'authentication',
+                'membership'     => 'membership',
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function registerFrontendControllers()
     {
         $app = $this->getContainer();

@@ -1,0 +1,14 @@
+##
+## Bolt Members configuration options
+##
+
+## Registration
+#
+# If registration should be allowed [true|false]
+registration: true
+
+# Base URLs
+urls:
+    authentication: authentication
+    membership: membership
+
