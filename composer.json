@@ -33,7 +33,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "Bolt\\Extension\\Bolt\\Members\\": "src"
+            "Bolt\\Extension\\Bolt\\Members\\": "src",
+            "League\\Event\\": "lib/League/Event",
+            "League\\OAuth2\\Client\\": "lib/League/OAuth2/Client/",
+            "League\\OAuth2\\Server\\": "lib/League/OAuth2/Server/",
+            "Stevenmaguire\\OAuth2\\Client\\": "lib/League/OAuth2/Client/"
         }
     },
     "autoload-dev": {
