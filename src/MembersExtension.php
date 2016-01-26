@@ -7,6 +7,9 @@ use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
+use Bolt\Extension\MenuTrait;
+use Bolt\Menu\MenuEntry;
+use Bolt\Translation\Translator as Trans;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,12 +27,14 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
 {
     use ConfigTrait;
     use ControllerMountTrait;
+    use MenuTrait;
 
     /**
      * @inheritDoc
      */
     public function register(Application $app)
     {
+        $this->extendMenuService();
     }
 
     /**
@@ -76,6 +81,21 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
 
         return [
             '/extend/members' => $app['members.controller.backend'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function registerMenuEntries()
+    {
+        $config = $this->getConfig();
+
+        return [
+            (new MenuEntry('members', 'members'))
+                ->setLabel(Trans::__('Members'))
+                ->setIcon('fa:users')
+                ->setPermission(implode('||', $config['admin_roles'])),
         ];
     }
 
