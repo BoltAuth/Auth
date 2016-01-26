@@ -1,0 +1,51 @@
+{
+    "name": "bolt/members",
+    "description": "Membership creation and management for Bolt",
+    "type": "bolt-extension",
+    "keywords": [
+        "Facebook",
+        "GitHub",
+        "Google",
+        "login",
+        "membership",
+        "oauth",
+        "profiles"
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "bolt/bolt": "^3.0",
+        "ramsey/uuid": "^3.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gawain Lynch",
+            "email": "gawain.lynch@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "name": "bolt",
+            "type": "composer",
+            "url": "https://extensions.bolt.cm/satis/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\Members\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bolt\\Extension\\Bolt\\Members\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "bolt-assets": "web",
+        "bolt-class": "Bolt\\Extension\\Bolt\\Members\\MembersExtension",
+        "branch-alias": {
+            "dev-master": "3.0.x-dev"
+        }
+    }
+}
