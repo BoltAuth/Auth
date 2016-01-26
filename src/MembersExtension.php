@@ -42,6 +42,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function boot(Application $app)
     {
+        $app['dispatcher']->addSubscriber($this);
+        $this->container = $app;
     }
 
     /**

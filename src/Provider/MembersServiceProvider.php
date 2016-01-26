@@ -44,6 +44,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     public function boot(Application $app)
     {
+        $app['dispatcher']->addSubscriber($this);
     }
 
     /**
