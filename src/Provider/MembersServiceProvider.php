@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
+use Bolt\Extension\Bolt\Members\Controller;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,6 +36,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     public function register(Application $app)
     {
+        $this->registerControllers($app);
     }
 
     /**
@@ -50,5 +52,31 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     public static function getSubscribedEvents()
     {
         return [];
+    }
+
+    /**
+     * Register controller service providers.
+     *
+     * @param Application $app
+     */
+    private function registerControllers(Application $app)
+    {
+        $app['members.controller.authentication'] = $app->share(
+            function () {
+                return new Controller\Authentication($this->config);
+            }
+        );
+
+        $app['members.controller.backend'] = $app->share(
+            function () {
+                return new Controller\Backend($this->config);
+            }
+        );
+
+        $app['members.controller.frontend'] = $app->share(
+            function () {
+                return new Controller\Frontend($this->config);
+            }
+        );
     }
 }

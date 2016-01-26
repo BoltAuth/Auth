@@ -2,9 +2,11 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
+use Bolt\Extension\ControllerMountTrait;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,6 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
     use ConfigTrait;
+    use ControllerMountTrait;
 
     /**
      * @inheritDoc
@@ -39,8 +42,39 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     /**
      * @inheritDoc
      */
+    protected function registerFrontendControllers()
+    {
+        $app = $this->getContainer();
+        $config = (array) $this->getConfig();
+
+        return [
+            $config['urls']['authentication'] => $app['members.controller.authentication'],
+            $config['urls']['membership']     => $app['members.controller.frontend'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function registerBackendControllers()
+    {
+        $app = $this->getContainer();
+
+        return [
+            '/extend/members' => $app['members.controller.backend'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public static function getSubscribedEvents()
     {
+        return [
+            ControllerEvents::MOUNT => [
+                ['onMountControllers', 0],
+            ],
+        ];
     }
 
     /**

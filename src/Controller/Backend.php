@@ -17,6 +17,19 @@ use Silex\ControllerProviderInterface;
  */
 class Backend implements ControllerProviderInterface
 {
+    /** @var array */
+    private $config;
+
+    /**
+     * Constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * @inheritDoc
      */
