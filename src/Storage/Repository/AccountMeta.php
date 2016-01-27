@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\Repository;
 
 /**
@@ -11,6 +12,59 @@ use Bolt\Storage\Repository;
  */
 class AccountMeta extends Repository
 {
+    /**
+     * Fetches all meta data for an account.
+     *
+     * @param string $guid
+     *
+     * @return Entity\AccountMeta[]
+     */
+    public function getAccountMetaAll($guid)
+    {
+        $query = $this->getAccountMetaAllQuery($guid);
+
+        return $this->findWith($query);
+    }
+
+    public function getAccountMetaAllQuery($guid)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where('guid = :guid')
+            ->setParameter('guid', $guid)
+        ;
+
+        return $qb;
+    }
+
+    /**
+     * Fetches a user's single meta record.
+     *
+     * @param string $guid
+     * @param string $metaName
+     *
+     * @return Entity\AccountMeta
+     */
+    public function getAccountMeta($guid, $metaName)
+    {
+        $query = $this->getAccountMetaByNameQuery($guid, $metaName);
+
+        return $this->findOneWith($query);
+    }
+
+    public function getAccountMetaByNameQuery($guid, $metaName)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where('guid = :guid')
+            ->andWhere('meta = :meta')
+            ->setParameter('guid', $guid)
+            ->setParameter('meta', $metaName)
+        ;
+
+        return $qb;
+    }
+
     /**
      * Creates a query builder instance namespaced to this repository
      *
