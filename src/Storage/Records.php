@@ -52,4 +52,52 @@ class Records
     {
         return $this->account->getAccounts();
     }
+
+    /**
+     * Fetches an account by GUID.
+     *
+     * @param string $guid
+     *
+     * @return Entity\Account
+     */
+    public function getAccountByGuid($guid)
+    {
+        return $this->account->getAccountByGuid($guid);
+    }
+
+    /**
+     * Fetches an account by email.
+     *
+     * @param string $email
+     *
+     * @return Entity\Account
+     */
+    public function getAccountByEmail($email)
+    {
+        return $this->account->getAccountByEmail($email);
+    }
+
+    /**
+     * Fetches an account by account name.
+     *
+     * @param string $username
+     *
+     * @return Entity\Account
+     */
+    public function getAccountByUserName($username)
+    {
+        return $this->account->getAccountByUserName($username);
+    }
+
+    /**
+     * Returns all accounts that are either enabled, or disabled.
+     *
+     * @param boolean $status
+     *
+     * @return Entity\Account[]
+     */
+    public function getAccountsByEnableStatus($status)
+    {
+        return $this->account->getAccountsByEnableStatus($status);
+    }
 }
