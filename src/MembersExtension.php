@@ -7,6 +7,7 @@ use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
+use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\MenuTrait;
 use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
@@ -28,20 +29,22 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
 {
     use ConfigTrait;
     use ControllerMountTrait;
+    use DatabaseSchemaTrait;
     use MenuTrait;
     use TwigTrait;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function register(Application $app)
     {
         $this->extendMenuService();
         $this->extendTwigService();
+        $this->extendDatabaseSchemaServices();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function boot(Application $app)
     {
@@ -50,7 +53,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getDefaultConfig()
     {
@@ -64,7 +67,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function registerFrontendControllers()
     {
@@ -78,7 +81,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function registerBackendControllers()
     {
@@ -90,7 +93,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function registerMenuEntries()
     {
@@ -128,7 +131,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
@@ -140,13 +143,29 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getServiceProviders()
     {
         return [
             $this,
             new MembersServiceProvider($this->getConfig())
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerExtensionTables()
+    {
+        $app = $this->getContainer();
+
+        return [
+            'members_account'      => $app['members.schema.table']['members_account_meta'],
+            'members_account_meta' => $app['members.schema.table']['members_account'],
+            'members_oauth'        => $app['members.schema.table']['members_oauth'],
+            'members_provider'     => $app['members.schema.table']['members_provider'],
+            'members_token'        => $app['members.schema.table']['members_token'],
         ];
     }
 }
