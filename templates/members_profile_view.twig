@@ -1,0 +1,24 @@
+{#
+ # Passed in variables:
+ #
+ #}
+{% extends twigparent %}
+
+{% block members %}
+    <div class="row">
+        <h4>Member Profile — {{ displayname }}</h4>
+    </div>
+
+    <div class="row profile">
+
+        <div class="small-3 columns">
+            <img alt="{{ displayname }}" src="{{ avatar }}">
+        </div>
+
+        <div class="small-9 columns">
+            <p>{{ displayname }}</p>
+            <p>{{ email }}</p>
+        </div>
+
+    </div>
+{% endblock %}
