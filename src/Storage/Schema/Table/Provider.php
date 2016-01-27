@@ -16,12 +16,12 @@ class Provider extends BaseTable
      */
     protected function addColumns()
     {
-        $this->table->addColumn('guid',              'guid',     []);
-        $this->table->addColumn('provider',          'string',   ['length' => 64]);
-        $this->table->addColumn('resource_owner_id', 'string',   ['length' => 128]);
-        $this->table->addColumn('refresh_token',     'string',   ['notnull' => false, 'default' => null, 'length' => 128]);
-        $this->table->addColumn('resource_owner',    'text',     ['notnull' => false, 'default' => null]);
-        $this->table->addColumn('lastupdate',        'datetime', ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('guid',              'guid',       []);
+        $this->table->addColumn('provider',          'string',     ['length' => 64]);
+        $this->table->addColumn('resource_owner_id', 'string',     ['length' => 128]);
+        $this->table->addColumn('refresh_token',     'json_array', ['notnull' => false, 'default' => null, 'length' => 128]);
+        $this->table->addColumn('resource_owner',    'text',       ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('lastupdate',        'datetime',   ['notnull' => false, 'default' => null]);
     }
 
     /**

@@ -16,12 +16,12 @@ class Token extends BaseTable
      */
     protected function addColumns()
     {
-        $this->table->addColumn('guid',       'guid',     []);
-        $this->table->addColumn('token_type', 'string',   ['length' => 32]);
-        $this->table->addColumn('token',      'string',   ['length' => 128]);
-        $this->table->addColumn('token_data', 'text',     ['notnull' => false, 'default' => null]);
-        $this->table->addColumn('expires',    'integer',  ['notnull' => false, 'default' => null]);
-        $this->table->addColumn('cookie',     'string',   ['notnull' => false, 'default' => null, 'length' => 128]);
+        $this->table->addColumn('guid',       'guid',       []);
+        $this->table->addColumn('token_type', 'string',     ['length' => 32]);
+        $this->table->addColumn('token',      'string',     ['length' => 128]);
+        $this->table->addColumn('token_data', 'json_array', ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('expires',    'integer',    ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('cookie',     'string',     ['notnull' => false, 'default' => null, 'length' => 128]);
     }
 
     /**
