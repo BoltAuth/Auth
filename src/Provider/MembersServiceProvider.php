@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\Controller;
+use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
@@ -136,5 +137,17 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app['storage.metadata']->setDefaultAlias($app['schema.prefix'] . $alias, key($map));
             $app['storage']->setRepository(key($map), current($map));
         }
+
+        $app['members.records'] = $app->share(
+            function () use ($app) {
+                return new Records(
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Account'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Provider'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Token')
+                );
+            }
+        );
     }
 }
