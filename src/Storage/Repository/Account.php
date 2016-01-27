@@ -21,7 +21,7 @@ class Account extends Repository
     {
         $query = $this->getAccountsQuery();
 
-        return $this->findOneWith($query);
+        return $this->findWith($query);
     }
 
     public function getAccountsQuery()
