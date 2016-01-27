@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Schema\Entity;
+namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
 use Symfony\Component\Validator\Tests\Fixtures\Entity;
 

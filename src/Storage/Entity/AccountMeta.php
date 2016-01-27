@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Schema\Entity;
+namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
 use Bolt\Storage\Entity\Entity;
 
