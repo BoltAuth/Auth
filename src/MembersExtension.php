@@ -160,14 +160,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         $app = $this->getContainer();
 
-        $app['storage.repositories'] += [
-            'Bolt\Extension\Bolt\Members\Storage\Entity\Account'     => 'Bolt\Extension\Bolt\Members\Storage\Repository\Account',
-            'Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta' => 'Bolt\Extension\Bolt\Members\Storage\Repository\AccountMeta',
-            'Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Oauth',
-            'Bolt\Extension\Bolt\Members\Storage\Entity\Provider'    => 'Bolt\Extension\Bolt\Members\Storage\Repository\Provider',
-            'Bolt\Extension\Bolt\Members\Storage\Entity\Token'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Token',
-        ];
-
         return [
             'members_account'      => $app['members.schema.table']['members_account'],
             'members_account_meta' => $app['members.schema.table']['members_account_meta'],

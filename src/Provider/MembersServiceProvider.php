@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\Controller;
-use Bolt\Extension\Bolt\Members\Storage\Schema\Manager;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
@@ -123,5 +122,19 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 // @codingStandardsIgnoreEnd
             }
         );
+
+        $mapping = [
+            'members_account'      => ['Bolt\Extension\Bolt\Members\Storage\Entity\Account'     => 'Bolt\Extension\Bolt\Members\Storage\Repository\Account'],
+            'members_account_meta' => ['Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta' => 'Bolt\Extension\Bolt\Members\Storage\Repository\AccountMeta'],
+            'members_oauth'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Oauth'],
+            'members_provider'     => ['Bolt\Extension\Bolt\Members\Storage\Entity\Provider'    => 'Bolt\Extension\Bolt\Members\Storage\Repository\Provider'],
+            'members_token'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Token'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Token'],
+        ];
+
+        foreach ($mapping as $alias => $map) {
+            $app['storage.repositories'] += $map;
+            $app['storage.metadata']->setDefaultAlias($app['schema.prefix'] . $alias, key($map));
+            $app['storage']->setRepository(key($map), current($map));
+        }
     }
 }
