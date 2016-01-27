@@ -42,5 +42,4 @@ class Token extends BaseTable
     {
         $this->table->setPrimaryKey(['guid']);
     }
-
 }

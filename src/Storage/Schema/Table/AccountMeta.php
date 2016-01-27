@@ -38,5 +38,4 @@ class AccountMeta extends BaseTable
     {
         $this->table->setPrimaryKey(['guid']);
     }
-
 }

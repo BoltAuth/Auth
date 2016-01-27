@@ -40,5 +40,4 @@ class Oauth extends BaseTable
     {
         $this->table->setPrimaryKey(['guid']);
     }
-
 }

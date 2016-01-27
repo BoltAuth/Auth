@@ -44,5 +44,4 @@ class Account extends BaseTable
     {
         $this->table->setPrimaryKey(['guid']);
     }
-
 }
