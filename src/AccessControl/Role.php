@@ -15,6 +15,18 @@ class Role
     protected $displayName;
 
     /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $displayName
+     */
+    public function __construct($name, $displayName)
+    {
+        $this->name = $name;
+        $this->displayName = $displayName;
+    }
+
+    /**
      * @return string
      */
     public function getName()
