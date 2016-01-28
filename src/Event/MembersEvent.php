@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Event;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Role;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -46,11 +47,11 @@ class MembersEvent extends GenericEvent
     }
 
     /**
-     * @param array $roles
+     * @param Role[] $roles
      *
      * @return MembersEvent
      */
-    public function setRoles(array $roles)
+    public function setRoles($roles)
     {
         $this->roles = $roles;
 
