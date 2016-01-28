@@ -12,3 +12,12 @@ urls:
     authentication: authentication
     membership: membership
 
+## Access Control
+#
+roles:
+    admin:
+        - root
+        - admin
+        - developer
+    member:
+        - [ admin => 'Administrator' ]

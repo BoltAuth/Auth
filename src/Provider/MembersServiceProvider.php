@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Roles;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
@@ -67,6 +68,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerBase(Application $app)
     {
+        $app['members.roles'] = $app->share(
+            function () {
+                return new Roles($this->config);
+            }
+        );
+
         $app['members.twig'] = $app->share(
             function () {
                 return new Twig\Functions($this->config);
