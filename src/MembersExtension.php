@@ -97,7 +97,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $app = $this->getContainer();
 
         return [
-            '/extend/members' => $app['members.controller.backend'],
+            '/' => $app['members.controller.backend'],
         ];
     }
 
@@ -146,7 +146,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             ControllerEvents::MOUNT => [
-                ['onMountControllers', 0],
+                ['onMountControllers', -150],
             ],
         ];
     }

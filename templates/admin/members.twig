@@ -50,7 +50,7 @@ Manage Site Membership Roles
                                                value="{{ member.id }}">
                                     </label>
                                 </td>
-                                <td class="members-id"><a href="" target="_blank">{{ member.id }}</a></td>
+                                <td class="members-id"><a href="" target="_blank">{{ member.guid }}</a></td>
                                 <td class="members-name">
                                     {% if member.enabled|default(0) != 1 %}
                                     <i class="fa fa-minus-circle"></i>
@@ -130,8 +130,8 @@ Manage Site Membership Roles
                             <div class="col-md-12">
                                 <select class="form-control">
                                     <option value=""></option>
-                                    {% for role, name in roles %}
-                                    <option value="{{ role }}">{{ name }}</option>
+                                    {% for role in roles %}
+                                    <option value="{{ role.name }}">{{ role.displayname }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
