@@ -7,9 +7,11 @@ use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
+use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,8 +51,38 @@ class Backend implements ControllerProviderInterface
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
         $ctr->match('/extend/members', [$this, 'admin'])
-            ->bind('MembersAdmin')
+            ->bind('membersAdmin')
             ->method('GET')
+        ;
+
+        $ctr->match('/extend/members/action/userAdd', [$this, 'userAdd'])
+            ->bind('membersAdminUserAdd')
+            ->method('POST')
+        ;
+
+        $ctr->match('/extend/members/action/userDelete', [$this, 'userDelete'])
+            ->bind('membersAdminUserDel')
+            ->method('POST')
+        ;
+
+        $ctr->match('/extend/members/action/userEnable', [$this, 'userEnable'])
+            ->bind('membersAdminUserEnable')
+            ->method('POST')
+        ;
+
+        $ctr->match('/extend/members/action/userDisable', [$this, 'userDisable'])
+            ->bind('membersAdminUserDisable')
+            ->method('POST')
+        ;
+
+        $ctr->match('/extend/members/action/roleAdd', [$this, 'roleAdd'])
+            ->bind('membersAdminUserRoleAdd')
+            ->method('POST')
+        ;
+
+        $ctr->match('/extend/members/action/roleDel', [$this, 'roleDel'])
+            ->bind('membersAdminUserRoleDel')
+            ->method('POST')
         ;
 
         $ctr->before([$this, 'before']);
@@ -126,6 +158,195 @@ class Backend implements ControllerProviderInterface
         ]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
+    }
+
+    /**
+     * Add a member.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function userAdd(Application $app, Request $request)
+    {
+        try {
+            $account = new Account();
+            //$account->setGuid();
+            //$account->setUsername();
+            //$account->setDisplayname();
+            //$account->setEmail();
+            //$account->setEnabled();
+            //$account->setRoles();
+
+            //$app['members.records']->saveAccount($account);
+        } catch (\Exception $e) {
+            return new JsonResponse($this->getResult('userAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new JsonResponse($this->getResult('userAdd'));
+    }
+
+    /**
+     * Delete a member.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function userDelete(Application $app, Request $request)
+    {
+        foreach ($request->request->get('members.records') as $guid) {
+            if ($account = $app['members.records']->getAccountByGuid($guid)) {
+                try {
+                    $app['members.records']->deleteAccount($account);
+                } catch (\Exception $e) {
+                    return new JsonResponse($this->getResult('userDelete', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        return new JsonResponse($this->getResult('userDelete'));
+    }
+
+    /**
+     * Enable a member.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function userEnable(Application $app, Request $request)
+    {
+        foreach ($request->request->get('members.records') as $guid) {
+            if ($account = $app['members.records']->getAccountByGuid($guid)) {
+                try {
+                    $account->setEnabled(true);
+                    $app['members.records']->saveAccount($account);
+                } catch (\Exception $e) {
+                    return new JsonResponse($this->getResult('userEnable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        return new JsonResponse($this->getResult('userEnable'));
+    }
+
+    /**
+     * Disable a member.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function userDisable(Application $app, Request $request)
+    {
+        foreach ($request->request->get('members.records') as $guid) {
+            if ($account = $app['members.records']->getAccountByGuid($guid)) {
+                try {
+                    $account->setEnabled(false);
+                    $app['members.records']->saveAccount($account);
+                } catch (\Exception $e) {
+                    return new JsonResponse($this->getResult('userDisable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        return new JsonResponse($this->getResult('userDisable'));
+    }
+
+    /**
+     * Add role(s) for member(s).
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function roleAdd(Application $app, Request $request)
+    {
+        $role = $request->request->get('role');
+        if ($role === null) {
+            return new JsonResponse($this->getResult('roleAdd', new \RuntimeException('Role was empty!')), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        foreach ($request->request->get('members.records') as $guid) {
+            if ($account = $app['members.records']->getAccountByGuid($guid)) {
+                try {
+                    $roles = $account->getRoles();
+                    if (!in_array($role, (array) $roles)) {
+                        $roles[] = $role;
+                    }
+                    $account->setRoles($roles);
+
+                    $app['members.records']->saveAccount($account);
+                } catch (\Exception $e) {
+                    return new JsonResponse($this->getResult('roleAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        return new JsonResponse($this->getResult('roleAdd'));
+    }
+
+    /**
+     * Delete role(s) from member(s).
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return JsonResponse
+     */
+    public function roleDel(Application $app, Request $request)
+    {
+        $role = $request->request->get('role');
+        if ($role === null) {
+            return new JsonResponse($this->getResult('roleAdd', new \RuntimeException('Role was empty!')), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        foreach ($request->request->get('members.records') as $guid) {
+            if ($account = $app['members.records']->getAccountByGuid($guid)) {
+                try {
+                    $roles = $account->getRoles();
+                    unset($roles[$role]);
+                    $account->setRoles($roles);
+
+                    $app['members.records']->saveAccount($account);
+                } catch (\Exception $e) {
+                    return new JsonResponse($this->getResult('roleDel', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        return new JsonResponse($this->getResult('roleDel'));
+    }
+
+    /**
+     * Get an array result suitable to return to the AJAX caller.
+     *
+     * @param string     $task
+     * @param \Exception $e
+     *
+     * @return array
+     */
+    private function getResult($task, \Exception $e = null)
+    {
+        if ($e === null) {
+            return [
+                'job'    => $task,
+                'result' => true,
+                'data'   => '',
+            ];
+        }
+
+        return [
+            'job'    => $task,
+            'result' => true,
+            'data'   => $e->getMessage(),
+        ];
     }
 
     /**

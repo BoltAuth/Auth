@@ -102,6 +102,30 @@ class Records
     }
 
     /**
+     * Save an account entity.
+     *
+     * @param Entity\Account $account
+     *
+     * @return bool
+     */
+    public function saveAccount(Entity\Account $account)
+    {
+        return $this->account->save($account);
+    }
+
+    /**
+     * Delete an account entity.
+     *
+     * @param Entity\Account $account
+     *
+     * @return bool
+     */
+    public function deleteAccount(Entity\Account $account)
+    {
+        return $this->account->delete($account);
+    }
+
+    /**
      * Fetches all meta data for an account.
      *
      * @param string $guid
