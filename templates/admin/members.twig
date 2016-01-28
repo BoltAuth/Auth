@@ -27,6 +27,14 @@ Manage Site Membership Roles
                 <div class="members-list">
 
                     <table class="dashboardlisting table" id="members-table">
+                        <colgroup>
+                            <col class="members-column-check">
+                            <col class="members-column-id">
+                            <col class="members-column-name">
+                            <col class="members-column-display-name">
+                            <col class="members-column-last-seen">
+                            <col class="members-column-roles">
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th></th>
@@ -52,9 +60,9 @@ Manage Site Membership Roles
                                 </td>
                                 <td class="members-id"><a href="" target="_blank">{{ member.guid }}</a></td>
                                 <td class="members-name">
-                                    {% if member.enabled|default(0) != 1 %}
+                                    {%- if member.enabled|default(0) != 1 %}
                                     <i class="fa fa-minus-circle"></i>
-                                    {% endif %}
+                                    {% endif -%}
                                 </td>
                                 <td class="members-name">{{ member.displayname }}</td>
                                 <td class="members-email">{{ member.email }}</td>

@@ -98,10 +98,12 @@ class Backend implements ControllerProviderInterface
         $dir = $extension->getRelativeUrl();
         $saCss = (new Stylesheet($dir . 'css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
         $saJs = (new JavaScript($dir . 'js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
+        $mCss = (new Stylesheet($dir . 'css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false);
         $mJs = (new JavaScript($dir . 'js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
 
         $app['asset.queue.file']->add($saCss);
         $app['asset.queue.file']->add($saJs);
+        $app['asset.queue.file']->add($mCss);
         $app['asset.queue.file']->add($mJs);
     }
 
