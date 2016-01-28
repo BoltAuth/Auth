@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\AccessControl;
 
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,15 +18,15 @@ class Roles implements EventSubscriberInterface
     /** @var Role[] */
     protected $roles;
 
-    /** @var array */
+    /** @var Config */
     private $config;
 
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param Config $config
      */
-    public function __construct(array $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -42,7 +43,7 @@ class Roles implements EventSubscriberInterface
 
     public function addBaseRoles()
     {
-        foreach ($this->config['roles']['member'] as $name => $displayName) {
+        foreach ($this->config->getRolesMember() as $name => $displayName) {
             $this->roles[$name] = new Role($name, $displayName);
         }
     }

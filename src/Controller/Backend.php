@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -25,15 +26,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Backend implements ControllerProviderInterface
 {
-    /** @var array */
+    /** @var Config */
     private $config;
 
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param Config $config
      */
-    public function __construct(array $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
@@ -70,7 +71,7 @@ class Backend implements ControllerProviderInterface
         $user    = $app['users']->getCurrentUser();
         $userid  = $user['id'];
 
-        foreach ($this->config['roles']['admin'] as $role) {
+        foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
                 if (!$request->isXmlHttpRequest()) {
                     $this->addWebAssets($app);

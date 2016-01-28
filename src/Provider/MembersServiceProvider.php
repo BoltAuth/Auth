@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Roles;
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
@@ -68,15 +69,21 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerBase(Application $app)
     {
-        $app['members.roles'] = $app->share(
+        $app['members.config'] = $app->share(
             function () {
-                return new Roles($this->config);
+                return new Config($this->config);
+            }
+        );
+
+        $app['members.roles'] = $app->share(
+            function ($app) {
+                return new Roles($app['members.config']);
             }
         );
 
         $app['members.twig'] = $app->share(
-            function () {
-                return new Twig\Functions($this->config);
+            function ($app) {
+                return new Twig\Functions($app['members.config']);
             }
         );
     }
@@ -89,20 +96,20 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     private function registerControllers(Application $app)
     {
         $app['members.controller.authentication'] = $app->share(
-            function () {
-                return new Controller\Authentication($this->config);
+            function ($app) {
+                return new Controller\Authentication($app['members.config']);
             }
         );
 
         $app['members.controller.backend'] = $app->share(
-            function () {
-                return new Controller\Backend($this->config);
+            function ($app) {
+                return new Controller\Backend($app['members.config']);
             }
         );
 
         $app['members.controller.frontend'] = $app->share(
-            function () {
-                return new Controller\Frontend($this->config);
+            function ($app) {
+                return new Controller\Frontend($app['members.config']);
             }
         );
     }

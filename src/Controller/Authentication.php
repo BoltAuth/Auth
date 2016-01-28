@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -17,15 +18,15 @@ use Silex\ControllerProviderInterface;
  */
 class Authentication implements ControllerProviderInterface
 {
-    /** @var array */
+    /** @var Config */
     private $config;
 
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param Config $config
      */
-    public function __construct(array $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }

@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Twig;
 
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Twig_Markup;
 
 /**
@@ -15,15 +16,15 @@ use Twig_Markup;
  */
 class Functions
 {
-    /** @var array */
+    /** @var Config */
     private $config;
 
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param Config $config
      */
-    public function __construct(array $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }
