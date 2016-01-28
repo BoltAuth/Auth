@@ -125,4 +125,40 @@ class Records
     {
         return $this->accountMeta->getAccountMetaByNameQuery($guid, $metaName);
     }
+
+    /**
+     * Fetches an OAuth entries by GUID.
+     *
+     * @param string $guid
+     *
+     * @return Entity\Account
+     */
+    public function getOauthByGuid($guid)
+    {
+        return $this->oauth->getOauthByGuidQuery($guid);
+    }
+
+    /**
+     * Fetches an OAuth entries by GUID.
+     *
+     * @param string $email
+     *
+     * @return Entity\Account
+     */
+    public function getOauthByEmail($email)
+    {
+        return $this->oauth->getOauthByEmailQuery($email);
+    }
+
+    /**
+     * Fetches an OAuth entries by Resource Owner ID.
+     *
+     * @param string $resourceOwnerId
+     *
+     * @return Entity\Account
+     */
+    public function getOauthByResourceOwnerId($resourceOwnerId)
+    {
+        return $this->oauth->getOauthByResourceOwnerIdQuery($resourceOwnerId);
+    }
 }
