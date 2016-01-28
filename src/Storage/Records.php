@@ -161,4 +161,52 @@ class Records
     {
         return $this->oauth->getOauthByResourceOwnerIdQuery($resourceOwnerId);
     }
+
+    /**
+     * Fetches Provider entries by GUID.
+     *
+     * @param string $guid
+     *
+     * @return Entity\Provider[]
+     */
+    public function getProvisionsByGuid($guid)
+    {
+        return $this->provider->getProvisionsByGuidQuery($guid);
+    }
+
+    /**
+     * Fetches Provider entries by provider name.
+     *
+     * @param string $provider
+     *
+     * @return Entity\Provider[]
+     */
+    public function getProvisionsByProvider($provider)
+    {
+        return $this->provider->getProvisionsByProviderQuery($provider);
+    }
+
+    /**
+     * Fetches Provider entry by resource owner.
+     *
+     * @param string $resourceOwner
+     *
+     * @return Entity\Provider
+     */
+    public function getProvisionByResourceOwner($resourceOwner)
+    {
+        return $this->provider->getProvisionByResourceOwnerQuery($resourceOwner);
+    }
+
+    /**
+     * Fetches an Provider entries by resource owner ID.
+     *
+     * @param string $resourceOwnerId
+     *
+     * @return Entity\Provider
+     */
+    public function getProvisionByResourceOwnerId($resourceOwnerId)
+    {
+        return $this->provider->getProvisionByResourceOwnerIdQuery($resourceOwnerId);
+    }
 }
