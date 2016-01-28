@@ -209,4 +209,38 @@ class Records
     {
         return $this->provider->getProvisionByResourceOwnerIdQuery($resourceOwnerId);
     }
+
+    /**
+     * Fetches Token entries by GUID.
+     *
+     * @param string $guid
+     *
+     * @return Entity\Token[]
+     */
+    public function getTokensByGuid($guid)
+    {
+        return $this->token->getTokensByGuidQuery($guid);
+    }
+
+    /**
+     * Fetches all tokens by cookie.
+     *
+     * @param $cookie
+     *
+     * @return Entity\Token[]
+     */
+    public function getTokensByCookie($cookie)
+    {
+        return $this->token->getTokensByCookieQuery($cookie);
+    }
+
+    /**
+     * Fetches expired tokens.
+     *
+     * @return Entity\Account
+     */
+    public function getTokensExpired()
+    {
+        return $this->token->getTokensExpiredQuery();
+    }
 }
