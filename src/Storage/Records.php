@@ -100,4 +100,29 @@ class Records
     {
         return $this->account->getAccountsByEnableStatus($status);
     }
+
+    /**
+     * Fetches all meta data for an account.
+     *
+     * @param string $guid
+     *
+     * @return Entity\AccountMeta[]
+     */
+    public function getAccountMetaAll($guid)
+    {
+        return $this->accountMeta->getAccountMetaAll($guid);
+    }
+
+    /**
+     * Fetches a user's single meta record.
+     *
+     * @param string $guid
+     * @param string $metaName
+     *
+     * @return Entity\AccountMeta
+     */
+    public function getAccountMeta($guid, $metaName)
+    {
+        return $this->accountMeta->getAccountMetaByNameQuery($guid, $metaName);
+    }
 }
