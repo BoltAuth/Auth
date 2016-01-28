@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Asset\File\JavaScript;
+use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Silex\Application;
@@ -70,6 +72,10 @@ class Backend implements ControllerProviderInterface
 
         foreach ($this->config['roles']['admin'] as $role) {
             if ($app['users']->hasRole($userid, $role)) {
+                if (!$request->isXmlHttpRequest()) {
+                    $this->addWebAssets($app);
+                }
+
                 return null;
             }
         }
@@ -78,6 +84,25 @@ class Backend implements ControllerProviderInterface
         $generator = $app['url_generator'];
 
         return new RedirectResponse($generator->generate('dashboard'), Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * Inject web assets for our route.
+     *
+     * @param Application $app
+     */
+    private function addWebAssets(Application $app)
+    {
+        /** @var MembersExtension $extension */
+        $extension = $app['extensions']->get('Bolt/Members');
+        $dir = $extension->getRelativeUrl();
+        $saCss = (new Stylesheet($dir . 'css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
+        $saJs = (new JavaScript($dir . 'js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
+        $mJs = (new JavaScript($dir . 'js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
+
+        $app['asset.queue.file']->add($saCss);
+        $app['asset.queue.file']->add($saJs);
+        $app['asset.queue.file']->add($mJs);
     }
 
     /**
