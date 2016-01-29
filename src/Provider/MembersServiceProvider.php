@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Provider;
 use Bolt\Extension\Bolt\Members\AccessControl\Roles;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
+use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
@@ -44,6 +45,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerBase($app);
         $this->registerControllers($app);
         $this->registerStorage($app);
+
+        $app['members.admin'] = $app->share(
+            function ($app) {
+                return new Admin($app['members.records'], $app['members.config']);
+            }
+        );
     }
 
     /**

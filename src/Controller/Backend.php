@@ -179,7 +179,7 @@ class Backend implements ControllerProviderInterface
             //$account->setEnabled();
             //$account->setRoles();
 
-            //$app['members.records']->saveAccount($account);
+            $app['members.admin']->addAccount($account);
         } catch (\Exception $e) {
             return new JsonResponse($this->getResult('userAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -197,13 +197,11 @@ class Backend implements ControllerProviderInterface
      */
     public function userDelete(Application $app, Request $request)
     {
-        foreach ($request->request->get('members.records') as $guid) {
-            if ($account = $app['members.records']->getAccountByGuid($guid)) {
-                try {
-                    $app['members.records']->deleteAccount($account);
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult('userDelete', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+        foreach ($request->request->get('members') as $guid) {
+            try {
+                $app['members.admin']->deleteAccount($guid);
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult('userDelete', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -220,14 +218,11 @@ class Backend implements ControllerProviderInterface
      */
     public function userEnable(Application $app, Request $request)
     {
-        foreach ($request->request->get('members.records') as $guid) {
-            if ($account = $app['members.records']->getAccountByGuid($guid)) {
-                try {
-                    $account->setEnabled(true);
-                    $app['members.records']->saveAccount($account);
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult('userEnable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+        foreach ($request->request->get('members') as $guid) {
+            try {
+                $app['members.admin']->enableAccount($guid);
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult('userEnable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -244,14 +239,11 @@ class Backend implements ControllerProviderInterface
      */
     public function userDisable(Application $app, Request $request)
     {
-        foreach ($request->request->get('members.records') as $guid) {
-            if ($account = $app['members.records']->getAccountByGuid($guid)) {
-                try {
-                    $account->setEnabled(false);
-                    $app['members.records']->saveAccount($account);
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult('userDisable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+        foreach ($request->request->get('members') as $guid) {
+            try {
+                $app['members.admin']->disableAccount($guid);
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult('userEnable', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -273,19 +265,11 @@ class Backend implements ControllerProviderInterface
             return new JsonResponse($this->getResult('roleAdd', new \RuntimeException('Role was empty!')), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        foreach ($request->request->get('members.records') as $guid) {
-            if ($account = $app['members.records']->getAccountByGuid($guid)) {
-                try {
-                    $roles = $account->getRoles();
-                    if (!in_array($role, (array) $roles)) {
-                        $roles[] = $role;
-                    }
-                    $account->setRoles($roles);
-
-                    $app['members.records']->saveAccount($account);
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult('roleAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+        foreach ($request->request->get('members') as $guid) {
+            try {
+                $app['members.admin']->addAccountRole($guid, $role);
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult('roleAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -307,17 +291,11 @@ class Backend implements ControllerProviderInterface
             return new JsonResponse($this->getResult('roleAdd', new \RuntimeException('Role was empty!')), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        foreach ($request->request->get('members.records') as $guid) {
-            if ($account = $app['members.records']->getAccountByGuid($guid)) {
-                try {
-                    $roles = $account->getRoles();
-                    unset($roles[$role]);
-                    $account->setRoles($roles);
-
-                    $app['members.records']->saveAccount($account);
-                } catch (\Exception $e) {
-                    return new JsonResponse($this->getResult('roleDel', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+        foreach ($request->request->get('members') as $guid) {
+            try {
+                $app['members.admin']->deleteAccountRole($guid, $role);
+            } catch (\Exception $e) {
+                return new JsonResponse($this->getResult('roleDel', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
