@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl\Roles;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Admin;
+use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
@@ -45,6 +46,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerBase($app);
         $this->registerControllers($app);
         $this->registerStorage($app);
+        $this->registerForms($app);
 
         $app['members.admin'] = $app->share(
             function ($app) {
@@ -168,6 +170,43 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Provider'),
                     $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Token')
                 );
+            }
+        );
+    }
+
+    private function registerForms(Application $app)
+    {
+        $app['members.forms'] = $app->share(
+            function ($app) {
+                $type = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+                $entity = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'profile'  => $app->share(function () use ($app) { return new Form\Entity\Profile($app['members.records']); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Entity\Register($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+                $constraint = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'email' => $app->share(function () use ($app) { return new Form\Validator\Constraint\UniqueEmail($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+
+                return new \Pimple([
+                    'type'       => $type,
+                    'entity'     => $entity,
+                    'constraint' => $constraint,
+                ]);
             }
         );
     }
