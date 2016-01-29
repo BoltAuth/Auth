@@ -5,18 +5,24 @@ namespace Bolt\Extension\Bolt\Members;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table\Account;
+use Bolt\Users;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Members admin class.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Admin
+class Admin implements EventSubscriberInterface
 {
     /** @var Records */
     protected $records;
     /** @var Config */
     protected $config;
+    /** @var Users */
+    private $users;
 
     /**
      * Constructor.
@@ -24,10 +30,11 @@ class Admin
      * @param Records $records
      * @param Config  $config
      */
-    public function __construct(Records $records, Config $config)
+    public function __construct(Records $records, Config $config, Users $users)
     {
         $this->records = $records;
         $this->config = $config;
+        $this->users = $users;
     }
 
     /**
@@ -125,5 +132,31 @@ class Admin
         $account->setRoles($roles);
 
         return $this->records->saveAccount($account);
+    }
+
+    /***
+     * Enforce system roles for runtime modification of member properties.
+     *
+     * @throws AccessDeniedException
+     */
+    public function onRequest()
+    {
+        foreach ($this->config->getRolesAdmin() as $role) {
+            if ($this->users->isAllowed($role)) {
+                return;
+            }
+        }
+
+        throw new AccessDeniedException('Logged in user does not have the correct rights to use this class.');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => ['onRequest', -8],
+        ];
     }
 }

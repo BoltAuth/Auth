@@ -48,7 +48,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.admin'] = $app->share(
             function ($app) {
-                return new Admin($app['members.records'], $app['members.config']);
+                return new Admin($app['members.records'], $app['members.config'], $app['users']);
             }
         );
     }
