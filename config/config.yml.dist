@@ -9,8 +9,8 @@ registration: true
 
 # Base URLs
 urls:
-    authentication: authentication
-    membership: membership
+    authenticate: authentication
+    members: membership
 
 ## Access Control
 #

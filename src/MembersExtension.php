@@ -70,8 +70,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
                 ],
             ],
             'urls'         => [
-                'authentication' => 'authentication',
-                'membership'     => 'membership',
+                'authenticate' => 'authentication',
+                'members'      => 'membership',
             ],
         ];
     }
@@ -85,8 +85,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $config = (array) $this->getConfig();
 
         return [
-            $config['urls']['authentication'] => $app['members.controller.authentication'],
-            $config['urls']['membership']     => $app['members.controller.frontend'],
+            $config['urls']['authenticate'] => $app['members.controller.authentication'],
+            $config['urls']['members']      => $app['members.controller.frontend'],
         ];
     }
 

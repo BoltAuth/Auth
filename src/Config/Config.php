@@ -16,9 +16,9 @@ class Config
     /** @var array */
     protected $rolesMember;
     /** @var string */
-    protected $urlAuthentication;
+    protected $urlAuthenticate;
     /** @var string */
-    protected $urlMembership;
+    protected $urlMembers;
 
     /**
      * Constructor.
@@ -30,8 +30,8 @@ class Config
         $this->registration = $extensionConfig['registration'];
         $this->rolesAdmin = $extensionConfig['roles']['admin'];
         $this->rolesMember = $extensionConfig['roles']['member'];
-        $this->urlAuthentication = $extensionConfig['urls']['authentication'];
-        $this->urlMembership = $extensionConfig['urls']['membership'];
+        $this->urlAuthenticate = $extensionConfig['urls']['authenticate'];
+        $this->urlMembers = $extensionConfig['urls']['members'];
     }
 
     /**
@@ -99,17 +99,17 @@ class Config
      */
     public function getUrlAuthentication()
     {
-        return $this->urlAuthentication;
+        return $this->urlAuthenticate;
     }
 
     /**
-     * @param string $urlAuthentication
+     * @param string $urlAuthenticate
      *
      * @return Config
      */
-    public function setUrlAuthentication($urlAuthentication)
+    public function setUrlAuthentication($urlAuthenticate)
     {
-        $this->urlAuthentication = $urlAuthentication;
+        $this->urlAuthenticate = $urlAuthenticate;
 
         return $this;
     }
@@ -117,19 +117,19 @@ class Config
     /**
      * @return string
      */
-    public function getUrlMembership()
+    public function getUrlMembers()
     {
-        return $this->urlMembership;
+        return $this->urlMembers;
     }
 
     /**
-     * @param string $urlMembership
+     * @param string $urlMembers
      *
      * @return Config
      */
-    public function setUrlMembership($urlMembership)
+    public function setUrlMembers($urlMembers)
     {
-        $this->urlMembership = $urlMembership;
+        $this->urlMembers = $urlMembers;
 
         return $this;
     }
