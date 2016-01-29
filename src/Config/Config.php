@@ -19,6 +19,8 @@ class Config
     protected $rolesAdmin;
     /** @var array */
     protected $rolesMember;
+    /** @var array */
+    protected $rolesRegister;
     /** @var string */
     protected $urlAuthenticate;
     /** @var string */
@@ -37,6 +39,7 @@ class Config
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
+        $this->rolesRegister = $config['roles']['register'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
     }
@@ -50,7 +53,7 @@ class Config
     public function getTemplates($parent, $key)
     {
         if (!isset($this->templates[$parent][$key])) {
-            throw new \BadMethodCallException(sprintf('Tamplate of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
+            throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
         }
 
         return $this->templates[$parent][$key];
@@ -149,6 +152,26 @@ class Config
     }
 
     /**
+     * @return array
+     */
+    public function getRolesRegister()
+    {
+        return $this->rolesRegister;
+    }
+
+    /**
+     * @param array $rolesRegister
+     *
+     * @return Config
+     */
+    public function setRolesRegister(array $rolesRegister)
+    {
+        $this->rolesRegister = $rolesRegister;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getUrlAuthentication()
@@ -202,6 +225,9 @@ class Config
                 'member' => [
                     'admin' => 'Administrator',
                 ],
+                'register' => [
+                    'participant'
+                ]
             ],
             'urls'         => [
                 'authenticate' => 'authentication',

@@ -40,4 +40,6 @@ roles:
         - admin
         - developer
     member:
-        - [ admin => 'Administrator' ]
+        - [ admin => 'Administrator', Participant => 'participant' ]
+    register:
+        - participant
