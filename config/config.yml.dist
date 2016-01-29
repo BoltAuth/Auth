@@ -2,6 +2,26 @@
 ## Bolt Members configuration options
 ##
 
+## Template overrides
+#
+# The template names that you wish to use in your theme to override the defaults
+templates:
+    profile:
+        parent: members.twig
+        register: members_register.twig
+        edit: members_profile_edit.twig
+        view: members_profile_view.twig
+    authentication:
+        parent: password.twig
+        login: _login.twig
+        password: _password.twig
+        feedback: _feedback.twig
+        button: _button.twig
+    error:
+        parent: members_error.twig
+        error: _members_error.twig
+
+
 ## Registration
 #
 # If registration should be allowed [true|false]
