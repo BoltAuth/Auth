@@ -2,9 +2,11 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
+use Bolt\Extension\Bolt\Members\Storage\Entity\AbstractGuidEntity;
 use Bolt\Storage\Entity\Entity;
 use Bolt\Storage\QuerySet;
 use Bolt\Storage\Repository;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Bolt core ID/GUID mapping.
@@ -16,8 +18,30 @@ abstract class AbstractGuidRepository extends Repository
     /**
      * {@inheritdoc}
      */
+    public function save($entity, $silent = null)
+    {
+        try {
+            $existing = $entity->getGuid();
+        } catch (\Exception $e) {
+            $existing = false;
+        }
+
+        if ($existing) {
+            $response = $this->update($entity);
+        } else {
+            $response = $this->insert($entity);
+        }
+
+        return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function insert(Entity $entity)
     {
+        /** @var AbstractGuidEntity $entity */
+        $entity->setGuid(Uuid::uuid4()->toString());
         $querySet = new QuerySet();
         $qb = $this->em->createQueryBuilder();
         $qb->insert($this->getTableName());
