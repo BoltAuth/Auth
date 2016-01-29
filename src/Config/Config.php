@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Config;
 
+use Bolt\Helpers\Arr;
+
 /**
  * Base configuration class.
  *
@@ -27,11 +29,33 @@ class Config
      */
     public function __construct(array $extensionConfig)
     {
-        $this->registration = $extensionConfig['registration'];
-        $this->rolesAdmin = $extensionConfig['roles']['admin'];
-        $this->rolesMember = $extensionConfig['roles']['member'];
-        $this->urlAuthenticate = $extensionConfig['urls']['authenticate'];
-        $this->urlMembers = $extensionConfig['urls']['members'];
+        $config = Arr::mergeRecursiveDistinct($this->getDefaultConfig(), $extensionConfig);
+
+        $this->registration = $config['registration'];
+        $this->rolesAdmin = $config['roles']['admin'];
+        $this->rolesMember = $config['roles']['member'];
+        $this->urlAuthenticate = $config['urls']['authenticate'];
+        $this->urlMembers = $config['urls']['members'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlAuthenticate()
+    {
+        return $this->urlAuthenticate;
+    }
+
+    /**
+     * @param string $urlAuthenticate
+     *
+     * @return Config
+     */
+    public function setUrlAuthenticate($urlAuthenticate)
+    {
+        $this->urlAuthenticate = $urlAuthenticate;
+
+        return $this;
     }
 
     /**
@@ -132,5 +156,27 @@ class Config
         $this->urlMembers = $urlMembers;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultConfig()
+    {
+        return [
+            'registration' => true,
+            'roles' => [
+                'admin'  => [
+                    'root'
+                ],
+                'member' => [
+                    'admin' => 'Administrator',
+                ],
+            ],
+            'urls'         => [
+                'authenticate' => 'authentication',
+                'members'      => 'membership',
+            ],
+        ];
     }
 }
