@@ -10,7 +10,7 @@ use Bolt\Storage\Repository;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Provider extends Repository
+class Provider extends AbstractGuidRepository
 {
     /**
      * Fetches Provider entries by GUID.

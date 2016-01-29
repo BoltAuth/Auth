@@ -10,7 +10,7 @@ use Bolt\Storage\Repository;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Account extends Repository
+class Account extends AbstractGuidRepository
 {
     /**
      * Fetches an account by GUID.
@@ -130,16 +130,5 @@ class Account extends Repository
         ;
 
         return $qb;
-    }
-
-    /**
-     * Creates a query builder instance namespaced to this repository.
-     *
-     * @return \Doctrine\DBAL\Query\QueryBuilder
-     */
-    public function createQueryBuilder()
-    {
-        return $this->em->createQueryBuilder()
-            ->from($this->getTableName());
     }
 }

@@ -10,7 +10,7 @@ use Bolt\Storage\Repository;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class AccountMeta extends Repository
+class AccountMeta extends AbstractGuidRepository
 {
     /**
      * Fetches all meta data for an account.

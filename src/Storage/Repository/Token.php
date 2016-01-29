@@ -12,7 +12,7 @@ use Carbon\Carbon;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Token extends Repository
+class Token extends AbstractGuidRepository
 {
     /**
      * Fetches Token entries by GUID.

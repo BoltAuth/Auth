@@ -10,7 +10,7 @@ use Bolt\Storage\Repository;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Oauth extends Repository
+class Oauth extends AbstractGuidRepository
 {
     /**
      * Fetches an OAuth entries by GUID.
