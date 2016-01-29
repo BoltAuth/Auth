@@ -9,11 +9,8 @@ use Bolt\Storage\Entity\Entity;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Token extends Entity
+class Token extends AbstractGuidEntity
 {
-    use IdGuidMappingTrait;
-
-    protected $guid;
     protected $token_type;
     protected $token;
     protected $token_data;

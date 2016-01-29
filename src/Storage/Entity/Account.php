@@ -9,11 +9,8 @@ use Bolt\Storage\Entity\Entity;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Account extends Entity
+class Account extends AbstractGuidEntity
 {
-    use IdGuidMappingTrait;
-
-    protected $guid;
     protected $username;
     protected $email;
     protected $lastseen;
@@ -21,22 +18,6 @@ class Account extends Entity
     protected $displayname;
     protected $enabled;
     protected $roles;
-
-    /**
-     * @return mixed
-     */
-    public function getGuid()
-    {
-        return $this->guid;
-    }
-
-    /**
-     * @param mixed $guid
-     */
-    public function setGuid($guid)
-    {
-        $this->guid = $guid;
-    }
 
     /**
      * @return mixed

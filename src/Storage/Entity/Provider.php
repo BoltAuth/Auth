@@ -9,32 +9,13 @@ use Symfony\Component\Validator\Tests\Fixtures\Entity;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Provider extends Entity
+class Provider extends AbstractGuidEntity
 {
-    use IdGuidMappingTrait;
-
-    protected $guid;
     protected $provider;
     protected $resource_owner_id;
     protected $refresh_token;
     protected $resource_owner;
     protected $lastupdate;
-
-    /**
-     * @return mixed
-     */
-    public function getGuid()
-    {
-        return $this->guid;
-    }
-
-    /**
-     * @param mixed $guid
-     */
-    public function setGuid($guid)
-    {
-        $this->guid = $guid;
-    }
 
     /**
      * @return mixed

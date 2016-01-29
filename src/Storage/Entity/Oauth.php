@@ -9,31 +9,12 @@ use Bolt\Storage\Entity\Entity;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Oauth extends Entity
+class Oauth extends AbstractGuidEntity
 {
-    use IdGuidMappingTrait;
-
-    protected $guid;
     protected $resource_owner_id;
     protected $password;
     protected $email;
     protected $enabled;
-
-    /**
-     * @return mixed
-     */
-    public function getGuid()
-    {
-        return $this->guid;
-    }
-
-    /**
-     * @param mixed $guid
-     */
-    public function setGuid($guid)
-    {
-        $this->guid = $guid;
-    }
 
     /**
      * @return mixed
