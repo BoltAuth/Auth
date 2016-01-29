@@ -63,8 +63,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $config = (array) $this->getConfig();
 
         return [
-            $config['urls']['authenticate'] => $app['members.controller.authentication'],
-            $config['urls']['members']      => $app['members.controller.frontend'],
+            $app['members.config']->getUrlAuthentication() => $app['members.controller.authentication'],
+            $app['members.config']->getUrlMembers()        => $app['members.controller.frontend'],
         ];
     }
 
