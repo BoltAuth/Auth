@@ -54,11 +54,11 @@ var MembersAdmin = Object.extend(
 
         doUserAdd: function(e) {
             var controller = this;
-            var selected_members = new Array();
+            var selected_members = [];
 
             console.debug("Adding a user");
 
-            $.post(baseurl + '/ajax?task=userAdd', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userAdd', {member: selected_members}, function(selected_members) {})
                 .done(
                     function() {
                         swal({title: "", text: "Feature coming soon!", type: "info"});
@@ -74,7 +74,7 @@ var MembersAdmin = Object.extend(
 
         doUserDel: function(e) {
             var controller = this;
-            var selected_members = new Array();
+            var selected_members = [];
 
             $.each(
                 $("input[name='form[members][]']:checked"), function() {
@@ -84,7 +84,7 @@ var MembersAdmin = Object.extend(
 
             console.debug("Deleting user(s): " + selected_members);
 
-            $.post(baseurl + '/ajax?task=userDel', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userDel', {members: selected_members}, function(selected_members) {})
                 .done(
                     function() {
                         swal({title: "", text: "Feature coming soon!", type: "info"});
@@ -100,7 +100,7 @@ var MembersAdmin = Object.extend(
 
         doUserEnable: function(e) {
             var controller = this;
-            var selected_members = new Array();
+            var selected_members = [];
 
             $.each(
                 $("input[name='form[members][]']:checked"), function() {
@@ -108,14 +108,14 @@ var MembersAdmin = Object.extend(
                 }
             );
 
-            if (selected_members == '') {
+            if (selected_members == []) {
                 swal({title: "Nothing Selected!", text: "You need to chose a member.", type: "warning"});
                 return;
             }
 
             console.debug("Enabling user(s): " + selected_members);
 
-            $.post(baseurl + '/ajax?task=userEnable', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userEnable', {members: selected_members}, function(selected_members) {})
                 .done(
                     function() {
                         location.reload(true);
@@ -130,7 +130,7 @@ var MembersAdmin = Object.extend(
 
         doUserDisable: function(e) {
             var controller = this;
-            var selected_members = new Array();
+            var selected_members = [];
 
             $.each(
                 $("input[name='form[members][]']:checked"), function() {
@@ -145,7 +145,7 @@ var MembersAdmin = Object.extend(
 
             console.debug("Disabling user(s): " + selected_members);
 
-            $.post(baseurl + '/ajax?task=userDisable', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userDisable', {members: selected_members}, function(selected_members) {})
                 .done(
                     function() {
                         location.reload(true);
@@ -160,8 +160,8 @@ var MembersAdmin = Object.extend(
 
         doRoleAdd: function(e) {
             var controller = this;
-            var selected_members = new Array();
-            var selected_role = $("#members-role-select option:selected").val();
+            var selected_members = [];
+            var selected_role = $(".members-select-roles :selected").val();
 
             $.each(
                 $("input[name='form[members][]']:checked"), function() {
@@ -182,7 +182,7 @@ var MembersAdmin = Object.extend(
             console.debug("Adding role '" + selected_role + "' to user(s): " + selected_members);
 
             $.post(
-                    baseurl + '/ajax?task=roleAdd',
+                    baseurl + '/roleAdd',
                 {members: selected_members, role: selected_role},
                 function(selected_members, selected_role) {}
                 )
@@ -207,8 +207,8 @@ var MembersAdmin = Object.extend(
 
         doRoleDel: function(e) {
             var controller = this;
-            var selected_members = new Array();
-            var selected_role = $("#members-role-select option:selected").val();
+            var selected_members = [];
+            var selected_role = $(".members-select-roles :selected").val();
 
             $.each(
                 $("input[name='form[members][]']:checked"), function() {
@@ -229,7 +229,7 @@ var MembersAdmin = Object.extend(
             console.debug("Removing role '" + selected_role + "' from user(s): " + selected_members);
 
             $.post(
-                    baseurl + '/ajax?task=roleDel',
+                    baseurl + '/roleDel',
                 {members: selected_members, role: selected_role},
                 function(selected_members, selected_role) {}
                 )

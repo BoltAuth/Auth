@@ -3,19 +3,19 @@ col.members-column-check {
     /*width: 10%;*/
 }
 
-col.members-column-id {
+col.members-column-enabled {
     /*width: 30%;*/
 }
 
-col.members-column-name {
+col.members-column-guid {
+    /*width: 30%;*/
+}
+
+col.members-column-displayname {
     /*width: 10%;*/
 }
 
-col.members-column-display-name {
-    /*width: 10%;*/
-}
-
-col.members-column-last-seen {
+col.members-column-lastseen {
     /*width: 10%;*/
 }
 
