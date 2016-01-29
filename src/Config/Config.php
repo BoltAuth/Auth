@@ -11,6 +11,8 @@ use Bolt\Helpers\Arr;
  */
 class Config
 {
+    /** @var array */
+    protected $templates;
     /** @var  boolean */
     protected $registration;
     /** @var array */
@@ -31,11 +33,39 @@ class Config
     {
         $config = Arr::mergeRecursiveDistinct($this->getDefaultConfig(), $extensionConfig);
 
+        $this->templates = $config['templates'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
+    }
+
+    /**
+     * @param $parent
+     * @param $key
+     *
+     * @return array
+     */
+    public function getTemplates($parent, $key)
+    {
+        if (!isset($this->templates[$parent][$key])) {
+            throw new \BadMethodCallException(sprintf('Tamplate of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
+        }
+
+        return $this->templates[$parent][$key];
+    }
+
+    /**
+     * @param array $templates
+     *
+     * @return Config
+     */
+    public function setTemplates($templates)
+    {
+        $this->templates = $templates;
+
+        return $this;
     }
 
     /**
