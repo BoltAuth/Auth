@@ -134,9 +134,11 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
 
         return [
-            'members_auth'   => [[$app['members.twig'], 'displayAuth'], $options],
-            'members_login'  => [[$app['members.twig'], 'displayLogin'], $options],
-            'members_logout' => [[$app['members.twig'], 'displayLogout'], $options],
+            'is_member'             => [[$app['members.twig'], 'isMember'], $options],
+            'member_has_role'       => [[$app['members.twig'], 'hasRole'], $options],
+            'members_auth_switcher' => [[$app['members.twig'], 'renderSwitcher'], $options],
+            'members_auth_login'    => [[$app['members.twig'], 'renderLogin'], $options],
+            'members_auth_logout'   => [[$app['members.twig'], 'renderLogout'], $options],
         ];
     }
 

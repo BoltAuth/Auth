@@ -30,13 +30,33 @@ class Functions
     }
 
     /**
+     * Check if the current session is a logged-in member.
+     *
+     * @return bool
+     */
+    public function isMember()
+    {
+        return true;
+    }
+
+    /**
+     * Check if the current logged-in session has a member role.
+     *
+     * @return bool
+     */
+    public function hasRole()
+    {
+        return true;
+    }
+
+    /**
      * Display login/logout button(s) depending on status.
      *
      * @param bool $redirect
      *
      * @return Twig_Markup
      */
-    public function displayAuth($redirect = false)
+    public function renderSwitcher($redirect = false)
     {
         return new Twig_Markup('', 'UTF-8');
     }
@@ -48,7 +68,7 @@ class Functions
      *
      * @return Twig_Markup
      */
-    public function displayLogin($redirect = false)
+    public function renderLogin($redirect = false)
     {
         return new Twig_Markup('', 'UTF-8');
     }
@@ -60,7 +80,7 @@ class Functions
      *
      * @return Twig_Markup
      */
-    public function displayLogout($redirect = false)
+    public function renderLogout($redirect = false)
     {
         return new Twig_Markup('', 'UTF-8');
     }
