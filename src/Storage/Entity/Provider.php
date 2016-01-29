@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Tests\Fixtures\Entity;
  */
 class Provider extends Entity
 {
+    use IdGuidMappingTrait;
+
     protected $guid;
     protected $provider;
     protected $resource_owner_id;

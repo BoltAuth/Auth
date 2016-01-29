@@ -11,6 +11,8 @@ use Bolt\Storage\Entity\Entity;
  */
 class Account extends Entity
 {
+    use IdGuidMappingTrait;
+
     protected $guid;
     protected $username;
     protected $email;

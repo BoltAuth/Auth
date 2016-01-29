@@ -11,6 +11,8 @@ use Bolt\Storage\Entity\Entity;
  */
 class Oauth extends Entity
 {
+    use IdGuidMappingTrait;
+
     protected $guid;
     protected $resource_owner_id;
     protected $password;

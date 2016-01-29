@@ -11,6 +11,8 @@ use Bolt\Storage\Entity\Entity;
  */
 class AccountMeta extends Entity
 {
+    use IdGuidMappingTrait;
+
     protected $guid;
     protected $meta;
     protected $value;

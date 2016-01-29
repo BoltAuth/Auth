@@ -11,6 +11,8 @@ use Bolt\Storage\Entity\Entity;
  */
 class Token extends Entity
 {
+    use IdGuidMappingTrait;
+
     protected $guid;
     protected $token_type;
     protected $token;
