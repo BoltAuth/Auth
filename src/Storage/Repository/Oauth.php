@@ -13,6 +13,27 @@ use Bolt\Storage\Repository;
 class Oauth extends AbstractGuidRepository
 {
     /**
+     * {@inheritdoc}
+     */
+    public function save($entity, $silent = null)
+    {
+        try {
+            /** @var Entity\Oauth $entity */
+            $existing = $this->getOauthByGuid($entity->getGuid());
+        } catch (\Exception $e) {
+            $existing = false;
+        }
+
+        if ($existing) {
+            $response = $this->update($entity);
+        } else {
+            $response = $this->insert($entity);
+        }
+
+        return $response;
+    }
+
+    /**
      * Fetches an OAuth entries by GUID.
      *
      * @param string $guid

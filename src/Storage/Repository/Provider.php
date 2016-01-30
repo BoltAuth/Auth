@@ -13,6 +13,27 @@ use Bolt\Storage\Repository;
 class Provider extends AbstractGuidRepository
 {
     /**
+     * {@inheritdoc}
+     */
+    public function save($entity, $silent = null)
+    {
+        try {
+            /** @var Entity\Provider $entity */
+            $existing = $this->getProvisionByResourceOwnerId($entity->getResourceOwnerId());
+        } catch (\Exception $e) {
+            $existing = false;
+        }
+
+        if ($existing) {
+            $response = $this->update($entity);
+        } else {
+            $response = $this->insert($entity);
+        }
+
+        return $response;
+    }
+
+    /**
      * Fetches Provider entries by GUID.
      *
      * @param string $guid

@@ -13,6 +13,27 @@ use Bolt\Storage\Repository;
 class AccountMeta extends AbstractGuidRepository
 {
     /**
+     * {@inheritdoc}
+     */
+    public function save($entity, $silent = null)
+    {
+        try {
+            /** @var Entity\AccountMeta $entity */
+            $existing = $this->getAccountMeta($entity->getGuid(), $entity->getMeta());
+        } catch (\Exception $e) {
+            $existing = false;
+        }
+
+        if ($existing) {
+            $response = $this->update($entity);
+        } else {
+            $response = $this->insert($entity);
+        }
+
+        return $response;
+    }
+
+    /**
      * Fetches all meta data for an account.
      *
      * @param string $guid

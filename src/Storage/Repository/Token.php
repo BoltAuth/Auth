@@ -15,6 +15,52 @@ use Carbon\Carbon;
 class Token extends AbstractGuidRepository
 {
     /**
+     * {@inheritdoc}
+     */
+    public function save($entity, $silent = null)
+    {
+        try {
+            /** @var Entity\Token $entity */
+            $existing = $this->getToken($entity->getToken());
+        } catch (\Exception $e) {
+            $existing = false;
+        }
+
+        if ($existing) {
+            $response = $this->update($entity);
+        } else {
+            $response = $this->insert($entity);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Fetches Token entries by GUID.
+     *
+     * @param string $token
+     *
+     * @return Entity\Token[]
+     */
+    public function getToken($token)
+    {
+        $query = $this->getTokenQuery($token);
+
+        return $this->findOneWith($query);
+    }
+
+    public function getTokenQuery($token)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where('token = :token')
+            ->setParameter('token', $token)
+        ;
+
+        return $qb;
+    }
+
+    /**
      * Fetches Token entries by GUID.
      *
      * @param string $guid
