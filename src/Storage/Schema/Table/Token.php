@@ -16,11 +16,11 @@ class Token extends BaseTable
      */
     protected function addColumns()
     {
-        $this->table->addColumn('guid',       'guid',       []);
-        $this->table->addColumn('token_type', 'string',     ['length' => 32]);
         $this->table->addColumn('token',      'string',     ['length' => 128]);
+        $this->table->addColumn('token_type', 'string',     ['length' => 32]);
         $this->table->addColumn('token_data', 'json_array', ['notnull' => false, 'default' => null]);
         $this->table->addColumn('expires',    'integer',    ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('guid',       'guid',       []);
         $this->table->addColumn('cookie',     'string',     ['notnull' => false, 'default' => null, 'length' => 128]);
     }
 
@@ -30,8 +30,8 @@ class Token extends BaseTable
     protected function addIndexes()
     {
         $this->table->addIndex(['token_type']);
-        $this->table->addIndex(['token']);
         $this->table->addIndex(['expires']);
+        $this->table->addIndex(['guid']);
         $this->table->addIndex(['cookie']);
     }
 
@@ -40,6 +40,6 @@ class Token extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['guid']);
+        $this->table->setPrimaryKey(['token']);
     }
 }
