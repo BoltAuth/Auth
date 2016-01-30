@@ -81,7 +81,7 @@ class Frontend implements ControllerProviderInterface
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
         } else {
-            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie));
+            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, 86400));
         }
     }
 
