@@ -313,6 +313,6 @@ class Records
      */
     public function saveToken(Entity\Token $token)
     {
-        return $this->provider->save($token);
+        return $this->token->save($token);
     }
 }
