@@ -57,6 +57,12 @@ class Authentication implements ControllerProviderInterface
      */
     public function after(Request $request, Response $response, Application $app)
     {
+        if ($app['members.session']->getAuthorisation() === null) {
+            $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
+
+            return;
+        }
+
         $cookie = $app['members.session']->getAuthorisation()->getCookie();
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);

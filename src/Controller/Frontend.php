@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
 use Carbon\Carbon;
 use Silex\Application;
@@ -70,6 +71,12 @@ class Frontend implements ControllerProviderInterface
      */
     public function after(Request $request, Response $response, Application $app)
     {
+        if ($app['members.session']->getAuthorisation() === null) {
+            $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
+
+            return;
+        }
+
         $cookie = $app['members.session']->getAuthorisation()->getCookie();
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
@@ -116,6 +123,7 @@ class Frontend implements ControllerProviderInterface
         // If we're in a POST, validate the form
         if ($request->isMethod('POST')) {
             if ($form->isValid()) {
+                // Create and store the account entity
                 $account = new Account();
                 $account->setDisplayname($form->get('displayname')->getData());
                 $account->setEmail($form->get('email')->getData());
@@ -126,6 +134,11 @@ class Frontend implements ControllerProviderInterface
 
                 $app['members.records']->saveAccount($account);
 
+                // Set up the initial session.
+                $localProvider = new Provider\Local();
+                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localProvider->getAccessToken('password', []));
+
+                // Redirect to our required location.
                 if ($redirect = $app['session']->get('member_redirect')) {
                     $response = new RedirectResponse($redirect);
                 } else {
