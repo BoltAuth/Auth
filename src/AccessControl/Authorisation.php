@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\AccessControl;
 
 use Carbon\Carbon;
 use League\OAuth2\Client\Token\AccessToken;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Authorisation state object class.
@@ -46,6 +47,10 @@ class Authorisation implements \JsonSerializable
      */
     public function getCookie()
     {
+        if ($this->cookie === null) {
+            $this->cookie = Uuid::uuid4()->toString();
+        }
+
         return $this->cookie;
     }
 
