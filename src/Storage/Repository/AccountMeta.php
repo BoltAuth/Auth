@@ -47,12 +47,12 @@ class AccountMeta extends AbstractGuidRepository
      */
     public function getAccountMeta($guid, $metaName)
     {
-        $query = $this->getAccountMetaByNameQuery($guid, $metaName);
+        $query = $this->getAccountMetaQuery($guid, $metaName);
 
         return $this->findOneWith($query);
     }
 
-    public function getAccountMetaByNameQuery($guid, $metaName)
+    public function getAccountMetaQuery($guid, $metaName)
     {
         $qb = $this->createQueryBuilder();
         $qb->select('*')

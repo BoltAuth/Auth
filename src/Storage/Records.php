@@ -147,7 +147,7 @@ class Records
      */
     public function getAccountMeta($guid, $metaName)
     {
-        return $this->accountMeta->getAccountMetaByNameQuery($guid, $metaName);
+        return $this->accountMeta->getAccountMeta($guid, $metaName);
     }
 
     /**
@@ -159,7 +159,7 @@ class Records
      */
     public function getOauthByGuid($guid)
     {
-        return $this->oauth->getOauthByGuidQuery($guid);
+        return $this->oauth->getOauthByGuid($guid);
     }
 
     /**
@@ -171,7 +171,7 @@ class Records
      */
     public function getOauthByEmail($email)
     {
-        return $this->oauth->getOauthByEmailQuery($email);
+        return $this->oauth->getOauthByEmail($email);
     }
 
     /**
@@ -183,7 +183,7 @@ class Records
      */
     public function getOauthByResourceOwnerId($resourceOwnerId)
     {
-        return $this->oauth->getOauthByResourceOwnerIdQuery($resourceOwnerId);
+        return $this->oauth->getOauthByResourceOwnerId($resourceOwnerId);
     }
 
     /**
@@ -195,7 +195,7 @@ class Records
      */
     public function getProvisionsByGuid($guid)
     {
-        return $this->provider->getProvisionsByGuidQuery($guid);
+        return $this->provider->getProvisionsByGuid($guid);
     }
 
     /**
@@ -207,7 +207,7 @@ class Records
      */
     public function getProvisionsByProvider($provider)
     {
-        return $this->provider->getProvisionsByProviderQuery($provider);
+        return $this->provider->getProvisionsByProvider($provider);
     }
 
     /**
@@ -219,7 +219,7 @@ class Records
      */
     public function getProvisionByResourceOwner($resourceOwner)
     {
-        return $this->provider->getProvisionByResourceOwnerQuery($resourceOwner);
+        return $this->provider->getProvisionByResourceOwner($resourceOwner);
     }
 
     /**
@@ -231,7 +231,7 @@ class Records
      */
     public function getProvisionByResourceOwnerId($resourceOwnerId)
     {
-        return $this->provider->getProvisionByResourceOwnerIdQuery($resourceOwnerId);
+        return $this->provider->getProvisionByResourceOwnerId($resourceOwnerId);
     }
 
     /**
@@ -243,7 +243,7 @@ class Records
      */
     public function getTokensByGuid($guid)
     {
-        return $this->token->getTokensByGuidQuery($guid);
+        return $this->token->getTokensByGuid($guid);
     }
 
     /**
@@ -255,7 +255,7 @@ class Records
      */
     public function getTokensByCookie($cookie)
     {
-        return $this->token->getTokensByCookieQuery($cookie);
+        return $this->token->getTokensByCookie($cookie);
     }
 
     /**
@@ -265,6 +265,6 @@ class Records
      */
     public function getTokensExpired()
     {
-        return $this->token->getTokensExpiredQuery();
+        return $this->token->getTokensExpired();
     }
 }
