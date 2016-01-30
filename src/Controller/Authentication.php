@@ -2,10 +2,14 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Authentication controller.
@@ -39,6 +43,25 @@ class Authentication implements ControllerProviderInterface
         /** @var $ctr ControllerCollection */
         $ctr = $app['controllers_factory'];
 
+        $ctr->after([$this, 'after']);
+
         return $ctr;
+    }
+
+    /**
+     * Middleware to modify the Response before it is sent to the client.
+     *
+     * @param Request     $request
+     * @param Response    $response
+     * @param Application $app
+     */
+    public function after(Request $request, Response $response, Application $app)
+    {
+        $cookie = $app['members.session']->getAuthorisation()->getCookie();
+        if ($cookie === null) {
+            $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
+        } else {
+            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie));
+        }
     }
 }
