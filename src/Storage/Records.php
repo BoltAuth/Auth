@@ -151,11 +151,23 @@ class Records
     }
 
     /**
+     * Save an account meta entity.
+     *
+     * @param Entity\AccountMeta $accountMeta
+     *
+     * @return bool
+     */
+    public function saveAccountMeta(Entity\AccountMeta $accountMeta)
+    {
+        return $this->accountMeta->save($accountMeta);
+    }
+
+    /**
      * Fetches an OAuth entries by GUID.
      *
      * @param string $guid
      *
-     * @return Entity\Account
+     * @return Entity\Oauth
      */
     public function getOauthByGuid($guid)
     {
@@ -167,7 +179,7 @@ class Records
      *
      * @param string $email
      *
-     * @return Entity\Account
+     * @return Entity\Oauth
      */
     public function getOauthByEmail($email)
     {
@@ -179,11 +191,23 @@ class Records
      *
      * @param string $resourceOwnerId
      *
-     * @return Entity\Account
+     * @return Entity\Oauth
      */
     public function getOauthByResourceOwnerId($resourceOwnerId)
     {
         return $this->oauth->getOauthByResourceOwnerId($resourceOwnerId);
+    }
+
+    /**
+     * Save an OAuth entity.
+     *
+     * @param Entity\Oauth $oauth
+     *
+     * @return bool
+     */
+    public function saveOauth(Entity\Oauth $oauth)
+    {
+        return $this->oauth->save($oauth);
     }
 
     /**
@@ -235,6 +259,18 @@ class Records
     }
 
     /**
+     * Save a provider entity.
+     *
+     * @param Entity\Provider $provider
+     *
+     * @return bool
+     */
+    public function saveProvider(Entity\Provider $provider)
+    {
+        return $this->provider->save($provider);
+    }
+
+    /**
      * Fetches Token entries by GUID.
      *
      * @param string $guid
@@ -261,10 +297,22 @@ class Records
     /**
      * Fetches expired tokens.
      *
-     * @return Entity\Account
+     * @return Entity\Token[]
      */
     public function getTokensExpired()
     {
         return $this->token->getTokensExpired();
+    }
+
+    /**
+     * Save a token entity.
+     *
+     * @param Entity\Token $token
+     *
+     * @return bool
+     */
+    public function saveToken(Entity\Token $token)
+    {
+        return $this->provider->save($token);
     }
 }
