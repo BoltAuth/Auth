@@ -231,10 +231,11 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
     private function registerOauthHandlers(Application $app)
     {
-        // Authentication handler service. Will be chosen, and set, inside a request cycle
+        // Authentication handler service.
+        // Will be chosen, and set, inside a request cycle
         $app['members.oauth.handler'] = $app->share(
             function () {
-                throw new \RuntimeException('Members OAuth authentication handler not set up!');
+                return new Handler\Null();
             }
         );
 
