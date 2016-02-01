@@ -43,6 +43,24 @@ class Authentication implements ControllerProviderInterface
         /** @var $ctr ControllerCollection */
         $ctr = $app['controllers_factory'];
 
+        // Member login
+        $ctr->match('login', [$this, 'login'])
+            ->bind('authenticationLogin')
+            ->method('GET|POST')
+        ;
+
+        // Member logout
+        $ctr->match('/logout', [$this, 'logout'])
+            ->bind('authenticationLogout')
+            ->method('GET')
+        ;
+
+
+        // OAuth callback URI
+        $ctr->match('/oauth2/callback', [$this, 'oauthCallback'])
+            ->bind('authenticationCallback')
+            ->method('GET');
+
         $ctr->after([$this, 'after']);
 
         return $ctr;
@@ -69,5 +87,46 @@ class Authentication implements ControllerProviderInterface
         } else {
             $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, 86400));
         }
+    }
+
+    /**
+     * Login route.
+     *
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
+     * @return Response
+     */
+    public function login(Application $app, Request $request)
+    {
+        // Log a warning if this route is not HTTPS
+        if (!$request->isSecure()) {
+            $msg = sprintf("[Members][Controller]: Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
+            $app['logger.system']->critical($msg, ['event' => 'extensions']);
+        }
+    }
+
+    /**
+     * Login route.
+     *
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
+     * @return Response
+     */
+    public function logout(Application $app, Request $request)
+    {
+    }
+
+    /**
+     * Login route.
+     *
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
+     * @return Response
+     */
+    public function oauthCallback(Application $app, Request $request)
+    {
     }
 }
