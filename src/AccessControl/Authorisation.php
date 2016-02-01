@@ -161,7 +161,7 @@ class Authorisation implements \JsonSerializable
         if (is_string($data)) {
             $data = json_decode($data);
         }
-        if (!is_array($data)) {
+        if (!$data instanceof \stdClass) {
             return null;
         }
 
