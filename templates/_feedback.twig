@@ -7,7 +7,7 @@
 {#% set feedback = clientlogin.feedback.get() %#}
 
 {% if feedback|default(null) %}
-<div class="panel client-login-feedback">
+<div class="panel members-feedback">
     {% if feedback.debug|default(null) %}
     <div class="debug-messages">
         <h5>Debug Messages:</h5>
