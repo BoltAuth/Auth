@@ -305,6 +305,18 @@ class Records
     }
 
     /**
+     * Delete a token entity.
+     *
+     * @param Entity\Token $token
+     *
+     * @return bool
+     */
+    public function deleteToken(Entity\Token $token)
+    {
+        return $this->token->delete($token);
+    }
+
+    /**
      * Save a token entity.
      *
      * @param Entity\Token $token
