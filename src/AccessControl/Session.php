@@ -86,6 +86,20 @@ class Session implements EventSubscriberInterface
     }
 
     /**
+     * Check if there is a valid authorisation session.
+     *
+     * @return boolean
+     */
+    public function hasAuthorisation()
+    {
+        if ($this->authorisation === null) {
+            $this->getAuthorisation();
+        }
+
+        return (boolean) $this->authorisation ?: false;
+    }
+
+    /**
      * Return the stored authorisation session.
      *
      * @return Authorisation|null
