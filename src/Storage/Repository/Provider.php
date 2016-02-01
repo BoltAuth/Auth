@@ -111,15 +111,4 @@ class Provider extends AbstractMembersRepository
 
         return $qb;
     }
-
-    /**
-     * Creates a query builder instance namespaced to this repository
-     *
-     * @return \Doctrine\DBAL\Query\QueryBuilder
-     */
-    public function createQueryBuilder($alias = null)
-    {
-        return $this->em->createQueryBuilder()
-            ->from($this->getTableName());
-    }
 }
