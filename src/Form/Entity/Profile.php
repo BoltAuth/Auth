@@ -35,7 +35,7 @@ class Profile
      */
     public function __construct(Records $records)
     {
-        $this->$records = $records;
+        $this->records = $records;
     }
 
     /**
