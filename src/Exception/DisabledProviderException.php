@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\ClientLogin\Exception;
+namespace Bolt\Extension\Bolt\Members\Exception;
 
 class DisabledProviderException extends \Exception
 {
