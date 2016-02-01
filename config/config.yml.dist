@@ -21,6 +21,10 @@ templates:
         parent: members_error.twig
         error: _members_error.twig
 
+labels:
+    login: Login
+    logout: Logout
+
 
 ## Registration
 #

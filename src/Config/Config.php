@@ -12,7 +12,9 @@ use Bolt\Helpers\Arr;
 class Config
 {
     /** @var array */
-    protected $templates;
+    protected $addOns;
+    /** @var array */
+    protected $labels;
     /** @var  boolean */
     protected $registration;
     /** @var array */
@@ -21,6 +23,8 @@ class Config
     protected $rolesMember;
     /** @var array */
     protected $rolesRegister;
+    /** @var array */
+    protected $templates;
     /** @var string */
     protected $urlAuthenticate;
     /** @var string */
@@ -36,6 +40,7 @@ class Config
         $config = Arr::mergeRecursiveDistinct($this->getDefaultConfig(), $extensionConfig);
 
         $this->addOns =  $config['addons'];
+        $this->labels =  $config['labels'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
@@ -75,6 +80,35 @@ class Config
         return $this;
     }
 
+    /**
+     * @param $label
+     *
+     * @return array
+     */
+    public function getLabel($label)
+    {
+        return $this->labels[$label];
+    }
+
+    /**
+     * @return array
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param array $labels
+     *
+     * @return Config
+     */
+    public function setLabels($labels)
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
 
     /**
      * @param $parent
@@ -231,6 +265,10 @@ class Config
         return [
             'addons'       => [
                 'zocial' => false,
+            ],
+            'labels'     => [
+                'login'  => 'Login',
+                'logout' => 'Logout',
             ],
             'registration' => true,
             'roles'        => [
