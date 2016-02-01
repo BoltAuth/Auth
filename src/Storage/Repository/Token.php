@@ -12,29 +12,8 @@ use Carbon\Carbon;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Token extends AbstractGuidRepository
+class Token extends AbstractMembersRepository
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function save($entity, $silent = null)
-    {
-        try {
-            /** @var Entity\Token $entity */
-            $existing = $this->getToken($entity->getToken());
-        } catch (\Exception $e) {
-            $existing = false;
-        }
-
-        if ($existing) {
-            $response = $this->update($entity);
-        } else {
-            $response = $this->insert($entity);
-        }
-
-        return $response;
-    }
-
     /**
      * Fetches Token entries by GUID.
      *

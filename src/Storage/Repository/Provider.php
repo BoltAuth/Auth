@@ -10,29 +10,8 @@ use Bolt\Storage\Repository;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Provider extends AbstractGuidRepository
+class Provider extends AbstractMembersRepository
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function save($entity, $silent = null)
-    {
-        try {
-            /** @var Entity\Provider $entity */
-            $existing = $this->getProvisionByResourceOwnerId($entity->getResourceOwnerId());
-        } catch (\Exception $e) {
-            $existing = false;
-        }
-
-        if ($existing) {
-            $response = $this->update($entity);
-        } else {
-            $response = $this->insert($entity);
-        }
-
-        return $response;
-    }
-
     /**
      * Fetches Provider entries by GUID.
      *
