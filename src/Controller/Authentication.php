@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -61,9 +62,25 @@ class Authentication implements ControllerProviderInterface
             ->bind('authenticationCallback')
             ->method('GET');
 
-        $ctr->after([$this, 'after']);
+        $ctr
+            ->before([$this, 'before'])
+            ->after([$this, 'after'])
+        ;
 
         return $ctr;
+    }
+
+    /**
+     * Controller before render
+     *
+     * @param Request     $request
+     * @param Application $app
+     */
+    public function before(Request $request, Application $app)
+    {
+        /** @var ProviderManager $providerManager */
+        $providerManager = $app['members.oauth.provider.manager'];
+        $providerManager->setProvider($app, $request);
     }
 
     /**
