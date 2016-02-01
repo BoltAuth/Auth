@@ -95,7 +95,59 @@ class Frontend implements ControllerProviderInterface
      */
     public function editProfile(Application $app, Request $request)
     {
-        $response = new Response('edit me');
+        $memberSession = $app['members.session']->getAuthorisation();
+        if ($memberSession === null) {
+            $app->abort('TODO: No session found, please login');
+        }
+
+        // Get the stored account & meta
+        $account = $app['members.records']->getAccountByGuid($memberSession->getGuid());
+        $meta = $app['members.records']->getAccountMetaAll($memberSession->getGuid());
+
+        // Add account fields and meta fields to the form data
+        $fields = [
+            'displayname' => $account->getDisplayname(),
+            'email' => $account->getEmail(),
+        ];
+        foreach ($meta as $metaEntity) {
+            $fields[$metaEntity->getMeta()] = $metaEntity->getValue();
+        }
+        $data = [
+            'csrf_protection' => true,
+            'data'            => $fields,
+        ];
+        $form = $app['form.factory']
+            ->createBuilder(
+                $app['members.forms']['type']['profile'],
+                $app['members.forms']['entity']['profile'],
+                $data
+            )
+            ->getForm()
+        ;
+
+        // Handle the form request data
+        $form->handleRequest($request);
+
+        if ($request->isMethod('POST')) {
+            if ($form->isValid()) {
+                $account->setDisplayname($form->get('displayname')->getData());
+                $account->setEmail($form->get('email')->getData());
+                $app['members.records']->saveAccount($account);
+
+                //if ($redirect = $app['session']->get('members_redirect')) {
+                //    $response = new RedirectResponse($redirect);
+                //} else {
+                //    $response = new RedirectResponse($app['resources']->getUrl('hosturl'));
+                //}
+            }
+        }
+
+        $html = $app['render']->render($this->config->getTemplates('profile', 'edit'), [
+            'form'       => $form->createView(),
+            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+        ]);
+
+        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
 
         return $response;
     }
@@ -123,7 +175,7 @@ class Frontend implements ControllerProviderInterface
             ->getForm()
         ;
 
-         // Handle the form request data
+        // Handle the form request data
         $form->handleRequest($request);
 
         // If we're in a POST, validate the form
