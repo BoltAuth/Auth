@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -116,6 +117,7 @@ class Frontend implements ControllerProviderInterface
             'csrf_protection' => true,
             'data'            => $fields,
         ];
+        /** @var Form $form */
         $form = $app['form.factory']
             ->createBuilder(
                 $app['members.forms']['type']['profile'],
@@ -166,6 +168,7 @@ class Frontend implements ControllerProviderInterface
             'csrf_protection' => true,
             'data'            => [],
         ];
+        /** @var Form $form */
         $form = $app['form.factory']
             ->createBuilder(
                 $app['members.forms']['type']['register'],
