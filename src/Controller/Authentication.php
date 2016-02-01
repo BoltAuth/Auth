@@ -4,7 +4,12 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
+use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
+use Bolt\Extension\Bolt\Members\Exception\MissingAccountException;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
+use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -23,6 +28,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Authentication implements ControllerProviderInterface
 {
+    const FINAL_REDIRECT_KEY = 'members.auth.redirect';
+
     /** @var Config */
     private $config;
 
@@ -121,6 +128,18 @@ class Authentication implements ControllerProviderInterface
             $msg = sprintf("[Members][Controller]: Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
             $app['logger.system']->critical($msg, ['event' => 'extensions']);
         }
+
+        $this->setFinalRedirectUrl($app, $request);
+
+        try {
+            /** @var HandlerInterface $handler */
+            $handler = $app['members.oauth.handler'];
+            $response = $handler->login($request);
+        } catch (\Exception $e) {
+            return $this->getExceptionResponse($app, $e);
+        }
+
+        return $response;
     }
 
     /**
@@ -145,5 +164,94 @@ class Authentication implements ControllerProviderInterface
      */
     public function oauthCallback(Application $app, Request $request)
     {
+    }
+
+    /**
+     * Save the redirect URL to the session.
+     *
+     * @param \Silex\Application $app
+     * @param Request            $request
+     *
+     * @return string
+     */
+    private function setFinalRedirectUrl(Application $app, Request $request)
+    {
+        if ($returnpage = $request->get('redirect')) {
+            $returnpage = str_replace($app['resources']->getUrl('hosturl'), '', $returnpage);
+        } else {
+            $returnpage = $app['resources']->getUrl('hosturl');
+        }
+
+        $app['session']->set(self::FINAL_REDIRECT_KEY, $returnpage);
+
+        return $returnpage;
+    }
+
+    /**
+     * Get an exception state's HTML response page.
+     *
+     * @param Application $app
+     * @param \Exception  $e
+     *
+     * @return Response
+     */
+    private function getExceptionResponse(Application $app, \Exception $e)
+    {
+        if ($e instanceof IdentityProviderException) {
+            // Thrown by the OAuth2 library
+            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            // 'Access denied!'
+            $response = new Response('', Response::HTTP_FORBIDDEN);
+        } elseif ($e instanceof InvalidAuthorisationRequestException) {
+            // Thrown deliberately internally
+            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            // 'Access denied!'
+            $response = new Response('', Response::HTTP_FORBIDDEN);
+        } elseif ($e instanceof MissingAccountException) {
+            // Thrown deliberately internally
+            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            // 'Access denied!'
+            $response = new Response('', Response::HTTP_FORBIDDEN);
+        } else {
+            // Yeah, this can't be good…
+            $app['members.feedback']->set('message', 'A server error occurred, we are very sorry and someone has been notified!');
+            $response = new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        // Dispatch an event so that subscribers can extend exception handling
+        if ($app['dispatcher']->hasListeners(ExceptionEvent::ERROR)) {
+            try {
+                $app['dispatcher']->dispatch(ExceptionEvent::ERROR, new ExceptionEvent($e));
+            } catch (\Exception $e) {
+                $app['logger.system']->critical('[ClientLogin][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
+            }
+        }
+
+        $app['members.feedback']->set('debug', $e->getMessage());
+        $response->setContent($this->displayExceptionPage($app, $e));
+
+        return $response;
+    }
+
+    /**
+     * Render one of our exception pages.
+     *
+     * @param Application $app
+     * @param \Exception  $e
+     *
+     * @return \Twig_Markup
+     */
+    public function displayExceptionPage(Application $app, \Exception $e)
+    {
+        $ext = $app['extensions']->get('Bolt/Members');
+        $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
+        $context = [
+            'parent'    => $app['members.config']->getTemplates('error', 'parent'),
+            'feedback'  => $app['members.feedback']->get(),
+            'exception' => $e,
+        ];
+        $html = $app['twig']->render($this->config->getTemplates('error', 'error'), $context);
+
+        return new \Twig_Markup($html, 'UTF-8');
     }
 }
