@@ -8,6 +8,9 @@ use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
@@ -48,6 +51,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerControllers($app);
         $this->registerStorage($app);
         $this->registerForms($app);
+        $this->registerOauthHandlers($app);
+        $this->registerOauthProviders($app);
 
         $app['members.admin'] = $app->share(
             function ($app) {
@@ -222,5 +227,72 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 ]);
             }
         );
+    }
+
+    private function registerOauthHandlers(Application $app)
+    {
+        // Authentication handler service. Will be chosen, and set, inside a request cycle
+        $app['members.oauth.handler'] = $app->share(
+            function () {
+                throw new \RuntimeException('Members OAuth authentication handler not set up!');
+            }
+        );
+
+        // Handler object for local authentication processing
+        $app['members.oauth.handler.local'] = $app->protect(
+            function ($app) use ($app) {
+                return new Handler\Local($app['members.config'], $app);
+            }
+        );
+
+        // Handler object for remote authentication processing
+        $app['members.oauth.handler.remote'] = $app->protect(
+            function ($app) use ($app) {
+                return new Handler\Remote($app['members.config'], $app);
+            }
+        );
+    }
+
+    private function registerOauthProviders(Application $app)
+    {
+        // Provider manager
+        $app['members.oauth.provider.manager'] = $app->share(
+            function ($app) {
+                $rootUrl = $app['resources']->getUrl('rooturl');
+
+                return new ProviderManager($app['members.oauth.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
+            }
+        );
+
+        // OAuth provider service. Will be chosen, and set, inside a request cycle
+        $app['members.oauth.provider'] = $app->share(
+            function () {
+                throw new \RuntimeException('Members authentication provider not set up!');
+            }
+        );
+
+        $app['members.oauth.provider.name'] = $app->share(
+            function () {
+                throw new \RuntimeException('Members authentication provider not set up!');
+            }
+        );
+
+        // Generic OAuth provider object
+        $app['members.oauth.provider.generic'] = $app->protect(
+            function () {
+                return new Provider\Generic([]);
+            }
+        );
+
+        // Provider objects for each enabled provider
+        foreach ($this->config['providers'] as $providerName => $providerConfig) {
+            if ($providerConfig['enabled'] === true) {
+                $app['members.oauth.provider.' . strtolower($providerName)] = $app->protect(
+                    function ($app) use ($app, $providerName) {
+                        return $app['members.oauth.provider.manager']->getProvider($providerName);
+                    }
+                );
+            }
+        }
     }
 }
