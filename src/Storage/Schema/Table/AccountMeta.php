@@ -16,7 +16,8 @@ class AccountMeta extends BaseTable
      */
     protected function addColumns()
     {
-        $this->table->addColumn('guid',   'guid',     []);
+        $this->table->addColumn('id',     'integer', ['autoincrement' => true]);
+        $this->table->addColumn('guid',   'guid',    []);
         $this->table->addColumn('meta',   'string',  ['length' => 64]);
         $this->table->addColumn('value',  'text');
     }
@@ -26,9 +27,13 @@ class AccountMeta extends BaseTable
      */
     protected function addIndexes()
     {
+        $this->table->addIndex(['guid']);
         $this->table->addIndex(['meta']);
 
-        //$this->table->addForeignKeyConstraint($this->tableName, ['guid'], ['guid']);
+        $this->table->addUniqueIndex(['guid', 'meta']);
+
+        // Temporary until done upstream
+        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -36,6 +41,14 @@ class AccountMeta extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['guid']);
+        $this->table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function addForeignKeyConstraint()
+    {
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
     }
 }

@@ -16,6 +16,7 @@ class Token extends BaseTable
      */
     protected function addColumns()
     {
+        $this->table->addColumn('id',         'integer',    ['autoincrement' => true]);
         $this->table->addColumn('token',      'string',     ['length' => 128]);
         $this->table->addColumn('token_type', 'string',     ['length' => 32]);
         $this->table->addColumn('token_data', 'json_array', ['notnull' => false, 'default' => null]);
@@ -33,6 +34,11 @@ class Token extends BaseTable
         $this->table->addIndex(['expires']);
         $this->table->addIndex(['guid']);
         $this->table->addIndex(['cookie']);
+
+        $this->table->addUniqueIndex(['guid', 'cookie']);
+
+        // Temporary until done upstream
+        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -40,6 +46,14 @@ class Token extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['token']);
+        $this->table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function addForeignKeyConstraint()
+    {
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
     }
 }

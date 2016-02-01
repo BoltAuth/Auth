@@ -16,11 +16,12 @@ class Oauth extends BaseTable
      */
     protected function addColumns()
     {
-        $this->table->addColumn('guid',              'guid',     []);
-        $this->table->addColumn('resource_owner_id', 'string',   ['notnull' => false, 'length' => 128]);
-        $this->table->addColumn('password',          'string',   ['notnull' => false, 'length' => 64]);
-        $this->table->addColumn('email',             'string',   ['notnull' => false, 'length' => 254]);
-        $this->table->addColumn('enabled',           'boolean',  ['default' => false]);
+        $this->table->addColumn('id',                'integer', ['autoincrement' => true]);
+        $this->table->addColumn('guid',              'guid',    []);
+        $this->table->addColumn('resource_owner_id', 'string',  ['notnull' => false, 'length' => 128]);
+        $this->table->addColumn('password',          'string',  ['notnull' => false, 'length' => 64]);
+        $this->table->addColumn('email',             'string',  ['notnull' => false, 'length' => 254]);
+        $this->table->addColumn('enabled',           'boolean', ['default' => false]);
     }
 
     /**
@@ -30,7 +31,11 @@ class Oauth extends BaseTable
     {
         $this->table->addUniqueIndex(['resource_owner_id']);
         $this->table->addUniqueIndex(['email']);
+        $this->table->addIndex(['guid']);
         $this->table->addIndex(['enabled']);
+
+        // Temporary until done upstream
+        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -38,6 +43,14 @@ class Oauth extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['guid']);
+        $this->table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function addForeignKeyConstraint()
+    {
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
     }
 }

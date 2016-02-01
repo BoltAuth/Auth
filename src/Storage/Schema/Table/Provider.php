@@ -16,6 +16,7 @@ class Provider extends BaseTable
      */
     protected function addColumns()
     {
+        $this->table->addColumn('id',                'integer',    ['autoincrement' => true]);
         $this->table->addColumn('guid',              'guid',       []);
         $this->table->addColumn('provider',          'string',     ['length' => 64]);
         $this->table->addColumn('resource_owner_id', 'string',     ['length' => 128]);
@@ -29,9 +30,15 @@ class Provider extends BaseTable
      */
     protected function addIndexes()
     {
+        $this->table->addIndex(['guid']);
         $this->table->addIndex(['provider']);
         $this->table->addIndex(['resource_owner_id']);
         $this->table->addIndex(['refresh_token']);
+
+        $this->table->addUniqueIndex(['provider', 'resource_owner_id']);
+
+        // Temporary until done upstream
+        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -39,6 +46,14 @@ class Provider extends BaseTable
      */
     protected function setPrimaryKey()
     {
-        $this->table->setPrimaryKey(['guid']);
+        $this->table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function addForeignKeyConstraint()
+    {
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
     }
 }
