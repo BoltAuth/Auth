@@ -35,14 +35,46 @@ class Config
     {
         $config = Arr::mergeRecursiveDistinct($this->getDefaultConfig(), $extensionConfig);
 
-        $this->templates = $config['templates'];
+        $this->addOns =  $config['addons'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
         $this->rolesRegister = $config['roles']['register'];
+        $this->templates = $config['templates'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
     }
+
+    /**
+     * @param $addOn
+     *
+     * @return array
+     */
+    public function getAddOn($addOn)
+    {
+        return $this->addOns[$addOn];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAddOns()
+    {
+        return $this->addOns;
+    }
+
+    /**
+     * @param array $addOns
+     *
+     * @return Config
+     */
+    public function setAddOns(array $addOns)
+    {
+        $this->addOns = $addOns;
+
+        return $this;
+    }
+
 
     /**
      * @param $parent
@@ -174,26 +206,6 @@ class Config
     /**
      * @return string
      */
-    public function getUrlAuthentication()
-    {
-        return $this->urlAuthenticate;
-    }
-
-    /**
-     * @param string $urlAuthenticate
-     *
-     * @return Config
-     */
-    public function setUrlAuthentication($urlAuthenticate)
-    {
-        $this->urlAuthenticate = $urlAuthenticate;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getUrlMembers()
     {
         return $this->urlMembers;
@@ -217,6 +229,9 @@ class Config
     protected function getDefaultConfig()
     {
         return [
+            'addons'       => [
+                'zocial' => false,
+            ],
             'registration' => true,
             'roles'        => [
                 'admin'  => [
