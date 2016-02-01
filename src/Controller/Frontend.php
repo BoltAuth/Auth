@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Carbon\Carbon;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -124,19 +124,26 @@ class Frontend implements ControllerProviderInterface
         if ($request->isMethod('POST')) {
             if ($form->isValid()) {
                 // Create and store the account entity
-                $account = new Account();
+                $account = new Entity\Account();
                 $account->setDisplayname($form->get('displayname')->getData());
                 $account->setEmail($form->get('email')->getData());
                 $account->setRoles($app['members.config']->getRolesRegister());
                 $account->setEnabled(true);
                 $account->setLastseen(Carbon::now());
                 $account->setLastip($app['request_stack']->getCurrentRequest()->getClientIp());
-
                 $app['members.records']->saveAccount($account);
 
                 // Set up the initial session.
                 $localProvider = new Provider\Local();
-                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localProvider->getAccessToken('password', []));
+                $localAccessToken = $localProvider->getAccessToken('password', []);
+                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+
+                $provider = new Entity\Provider();
+                $provider->setGuid($account->getGuid());
+                $provider->setProvider('Local');
+                $provider->setResourceOwnerId($account->getGuid());
+                $provider->setLastupdate(Carbon::now());
+                $app['members.records']->saveProvider($provider);
 
                 // Redirect to our required location.
                 if ($redirect = $app['session']->get('member_redirect')) {
