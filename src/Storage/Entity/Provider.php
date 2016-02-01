@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Tests\Fixtures\Entity;
  */
 class Provider extends AbstractGuidEntity
 {
+    protected $id;
     protected $provider;
     protected $resource_owner_id;
     protected $refresh_token;

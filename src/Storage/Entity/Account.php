@@ -20,6 +20,22 @@ class Account extends AbstractGuidEntity
     protected $roles;
 
     /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->guid;
+    }
+
+    /**
+     * @param string $guid
+     */
+    public function setId($guid)
+    {
+        $this->guid = $guid;
+    }
+
+    /**
      * @return mixed
      */
     public function getUsername()

@@ -28,20 +28,4 @@ abstract class AbstractGuidEntity extends Entity
     {
         $this->guid = $guid;
     }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->guid;
-    }
-
-    /**
-     * @param string $guid
-     */
-    public function setId($guid)
-    {
-        $this->guid = $guid;
-    }
 }

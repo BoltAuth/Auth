@@ -11,6 +11,7 @@ use Bolt\Storage\Entity\Entity;
  */
 class Oauth extends AbstractGuidEntity
 {
+    protected $id;
     protected $resource_owner_id;
     protected $password;
     protected $email;

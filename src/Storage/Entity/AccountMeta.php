@@ -11,6 +11,7 @@ use Bolt\Storage\Entity\Entity;
  */
 class AccountMeta extends AbstractGuidEntity
 {
+    protected $id;
     protected $meta;
     protected $value;
 

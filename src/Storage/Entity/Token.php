@@ -11,6 +11,7 @@ use Bolt\Storage\Entity\Entity;
  */
 class Token extends AbstractGuidEntity
 {
+    protected $id;
     protected $token_type;
     protected $token;
     protected $token_data;
