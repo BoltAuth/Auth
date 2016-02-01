@@ -114,8 +114,14 @@ class Frontend implements ControllerProviderInterface
             'csrf_protection' => true,
             'data'            => [],
         ];
-        $form = $app['form.factory']->createBuilder($app['members.forms']['type']['register'], $app['members.forms']['entity']['register'], $data)
-            ->getForm();
+        $form = $app['form.factory']
+            ->createBuilder(
+                $app['members.forms']['type']['register'],
+                $app['members.forms']['entity']['register'],
+                $data
+            )
+            ->getForm()
+        ;
 
          // Handle the form request data
         $form->handleRequest($request);
@@ -138,6 +144,7 @@ class Frontend implements ControllerProviderInterface
                 $localAccessToken = $localProvider->getAccessToken('password', []);
                 $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
 
+                // Create a local provider entry
                 $provider = new Entity\Provider();
                 $provider->setGuid($account->getGuid());
                 $provider->setProvider('Local');
@@ -145,12 +152,8 @@ class Frontend implements ControllerProviderInterface
                 $provider->setLastupdate(Carbon::now());
                 $app['members.records']->saveProvider($provider);
 
-                // Redirect to our required location.
-                if ($redirect = $app['session']->get('member_redirect')) {
-                    $response = new RedirectResponse($redirect);
-                } else {
-                    $response = new RedirectResponse($app['resources']->getUrl('hosturl'));
-                }
+                // Redirect to our profile page.
+                $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
                 return $response;
             }
