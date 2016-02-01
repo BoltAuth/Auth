@@ -249,13 +249,14 @@ class Records
     /**
      * Fetches an Provider entries by resource owner ID.
      *
+     * @param string $provider
      * @param string $resourceOwnerId
      *
      * @return Entity\Provider
      */
-    public function getProvisionByResourceOwnerId($resourceOwnerId)
+    public function getProvisionByResourceOwnerId($provider, $resourceOwnerId)
     {
-        return $this->provider->getProvisionByResourceOwnerId($resourceOwnerId);
+        return $this->provider->getProvisionByResourceOwnerId($provider, $resourceOwnerId);
     }
 
     /**

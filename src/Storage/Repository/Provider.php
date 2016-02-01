@@ -90,21 +90,23 @@ class Provider extends AbstractMembersRepository
     /**
      * Fetches an Provider entries by resource owner ID.
      *
+     * @param string $provider
      * @param string $resourceOwnerId
      *
      * @return Entity\Provider
      */
-    public function getProvisionByResourceOwnerId($resourceOwnerId)
+    public function getProvisionByResourceOwnerId($provider, $resourceOwnerId)
     {
-        $query = $this->getProvisionByResourceOwnerIdQuery($resourceOwnerId);
+        $query = $this->getProvisionByResourceOwnerIdQuery($provider, $resourceOwnerId);
 
         return $this->findWith($query);
     }
 
-    public function getProvisionByResourceOwnerIdQuery($resourceOwnerId)
+    public function getProvisionByResourceOwnerIdQuery($provider, $resourceOwnerId)
     {
         $qb = $this->createQueryBuilder();
         $qb->select('*')
+            ->where('provider = :provider')
             ->where('resource_owner_id = :resource_owner_id')
             ->setParameter('resource_owner_id', $resourceOwnerId)
         ;
