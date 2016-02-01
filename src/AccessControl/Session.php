@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\AccessControl;
 
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -19,6 +20,7 @@ class Session implements EventSubscriberInterface
 {
     const COOKIE_AUTHORISATION = 'members';
     const SESSION_AUTHORISATION = 'members-authorisation';
+    const SESSION_STATE = 'members-oauth-state';
 
     /** @var Authorisation */
     protected $authorisation;
@@ -187,6 +189,26 @@ class Session implements EventSubscriberInterface
         }
 
         $this->session->set(self::SESSION_AUTHORISATION, json_encode($this->authorisation));
+    }
+
+    /**
+     * Return the stored provider session state token.
+     *
+     * @return string
+     */
+    public function getStateToken()
+    {
+        return $this->session->get(self::SESSION_STATE);
+    }
+
+    /**
+     * Set the state token string from a provider to the user's session.
+     *
+     * @param AbstractProvider $provider
+     */
+    public function setStateToken(AbstractProvider $provider)
+    {
+        $this->session->set(self::SESSION_STATE, $provider->getState());
     }
 
     /**
