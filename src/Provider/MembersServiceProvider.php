@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Admin;
+use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
@@ -81,6 +82,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $app['members.config'] = $app->share(
             function () {
                 return new Config($this->config);
+            }
+        );
+
+        $app['members.feedback'] = $app->share(
+            function ($app) {
+                return new Feedback($app['session']);
             }
         );
 
