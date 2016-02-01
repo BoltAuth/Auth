@@ -14,6 +14,7 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -62,7 +63,6 @@ class Authentication implements ControllerProviderInterface
             ->bind('authenticationLogout')
             ->method('GET')
         ;
-
 
         // OAuth callback URI
         $ctr->match('/oauth2/callback', [$this, 'oauthCallback'])
@@ -116,8 +116,8 @@ class Authentication implements ControllerProviderInterface
     /**
      * Login route.
      *
-     * @param \Silex\Application $app
-     * @param Request            $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return Response
      */
@@ -145,8 +145,8 @@ class Authentication implements ControllerProviderInterface
     /**
      * Login route.
      *
-     * @param \Silex\Application $app
-     * @param Request            $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return Response
      */
@@ -157,34 +157,77 @@ class Authentication implements ControllerProviderInterface
     /**
      * Login route.
      *
-     * @param \Silex\Application $app
-     * @param Request            $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return Response
      */
     public function oauthCallback(Application $app, Request $request)
     {
+        try {
+            $response = $app['members.oauth.handler']->process($request);
+        } catch (\Exception $e) {
+            return $this->getExceptionResponse($app, $e);
+        }
+
+        if ($response instanceof RedirectResponse) {
+            $response->setTargetUrl($this->getRedirectUrl($app));
+        }
+
+        $sessionResponse = $app['session']->get('redirect', null);
+        if ($sessionResponse instanceof RedirectResponse) {
+            $response = $sessionResponse;
+            $app['session']->set('redirect', null);
+        }
+
+        return $response;
     }
 
     /**
      * Save the redirect URL to the session.
      *
-     * @param \Silex\Application $app
-     * @param Request            $request
+     * @param Application $app
+     * @param Request     $request
      *
      * @return string
      */
     private function setFinalRedirectUrl(Application $app, Request $request)
     {
-        if ($returnpage = $request->get('redirect')) {
-            $returnpage = str_replace($app['resources']->getUrl('hosturl'), '', $returnpage);
+        if ($returnPage = $request->get('redirect')) {
+            $returnPage = str_replace($app['resources']->getUrl('hosturl'), '', $returnPage);
         } else {
-            $returnpage = $app['resources']->getUrl('hosturl');
+            $returnPage = $app['resources']->getUrl('hosturl');
         }
 
-        $app['session']->set(self::FINAL_REDIRECT_KEY, $returnpage);
+        $app['session']->set(self::FINAL_REDIRECT_KEY, $returnPage);
 
-        return $returnpage;
+        return $returnPage;
+    }
+
+    /**
+     * Get the saved redirect URL from the session.
+     *
+     * @param Application $app
+     *
+     * @return string
+     */
+    private function getRedirectUrl($app)
+    {
+        if ($returnPage = $app['session']->get(self::FINAL_REDIRECT_KEY)) {
+            return $returnPage;
+        }
+
+        return $app['resources']->getUrl('hosturl');
+    }
+
+    /**
+     * Clear the redirect URL.
+     *
+     * @param Application $app
+     */
+    private function clearRedirectUrl($app)
+    {
+        $app['session']->remove(self::FINAL_REDIRECT_KEY);
     }
 
     /**
