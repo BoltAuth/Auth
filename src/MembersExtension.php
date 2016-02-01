@@ -110,7 +110,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerTwigFunctions()
     {
         $app = $this->getContainer();
-        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
+        $options = ['is_safe' => ['html'], 'is_safe_callback' => true, 'needs_environment' => true];
 
         return [
             'is_member'             => [[$app['members.twig'], 'isMember'], $options],

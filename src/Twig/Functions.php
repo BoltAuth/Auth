@@ -2,8 +2,11 @@
 
 namespace Bolt\Extension\Bolt\Members\Twig;
 
+use Bolt\Configuration\ResourceManager;
+use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Twig_Markup;
+use Twig_Environment as TwigEnvironment;
+use Twig_Markup as TwigMarkup;
 
 /**
  * Twig functions.
@@ -18,15 +21,23 @@ class Functions
 {
     /** @var Config */
     private $config;
+    /** @var Session */
+    private $session;
+    /** @var ResourceManager */
+    private $resourceManager;
 
     /**
      * Constructor.
      *
-     * @param Config $config
+     * @param Config          $config
+     * @param Session         $session
+     * @param ResourceManager $resourceManager
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Session $session, ResourceManager $resourceManager)
     {
         $this->config = $config;
+        $this->session = $session;
+        $this->resourceManager = $resourceManager;
     }
 
     /**
@@ -52,36 +63,98 @@ class Functions
     /**
      * Display login/logout button(s) depending on status.
      *
-     * @param bool $redirect
+     * @param TwigEnvironment $twig
+     * @param bool            $redirect
      *
-     * @return Twig_Markup
+     * @return TwigMarkup
      */
-    public function renderSwitcher($redirect = false)
+    public function renderSwitcher(TwigEnvironment $twig, $redirect = false)
     {
-        return new Twig_Markup('', 'UTF-8');
+        if ($this->session->getAuthorisation()) {
+            return $this->renderLogout($twig, $redirect);
+        }
+
+        return $this->renderLogin($twig, $redirect);
     }
 
     /**
      * Display logout button(s).
      *
-     * @param bool $redirect
+     * @param TwigEnvironment $twig
+     * @param bool            $redirect
      *
-     * @return Twig_Markup
+     * @return TwigMarkup
      */
-    public function renderLogin($redirect = false)
+    public function renderLogin(TwigEnvironment $twig, $redirect = false)
     {
-        return new Twig_Markup('', 'UTF-8');
+        // Set redirect if requested
+        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')]: [];
+        $context = [];
+
+        foreach ($this->config->getProviders() as $provider => $providerConf) {
+            if (!$providerConf->isEnabled()) {
+                continue;
+            }
+
+            $link = sprintf('%s%s/login?%s',
+                $this->resourceManager->getUrl('root'),
+                $this->config->getUrlAuthenticate(),
+                http_build_query(['provider' => $provider] + $target)
+            );
+
+            $context['providers'][$provider] = [
+                'link'  => $link,
+                'label' => $providerConf->getLabel() ?: $provider,
+                'class' => $this->getCssClass(strtolower($provider))
+            ];
+        }
+
+        $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
+
+        return new TwigMarkup($html, 'UTF-8');
     }
 
     /**
      * Display logout button.
      *
-     * @param bool $redirect
+     * @param TwigEnvironment $twig
+     * @param bool            $redirect
      *
-     * @return Twig_Markup
+     * @return TwigMarkup
      */
-    public function renderLogout($redirect = false)
+    public function renderLogout(TwigEnvironment $twig, $redirect = false)
     {
-        return new Twig_Markup('', 'UTF-8');
+        // Set redirect if requested
+        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')]: [];
+        $link = sprintf('%s%s/logout?',
+            $this->resourceManager->getUrl('root'),
+            $this->config->getUrlAuthenticate(),
+            http_build_query($target)
+        );
+        $context = [
+            'providers' => [
+                'logout' => [
+                    'link'  => $link,
+                    'label' => $this->config->getLabel('logout'),
+                    'class' => 'logout'
+                ]
+            ]
+        ];
+
+        $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
+
+        return new TwigMarkup($html, 'UTF-8');
+    }
+
+    /**
+     * Get a button's CSS class
+     *
+     * @param string $provider
+     *
+     * @return string
+     */
+    private function getCssClass($provider)
+    {
+        return $this->config->getAddOn('zocial') ? "zocial $provider" : $provider;
     }
 }

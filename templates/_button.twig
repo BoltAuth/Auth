@@ -1,0 +1,14 @@
+{#
+ # Passed in variables:
+ #   - providers[]
+ #     - link
+ #     - label
+ #     - class
+ #}
+{% for provider in providers %}
+<a class="button {{ provider.class }}" href="{{ provider.link }}">
+    {{ provider.label }}
+</a>
+{% endfor %}
+
+{% include '_feedback.twig' %}
