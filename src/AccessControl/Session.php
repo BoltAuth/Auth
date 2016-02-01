@@ -212,6 +212,14 @@ class Session implements EventSubscriberInterface
     }
 
     /**
+     * Remove the state tokenfrom the user's session.
+     */
+    public function removeStateToken()
+    {
+        $this->session->remove(self::SESSION_STATE);
+    }
+
+    /**
      * Ensure an access token always has a valid expiry field.
      *
      * @param AccessToken $accessToken
