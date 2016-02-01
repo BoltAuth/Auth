@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Roles;
+use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\Admin;
@@ -86,7 +86,13 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.roles'] = $app->share(
             function ($app) {
-                return new Roles($app['members.config']);
+                return new AccessControl\Roles($app['members.config']);
+            }
+        );
+
+        $app['members.session'] = $app->share(
+            function ($app) {
+                return new AccessControl\Session($app['members.records'], $app['session']);
             }
         );
 
