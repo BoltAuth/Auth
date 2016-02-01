@@ -38,7 +38,7 @@ class Account extends AbstractMembersRepository
     /**
      * {@inheritdoc}
      */
-    public function insert(BoltEntity $entity)
+    public function insert($entity)
     {
         /** @var \Bolt\Extension\Bolt\Members\Storage\Entity\Account $entity */
         $entity->setGuid(Uuid::uuid4()->toString());

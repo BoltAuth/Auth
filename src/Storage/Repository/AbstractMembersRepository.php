@@ -16,11 +16,9 @@ use Ramsey\Uuid\Uuid;
 abstract class AbstractMembersRepository extends Repository
 {
     /**
-     * Creates a query builder instance namespaced to this repository.
-     *
-     * @return \Doctrine\DBAL\Query\QueryBuilder
+     * {@inheritdoc}
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder($alias = null)
     {
         return $this->em->createQueryBuilder()
             ->from($this->getTableName());
