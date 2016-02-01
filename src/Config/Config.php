@@ -15,6 +15,8 @@ class Config
     protected $addOns;
     /** @var array */
     protected $labels;
+    /** @var Provider[] */
+    protected $providers;
     /** @var  boolean */
     protected $registration;
     /** @var array */
@@ -48,6 +50,10 @@ class Config
         $this->templates = $config['templates'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
+
+        foreach ($config['providers'] as $name => $provider) {
+            $this->providers[$name] = new Provider($name, $provider);
+        }
     }
 
     /**
@@ -106,6 +112,36 @@ class Config
     public function setLabels($labels)
     {
         $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * @param $provider
+     *
+     * @return Provider
+     */
+    public function getProvider($provider)
+    {
+        return $this->providers[$provider];
+    }
+
+    /**
+     * @return Provider[]
+     */
+    public function getProviders()
+    {
+        return $this->providers;
+    }
+
+    /**
+     * @param Provider[] $providers
+     *
+     * @return Config
+     */
+    public function setProviders($providers)
+    {
+        $this->providers = $providers;
 
         return $this;
     }

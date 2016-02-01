@@ -47,3 +47,35 @@ roles:
         - [ admin => 'Administrator', Participant => 'participant' ]
     register:
         - participant
+
+## OAuhth2 Providers
+#
+providers:
+    Local:
+        label: Sign in with a local account
+        enabled: false
+        keys:
+            clientId: localdefault
+            clientSecret: localdefault
+        scopes: [ user ]
+    Google:
+        label: Sign in with Google
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ openid, profile, email ]
+    Facebook:
+        label: Sign in with Facebook
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ email ]
+    GitHub:
+        label: Sign in with Github
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ user ]
