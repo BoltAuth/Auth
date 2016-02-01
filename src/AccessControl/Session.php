@@ -2,12 +2,15 @@
 
 namespace Bolt\Extension\Bolt\Members\AccessControl;
 
+use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
+use Psr\Log\LogLevel;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -212,11 +215,42 @@ class Session implements EventSubscriberInterface
     }
 
     /**
-     * Remove the state tokenfrom the user's session.
+     * Remove the state token from the user's session.
      */
     public function removeStateToken()
     {
         $this->session->remove(self::SESSION_STATE);
+    }
+
+    /**
+     * Check the state token stored in session against the one passed in the request.
+     *
+     * @param Request $request
+     *
+     * @throws Exception\InvalidAuthorisationRequestException
+     *
+     * @return bool
+     */
+    public function checkStateToken(Request $request)
+    {
+        $requestState = $request->get('state');
+        if ($requestState === null) {
+            //$this->logMessage(LogLevel::ERROR, 'Authorisation request was missing state token.');
+            throw new Exception\InvalidAuthorisationRequestException('Invalid authorisation request!');
+        }
+
+        // Get the stored token
+        $storedState = $this->getStateToken();
+
+        // Clear the stored token from the session
+        $this->removeStateToken();
+
+        if (empty($storedState) || $storedState !== $requestState) {
+            //$this->logMessage(LogLevel::ERROR, "Mismatch of state token '$state' against saved '$stateToken'");
+            throw new Exception\InvalidAuthorisationRequestException('Invalid authorisation request!');
+        }
+
+        return true;
     }
 
     /**
