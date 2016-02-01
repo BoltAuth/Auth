@@ -60,7 +60,7 @@ class ProviderManager
         $this->setProviderName($request);
 
         $providerName = $this->getProviderName();
-        $providerKey = 'members.oauthp.rovider.' . strtolower($providerName);
+        $providerKey = 'members.oauth.provider.' . strtolower($providerName);
 
         $app['members.oauth.provider'] = $app->share(
             function ($app) use ($providerKey) {
