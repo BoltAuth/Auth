@@ -108,15 +108,15 @@ class ProviderManager
     /**
      * Get a corrected provider name for the request.
      *
-     * @throws \RuntimeException
+     * @param bool $lower
      *
      * @return string
      */
-    public function getProviderName()
+    public function getProviderName($lower = false)
     {
         // If the provider name is set, we assume this is called post ->before()
         if ($this->providerName !== null) {
-            return $this->providerName;
+            return $lower ? strtolower($this->providerName) : $this->providerName;
         }
 
         // If we have no provider name set, and no valid request, we're out of

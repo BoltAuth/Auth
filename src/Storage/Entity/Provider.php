@@ -31,7 +31,7 @@ class Provider extends AbstractGuidEntity
      */
     public function setProvider($provider)
     {
-        $this->provider = $provider;
+        $this->provider = strtolower($provider);
     }
 
     /**
