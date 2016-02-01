@@ -125,6 +125,29 @@ class Session implements EventSubscriberInterface
     }
 
     /**
+     * Remove authorisation.
+     */
+    public function removeAuthorisation()
+    {
+        $authorisation = $this->getAuthorisation();
+
+        // Remove property
+        $this->authorisation = null;
+        // Clear session
+        $this->session->remove(self::SESSION_AUTHORISATION);
+
+        if ($authorisation === null) {
+            return;
+        }
+
+        // Remove records
+        $tokenEntities = $this->records->getTokensByGuid($authorisation->getGuid());
+        foreach ((array) $tokenEntities as $tokenEntity) {
+            $this->records->deleteToken($tokenEntity);
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public static function getSubscribedEvents()
