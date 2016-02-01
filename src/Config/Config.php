@@ -218,16 +218,35 @@ class Config
     {
         return [
             'registration' => true,
-            'roles' => [
+            'roles'        => [
                 'admin'  => [
-                    'root'
+                    'root',
                 ],
                 'member' => [
                     'admin' => 'Administrator',
                 ],
                 'register' => [
-                    'participant'
-                ]
+                    'participant',
+                ],
+            ],
+            'templates' => [
+                'profile'        => [
+                    'parent'   => 'members.twig',
+                    'register' => 'members_register.twig',
+                    'edit'     => 'members_profile_edit.twig',
+                    'view'     => 'members_profile_view.twig',
+                ],
+                'authentication' => [
+                    'parent'   => 'password.twig',
+                    'login'    => '_login.twig',
+                    'password' => '_password.twig',
+                    'feedback' => '_feedback.twig',
+                    'button'   => '_button.twig',
+                ],
+                'error'          => [
+                    'parent' => 'members_error.twig',
+                    'error'  => '_members_error.twig',
+                ],
             ],
             'urls'         => [
                 'authenticate' => 'authentication',
