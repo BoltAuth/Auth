@@ -261,7 +261,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 $rootUrl = $app['resources']->getUrl('rooturl');
 
-                return new ProviderManager($app['members.oauth.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
+                return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
             }
         );
 
