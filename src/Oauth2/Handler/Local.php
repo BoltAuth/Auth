@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * OAuth local login provider.
  *
@@ -12,21 +14,21 @@ class Local extends HandlerBase
     /**
      * {@inheritdoc}
      */
-    public function login()
+    public function login(Request $request)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process($grantType = 'authorization_code')
+    public function process(Request $request, $grantType = 'authorization_code')
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function logout()
+    public function logout(Request $request)
     {
     }
 }
