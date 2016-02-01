@@ -93,7 +93,7 @@ class ProviderManager
         $this->logger->debug('[Members][Provider]: Fetching provider object: ' . $providerName);
 
         /** @var \League\OAuth2\Client\Provider\AbstractProvider $providerClass */
-        $providerClass = '\\Bolt\\Extension\\Bolt\\Members\\Oauth2\\Client\\Provider' . $providerName;
+        $providerClass = '\\Bolt\\Extension\\Bolt\\Members\\Oauth2\\Client\\Provider\\' . $providerName;
 
         if (!class_exists($providerClass)) {
             throw new Exception\InvalidProviderException(Exception\InvalidProviderException::INVALID_PROVIDER);
@@ -164,9 +164,9 @@ class ProviderManager
         }
 
         $options = [
-            'clientId'     => $providerConfig['clientId'],
-            'clientSecret' => $providerConfig['clientSecret'],
-            'scope'        => $providerConfig['scopes'],
+            'clientId'     => $providerConfig->getClientId(),
+            'clientSecret' => $providerConfig->getClientSecret(),
+            'scope'        => $providerConfig->getScopes(),
             'redirectUri'  => $this->getCallbackUrl($providerName),
         ];
         if ($providerName === 'Facebook') {
@@ -205,7 +205,7 @@ class ProviderManager
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
-        if ($providerConfig['enabled'] !== true && $providerName !== 'Generic') {
+        if (!$providerConfig->isEnabled() && $providerName !== 'Generic') {
             $app['logger.system']->debug('[Members][Provider]: Request provider was disabled.', ['event' => 'extensions']);
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
