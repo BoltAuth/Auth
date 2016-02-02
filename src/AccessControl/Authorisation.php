@@ -168,7 +168,14 @@ class Authorisation implements \JsonSerializable
         $auth = new self();
         $auth->guid = $data->guid;
         $auth->cookie = $data->cookie;
-        $auth->expiry = new Carbon($data->expiry->date, $data->expiry->timezone);
+        if (is_numeric($data->expiry)) {
+            $auth->expiry = new Carbon($data->expiry);
+        } else {
+            $auth->expiry = new Carbon(
+                $data->expiry->date,
+                $data->expiry->timezone
+            );
+        }
 
         foreach ((array) $data->accessTokens as $provider => $tokenData) {
             $auth->accessTokens[$provider] = new AccessToken((array) $tokenData);
