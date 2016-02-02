@@ -135,6 +135,13 @@ class Authentication implements ControllerProviderInterface
      */
     public function login(Application $app, Request $request)
     {
+        if ($request->isMethod('GET')) {
+            $app['members.session']
+                ->clearRedirects()
+                ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
+            ;
+        }
+
         $data = [
             'csrf_protection' => true,
             'data'            => [
@@ -175,7 +182,7 @@ class Authentication implements ControllerProviderInterface
             }
 
             if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
-                return new RedirectResponse($request->headers->get('referer', '/'));
+                return $app['members.session']->popRedirect()->getResponse();
             }
         }
 
@@ -203,17 +210,15 @@ class Authentication implements ControllerProviderInterface
             $app['logger.system']->critical($msg, ['event' => 'extensions']);
         }
 
-        $this->setFinalRedirectUrl($app, $request);
-
+        /** @var HandlerInterface $handler */
+        $handler = $app['members.oauth.handler'];
         try {
-            /** @var HandlerInterface $handler */
-            $handler = $app['members.oauth.handler'];
-            $response = $handler->login($request);
+            $handler->login($request);
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
 
-        return $response;
+        return $app['members.session']->popRedirect()->getResponse();
     }
 
     /**
@@ -226,6 +231,8 @@ class Authentication implements ControllerProviderInterface
      */
     public function logout(Application $app, Request $request)
     {
+
+        return $app['members.session']->popRedirect()->getResponse();
     }
 
     /**
@@ -247,66 +254,13 @@ class Authentication implements ControllerProviderInterface
         }
 
         if ($response instanceof RedirectResponse) {
-            $response->setTargetUrl($this->getRedirectUrl($app));
-        }
-
-        $sessionResponse = $app['session']->get('redirect', null);
-        if ($sessionResponse instanceof RedirectResponse) {
-            $response = $sessionResponse;
-            $app['session']->set('redirect', null);
+            return $response;
         }
 
         // Flush any pending redirects
-        $this->clearRedirectUrl($app);
+        $app['members.session']->clearRedirects();
 
         return $response;
-    }
-
-    /**
-     * Save the redirect URL to the session.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return string
-     */
-    private function setFinalRedirectUrl(Application $app, Request $request)
-    {
-        if ($returnPage = $request->get('redirect')) {
-            $returnPage = str_replace($app['resources']->getUrl('hosturl'), '', $returnPage);
-        } else {
-            $returnPage = $app['resources']->getUrl('hosturl');
-        }
-
-        $app['session']->set(self::FINAL_REDIRECT_KEY, $returnPage);
-
-        return $returnPage;
-    }
-
-    /**
-     * Get the saved redirect URL from the session.
-     *
-     * @param Application $app
-     *
-     * @return string
-     */
-    private function getRedirectUrl($app)
-    {
-        if ($returnPage = $app['session']->get(self::FINAL_REDIRECT_KEY)) {
-            return $returnPage;
-        }
-
-        return $app['resources']->getUrl('hosturl');
-    }
-
-    /**
-     * Clear the redirect URL.
-     *
-     * @param Application $app
-     */
-    private function clearRedirectUrl($app)
-    {
-        $app['session']->remove(self::FINAL_REDIRECT_KEY);
     }
 
     /**

@@ -89,13 +89,11 @@ abstract class HandlerBase
         }
 
         if ($this->session->hasAuthorisation()) {
-            return new RedirectResponse($request->headers->get('referer', '/'));
+            return;
         }
 
         // Set user feedback messages
         $this->feedback->set('message', 'Login was route complete, redirecting for authentication.');
-
-        return null;
     }
 
     /**
@@ -107,8 +105,6 @@ abstract class HandlerBase
             $this->session->removeAuthorisation();
             $this->feedback->set('message', 'Logout was successful.');
         }
-
-        return new RedirectResponse($request->headers->get('referer', '/'));
     }
 
     /**
@@ -123,12 +119,8 @@ abstract class HandlerBase
 
         // Update the PHP session
         $authorisation = $this->session->createAuthorisation($guid, $this->providerManager->getProviderName(), $accessToken);
-
-        $response = new RedirectResponse($request->headers->get('referer', '/'));
-
+        // Send the event
         $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $authorisation);
-
-        return $response;
     }
 
     /**

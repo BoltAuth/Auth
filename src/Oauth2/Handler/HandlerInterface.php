@@ -21,8 +21,6 @@ interface HandlerInterface
      *
      * @throws DisabledProviderException
      * @throws InvalidAuthorisationRequestException
-     *
-     * @return Response
      */
     public function login(Request $request);
 
@@ -31,8 +29,6 @@ interface HandlerInterface
      *
      * @param Request $request
      * @param string  $grantType
-     *
-     * @return Response
      */
     public function process(Request $request, $grantType);
 
@@ -40,8 +36,6 @@ interface HandlerInterface
      * Logout a client.
      *
      * @param Request $request
-     *
-     * @return Response
      */
     public function logout(Request $request);
 }

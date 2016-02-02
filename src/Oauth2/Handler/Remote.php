@@ -27,24 +27,16 @@ class Remote extends HandlerBase
      */
     public function login(Request $request)
     {
-        $response = parent::login($request);
-        if ($response instanceof Response) {
-            $providerName = $this->providerManager->getProviderName(true);
-            $profileEntities = $this->records->getProvisionsByProvider($providerName);
-            foreach ($profileEntities as $profileEntity) {
-                if ($profileEntity->getProvider() === $providerName) {
-                    // User is logged in already, from whence they came return them now.
-                    return $response;
-                }
+        parent::login($request);
+        $providerName = $this->providerManager->getProviderName(true);
+        $profileEntities = $this->records->getProvisionsByProvider($providerName);
+        foreach ($profileEntities as $profileEntity) {
+            if ($profileEntity->getProvider() === $providerName) {
+                // User is logged in already, from whence they came return them now.
+                return null;
             }
         }
-
-        $response = $this->getAuthorisationRedirectResponse();
-        if ($response instanceof Response) {
-            return $response;
-        }
-
-        throw new \RuntimeException('An error occured with the provider redirect handling.');
+        $this->getAuthorisationRedirectResponse();
     }
 
     /**
@@ -52,7 +44,7 @@ class Remote extends HandlerBase
      */
     public function process(Request $request, $grantType = 'authorization_code')
     {
-        return parent::process($request, $grantType);
+        parent::process($request, $grantType);
     }
 
     /**
@@ -60,7 +52,7 @@ class Remote extends HandlerBase
      */
     public function logout(Request $request)
     {
-        return parent::logout($request);
+        parent::logout($request);
     }
 
     protected function getOauthResourceOwner(Request $request)
@@ -96,9 +88,9 @@ class Remote extends HandlerBase
     /**
      * Create a redirect response to fetch an authorisation code.
      *
-     * @param string $approvalPrompt
+     * @throws \RuntimeException
      *
-     * @return RedirectResponse
+     * @param string $approvalPrompt
      */
     protected function getAuthorisationRedirectResponse($approvalPrompt = 'auto')
     {
@@ -118,7 +110,10 @@ class Remote extends HandlerBase
         $this->session->setStateToken($provider);
         $this->setDebugMessage('Storing state token: ' . $provider->getState());
 
-        return new RedirectResponse($authorizationUrl);
+        if ($authorizationUrl == null) {
+            throw new \RuntimeException('An error occured with the provider redirect handling.');
+        }
+        $this->session->addRedirect($authorizationUrl);
     }
 
     /**
