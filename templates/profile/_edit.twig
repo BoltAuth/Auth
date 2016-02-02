@@ -17,8 +17,8 @@
             {{ form_start(form) }}
                 {{ form_row(form.displayname) }}
                 {{ form_row(form.email) }}
-            {{ form_row(form.plainPassword.first) }}
-            {{ form_row(form.plainPassword.second) }}
+                {{ form_row(form.plainPassword.first) }}
+                {{ form_row(form.plainPassword.second) }}
                 <br>
                 {{ form_row(form.submit) }}
             {{ form_end(form) }}
@@ -43,5 +43,5 @@
 
     </div>
 
-    {% include '_feedback.twig' %}
+    {% include 'feedback.twig' %}
 {% endblock %}

@@ -322,15 +322,14 @@ class Config
             'templates' => [
                 'profile'        => [
                     'parent'   => 'members.twig',
-                    'register' => 'members_register.twig',
-                    'edit'     => 'members_profile_edit.twig',
-                    'view'     => 'members_profile_view.twig',
+                    'edit'     => '_edit.twig',
+                    'register' => '_register.twig',
+                    'view'     => '_view.twig',
                 ],
                 'authentication' => [
-                    'parent'   => 'password.twig',
+                    'parent'   => 'login.twig',
+                    'feedback' => 'feedback.twig',
                     'login'    => '_login.twig',
-                    'password' => '_password.twig',
-                    'feedback' => '_feedback.twig',
                     'button'   => '_button.twig',
                 ],
                 'error'          => [

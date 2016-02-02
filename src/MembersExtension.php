@@ -102,7 +102,12 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerTwigPaths()
     {
-        return ['templates'];
+        return [
+            'templates/authentication',
+            'templates/error',
+            'templates/feedback',
+            'templates/profile',
+        ];
     }
 
     /**
