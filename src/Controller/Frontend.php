@@ -100,7 +100,7 @@ class Frontend implements ControllerProviderInterface
 
         if ($memberSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-            $app['logger.flash']->info('Login required to edit your profile');
+            $app['members.feedback']->info('Login required to edit your profile');
 
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }

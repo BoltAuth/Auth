@@ -163,20 +163,20 @@ class Authentication implements ControllerProviderInterface
         if ($form->isValid()) {
             $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
             if (!$account instanceof Entity\Account) {
-                $app['logger.flash']->info('Registration is required.');
+                $app['members.feedback']->info('Registration is required.');
 
                 return new RedirectResponse($app['url_generator']->generate('registerProfile'));
             }
 
             $oauth = $app['members.records']->getOauthByGuid($account->getGuid());
             if (!$oauth instanceof Entity\Oauth) {
-                $app['logger.flash']->info('Registration is required.');
+                $app['members.feedback']->info('Registration is required.');
 
                 return new RedirectResponse($app['url_generator']->generate('registerProfile'));
             }
 
             if (!$oauth->getEnabled()) {
-                $app['logger.flash']->info('Account disabled.');
+                $app['members.feedback']->info('Account disabled.');
 
                 return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
             }
@@ -184,11 +184,14 @@ class Authentication implements ControllerProviderInterface
             if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
                 return $app['members.session']->popRedirect()->getResponse();
             }
+
+            $app['members.feedback']->info('Login detail are incorrect.');
         }
 
         $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
             'form'       => $form->createView(),
             'twigparent' => $this->config->getTemplates('authentication', 'parent'),
+            'feedback'   => $app['members.feedback']->get(),
         ]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
