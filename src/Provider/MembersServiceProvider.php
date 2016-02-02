@@ -237,7 +237,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         // Will be chosen, and set, inside a request cycle
         $app['members.oauth.handler'] = $app->share(
             function () {
-                return new Handler\Null();
+                return new Handler\NullHandler();
             }
         );
 

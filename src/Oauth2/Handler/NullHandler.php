@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Null implements HandlerInterface
+class NullHandler implements HandlerInterface
 {
     public function __construct()
     {
