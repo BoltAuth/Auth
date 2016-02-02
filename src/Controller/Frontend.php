@@ -97,8 +97,9 @@ class Frontend implements ControllerProviderInterface
     public function editProfile(Application $app, Request $request)
     {
         $memberSession = $app['members.session']->getAuthorisation();
+
         if ($memberSession === null) {
-            $app->abort('TODO: No session found, please login');
+            return new Response('TODO: No session found, please login', Response::HTTP_FORBIDDEN);
         }
 
         // Get the stored account & meta
@@ -129,19 +130,16 @@ class Frontend implements ControllerProviderInterface
 
         // Handle the form request data
         $form->handleRequest($request);
+        if ($form->isValid()) {
+            $account->setDisplayname($form->get('displayname')->getData());
+            $account->setEmail($form->get('email')->getData());
+            $app['members.records']->saveAccount($account);
 
-        if ($request->isMethod('POST')) {
-            if ($form->isValid()) {
-                $account->setDisplayname($form->get('displayname')->getData());
-                $account->setEmail($form->get('email')->getData());
-                $app['members.records']->saveAccount($account);
-
-                //if ($redirect = $app['session']->get('members_redirect')) {
-                //    $response = new RedirectResponse($redirect);
-                //} else {
-                //    $response = new RedirectResponse($app['resources']->getUrl('hosturl'));
-                //}
-            }
+            //if ($redirect = $app['session']->get('members_redirect')) {
+            //    $response = new RedirectResponse($redirect);
+            //} else {
+            //    $response = new RedirectResponse($app['resources']->getUrl('hosturl'));
+            //}
         }
 
         $html = $app['render']->render($this->config->getTemplates('profile', 'edit'), [
@@ -180,38 +178,34 @@ class Frontend implements ControllerProviderInterface
 
         // Handle the form request data
         $form->handleRequest($request);
+        if ($form->isValid()) {
+            // Create and store the account entity
+            $account = new Entity\Account();
+            $account->setDisplayname($form->get('displayname')->getData());
+            $account->setEmail($form->get('email')->getData());
+            $account->setRoles($app['members.config']->getRolesRegister());
+            $account->setEnabled(true);
+            $account->setLastseen(Carbon::now());
+            $account->setLastip($app['request_stack']->getCurrentRequest()->getClientIp());
+            $app['members.records']->saveAccount($account);
 
-        // If we're in a POST, validate the form
-        if ($request->isMethod('POST')) {
-            if ($form->isValid()) {
-                // Create and store the account entity
-                $account = new Entity\Account();
-                $account->setDisplayname($form->get('displayname')->getData());
-                $account->setEmail($form->get('email')->getData());
-                $account->setRoles($app['members.config']->getRolesRegister());
-                $account->setEnabled(true);
-                $account->setLastseen(Carbon::now());
-                $account->setLastip($app['request_stack']->getCurrentRequest()->getClientIp());
-                $app['members.records']->saveAccount($account);
+            // Set up the initial session.
+            $localProvider = new Provider\Local();
+            $localAccessToken = $localProvider->getAccessToken('password', []);
+            $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
 
-                // Set up the initial session.
-                $localProvider = new Provider\Local();
-                $localAccessToken = $localProvider->getAccessToken('password', []);
-                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+            // Create a local provider entry
+            $provider = new Entity\Provider();
+            $provider->setGuid($account->getGuid());
+            $provider->setProvider('Local');
+            $provider->setResourceOwnerId($account->getGuid());
+            $provider->setLastupdate(Carbon::now());
+            $app['members.records']->saveProvider($provider);
 
-                // Create a local provider entry
-                $provider = new Entity\Provider();
-                $provider->setGuid($account->getGuid());
-                $provider->setProvider('Local');
-                $provider->setResourceOwnerId($account->getGuid());
-                $provider->setLastupdate(Carbon::now());
-                $app['members.records']->saveProvider($provider);
+            // Redirect to our profile page.
+            $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
-                // Redirect to our profile page.
-                $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
-
-                return $response;
-            }
+            return $response;
         }
 
         $html = $app['render']->render($this->config->getTemplates('profile', 'register'), [
