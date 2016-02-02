@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
-use Symfony\Component\Validator\Tests\Fixtures\Entity;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 /**
  * Provider entity class.
@@ -19,7 +19,7 @@ class Provider extends AbstractGuidEntity
     protected $lastupdate;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getProvider()
     {
@@ -27,7 +27,7 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $provider
+     * @param string $provider
      */
     public function setProvider($provider)
     {
@@ -35,7 +35,7 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResourceOwnerId()
     {
@@ -43,15 +43,15 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $resource_owner_id
+     * @param string $resourceOwnerId
      */
-    public function setResourceOwnerId($resource_owner_id)
+    public function setResourceOwnerId($resourceOwnerId)
     {
-        $this->resource_owner_id = $resource_owner_id;
+        $this->resource_owner_id = $resourceOwnerId;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getRefreshToken()
     {
@@ -59,15 +59,15 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $refresh_token
+     * @param string $refreshToken
      */
-    public function setRefreshToken($refresh_token)
+    public function setRefreshToken($refreshToken)
     {
-        $this->refresh_token = $refresh_token;
+        $this->refresh_token = $refreshToken;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getResourceOwner()
     {
@@ -75,15 +75,18 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $resource_owner
+     * @param array|ResourceOwnerInterface $resourceOwner
      */
-    public function setResourceOwner($resource_owner)
+    public function setResourceOwner($resourceOwner)
     {
-        $this->resource_owner = $resource_owner;
+        if ($resourceOwner instanceof ResourceOwnerInterface) {
+            $resourceOwner = $resourceOwner->toArray();
+        }
+        $this->resource_owner = $resourceOwner;
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getLastupdate()
     {
@@ -91,10 +94,10 @@ class Provider extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $lastupdate
+     * @param \DateTime $lastUpdate
      */
-    public function setLastupdate($lastupdate)
+    public function setLastupdate($lastUpdate)
     {
-        $this->lastupdate = $lastupdate;
+        $this->lastupdate = $lastUpdate;
     }
 }
