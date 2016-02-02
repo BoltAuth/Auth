@@ -116,6 +116,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         return [
             'is_member'             => [[$app['members.twig'], 'isMember'], $options],
             'member_has_role'       => [[$app['members.twig'], 'hasRole'], $options],
+            'member_providers'      => [[$app['members.twig'], 'getProviders'], $options],
             'members_auth_switcher' => [[$app['members.twig'], 'renderSwitcher'], $options],
             'members_auth_login'    => [[$app['members.twig'], 'renderLogin'], $options],
             'members_auth_logout'   => [[$app['members.twig'], 'renderLogout'], $options],

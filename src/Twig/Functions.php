@@ -5,6 +5,8 @@ namespace Bolt\Extension\Bolt\Members\Twig;
 use Bolt\Configuration\ResourceManager;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\Bolt\Members\Storage\Records;
 use Twig_Environment as TwigEnvironment;
 use Twig_Markup as TwigMarkup;
 
@@ -23,6 +25,8 @@ class Functions
     private $config;
     /** @var Session */
     private $session;
+    /** @var Records */
+    private $records;
     /** @var ResourceManager */
     private $resourceManager;
 
@@ -31,12 +35,14 @@ class Functions
      *
      * @param Config          $config
      * @param Session         $session
+     * @param Records         $records
      * @param ResourceManager $resourceManager
      */
-    public function __construct(Config $config, Session $session, ResourceManager $resourceManager)
+    public function __construct(Config $config, Session $session, Records $records, ResourceManager $resourceManager)
     {
         $this->config = $config;
         $this->session = $session;
+        $this->records = $records;
         $this->resourceManager = $resourceManager;
     }
 
@@ -58,6 +64,27 @@ class Functions
     public function hasRole()
     {
         return true;
+    }
+
+    public function getProviders()
+    {
+        $providers = [];
+        $auth = $this->session->getAuthorisation();
+        if ($auth === null) {
+            return $providers;
+        }
+
+        $providerEntities = $this->records->getProvisionsByGuid($auth->getGuid());
+        if ($providerEntities === null) {
+            return $providers;
+        }
+
+        /** @var Entity\Provider $providerEntity */
+        foreach ($providerEntities as $providerEntity) {
+            $providers[] = $providerEntity->getProvider();
+        }
+
+        return $providers;
     }
 
     /**
@@ -105,7 +132,7 @@ class Functions
             $context['providers'][$provider] = [
                 'link'  => $link,
                 'label' => $providerConf->getLabel() ?: $provider,
-                'class' => $this->getCssClass(strtolower($provider))
+                'class' => $this->getCssClass(strtolower($provider)),
             ];
         }
 
@@ -136,9 +163,9 @@ class Functions
                 'logout' => [
                     'link'  => $link,
                     'label' => $this->config->getLabel('logout'),
-                    'class' => 'logout'
-                ]
-            ]
+                    'class' => 'logout',
+                ],
+            ],
         ];
 
         $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);

@@ -5,6 +5,7 @@
 {% extends twigparent %}
 
 {% block members %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
         <h4>Edit Profile</h4>
     </div>
@@ -22,6 +23,16 @@
                 {{ form_row(form.submit) }}
             {{ form_end(form) }}
 
+        </div>
+
+        <div class="small-12 columns">
+            <h5>Registered Social Media Accounts</h5>
+
+            <ul>
+                {%- for provider in member_providers() %}
+                    <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
+                {% endfor -%}
+            </ul>
         </div>
 
         <div class="small-12 columns">

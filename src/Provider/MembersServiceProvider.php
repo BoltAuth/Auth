@@ -110,7 +110,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.twig'] = $app->share(
             function ($app) {
-                return new Twig\Functions($app['members.config'], $app['members.session'], $app['resources']);
+                return new Twig\Functions($app['members.config'], $app['members.session'], $app['members.records'], $app['resources']);
             }
         );
     }
