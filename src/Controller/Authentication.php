@@ -53,9 +53,15 @@ class Authentication implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
 
         // Member login
-        $ctr->match('login', [$this, 'login'])
+        $ctr->match('/login', [$this, 'login'])
             ->bind('authenticationLogin')
             ->method('GET|POST')
+        ;
+
+        // Member login
+        $ctr->match('/login/process', [$this, 'processLogin'])
+            ->bind('authenticationProcessLogin')
+            ->method('POST')
         ;
 
         // Member logout
@@ -123,6 +129,18 @@ class Authentication implements ControllerProviderInterface
      */
     public function login(Application $app, Request $request)
     {
+    }
+
+    /**
+     * Login processing route.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return Response
+     */
+    public function processLogin(Application $app, Request $request)
+    {
         // Log a warning if this route is not HTTPS
         if (!$request->isSecure()) {
             $msg = sprintf("[Members][Controller]: Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
@@ -181,6 +199,9 @@ class Authentication implements ControllerProviderInterface
             $response = $sessionResponse;
             $app['session']->set('redirect', null);
         }
+
+        // Flush any pending redirects
+        $this->clearRedirectUrl($app);
 
         return $response;
     }

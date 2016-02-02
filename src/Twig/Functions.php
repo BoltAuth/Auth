@@ -123,7 +123,7 @@ class Functions
                 continue;
             }
 
-            $link = sprintf('%s%s/login?%s',
+            $link = sprintf('%s%s/login/process?%s',
                 $this->resourceManager->getUrl('root'),
                 $this->config->getUrlAuthenticate(),
                 http_build_query(['provider' => $provider] + $target)
