@@ -111,9 +111,11 @@ class Frontend implements ControllerProviderInterface
             'displayname' => $account->getDisplayname(),
             'email' => $account->getEmail(),
         ];
-        /** @var Entity\AccountMeta $metaEntity */
-        foreach ((array) $meta as $metaEntity) {
-            $fields[$metaEntity->getMeta()] = $metaEntity->getValue();
+        if ($meta !== false) {
+            /** @var Entity\AccountMeta $metaEntity */
+            foreach ((array) $meta as $metaEntity) {
+                $fields[$metaEntity->getMeta()] = $metaEntity->getValue();
+            }
         }
         $data = [
             'csrf_protection' => true,
