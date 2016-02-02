@@ -111,7 +111,8 @@ class Frontend implements ControllerProviderInterface
             'displayname' => $account->getDisplayname(),
             'email' => $account->getEmail(),
         ];
-        foreach ($meta as $metaEntity) {
+        /** @var Entity\AccountMeta $metaEntity */
+        foreach ((array) $meta as $metaEntity) {
             $fields[$metaEntity->getMeta()] = $metaEntity->getValue();
         }
         $data = [
