@@ -2,35 +2,59 @@
 
 namespace Bolt\Extension\Bolt\Members\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Bolt\Extension\Bolt\Members\AccessControl\Role;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Members events
+ * Members event class.
  *
- * Copyright (C) 2014-2016 Gawain Lynch
- *
- * @author    Gawain Lynch <gawain.lynch@gmail.com>
- * @copyright Copyright (c) 2014-2016, Gawain Lynch
- * @license   https://opensource.org/licenses/MIT MIT
+ * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class MembersEvent extends Event
+class MembersEvent extends GenericEvent
 {
-    /** @var array The user record */
-    private $user;
+    /** @var Entity\Account */
+    protected $account;
+    /** @var array */
+    protected $roles;
 
     /**
-     * @param array $user
+     * @return Entity\Account
      */
-    public function __construct($user)
+    public function getAccount()
     {
-        $this->user = $user;
+        return $this->account;
     }
 
     /**
-     * Return the user record
+     * @param Entity\Account $account
+     *
+     * @return MembersEvent
      */
-    public function getUser()
+    public function setAccount(Entity\Account $account)
     {
-        return $this->user;
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param Role[] $roles
+     *
+     * @return MembersEvent
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 }

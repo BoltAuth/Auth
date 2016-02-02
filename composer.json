@@ -3,14 +3,21 @@
     "description": "Membership creation and management for Bolt",
     "type": "bolt-extension",
     "keywords": [
+        "Facebook",
+        "GitHub",
+        "Google",
+        "login",
+        "membership",
+        "oauth",
         "profiles"
     ],
     "require": {
         "php": ">=5.5.9",
         "bolt/bolt": "^3.0",
-        "bolt/clientlogin": "^3.0"
+        "bolt/boltforms": "^3.0",
+        "ramsey/uuid": "^3.1"
     },
-    "license": "GPL-3.0+",
+    "license": "MIT",
     "authors": [
         {
             "name": "Gawain Lynch",
@@ -27,14 +34,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "Bolt\\Extension\\Bolt\\Members\\": [
-                "src/"
-            ]
+            "Bolt\\Extension\\Bolt\\Members\\": "src",
+            "League\\Event\\": "lib/League/Event",
+            "League\\OAuth2\\Client\\": "lib/League/OAuth2/Client/",
+            "League\\OAuth2\\Server\\": "lib/League/OAuth2/Server/",
+            "Stevenmaguire\\OAuth2\\Client\\": "lib/League/OAuth2/Client/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Bolt\\Extension\\Bolt\\Members\\Tests\\": "tests/"
+            "Bolt\\Extension\\Bolt\\Members\\Tests\\": "tests"
         }
     },
     "extra": {

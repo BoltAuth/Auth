@@ -4,17 +4,16 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
-use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
+use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
+use Bolt\Extension\DatabaseSchemaTrait;
 use Bolt\Extension\MenuTrait;
-use Bolt\Extension\NutTrait;
 use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,68 +27,57 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
-    /** @var boolean */
-    private $isAdmin;
-
-    use ConfigTrait {
-        getConfig as public;
-    }
+    use ConfigTrait;
     use ControllerMountTrait;
-    use NutTrait;
+    use DatabaseSchemaTrait;
     use MenuTrait;
     use TwigTrait;
 
     /**
      * {@inheritdoc}
      */
-    final public function register(Application $app)
+    public function register(Application $app)
     {
-        $this->extendTwigService();
-        $this->extendNutService();
         $this->extendMenuService();
-    }
-
-    public function boot(Application $app)
-    {
-        $app['dispatcher']->addSubscriber($this);
-
-        // Check & create database tables if required
-        $app['members.records']->dbCheck();
-
-        $this->container = $app;
-    }
-
-    /**
-     * Hook for ClientLogin login events
-     *
-     * @param ClientLoginEvent $event
-     */
-    public function loginCallback(ClientLoginEvent $event)
-    {
-        $app = $this->getContainer();
-        $app['members.authenticate']->login($event);
-    }
-
-    /**
-     * Hook for ClientLogin logout events
-     *
-     * @param ClientLoginEvent $event
-     */
-    public function logoutCallback(ClientLoginEvent $event)
-    {
-        $app = $this->getContainer();
-        $app['members.authenticate']->logout($event);
+        $this->extendTwigService();
+        $this->extendDatabaseSchemaServices();
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public function boot(Application $app)
     {
+        $app['dispatcher']->addSubscriber($this);
+        $app['dispatcher']->addSubscriber($app['members.admin']);
+        $app['dispatcher']->addSubscriber($app['members.roles']);
+        $app['dispatcher']->addSubscriber($app['members.session']);
+        $this->container = $app;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerFrontendControllers()
+    {
+        $app = $this->getContainer();
+        $config = (array) $this->getConfig();
+
         return [
-            ControllerEvents::MOUNT => [
-                ['onMountControllers', 0],
-            ],
+            $app['members.config']->getUrlAuthenticate() => $app['members.controller.authentication'],
+            $app['members.config']->getUrlMembers()      => $app['members.controller.frontend'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerBackendControllers()
+    {
+        $app = $this->getContainer();
+
+        return [
+            '/' => $app['members.controller.backend'],
         ];
     }
 
@@ -99,12 +87,51 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerMenuEntries()
     {
         $config = $this->getConfig();
+        $roles = isset($config['roles']['admin']) ? $config['roles']['admin'] : ['root'];
 
         return [
             (new MenuEntry('members', 'members'))
                 ->setLabel(Trans::__('Members'))
                 ->setIcon('fa:users')
-                ->setPermission(implode('||', $config['admin_roles'])),
+                ->setPermission(implode('||', $roles)),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigPaths()
+    {
+        return ['templates'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerTwigFunctions()
+    {
+        $app = $this->getContainer();
+        $options = ['is_safe' => ['html'], 'is_safe_callback' => true, 'needs_environment' => true];
+
+        return [
+            'is_member'             => [[$app['members.twig'], 'isMember'], $options],
+            'member_has_role'       => [[$app['members.twig'], 'hasRole'], $options],
+            'member_providers'      => [[$app['members.twig'], 'getProviders'], $options],
+            'members_auth_switcher' => [[$app['members.twig'], 'renderSwitcher'], $options],
+            'members_auth_login'    => [[$app['members.twig'], 'renderLogin'], $options],
+            'members_auth_logout'   => [[$app['members.twig'], 'renderLogout'], $options],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ControllerEvents::MOUNT => [
+                ['onMountControllers', -150],
+            ],
         ];
     }
 
@@ -115,74 +142,23 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new Provider\MembersServiceProvider(),
+            new MembersServiceProvider($this->getConfig())
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function registerBackendControllers()
+    protected function registerExtensionTables()
     {
         $app = $this->getContainer();
-        return [
-            '/extend/members' => $app['members.controller.admin'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function registerFrontendControllers()
-    {
-        $app = $this->getContainer();
-        $config = $this->getConfig();
-        $base = '/' . ltrim($config['basepath'], '/');
 
         return [
-            $base => $app['members.controller'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function registerTwigFunctions()
-    {
-        $app = $this->getContainer();
-        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
-
-        return [
-            'member'     => [[$app['members.twig'], 'member'], $options],
-            'memberauth' => [[$app['members.twig'], 'memberAuth'], $options],
-            'hasrole'    => [[$app['members.twig'], 'hasRole'], $options],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isSafe()
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDefaultConfig()
-    {
-        return [
-            'basepath'     => 'members',
-            'templates'    => [
-                'parent'        => 'members.twig',
-                'register'      => 'members_register.twig',
-                'profile_edit'  => 'members_profile_edit.twig',
-                'profile_view'  => 'members_profile_view.twig',
-            ],
-            'registration' => true,
-            'csrf'         => true,
-            'admin_roles'  => ['root', 'admin', 'developer', 'chief-editor'],
+            'members_account'      => $app['members.schema.table']['members_account'],
+            'members_account_meta' => $app['members.schema.table']['members_account_meta'],
+            'members_oauth'        => $app['members.schema.table']['members_oauth'],
+            'members_provider'     => $app['members.schema.table']['members_provider'],
+            'members_token'        => $app['members.schema.table']['members_token'],
         ];
     }
 }

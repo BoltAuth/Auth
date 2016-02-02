@@ -2,26 +2,80 @@
 ## Bolt Members configuration options
 ##
 
+## Template overrides
+#
+# The template names that you wish to use in your theme to override the defaults
+templates:
+    profile:
+        parent: members.twig
+        register: members_register.twig
+        edit: members_profile_edit.twig
+        view: members_profile_view.twig
+    authentication:
+        parent: password.twig
+        login: _login.twig
+        password: _password.twig
+        feedback: _feedback.twig
+        button: _button.twig
+    error:
+        parent: members_error.twig
+        error: _members_error.twig
+
+labels:
+    login: Login
+    logout: Logout
+
 
 ## Registration
 #
-# If regsitration should be allowed [true|false]
+# If registration should be allowed [true|false]
 registration: true
 
+# Base URLs
+urls:
+    authenticate: authentication
+    members: membership
 
-## Template overrides
-# 
-# The template names that you wish to use in your theme to override the defaults
-templates:
-  parent: members.twig
-  register: members_register.twig
-  profile_edit: members_profile_edit.twig
-  profile_view: members_profile_view.twig
-
-## Routing
+## Access Control
 #
-# The base URI path for member pages (new members and profile view/edits)
-#basepath: members
+roles:
+    admin:
+        - root
+        - admin
+        - developer
+    member:
+        - [ admin => 'Administrator', Participant => 'participant' ]
+    register:
+        - participant
 
-# Access role(s) required to access the Members Administation page
-admin_roles: [ 'root', 'admin', 'developer', 'chief-editor' ]
+## OAuhth2 Providers
+#
+providers:
+    Local:
+        label: Sign in with a local account
+        enabled: false
+        keys:
+            clientId: localdefault
+            clientSecret: localdefault
+        scopes: [ user ]
+    Google:
+        label: Sign in with Google
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ openid, profile, email ]
+    Facebook:
+        label: Sign in with Facebook
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ email ]
+    GitHub:
+        label: Sign in with Github
+        enabled: false
+        keys:
+            clientId:
+            clientSecret:
+        scopes: [ user ]

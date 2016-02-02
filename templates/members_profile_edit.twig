@@ -5,6 +5,7 @@
 {% extends twigparent %}
 
 {% block members %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
         <h4>Edit Profile</h4>
     </div>
@@ -14,12 +15,30 @@
         <div class="small-12 columns">
 
             {{ form_start(form) }}
-                {{ form_row(form.username) }}
                 {{ form_row(form.displayname) }}
                 {{ form_row(form.email) }}
+            {{ form_row(form.plainPassword.first) }}
+            {{ form_row(form.plainPassword.second) }}
                 <br>
                 {{ form_row(form.submit) }}
             {{ form_end(form) }}
+
+        </div>
+
+        <div class="small-12 columns">
+            <h5>Registered Social Media Accounts</h5>
+
+            <ul>
+                {%- for provider in member_providers() %}
+                    <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
+                {% endfor -%}
+            </ul>
+        </div>
+
+        <div class="small-12 columns">
+            <h5>Add Social Media Account</h5>
+
+            {{ members_auth_login() }}
         </div>
 
     </div>

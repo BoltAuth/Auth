@@ -27,42 +27,55 @@ Manage Site Membership Roles
                 <div class="members-list">
 
                     <table class="dashboardlisting table" id="members-table">
+                        <colgroup>
+                            <col class="members-column-check">
+                            <col class="members-column-displayname">
+                            <col class="members-column-enabled">
+                            <col class="members-column-email">
+                            <col class="members-column-roles">
+                            <col class="members-column-lastseen">
+                            <col class="members-column-guid">
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>{{ __('ID') }}</th>
-                                <th></th>
                                 <th>{{ __('Display Name') }}</th>
+                                <th></th>
                                 <th>{{ __('Email') }}</th>
-                                <th>{{ __('Last Seen') }}</th>
                                 <th>{{ __('Roles') }}</th>
+                                <th>{{ __('Last Seen') }}</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody class="members-list-items">
-
                         {% for member in members %}
-                            <tr id="members-member[{{ member.id }}]">
+                            {% if member.enabled %}{% set enabled = 'fa fa-check' %}{% else %}{% set enabled = 'fa fa-close' %}{% endif %}
+                            <tr id="members-member[{{ member.guid }}]">
                                 <td class="member-cb">
                                     <label>
                                         <input type="checkbox"
                                                id="form_members_{{ loop.index0 }}"
                                                name="form[members][]"
-                                               value="{{ member.id }}">
+                                               value="{{ member.guid }}">
                                     </label>
                                 </td>
-                                <td class="members-id"><a href="" target="_blank">{{ member.id }}</a></td>
-                                <td class="members-name">
-                                    {% if member.enabled|default(0) != 1 %}
-                                    <i class="fa fa-minus-circle"></i>
-                                    {% endif %}
-                                </td>
-                                <td class="members-name">{{ member.displayname }}</td>
+                                <td class="members-displayname"><a href="" target="_blank">{{ member.displayname }}</a></td>
+                                <td class="member-enabled"><i class="{{ enabled }}"></i></td>
                                 <td class="members-email">{{ member.email }}</td>
-                                <td class="members-seen">{{ member.lastseen }}</td>
                                 <td class="members-roles">
                                     {% for role in member.roles|default(['-']) %}
                                     {{ role }}<br>
                                     {% endfor %}
+                                </td>
+                                <td class="members-lastseen">{{ member.lastseen }}</td>
+                                <td class="member-guid">
+                                    {% spaceless %}
+                                        <span class="info-pop pull-right" style="background-color: inherit !important;"
+                                              data-content="{{ member.guid }}"
+                                              data-html="false" >
+                                              <i class="fa fa-user-md"></i>
+                                        </span>
+                                    {% endspaceless %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -128,10 +141,10 @@ Manage Site Membership Roles
 
                         <div class="row">
                             <div class="col-md-12">
-                                <select class="form-control">
+                                <select class="form-control members-select-roles">
                                     <option value=""></option>
-                                    {% for role, name in roles %}
-                                    <option value="{{ role }}">{{ name }}</option>
+                                    {% for role in roles %}
+                                    <option value="{{ role.name }}">{{ role.displayname }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -146,7 +159,7 @@ Manage Site Membership Roles
     </div>
 
     <script>
-        var baseurl = "{{paths.bolt}}extensions/members";
+        var baseurl = "{{ paths.bolt }}extend/members/action";
 
         var active_console;
         var active_interval;

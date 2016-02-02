@@ -1,0 +1,44 @@
+{#
+ # Warning: Calling .get() will flush the feedback message queue. Which is what
+ #          you want most of the time, but if you're doing something tricky…
+ #
+ # If you wish to get them without flush, call .peek() instead of .get()
+ #}
+{#% set feedback = clientlogin.feedback.get() %#}
+
+{% if feedback|default(null) %}
+<div class="panel members-feedback">
+    {% if feedback.debug|default(null) %}
+    <div class="debug-messages">
+        <h5>Debug Messages:</h5>
+        <ol>
+            {% for message in feedback.debug %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
+
+    {% if feedback.error|default(null) %}
+    <div class="debug-messages">
+        <h5>Error Messages:</h5>
+        <ol>
+            {% for message in feedback.error %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
+
+    {% if feedback.message|default(null) %}
+    <div class="debug-messages">
+        <h5>Informational Messages:</h5>
+        <ol>
+            {% for message in feedback.message %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
+</div>
+{% endif %}

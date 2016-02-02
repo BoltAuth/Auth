@@ -1,0 +1,16 @@
+{% extends parent %}
+
+{#
+ # Probably want to dump things here like the Twig global
+ #}
+
+{% block members_error %}
+<div class="errors">
+    </h1>We broke!</h1>
+
+    {{ dump(feedback) }}
+    {#{ dump(exception.getResponse().getBody().__toString()|striptags) }#}
+    {{ dump(exception) }}
+
+</div>
+{% endblock members_error %}

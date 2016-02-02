@@ -2,90 +2,298 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
-use Bolt\Extension\Bolt\Members\Authenticate;
+use Bolt\Extension\Bolt\Members\AccessControl;
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
-use Bolt\Extension\Bolt\Members\Members;
-use Bolt\Extension\Bolt\Members\MembersExtension;
-use Bolt\Extension\Bolt\Members\Profiles;
-use Bolt\Extension\Bolt\Members\Records;
+use Bolt\Extension\Bolt\Members\Admin;
+use Bolt\Extension\Bolt\Members\Feedback;
+use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+use Bolt\Extension\Bolt\Members\Oauth2\Handler;
+use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MembersServiceProvider implements ServiceProviderInterface
+/**
+ * Members service provider.
+ *
+ * Copyright (C) 2014-2016 Gawain Lynch
+ *
+ * @author    Gawain Lynch <gawain.lynch@gmail.com>
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
+ */
+class MembersServiceProvider implements ServiceProviderInterface, EventSubscriberInterface
 {
+    /** @var array */
+    private $config;
+
+    /**
+     * Constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function register(Application $app)
     {
-        $app['members'] = $app->share(
-            function ($app) {
-                /** @var MembersExtension $extension */
-                $extension = $app['extensions']->get('Bolt/Members');
-                $members = new Members($app, $extension->getConfig());
+        $this->registerBase($app);
+        $this->registerControllers($app);
+        $this->registerStorage($app);
+        $this->registerForms($app);
+        $this->registerOauthHandlers($app);
+        $this->registerOauthProviders($app);
 
-                return $members;
+        $app['members.admin'] = $app->share(
+            function ($app) {
+                return new Admin($app['members.records'], $app['members.config'], $app['users']);
+            }
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function boot(Application $app)
+    {
+        $app['dispatcher']->addSubscriber($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [];
+    }
+
+    /**
+     * Register base services for Members.
+     *
+     * @param Application $app
+     */
+    private function registerBase(Application $app)
+    {
+        $app['members.config'] = $app->share(
+            function () {
+                return new Config($this->config);
             }
         );
 
-        $app['members.authenticate'] = $app->share(
+        $app['members.feedback'] = $app->share(
             function ($app) {
-                /** @var MembersExtension $extension */
-                $extension = $app['extensions']->get('Bolt/Members');
-                $records = new Authenticate($app, $extension->getConfig());
-
-                return $records;
+                return new Feedback($app['session']);
             }
         );
 
-        $app['members.profiles'] = $app->share(
+        $app['members.roles'] = $app->share(
             function ($app) {
-                $profiles = new Profiles($app);
-
-                return $profiles;
+                return new AccessControl\Roles($app['members.config']);
             }
         );
 
-        $app['members.records'] = $app->share(
+        $app['members.session'] = $app->share(
             function ($app) {
-                $records = new Records($app);
-
-                return $records;
-            }
-        );
-
-        $app['members.controller'] = $app->share(
-            function ($app) {
-                /** @var MembersExtension $extension */
-                $extension = $app['extensions']->get('Bolt/Members');
-                $controller = new Controller\MembersController($extension->getConfig());
-
-                return $controller;
-            }
-        );
-
-        $app['members.controller.admin'] = $app->share(
-            function ($app) {
-                /** @var MembersExtension $extension */
-                $extension = $app['extensions']->get('Bolt/Members');
-                $controller = new Controller\MembersAdminController($app, $extension->getConfig());
-
-                return $controller;
+                return new AccessControl\Session($app['members.records'], $app['session']);
             }
         );
 
         $app['members.twig'] = $app->share(
             function ($app) {
-                $twig = new Twig\MembersExtension($app);
-
-                return $twig;
+                return new Twig\Functions($app['members.config'], $app['members.session'], $app['members.records'], $app['resources']);
             }
         );
     }
 
-    public function boot(Application $app)
+    /**
+     * Register controller service providers.
+     *
+     * @param Application $app
+     */
+    private function registerControllers(Application $app)
     {
-        /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $app['dispatcher'];
-        $dispatcher->addSubscriber($app['members.authenticate']);
+        $app['members.controller.authentication'] = $app->share(
+            function ($app) {
+                return new Controller\Authentication($app['members.config']);
+            }
+        );
+
+        $app['members.controller.backend'] = $app->share(
+            function ($app) {
+                return new Controller\Backend($app['members.config']);
+            }
+        );
+
+        $app['members.controller.frontend'] = $app->share(
+            function ($app) {
+                return new Controller\Frontend($app['members.config']);
+            }
+        );
+    }
+
+    /**
+     * Register storage related service providers.
+     *
+     * @param Application $app
+     */
+    private function registerStorage(Application $app)
+    {
+        $app['members.schema.table'] = $app->share(
+            function () use ($app) {
+                /** @var \Doctrine\DBAL\Platforms\AbstractPlatform $platform */
+                $platform = $app['db']->getDatabasePlatform();
+
+                // @codingStandardsIgnoreStart
+                return new \Pimple([
+                    'members_account'      => $app->share(function () use ($platform) { return new Table\Account($platform); }),
+                    'members_account_meta' => $app->share(function () use ($platform) { return new Table\AccountMeta($platform); }),
+                    'members_oauth'        => $app->share(function () use ($platform) { return new Table\Oauth($platform); }),
+                    'members_provider'     => $app->share(function () use ($platform) { return new Table\Provider($platform); }),
+                    'members_token'        => $app->share(function () use ($platform) { return new Table\Token($platform); }),
+                ]);
+                // @codingStandardsIgnoreEnd
+            }
+        );
+
+        $mapping = [
+            'members_account'      => ['Bolt\Extension\Bolt\Members\Storage\Entity\Account'     => 'Bolt\Extension\Bolt\Members\Storage\Repository\Account'],
+            'members_account_meta' => ['Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta' => 'Bolt\Extension\Bolt\Members\Storage\Repository\AccountMeta'],
+            'members_oauth'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Oauth'],
+            'members_provider'     => ['Bolt\Extension\Bolt\Members\Storage\Entity\Provider'    => 'Bolt\Extension\Bolt\Members\Storage\Repository\Provider'],
+            'members_token'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Token'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Token'],
+        ];
+
+        foreach ($mapping as $alias => $map) {
+            $app['storage.repositories'] += $map;
+            $app['storage.metadata']->setDefaultAlias($app['schema.prefix'] . $alias, key($map));
+            $app['storage']->setRepository(key($map), current($map));
+        }
+
+        $app['members.records'] = $app->share(
+            function () use ($app) {
+                return new Records(
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Account'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Provider'),
+                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Token')
+                );
+            }
+        );
+    }
+
+    private function registerForms(Application $app)
+    {
+        $app['members.forms'] = $app->share(
+            function ($app) {
+                $type = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+                $entity = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'profile'  => $app->share(function () use ($app) { return new Form\Entity\Profile($app['members.records']); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Entity\Register($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+                $constraint = new \Pimple(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'email' => $app->share(function () use ($app) { return new Form\Validator\Constraint\UniqueEmail($app['members.records']); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+
+                return new \Pimple([
+                    'type'       => $type,
+                    'entity'     => $entity,
+                    'constraint' => $constraint,
+                ]);
+            }
+        );
+    }
+
+    private function registerOauthHandlers(Application $app)
+    {
+        // Authentication handler service.
+        // Will be chosen, and set, inside a request cycle
+        $app['members.oauth.handler'] = $app->share(
+            function () {
+                return new Handler\Null();
+            }
+        );
+
+        // Handler object for local authentication processing
+        $app['members.oauth.handler.local'] = $app->protect(
+            function ($app) use ($app) {
+                return new Handler\Local($app['members.config'], $app);
+            }
+        );
+
+        // Handler object for remote authentication processing
+        $app['members.oauth.handler.remote'] = $app->protect(
+            function ($app) use ($app) {
+                return new Handler\Remote($app['members.config'], $app);
+            }
+        );
+    }
+
+    private function registerOauthProviders(Application $app)
+    {
+        // Provider manager
+        $app['members.oauth.provider.manager'] = $app->share(
+            function ($app) {
+                $rootUrl = $app['resources']->getUrl('rooturl');
+
+                return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
+            }
+        );
+
+        // OAuth provider service. Will be chosen, and set, inside a request cycle
+        $app['members.oauth.provider'] = $app->share(
+            function () {
+                throw new \RuntimeException('Members authentication provider not set up!');
+            }
+        );
+
+        $app['members.oauth.provider.name'] = $app->share(
+            function () {
+                throw new \RuntimeException('Members authentication provider not set up!');
+            }
+        );
+
+        // Generic OAuth provider object
+        $app['members.oauth.provider.generic'] = $app->protect(
+            function () {
+                return new Provider\Generic([]);
+            }
+        );
+
+        // Provider objects for each enabled provider
+        foreach ($this->config['providers'] as $providerName => $providerConfig) {
+            if ($providerConfig['enabled'] === true) {
+                $app['members.oauth.provider.' . strtolower($providerName)] = $app->protect(
+                    function ($app) use ($app, $providerName) {
+                        return $app['members.oauth.provider.manager']->getProvider($providerName);
+                    }
+                );
+            }
+        }
     }
 }
