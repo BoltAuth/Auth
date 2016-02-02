@@ -39,7 +39,8 @@ class Config
      */
     public function __construct(array $extensionConfig)
     {
-        $config = Arr::mergeRecursiveDistinct($this->getDefaultConfig(), $extensionConfig);
+        $defaultConfig = $this->getDefaultConfig();
+        $config = Arr::mergeRecursiveDistinct($defaultConfig, $extensionConfig);
 
         $this->addOns =  $config['addons'];
         $this->labels =  $config['labels'];
