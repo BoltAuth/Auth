@@ -7,11 +7,11 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
-use Psr\Log\LogLevel;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -24,9 +24,12 @@ class Session implements EventSubscriberInterface
     const COOKIE_AUTHORISATION = 'members';
     const SESSION_AUTHORISATION = 'members-authorisation';
     const SESSION_STATE = 'members-oauth-state';
+    const REDIRECT_STACK = 'members-redirect-stack';
 
     /** @var Authorisation */
     protected $authorisation;
+    /** @var Redirect[] */
+    protected $redirectStack;
 
     /** @var Records */
     private $records;
@@ -158,7 +161,13 @@ class Session implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['persistData', 0],
+            KernelEvents::RESPONSE => [
+                ['persistData'],
+                ['saveRedirects']
+            ],
+            KernelEvents::REQUEST => [
+                ['loadRedirects']
+            ],
         ];
     }
 
@@ -251,6 +260,59 @@ class Session implements EventSubscriberInterface
         }
 
         return true;
+    }
+
+    /**
+     * Add a redirect onto the stack.
+     *
+     * @param string $url
+     */
+    public function addRedirect($url)
+    {
+        $this->redirectStack[] = new Redirect($url);
+    }
+
+    /**
+     * Remove and return a redirect off the stack.
+     *
+     * @return Redirect
+     */
+    public function popRedirect()
+    {
+        $redirect = end($this->redirectStack);
+        $key = key($this->redirectStack);
+        unset($this->redirectStack[$key]);
+
+        return $redirect;
+    }
+
+    /**
+     * Clear the redirect stack.
+     *
+     * @return Session
+     */
+    public function clearRedirects()
+    {
+        $this->redirectStack = null;
+        $this->redirectStack[] = new Redirect('/');
+
+        return $this;
+    }
+
+    /**
+     * Save redirects to the session.
+     */
+    public function saveRedirects()
+    {
+        $this->session->set(self::REDIRECT_STACK, $this->redirectStack);
+    }
+
+    /**
+     * Load the redirects stored in the session.
+     */
+    public function loadRedirects()
+    {
+        $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect('/')]);
     }
 
     /**
