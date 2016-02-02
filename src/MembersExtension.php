@@ -87,12 +87,13 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerMenuEntries()
     {
         $config = $this->getConfig();
+        $roles = isset($config['roles']['admin']) ? $config['roles']['admin'] : ['root'];
 
         return [
             (new MenuEntry('members', 'members'))
                 ->setLabel(Trans::__('Members'))
                 ->setIcon('fa:users')
-                ->setPermission(implode('||', $config['admin_roles'])),
+                ->setPermission(implode('||', $roles)),
         ];
     }
 
