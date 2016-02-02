@@ -60,28 +60,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     }
 
     /**
-     * Hook for ClientLogin login events
-     *
-     * @param ClientLoginEvent $event
-     */
-    public function loginCallback(ClientLoginEvent $event)
-    {
-        $app = $this->getContainer();
-        $app['members.authenticate']->login($event);
-    }
-
-    /**
-     * Hook for ClientLogin logout events
-     *
-     * @param ClientLoginEvent $event
-     */
-    public function logoutCallback(ClientLoginEvent $event)
-    {
-        $app = $this->getContainer();
-        $app['members.authenticate']->logout($event);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()

@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Event;
 
+use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -16,21 +17,21 @@ use Symfony\Component\EventDispatcher\Event;
 class MembersEvent extends Event
 {
     /** @var array The user record */
-    private $user;
+    private $member;
 
     /**
-     * @param array $user
+     * @param array $member
      */
-    public function __construct($user)
+    public function __construct(Profile $member)
     {
-        $this->user = $user;
+        $this->member = $member;
     }
 
     /**
      * Return the user record
      */
-    public function getUser()
+    public function getMember()
     {
-        return $this->user;
+        return $this->member;
     }
 }

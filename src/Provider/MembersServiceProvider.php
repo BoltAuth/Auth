@@ -37,14 +37,6 @@ class MembersServiceProvider implements ServiceProviderInterface
             }
         );
 
-        $app['members.profiles'] = $app->share(
-            function ($app) {
-                $profiles = new Profiles($app);
-
-                return $profiles;
-            }
-        );
-
         $app['members.records'] = $app->share(
             function ($app) {
                 $records = new Records($app);
@@ -79,8 +71,8 @@ class MembersServiceProvider implements ServiceProviderInterface
                     $app->extend(
                         'twig',
                         function (\Twig_Environment $twig) use ($app) {
-                            $twig->addGlobal('member', $app['members.authenticate']->getMember());
-                            $twig->addGlobal('is_member', $app['members.authenticate']->isMember());
+                            //$twig->addGlobal('member', $app['members.authenticate']->getMember());
+                            //$twig->addGlobal('is_member', $app['members.authenticate']->isMember());
 
                             return $twig;
                         }

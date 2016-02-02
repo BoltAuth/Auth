@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+use Bolt\Extension\Bolt\Members\Entity\Profile;
 use Bolt\Storage\Database\Schema\Manager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
@@ -27,9 +28,9 @@ class Records
     /** @var Manager */
     private $schemaManager;
     /** @var string */
-    private $tableName = null;
+    private $tableName;
     /** @var string */
-    private $tableNameMeta = null;
+    private $tableNameMeta;
 
     /**
      * Constructor.
@@ -47,7 +48,7 @@ class Records
     /**
      * Get a set of members record from the database
      *
-     * @return boolean|array
+     * @return Profile[]|null
      */
     public function getMembers()
     {
@@ -59,11 +60,11 @@ class Records
         $records = $this->connection->fetchAll($query);
 
         if (empty($records)) {
-            return false;
+            return null;
         } else {
             foreach ($records as $key => $record) {
                 if (isset($record['roles'])) {
-                    $records[$key]['roles'] = json_decode($record['roles'], true);
+                    $records[$key] = new Profile($record, $this);
                 }
             }
 
@@ -77,7 +78,7 @@ class Records
      * @param string $field The field to query on (id, username or email)
      * @param string $value The value to match
      *
-     * @return boolean|array
+     * @return Profile|null
      */
     public function getMember($field, $value)
     {
@@ -90,31 +91,58 @@ class Records
         $record = $this->connection->fetchAssoc($query);
 
         if (empty($record['guid'])) {
-            return false;
+            return null;
         } else {
             if (isset($record['roles'])) {
                 $record['roles'] = json_decode($record['roles'], true);
             }
 
-            return $record;
+            return new Profile($record, $this);
         }
+    }
+
+    /**
+     * Look up a member based on their OAuth provider GUID.
+     *
+     * @param $guid
+     *
+     * @return Profile
+     */
+    public function getMemberByProviderId($guid)
+    {
+        $guid = $this->getSafeGuid($guid);
+        $query = $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from($this->tableNameMeta, 'm')
+            ->where("m.value = '$guid'")
+            //->where('m.value = :value')
+            //->setParameter(':value', $guid, \Doctrine\DBAL\Types\Type::GUID)
+        ;
+        $record = $this->connection->fetchAssoc($query);
+
+        if ($record === false) {
+            return;
+        }
+
+        return $this->getMember('guid', $record['guid']);
     }
 
     /**
      * Get a members meta record from the database
      *
-     * @param int         $userId
-     * @param bool|string $meta
+     * @param string $guid
+     * @param string $meta
      *
-     * @return array|bool
+     * @return array|null
      */
-    public function getMemberMeta($userId, $meta = false)
+    public function getMemberMeta($guid, $meta = null)
     {
         $query = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableNameMeta)
-            ->where('userid = :userid')
-            ->setParameter(':userid', $userId)
+            ->where("guid = '$guid'")
+            //->where('guid = :guid')
+            //->setParameter(':guid', $guid)
         ;
 
         if ($meta) {
@@ -126,30 +154,22 @@ class Records
             $record = $this->connection->fetchAll($query);
         }
 
-        if (empty($record)) {
-            return false;
-        } else {
-            return $record;
-        }
+        return empty($record) ? null : $record;
     }
 
     /**
      * Return the value of a single meta record for a user
      *
-     * @param integer $userId
+     * @param integer $guid
      * @param string  $meta
      *
-     * @return array|boolean
+     * @return array|null
      */
-    public function getMemberMetaValue($userId, $meta)
+    public function getMemberMetaValue($guid, $meta)
     {
-        $record = $this->getMemberMeta($userId, $meta);
+        $record = $this->getMemberMeta($guid, $meta);
 
-        if ($record) {
-            return $record['value'];
-        }
-
-        return false;
+        return $record ? $record['value'] : null;
     }
 
     /**
@@ -192,21 +212,21 @@ class Records
     /**
      * Update/insert a member record in the database
      *
-     * @param int   $userId
+     * @param int   $guid
      * @param array $values
      *
      * @return boolean
      */
-    public function updateMember($userId, $values)
+    public function updateMember($guid, $values)
     {
         $result = false;
         /*
          * Only do an update if there is a valid ID and the member exists
          * Only do an insert if we have a username, displayname and values to add
          */
-        if (!empty($userId) && $this->getMember('guid', $userId)) {
+        if (!empty($guid) && $this->getMember('guid', $guid)) {
             $result = $this->connection->update($this->tableName, $values, [
-                'guid' => $userId,
+                'guid' => $guid,
             ]);
         } elseif (isset($values['username']) && isset($values['displayname']) && isset($values['email'])) {
             $result = $this->connection->insert($this->tableName, $values);
@@ -222,23 +242,23 @@ class Records
     /**
      * Update/insert a member's meta record in the database
      *
-     * @param int    $userId
+     * @param int    $guid
      * @param string $meta
      * @param string $value
      *
      * @return boolean
      */
-    public function updateMemberMeta($userId, $meta, $value)
+    public function updateMemberMeta($guid, $meta, $value)
     {
         $data = [
-            'userid' => $userId,
+            'userid' => $guid,
             'meta'   => $meta,
             'value'  => $value,
         ];
 
-        if ($this->getMemberMeta($userId, $meta)) {
+        if ($this->getMemberMeta($guid, $meta)) {
             $result = $this->connection->update($this->tableNameMeta, $data, [
-                'userid' => $userId,
+                'userid' => $guid,
                 'meta'   => $meta,
             ]);
         } else {
@@ -285,17 +305,44 @@ class Records
             function (Schema $schema) {
                 $table = $schema->createTable($this->tableNameMeta);
                 $table->addColumn('guid',   'guid',     []);
-                $table->addColumn('userid', 'integer');
                 $table->addColumn('meta',   'string',  ['length' => 64]);
                 $table->addColumn('value',  'text');
 
                 $table->setPrimaryKey(['guid']);
 
-                $table->addIndex(['userid']);
                 $table->addIndex(['meta']);
+
+                $table->addForeignKeyConstraint($this->tableName, ['guid'], ['guid']);
 
                 return $table;
             }
         );
+    }
+
+    /**
+     * Temporary function for minimal parsing of GUIDs until we can figure out why DBAL is boking on them as parameters.
+     *
+     * @param string $guid
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    private function getSafeGuid($guid)
+    {
+        if (!is_string($guid)) {
+            throw new \InvalidArgumentException('Invalid GUID string.');
+        }
+
+        $parts = explode('-', $guid);
+        if (count($parts) !== 5) {
+            throw new \InvalidArgumentException('Invalid GUID string.');
+        }
+
+        if (strlen($parts[0]) === 8 && strlen($parts[1]) === 4 && strlen($parts[2]) === 4 && strlen($parts[3]) === 4 && strlen($parts[4]) === 12) {
+            return $guid;
+        }
+
+        throw new \InvalidArgumentException('Invalid GUID string.');
     }
 }

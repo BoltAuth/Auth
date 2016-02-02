@@ -2,11 +2,13 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\Bolt\ClientLogin\Client;
+use Bolt\Extension\Bolt\ClientLogin\Authorisation\SessionManager;
 use Bolt\Extension\Bolt\ClientLogin\Event\ClientLoginEvent;
-use Bolt\Extension\Bolt\ClientLogin\Session;
+use Bolt\Extension\Bolt\ClientLogin\Authorisation\SessionToken;
 use Silex\Application;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Member authentication interface class
@@ -17,14 +19,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Authenticate extends Controller\MembersController
+class Authenticate implements EventSubscriberInterface
 {
     /** @var Application */
     private $app;
-    /** array @var array */
-    private $config;
     /** @var Records */
     private $records;
+    /** @var array */
+    private $config;
+    /** @var  SessionManager */
+    private $clientSession;
 
     /**
      * Constructor.
@@ -34,11 +38,21 @@ class Authenticate extends Controller\MembersController
      */
     public function __construct(Application $app, array $config)
     {
-        parent::__construct($config);
-
         $this->app = $app;
         $this->config = $config;
-        $this->records = new Records($this->app);
+        $this->records = $app['members.records'];
+        $this->clientSession = $app['clientlogin.session'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ClientLoginEvent::LOGIN_POST  => ['login'],
+            ClientLoginEvent::LOGOUT_POST => ['logout'],
+        ];
     }
 
     /**
@@ -48,34 +62,35 @@ class Authenticate extends Controller\MembersController
      */
     public function login(ClientLoginEvent $event)
     {
-        /** @var \Bolt\Extension\Bolt\ClientLogin\Client */
-        $userdata = $event->getUser();
+        /** @var SessionToken */
+        $sessionToken = $event->getSessionToken();
 
         // See if we have this in our database
-        $member = $this->isMemberClientLogin($userdata->provider, $userdata->uid);
+        $member = $this->records->getMemberByProviderId($sessionToken->getGuid());
 
         if ($member) {
             $this->updateMemberLogin($member);
         } else {
             // If registration is closed, don't do anything
-            if (! $this->config['registration']) {
+            if (!$this->config['registration']) {
                 // @TODO handle this properly
                 return;
             }
 
             // Save any redirect that ClientLogin has pending
-            $this->app['clientlogin.session.handler']->set('pending',     $this->app['request']->get('redirect'));
-            $this->app['clientlogin.session.handler']->set('clientlogin', $userdata->id);
+            $this->app['session']->set('pending',     $this->app['request']->get('redirect'));
+            $this->app['session']->set('clientlogin', $sessionToken->getGuid());
 
             // Check to see if there is already a member with this email
-            $member = $this->app['members']->getMember('email', $userdata->email);
+            $member = $this->app['members']->getMember('email', $sessionToken->email);
 
             if ($member) {
                 // Associate this login with their Members profile
-                $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
+                $this->addMemberProvider($member['guid '], $sessionToken->provider, $sessionToken->uid);
             } else {
                 // Redirect to the 'new' page
-                $this->app['clientlogin.session']->setResponse(new RedirectResponse("/{$this->config['basepath']}/register"));
+                $redirect = sprintf('/%s/register', $this->config['basepath']);
+                $this->app['session']->set('redirect', new RedirectResponse($redirect));
             }
         }
     }
@@ -94,55 +109,21 @@ class Authenticate extends Controller\MembersController
      *
      * @return boolean|integer Member ID, or false
      */
-    public function isAuth()
+    public function getMember()
     {
         // First check for ClientLogin auth
-        if (! $this->app['clientlogin.session']->isLoggedIn()) {
+        if (!$this->clientSession->isLoggedIn()) {
             return false;
         }
 
         // Get their ClientLogin records
-        $token = $this->app['clientlogin.session']->getToken(Session::TOKEN_SESSION);
-        if (!$record = $this->app['clientlogin.db']->getUserProfileBySession($token)) {
-            return false;
+        $sessionToken = $this->clientSession->getLoggedIn();
+        if ($sessionToken === null) {
+            throw new \RuntimeException('Unable to retrieve ClientLogin session.');
         }
 
         // Look them up internally
-        return $this->isMemberClientLogin($record->provider, $record->uid);
-    }
-
-    /**
-     * Check if we have this ClientLogin as a member
-     *
-     * @param string $provider   The provider, e.g. 'Google'
-     * @param string $identifier The providers ID for the account
-     *
-     * @return int|boolean The user ID of the member or false if not found
-     */
-    private function isMemberClientLogin($provider, $identifier)
-    {
-        $key = 'clientlogin_id_' . strtolower($provider);
-        $record = $this->records->getMetaRecords($key, $identifier, true);
-        if ($record) {
-            return $record['userid'];
-        }
-
-        return false;
-    }
-
-    /**
-     * Check to see if a member is currently authenticated via ClientLogin
-     *
-     * @return boolean
-     */
-    private function isMemberClientLoginAuth()
-    {
-        //
-        if ($this->app['clientlogin.session']->isLoggedIn()) {
-            return true;
-        }
-
-        return false;
+        return $this->records->getMemberByProviderId($sessionToken->getGuid());
     }
 
     /**
@@ -154,9 +135,9 @@ class Authenticate extends Controller\MembersController
      *
      * @return bool
      */
-    private function addMemberClientLoginProfile($userid, $provider, $identifier)
+    private function addMemberProvider($userid, $provider, $identifier)
     {
-        if ($this->records->getMember('id', $userid)) {
+        if ($this->records->getMember('guid', $userid)) {
             $key = 'clientlogin_id_' . strtolower($provider);
             $this->records->updateMemberMeta($userid, $key, $identifier);
 
@@ -183,7 +164,7 @@ class Authenticate extends Controller\MembersController
 
         if ($member) {
             // We already have them, just link the profile
-            $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
+            $this->addMemberProvider($member['id'], $userdata->provider, $userdata->uid);
         } else {
             //
             $create = $this->records->updateMember(false, [
@@ -200,7 +181,7 @@ class Authenticate extends Controller\MembersController
                 $member = $this->app['members']->getMember('email', $form['email']);
 
                 // Add the provider info to meta
-                $this->addMemberClientLoginProfile($member['id'], $userdata->provider, $userdata->uid);
+                $this->addMemberProvider($member['id'], $userdata->provider, $userdata->uid);
 
                 // Add meta data from ClientLogin
                 $this->records->updateMemberMeta($member['id'], 'avatar', $userdata->imageUrl);
@@ -217,16 +198,18 @@ class Authenticate extends Controller\MembersController
     }
 
     /**
-     * Update a members login meta
+     * Update a members login meta.
      *
-     * @param integer $userid
+     * @param integer $guid
      */
-    private function updateMemberLogin($userid)
+    private function updateMemberLogin($guid)
     {
-        if ($this->records->getMember('id', $userid)) {
-            $this->records->updateMember($userid, [
+        /** @var Request $request */
+        $request = $this->app['request_stack']->getCurrentRequest();
+        if ($this->records->getMember('guid', $guid)) {
+            $this->records->updateMember($guid, [
                 'lastseen' => date('Y-m-d H:i:s'),
-                'lastip'   => $this->app['request']->getClientIp(),
+                'lastip'   => $request->getClientIp(),
             ]);
         }
     }

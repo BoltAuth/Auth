@@ -82,14 +82,15 @@ class MembersController implements ControllerProviderInterface
     {
         // Ensure we have a valid Client Login session
         if (!$app['clientlogin.session']->isLoggedIn()) {
+
             return new Response('No valid Client Login session!', Response::HTTP_FORBIDDEN, ['content-type' => 'text/html']);
         }
 
         // Get redirect that is set for ClientLogin
-        $redirect = $app['clientlogin.session.handler']->get('pending');
+        $redirect = $app['session']->get('pending');
 
         // Get session data we need from ClientLogin
-        $clientlogin = $app['clientlogin.session.handler']->get('clientlogin');
+        $clientlogin = $app['session']->get('clientlogin');
 
         // If there is no ClientLogin data in the session, they shouldn't be here
         if (empty($clientlogin)) {
@@ -97,7 +98,7 @@ class MembersController implements ControllerProviderInterface
         }
 
         // Get a Client object
-        $userdata = $app['clientlogin.db']->getUserProfileByID($clientlogin);
+        $userdata = $app['clientlogin.records']->getUserProfileByID($clientlogin);
 
         // Create new register form
         $register = new Register();
@@ -124,8 +125,8 @@ class MembersController implements ControllerProviderInterface
                 // Create new Member record and go back to where we came from
                 if ($auth->addMember($request->get('register'), $userdata)) {
                     // Clear any redirect that ClientLogin has pending
-                    $app['clientlogin.session.handler']->remove('pending');
-                    $app['clientlogin.session.handler']->remove('clientlogin');
+                    $app['session']->remove('pending');
+                    $app['session']->remove('clientlogin');
 
                     // Redirect
                     if (empty($redirect)) {
