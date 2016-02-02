@@ -8,7 +8,7 @@
 
 {% if feedback|default(null) %}
 <div class="panel members-feedback">
-    {% if feedback.debug|default(null) %}
+    {% if feedback.debug|default(null) and app['members.debug']%}
     <div class="debug-messages">
         <h5>Debug Messages:</h5>
         <ol>
@@ -30,12 +30,12 @@
     </div>
     {% endif %}
 
-    {% if feedback.message|default(null) %}
+    {% if feedback.info|default(null) %}
     <div class="debug-messages">
         <h5>Informational Messages:</h5>
         <ol>
-            {% for message in feedback.message %}
-                <li>{{ message }}</li>
+            {% for info in feedback.info %}
+                <li>{{ info }}</li>
             {% endfor %}
         </ol>
     </div>

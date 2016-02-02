@@ -2,6 +2,10 @@
 ## Bolt Members configuration options
 ##
 
+## Debugging
+#
+debug: false
+
 ## Template overrides
 #
 # The template names that you wish to use in your theme to override the defaults

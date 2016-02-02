@@ -90,6 +90,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
+        $app['members.debug'] = $app->protect(
+            function ($app) {
+                return $app['members.config']->isDebug();
+            }
+        );
+
         $app['members.feedback'] = $app->share(
             function ($app) {
                 return new Feedback($app['session']);

@@ -43,6 +43,7 @@ class Config
         $config = Arr::mergeRecursiveDistinct($defaultConfig, $extensionConfig);
 
         $this->addOns =  $config['addons'];
+        $this->debug = (boolean) $config['debug'];
         $this->labels =  $config['labels'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
@@ -73,6 +74,26 @@ class Config
     public function getAddOns()
     {
         return $this->addOns;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDebug()
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param boolean $debug
+     *
+     * @return Config
+     */
+    public function setDebug($debug)
+    {
+        $this->debug = (boolean) $debug;
+
+        return $this;
     }
 
     /**
@@ -303,6 +324,7 @@ class Config
             'addons'       => [
                 'zocial' => false,
             ],
+            'debug'        => false,
             'labels'     => [
                 'login'  => 'Login',
                 'logout' => 'Logout',
