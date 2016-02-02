@@ -199,6 +199,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $type = new \Pimple(
                     [
                         // @codingStandardsIgnoreStart
+                        'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType(); }),
                         'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
                         'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
                         // @codingStandardsIgnoreEnd
@@ -207,8 +208,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $entity = new \Pimple(
                     [
                         // @codingStandardsIgnoreStart
+                        'login'    => $app->share(function () use ($app) { return new Form\Entity\Login(); }),
                         'profile'  => $app->share(function () use ($app) { return new Form\Entity\Profile($app['members.records']); }),
-                        'register' => $app->share(function () use ($app) { return new Form\Entity\Register($app['members.records']); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Entity\Register(); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );
