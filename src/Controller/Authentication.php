@@ -13,6 +13,7 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +62,7 @@ class Authentication implements ControllerProviderInterface
         // Member login
         $ctr->match('/login/process', [$this, 'processLogin'])
             ->bind('authenticationProcessLogin')
-            ->method('POST')
+            ->method('GET')
         ;
 
         // Member logout
@@ -91,6 +92,10 @@ class Authentication implements ControllerProviderInterface
      */
     public function before(Request $request, Application $app)
     {
+        if ($request->get('_route') === 'authenticationLogin') {
+            return;
+        }
+
         /** @var ProviderManager $providerManager */
         $providerManager = $app['members.oauth.provider.manager'];
         $providerManager->setProvider($app, $request);
@@ -129,6 +134,34 @@ class Authentication implements ControllerProviderInterface
      */
     public function login(Application $app, Request $request)
     {
+        $data = [
+            'csrf_protection' => true,
+            'data'            => [
+                'email' => $request->request->get('email')
+            ],
+        ];
+        /** @var Form $form */
+        $form = $app['form.factory']
+            ->createBuilder(
+                $app['members.forms']['type']['login'],
+                $app['members.forms']['entity']['login'],
+                $data
+            )
+            ->getForm()
+        ;
+
+        // Handle the form request data
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+
+        }
+
+        $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
+            'form'       => $form->createView(),
+            'twigparent' => $this->config->getTemplates('authentication', 'parent'),
+        ]);
+
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 
     /**
