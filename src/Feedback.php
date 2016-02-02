@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Feedback
 {
+    const SESSION_KEY = 'members-feedback';
+
     /** @var array */
     protected $feedback = [];
 
@@ -23,9 +25,9 @@ class Feedback
     {
         $this->session = $session;
 
-        if ($this->session->isStarted() && $stored = $this->session->get('members_feedback')) {
+        if ($this->session->isStarted() && $stored = $this->session->get(self::SESSION_KEY)) {
             $this->feedback = $stored;
-            $this->session->remove('members_feedback');
+            $this->session->remove(self::SESSION_KEY);
         }
     }
 
@@ -35,7 +37,7 @@ class Feedback
     public function after()
     {
         if ($this->session->isStarted()) {
-            $this->session->set('members_feedback', $this->feedback);
+            $this->session->set(self::SESSION_KEY, $this->feedback);
         }
     }
 
@@ -72,9 +74,39 @@ class Feedback
      */
     public function set($state, $message)
     {
-        if (empty($state) || !in_array($state, ['error', 'message', 'debug'])) {
+        if (empty($state) || !in_array($state, ['debug', 'error', 'info'])) {
             throw new \InvalidArgumentException("Feedback state can only be 'error', 'message', or 'debug'.");
         }
         $this->feedback[$state][] = $message;
+    }
+
+    /**
+     * Set an debug message.
+     *
+     * @param string $message
+     */
+    public function debug($message)
+    {
+        $this->set('debug', $message);
+    }
+
+    /**
+     * Set an error message.
+     *
+     * @param string $message
+     */
+    public function error($message)
+    {
+        $this->set('error', $message);
+    }
+
+    /**
+     * Set an info message.
+     *
+     * @param string $message
+     */
+    public function info($message)
+    {
+        $this->set('info', $message);
     }
 }

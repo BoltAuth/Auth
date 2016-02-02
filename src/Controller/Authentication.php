@@ -275,22 +275,22 @@ class Authentication implements ControllerProviderInterface
     {
         if ($e instanceof IdentityProviderException) {
             // Thrown by the OAuth2 library
-            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof InvalidAuthorisationRequestException) {
             // Thrown deliberately internally
-            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof MissingAccountException) {
             // Thrown deliberately internally
-            $app['members.feedback']->set('message', 'An exception occurred authenticating with the provider.');
+            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } else {
             // Yeah, this can't be good…
-            $app['members.feedback']->set('message', 'A server error occurred, we are very sorry and someone has been notified!');
+            $app['members.feedback']->error('A server error occurred, we are very sorry and someone has been notified!');
             $response = new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -303,7 +303,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $app['members.feedback']->set('debug', $e->getMessage());
+        $app['members.feedback']->debug($e->getMessage());
         $response->setContent($this->displayExceptionPage($app, $e));
 
         return $response;
