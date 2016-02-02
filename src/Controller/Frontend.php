@@ -99,7 +99,10 @@ class Frontend implements ControllerProviderInterface
         $memberSession = $app['members.session']->getAuthorisation();
 
         if ($memberSession === null) {
-            return new Response('TODO: No session found, please login', Response::HTTP_FORBIDDEN);
+            $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
+            $app['logger.flash']->info('Login required to edit your profile');
+
+            return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
         // Get the stored account & meta
