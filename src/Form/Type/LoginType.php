@@ -33,10 +33,13 @@ class LoginType extends AbstractType
                     'checkMX' => true,
                 ]),
             ])
-            ->add('plainPassword', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options'  => array('label' => 'Password'),
-                'second_options' => array('label' => 'Repeat Password'),
+            ->add('password', PasswordType::class, [
+                'label'       => Trans::__('Password:'),
+                'data'        => null,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Length(['min' => 6]),
+                ],
             ])
             ->add('submit',      'submit', [
                 'label'   => Trans::__('Login'),
