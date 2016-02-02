@@ -165,7 +165,9 @@ class Authentication implements ControllerProviderInterface
     public function oauthCallback(Application $app, Request $request)
     {
         try {
-            $response = $app['members.oauth.handler']->process($request);
+            /** @var HandlerInterface $handler */
+            $handler = $app['members.oauth.handler'];
+            $response = $handler->process($request, 'authorization_code');
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
