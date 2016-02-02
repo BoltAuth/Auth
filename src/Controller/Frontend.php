@@ -140,12 +140,6 @@ class Frontend implements ControllerProviderInterface
             $account->setDisplayname($form->get('displayname')->getData());
             $account->setEmail($form->get('email')->getData());
             $app['members.records']->saveAccount($account);
-
-            //if ($redirect = $app['session']->get('members_redirect')) {
-            //    $response = new RedirectResponse($redirect);
-            //} else {
-            //    $response = new RedirectResponse($app['resources']->getUrl('hosturl'));
-            //}
         }
 
         $html = $app['render']->render($this->config->getTemplates('profile', 'edit'), [
