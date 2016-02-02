@@ -195,6 +195,15 @@ class Frontend implements ControllerProviderInterface
             $account->setLastip($app['request_stack']->getCurrentRequest()->getClientIp());
             $app['members.records']->saveAccount($account);
 
+            // Save the password to a meta record
+            $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);;
+            $oauth = new Entity\Oauth();
+            $oauth->setGuid($account->getGuid());
+            $oauth->setResourceOwnerId($account->getGuid());
+            $oauth->setEnabled(true);
+            $oauth->setPassword($encryptedPassword);
+            $app['members.records']->saveOauth($oauth);
+
             // Set up the initial session.
             $localProvider = new Provider\Local();
             $localAccessToken = $localProvider->getAccessToken('password', []);
