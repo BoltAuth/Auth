@@ -1,22 +1,24 @@
 {% extends twigparent %}
 
 {% block login %}
-<div class="login">
-    <div class="row profile">
-        <div class="small-12 columns">
-            {{ form_start(form) }}
-                {{ form_row(form.email) }}
-                {{ form_row(form.password) }}
-                <br>
-                {{ form_row(form.submit) }}
-            {{ form_end(form) }}
-        </div>
-    </div>
+    {% include "_messages.twig" %}
 
-    <div class="row profile">
-        <div class="small-12 columns">
-            {{ members_auth_login() }}
+    <div class="login">
+        <div class="row profile">
+            <div class="small-12 columns">
+                {{ form_start(form) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.password) }}
+                    <br>
+                    {{ form_row(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="row profile">
+            <div class="small-12 columns">
+                {{ members_auth_login() }}
+            </div>
         </div>
     </div>
-</div>
 {% endblock login %}
