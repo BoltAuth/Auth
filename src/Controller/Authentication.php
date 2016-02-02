@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Bolt\Extension\Bolt\Members\Exception\MissingAccountException;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -153,7 +154,29 @@ class Authentication implements ControllerProviderInterface
         // Handle the form request data
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
+            if (!$account instanceof Entity\Account) {
+                $app['logger.flash']->info('Registration is required.');
 
+                return new RedirectResponse($app['url_generator']->generate('registerProfile'));
+            }
+
+            $oauth = $app['members.records']->getOauthByGuid($account->getGuid());
+            if (!$oauth instanceof Entity\Oauth) {
+                $app['logger.flash']->info('Registration is required.');
+
+                return new RedirectResponse($app['url_generator']->generate('registerProfile'));
+            }
+
+            if (!$oauth->getEnabled()) {
+                $app['logger.flash']->info('Account disabled.');
+
+                return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
+            }
+
+            if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
+                return new RedirectResponse($request->headers->get('referer', '/'));
+            }
         }
 
         $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
