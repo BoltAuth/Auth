@@ -111,7 +111,7 @@ class Session implements EventSubscriberInterface
      */
     public function getAuthorisation()
     {
-        if ($this->authorisation === null) {
+        if ($this->authorisation === null && $this->session->get(self::SESSION_AUTHORISATION)) {
             $this->authorisation = Authorisation::createFromJson($this->session->get(self::SESSION_AUTHORISATION));
         }
 
