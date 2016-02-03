@@ -2,17 +2,21 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Feedback message class.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Feedback
+class Feedback implements EventSubscriberInterface
 {
     const SESSION_KEY = 'members-feedback';
 
+    /** @var SessionInterface */
+    protected $session;
     /** @var array */
     protected $feedback = [];
 
@@ -28,16 +32,6 @@ class Feedback
         if ($this->session->isStarted() && $stored = $this->session->get(self::SESSION_KEY)) {
             $this->feedback = $stored;
             $this->session->remove(self::SESSION_KEY);
-        }
-    }
-
-    /**
-     * Post-request middleware callback, added in service provider.
-     */
-    public function after()
-    {
-        if ($this->session->isStarted()) {
-            $this->session->set(self::SESSION_KEY, $this->feedback);
         }
     }
 
@@ -108,5 +102,25 @@ class Feedback
     public function info($message)
     {
         $this->set('info', $message);
+    }
+
+    /**
+     * Post-request middleware callback, added in service provider.
+     */
+    public function onResponse()
+    {
+        if ($this->session->isStarted()) {
+            $this->session->set(self::SESSION_KEY, $this->feedback);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::RESPONSE => ['onResponse'],
+        ];
     }
 }
