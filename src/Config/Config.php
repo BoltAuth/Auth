@@ -56,6 +56,7 @@ class Config
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[$name] = new Provider($name, $provider);
         }
+        $this->providers['Generic'] = new Provider('Generic', []);
     }
 
     /**
