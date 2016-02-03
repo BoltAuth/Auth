@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Config;
 
+use Bolt\Helpers\Arr;
+
 /**
  * Provider configuration definition.
  *
@@ -30,6 +32,7 @@ class Provider
      */
     public function __construct($name, array $providerConfig)
     {
+        $providerConfig = $this->setDefaultConfig($providerConfig);
         $this->name = $name;
         $this->label = $providerConfig['label'];
         $this->clientId = $providerConfig['keys']['clientId'];
@@ -161,5 +164,25 @@ class Provider
         $this->scopes = $scopes;
 
         return $this;
+    }
+
+    /**
+     * @param array $providerConfig
+     *
+     * @return array
+     */
+    private function setDefaultConfig(array $providerConfig)
+    {
+        $default = [
+            'label'   => null,
+            'keys'    => [
+                'clientId'     => null,
+                'clientSecret' => null,
+            ],
+            'scopes'  => null,
+            'enabled' => false,
+        ];
+
+        return Arr::mergeRecursiveDistinct($default, $providerConfig);
     }
 }
