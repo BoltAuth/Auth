@@ -141,6 +141,7 @@ class Authentication implements ControllerProviderInterface
                 ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
             ;
         }
+        $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
 
         $data = [
             'csrf_protection' => true,
@@ -160,7 +161,7 @@ class Authentication implements ControllerProviderInterface
 
         // Handle the form request data
         $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($hasLocal && $form->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
 
             $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
@@ -200,6 +201,7 @@ class Authentication implements ControllerProviderInterface
             'form'       => $form->createView(),
             'twigparent' => $this->config->getTemplates('authentication', 'parent'),
             'feedback'   => $app['members.feedback']->get(),
+            'has_local'  => $hasLocal,
         ]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));

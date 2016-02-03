@@ -4,16 +4,9 @@
     {% include "feedback.twig" %}
 
     <div class="login">
-        <div class="row profile">
-            <div class="small-12 columns">
-                {{ form_start(form) }}
-                    {{ form_row(form.email) }}
-                    {{ form_row(form.password) }}
-                    <br>
-                    {{ form_row(form.submit) }}
-                {{ form_end(form) }}
-            </div>
-        </div>
+        {% if has_local %}
+            {{ _self.password_login(form) }}
+        {% endif %}
 
         <div class="row profile">
             <div class="small-12 columns">
@@ -22,3 +15,17 @@
         </div>
     </div>
 {% endblock login %}
+
+{% macro password_login(form) %}
+    <div class="row profile">
+        <div class="small-12 columns">
+            {{ form_start(form) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.password) }}
+            <br>
+            {{ form_row(form.submit) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endmacro %}
+
