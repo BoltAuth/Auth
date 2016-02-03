@@ -53,7 +53,7 @@ class Functions
      */
     public function isMember()
     {
-        return true;
+        return $this->session->hasAuthorisation();
     }
 
     /**
