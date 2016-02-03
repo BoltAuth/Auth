@@ -144,6 +144,7 @@ abstract class HandlerBase
             throw new Ex\InvalidAuthorisationRequestException('Session authorisation missing');
         }
         $authorisation->addAccessToken($providerName, $accessToken);
+        $resourceOwner = $this->getResourceOwner($accessToken);
 
         /** @var Entity\Provider $entity */
         foreach ((array) $providerEntities as $entity) {
@@ -154,7 +155,6 @@ abstract class HandlerBase
             }
         }
 
-        $resourceOwner = $this->getResourceOwner($accessToken);
         if ($providerEntity === false) {
             // Create a new provider entry
             $this->setDebugMessage(sprintf('No provider profile found for %s ID %s', $providerName, $resourceOwner->getId()));
