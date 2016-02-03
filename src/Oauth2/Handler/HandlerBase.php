@@ -51,6 +51,8 @@ abstract class HandlerBase
     protected $logger;
     /** @var EventDispatcherInterface */
     protected $dispatcher;
+    /** @var ResourceOwnerInterface */
+    protected $resourceOwner;
 
     /** @var Application */
     private $app;
@@ -89,7 +91,7 @@ abstract class HandlerBase
         }
 
         if ($this->session->hasAuthorisation()) {
-            return;
+            return true;
         }
 
         // Set user feedback messages
@@ -205,7 +207,11 @@ abstract class HandlerBase
      */
     protected function getResourceOwner(AccessToken $accessToken)
     {
-        return $this->provider->getResourceOwner($accessToken);
+        if ($this->resourceOwner === null) {
+            $this->resourceOwner = $this->provider->getResourceOwner($accessToken);
+        }
+
+        return $this->resourceOwner;
     }
 
     /**
@@ -243,7 +249,7 @@ abstract class HandlerBase
         } catch (\RuntimeException $e) {
             return new AccessToken([
                 'access_token'      => $accessToken->getToken(),
-                'resource_owner_id' => $accessToken->getResourceOwnerId(),
+                'resource_owner_id' => $this->getResourceOwner($accessToken)->getResourceOwnerId(),
                 'refresh_token'     => $accessToken->getRefreshToken(),
                 'expires_in'        => 3600,
             ]);
