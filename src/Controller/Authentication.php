@@ -93,12 +93,11 @@ class Authentication implements ControllerProviderInterface
      */
     public function before(Request $request, Application $app)
     {
-        if ($request->get('_route') === 'authenticationLogin') {
-            return;
-        }
-
         /** @var ProviderManager $providerManager */
         $providerManager = $app['members.oauth.provider.manager'];
+        if (in_array($request->get('_route'), ['authenticationLogin', 'authenticationLogout'])) {
+            $request->query->set('provider', 'Generic');
+        }
         $providerManager->setProvider($app, $request);
     }
 
@@ -234,6 +233,13 @@ class Authentication implements ControllerProviderInterface
      */
     public function logout(Application $app, Request $request)
     {
+        /** @var HandlerInterface $handler */
+        $handler = $app['members.oauth.handler'];
+        try {
+            $handler->logout($request);
+        } catch (\Exception $e) {
+            return $this->getExceptionResponse($app, $e);
+        }
 
         return $app['members.session']->popRedirect()->getResponse();
     }
