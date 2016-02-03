@@ -33,7 +33,6 @@ class Provider extends BaseTable
         $this->table->addIndex(['guid']);
         $this->table->addIndex(['provider']);
         $this->table->addIndex(['resource_owner_id']);
-        $this->table->addIndex(['refresh_token']);
 
         $this->table->addUniqueIndex(['guid', 'provider', 'resource_owner_id']);
 
@@ -54,6 +53,6 @@ class Provider extends BaseTable
      */
     protected function addForeignKeyConstraint()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_constraint');
     }
 }

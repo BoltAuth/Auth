@@ -54,6 +54,6 @@ class Token extends BaseTable
      */
     protected function addForeignKeyConstraint()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_constraint');
     }
 }
