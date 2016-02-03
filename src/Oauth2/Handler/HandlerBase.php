@@ -93,7 +93,7 @@ abstract class HandlerBase
         }
 
         // Set user feedback messages
-        $this->feedback->set('message', 'Login was route complete, redirecting for authentication.');
+        $this->feedback->info('Login was route complete, redirecting for authentication.');
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class HandlerBase
     {
         if ($this->session->hasAuthorisation()) {
             $this->session->removeAuthorisation();
-            $this->feedback->set('message', 'Logout was successful.');
+            $this->feedback->info('Logout was successful.');
         }
     }
 
@@ -258,7 +258,7 @@ abstract class HandlerBase
     protected function setDebugMessage($message)
     {
         $this->logger->debug('[Members][Handler]: ' . $message, ['event' => 'extensions']);
-        $this->feedback->set('debug', $message);
+        $this->feedback->debug($message);
     }
 
     /**
