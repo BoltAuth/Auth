@@ -108,18 +108,19 @@ class Functions
      * Display logout button(s).
      *
      * @param TwigEnvironment $twig
-     * @param bool            $redirect
+     * @param bool            $redirect If we should redirect after login
+     * @param array           $exclude  An array of provider names to not include
      *
      * @return TwigMarkup
      */
-    public function renderLogin(TwigEnvironment $twig, $redirect = false)
+    public function renderLogin(TwigEnvironment $twig, $redirect = false, $exclude = [])
     {
         // Set redirect if requested
         $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')]: [];
         $context = [];
 
         foreach ($this->config->getProviders() as $provider => $providerConf) {
-            if (!$providerConf->isEnabled()) {
+            if (!$providerConf->isEnabled() || in_array($providerConf->getName(), $exclude)) {
                 continue;
             }
 
