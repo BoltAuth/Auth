@@ -293,6 +293,13 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
+        // Local OAuth provider object
+        $app['members.oauth.provider.local'] = $app->protect(
+            function () {
+                return new Provider\Local([]);
+            }
+        );
+
         // Provider objects for each enabled provider
         foreach ($this->config['providers'] as $providerName => $providerConfig) {
             if ($providerConfig['enabled'] === true) {
