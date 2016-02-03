@@ -179,6 +179,8 @@ class Frontend implements ControllerProviderInterface
         // Handle the form request data
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
+
             // Create and store the account entity
             $account = new Entity\Account();
             $account->setDisplayname($form->get('displayname')->getData());
@@ -199,7 +201,8 @@ class Frontend implements ControllerProviderInterface
             $app['members.records']->saveOauth($oauth);
 
             // Set up the initial session.
-            $localProvider = new Provider\Local();
+            /** @var Provider\Local $localProvider */
+            $localProvider = $app['members.oauth.provider'];
             $localAccessToken = $localProvider->getAccessToken('password', []);
             $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
 

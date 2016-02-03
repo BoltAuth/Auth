@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Bolt\Extension\Bolt\Members\Exception\MissingAccountException;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
@@ -160,6 +161,8 @@ class Authentication implements ControllerProviderInterface
         // Handle the form request data
         $form->handleRequest($request);
         if ($form->isValid()) {
+            $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
+
             $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
             if (!$account instanceof Entity\Account) {
                 $app['members.feedback']->info('Registration is required.');
@@ -181,10 +184,16 @@ class Authentication implements ControllerProviderInterface
             }
 
             if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
+                /** @var Provider\Local $localProvider */
+                $localProvider = $app['members.oauth.provider'];
+                $localAccessToken = $localProvider->getAccessToken('password', []);
+                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+                $app['members.feedback']->info('Login successful.');
+
                 return $app['members.session']->popRedirect()->getResponse();
             }
 
-            $app['members.feedback']->info('Login detail are incorrect.');
+            $app['members.feedback']->info('Login details are incorrect.');
         }
 
         $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
