@@ -13,6 +13,34 @@ use Bolt\Storage\Repository;
 class Provider extends AbstractMembersRepository
 {
     /**
+     * Fetches Provider entries by GUID & provider name.
+     *
+     * @param string $guid
+     * @param string $provider
+     *
+     * @return Entity\Provider
+     */
+    public function getProvision($guid, $provider)
+    {
+        $query = $this->getProvisionQuery($guid, $provider);
+
+        return $this->findOneWith($query);
+    }
+
+    public function getProvisionQuery($guid, $provider)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where('guid = :guid')
+            ->andWhere('provider = :provider')
+            ->setParameter('guid', $guid)
+            ->setParameter('provider', $provider)
+        ;
+
+        return $qb;
+    }
+
+    /**
      * Fetches Provider entries by GUID.
      *
      * @param string $guid

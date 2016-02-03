@@ -214,6 +214,19 @@ class Records
      * Fetches Provider entries by GUID.
      *
      * @param string $guid
+     * @param string $provider
+     *
+     * @return Entity\Provider[]
+     */
+    public function getProvision($guid, $provider)
+    {
+        return $this->provider->getProvision($guid, $provider);
+    }
+
+    /**
+     * Fetches Provider entries by GUID.
+     *
+     * @param string $guid
      *
      * @return Entity\Provider[]
      */
