@@ -282,7 +282,7 @@ class Session implements EventSubscriberInterface
         $redirect = end($this->redirectStack);
         $key = key($this->redirectStack);
         unset($this->redirectStack[$key]);
-        if ($this->redirectStack === null) {
+        if (empty($this->redirectStack)) {
             $this->redirectStack[] = new Redirect('/');
         }
 
