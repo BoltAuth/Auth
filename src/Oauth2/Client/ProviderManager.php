@@ -80,6 +80,18 @@ class ProviderManager
     }
 
     /**
+     * Set the in-use provider to the local provider.
+     *
+     * @param Application $app
+     * @param Request     $request
+     */
+    public function setLocalProvider(Application $app, Request $request)
+    {
+        $request->query->set('provider', 'Local');
+        $this->setProvider($app, $request);
+    }
+
+    /**
      * Get a provider class object.
      *
      * @param string $providerName
