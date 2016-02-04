@@ -11,6 +11,7 @@ use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -121,7 +122,7 @@ class Authentication implements ControllerProviderInterface
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
         } else {
-            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, 86400));
+            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, Carbon::now()->addSeconds(86400)));
         }
     }
 
