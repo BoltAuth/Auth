@@ -59,11 +59,23 @@ class Functions
     /**
      * Check if the current logged-in session has a member role.
      *
+     * @param string $role
+     *
      * @return bool
      */
-    public function hasRole()
+    public function hasRole($role)
     {
-        return true;
+        $auth = $this->session->getAuthorisation();
+        if ($auth === null) {
+            return false;
+        }
+        $account = $this->records->getAccountByGuid($auth->getGuid());
+        if ($account === false) {
+            return false;
+        }
+        $roles = (array) $account->getRoles();
+
+        return in_array($role, $roles);
     }
 
     public function getProviders()
