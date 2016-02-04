@@ -78,6 +78,11 @@ class Functions
         return in_array($role, $roles);
     }
 
+    /**
+     * Return an array of registered OAuth providers for an account.
+     *
+     * @return array
+     */
     public function getProviders()
     {
         $providers = [];
