@@ -137,7 +137,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             ControllerEvents::MOUNT => [
-                ['onMountControllers', -150],
+                ['onMountControllers', 100],
             ],
         ];
     }
