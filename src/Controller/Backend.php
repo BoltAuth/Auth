@@ -116,7 +116,7 @@ class Backend implements ControllerProviderInterface
         /** @var UrlGeneratorInterface $generator */
         $generator = $app['url_generator'];
 
-        return new RedirectResponse($generator->generate('dashboard'), Response::HTTP_UNAUTHORIZED);
+        return new RedirectResponse($generator->generate('dashboard'), Response::HTTP_SEE_OTHER);
     }
 
     /**

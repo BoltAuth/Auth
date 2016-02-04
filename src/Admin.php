@@ -163,8 +163,6 @@ class Admin implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [
-            KernelEvents::REQUEST => ['onRequest', -8],
-        ];
+        return [];
     }
 }
