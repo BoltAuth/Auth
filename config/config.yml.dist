@@ -29,6 +29,10 @@ labels:
     login: Login
     logout: Logout
 
+## Add-ons
+#
+addons:
+    zocial: false # Set to true to enable using Zocial icons. Requires the bolt/zocial-icons extension to be installed.
 
 ## Registration
 #
