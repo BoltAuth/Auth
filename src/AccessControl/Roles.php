@@ -3,10 +3,9 @@
 namespace Bolt\Extension\Bolt\Members\AccessControl;
 
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Roles manager.
@@ -41,6 +40,9 @@ class Roles implements EventSubscriberInterface
         return $this->roles;
     }
 
+    /**
+     * Add the extension's configured roles.
+     */
     public function addBaseRoles()
     {
         foreach ($this->config->getRolesMember() as $name => $displayName) {
@@ -51,9 +53,9 @@ class Roles implements EventSubscriberInterface
     /**
      * Event callback to add additional roles dynamically.
      *
-     * @param MembersEvent $event
+     * @param MembersRolesEvent $event
      */
-    public function addRole(MembersEvent $event)
+    public function addCustomRoles(MembersRolesEvent $event)
     {
         foreach ((array) $event->getRoles() as $role) {
             if ($role instanceof Role) {
@@ -63,13 +65,15 @@ class Roles implements EventSubscriberInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST      => 'addBaseRoles',
-            MembersEvents::MEMBER_ROLE => 'addRole',
+            MembersEvents::MEMBER_ROLE => [
+                ['addBaseRoles', -512],
+                ['addCustomRoles', -512],
+            ],
         ];
     }
 }
