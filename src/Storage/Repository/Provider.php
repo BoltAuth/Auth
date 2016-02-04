@@ -127,7 +127,7 @@ class Provider extends AbstractMembersRepository
     {
         $query = $this->getProvisionByResourceOwnerIdQuery($provider, $resourceOwnerId);
 
-        return $this->findWith($query);
+        return $this->findOneWith($query);
     }
 
     public function getProvisionByResourceOwnerIdQuery($provider, $resourceOwnerId)
