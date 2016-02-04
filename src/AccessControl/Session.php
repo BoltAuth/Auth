@@ -11,7 +11,6 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -150,7 +149,10 @@ class Session implements EventSubscriberInterface
 
         // Remove records
         $tokenEntities = $this->records->getTokensByGuid($authorisation->getGuid());
-        foreach ((array) $tokenEntities as $tokenEntity) {
+        if ($tokenEntities === false) {
+            return;
+        }
+        foreach ($tokenEntities as $tokenEntity) {
             $this->records->deleteToken($tokenEntity);
         }
     }
