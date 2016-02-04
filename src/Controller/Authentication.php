@@ -269,14 +269,11 @@ class Authentication implements ControllerProviderInterface
         try {
             /** @var HandlerInterface $handler */
             $handler = $app['members.oauth.handler'];
-            $response = $handler->process($request, 'authorization_code');
+            $handler->process($request, 'authorization_code');
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
-
-        if ($response instanceof RedirectResponse) {
-            return $response;
-        }
+        $response = $app['members.session']->popRedirect()->getResponse();
 
         // Flush any pending redirects
         $app['members.session']->clearRedirects();
