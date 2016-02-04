@@ -138,6 +138,20 @@ abstract class HandlerBase
     protected function handleAccountTransition(AccessToken $accessToken)
     {
         $providerName = $this->providerManager->getProviderName(true);
+        $resourceOwner = $this->getResourceOwner($accessToken);
+        $providerEntity = $this->records->getProvisionByResourceOwnerId($providerName, $resourceOwner->getId());
+        if ($providerEntity === false) {
+            throw new Ex\MissingAccountException(sprintf('No stored provider data for %s ID %s', $providerName, $resourceOwner->getId()));
+        }
+
+        if ($this->session->hasAuthorisation()) {
+            $this->session
+                ->getAuthorisation()
+                ->addAccessToken($providerName, $accessToken);
+        } else {
+            $this->session
+                ->createAuthorisation($providerEntity->getGuid(), $providerName, $accessToken);
+        }
         $authorisation = $this->session->getAuthorisation();
 
         $providerEntity = false;
@@ -146,7 +160,6 @@ abstract class HandlerBase
             throw new Ex\InvalidAuthorisationRequestException('Session authorisation missing');
         }
         $authorisation->addAccessToken($providerName, $accessToken);
-        $resourceOwner = $this->getResourceOwner($accessToken);
 
         /** @var Entity\Provider $entity */
         foreach ((array) $providerEntities as $entity) {

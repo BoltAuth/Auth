@@ -2,13 +2,13 @@
 
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Exception;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Remote OAuth2 client login provider.
@@ -27,15 +27,29 @@ class Remote extends HandlerBase
      */
     public function login(Request $request)
     {
-        parent::login($request);
-        $providerName = $this->providerManager->getProviderName(true);
-        $profileEntities = $this->records->getProvisionsByProvider($providerName);
-        foreach ($profileEntities as $profileEntity) {
-            if ($profileEntity->getProvider() === $providerName) {
-                // User is logged in already, from whence they came return them now.
-                return null;
-            }
+        if (parent::login($request)) {
+            return;
         }
+
+        $providerName = $this->providerManager->getProviderName(true);
+        $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
+        $tokenEntity = $this->records->getTokensByCookie($cookie);
+        if ($tokenEntity) {
+            $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
+            if ($provider === false) {
+                throw new Exception\MissingAccountException('No provider entry found');
+            }
+            $oauth = $this->records->getOauthByResourceOwnerId($provider->getResourceOwnerId());
+            if ($oauth === false) {
+                throw new Exception\MissingAccountException('No oauth entry found');
+            }
+            if (!$oauth->isEnabled()) {
+                throw new AccessDeniedException('Account disabled');
+            }
+
+            return null;
+        }
+
         $this->getAuthorisationRedirectResponse();
     }
 
