@@ -10,8 +10,8 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Exception as Ex;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
-use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\Bolt\Members\Storage\Records;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -20,9 +20,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Authorisation control class.
@@ -283,7 +281,7 @@ abstract class HandlerBase
     /**
      * Dispatch event to any listeners.
      *
-     * @param string       $type         Either MembersEvents::MEMBER_LOGIN' or MembersEvents::MEMBER_LOGOUT
+     * @param string        $type          Either MembersEvents::MEMBER_LOGIN' or MembersEvents::MEMBER_LOGOUT
      * @param Authorisation $authorisation
      */
     protected function dispatchEvent($type, Authorisation $authorisation)

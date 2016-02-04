@@ -112,7 +112,7 @@ class Frontend implements ControllerProviderInterface
         // Add account fields and meta fields to the form data
         $fields = [
             'displayname' => $account->getDisplayname(),
-            'email' => $account->getEmail(),
+            'email'       => $account->getEmail(),
         ];
         if ($meta !== false) {
             /** @var Entity\AccountMeta $metaEntity */
@@ -192,7 +192,7 @@ class Frontend implements ControllerProviderInterface
             $app['members.records']->saveAccount($account);
 
             // Save the password to a meta record
-            $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);;
+            $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
             $oauth = new Entity\Oauth();
             $oauth->setGuid($account->getGuid());
             $oauth->setResourceOwnerId($account->getGuid());

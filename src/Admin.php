@@ -9,7 +9,6 @@ use Bolt\Extension\Bolt\Members\Storage\Schema\Table\Account;
 use Bolt\Users;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -77,7 +76,6 @@ class Admin implements EventSubscriberInterface
 
         return $this->records->saveAccount($account);
     }
-
 
     /**
      * Disable a member account.

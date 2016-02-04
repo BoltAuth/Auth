@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
-use Bolt\Storage\Entity\Entity as BoltEntity;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\QuerySet;
 use Bolt\Storage\Repository;

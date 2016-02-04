@@ -64,9 +64,9 @@ class RegisterType extends AbstractType
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options'  => array('label' => 'Password'),
-                'second_options' => array('label' => 'Repeat Password'),
+                'type'           => PasswordType::class,
+                'first_options'  => ['label' => 'Password'],
+                'second_options' => ['label' => 'Repeat Password'],
             ])
             ->add('submit',      'submit', [
                 'label'       => Trans::__('Save & continue'),

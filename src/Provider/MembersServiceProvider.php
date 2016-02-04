@@ -3,13 +3,13 @@
 namespace Bolt\Extension\Bolt\Members\Provider;
 
 use Bolt\Extension\Bolt\Members\AccessControl;
+use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
-use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;

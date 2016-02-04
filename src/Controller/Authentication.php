@@ -147,7 +147,7 @@ class Authentication implements ControllerProviderInterface
         $data = [
             'csrf_protection' => true,
             'data'            => [
-                'email' => $request->request->get('email')
+                'email' => $request->request->get('email'),
             ],
         ];
         /** @var Form $form */

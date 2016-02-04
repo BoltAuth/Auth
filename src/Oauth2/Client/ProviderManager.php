@@ -248,6 +248,7 @@ class ProviderManager
         if ($providerName === 'Local') {
             return 'members.oauth.handler.local';
         }
+
         return 'members.oauth.handler.remote';
     }
 

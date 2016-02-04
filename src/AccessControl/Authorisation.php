@@ -91,7 +91,6 @@ class Authorisation implements \JsonSerializable
 
     /**
      * @param $provider
-     *
      * @param AccessToken $accessToken
      *
      * @return Authorisation

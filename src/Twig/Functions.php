@@ -116,7 +116,7 @@ class Functions
     public function renderLogin(TwigEnvironment $twig, $redirect = false, $exclude = [])
     {
         // Set redirect if requested
-        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')]: [];
+        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
         $context = [];
 
         foreach ($this->config->getProviders() as $provider => $providerConf) {
@@ -153,7 +153,7 @@ class Functions
     public function renderLogout(TwigEnvironment $twig, $redirect = false)
     {
         // Set redirect if requested
-        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')]: [];
+        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
         $link = sprintf('%s%s/logout?',
             $this->resourceManager->getUrl('root'),
             $this->config->getUrlAuthenticate(),

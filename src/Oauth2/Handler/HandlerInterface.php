@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Exception\DisabledProviderException;
 use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Authentication provider interface.

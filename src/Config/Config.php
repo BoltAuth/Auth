@@ -326,7 +326,7 @@ class Config
                 'zocial' => false,
             ],
             'debug'        => false,
-            'labels'     => [
+            'labels'       => [
                 'login'  => 'Login',
                 'logout' => 'Logout',
             ],

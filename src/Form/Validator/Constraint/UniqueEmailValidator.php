@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Validator\Constraint;
 
-use Bolt\Configuration\ResourceManager;
-use Bolt\Extension\Bolt\Members\Storage\Records;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

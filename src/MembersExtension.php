@@ -148,7 +148,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new MembersServiceProvider($this->getConfig())
+            new MembersServiceProvider($this->getConfig()),
         ];
     }
 

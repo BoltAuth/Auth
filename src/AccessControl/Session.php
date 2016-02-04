@@ -165,10 +165,10 @@ class Session implements EventSubscriberInterface
         return [
             KernelEvents::RESPONSE => [
                 ['persistData'],
-                ['saveRedirects']
+                ['saveRedirects'],
             ],
             KernelEvents::REQUEST => [
-                ['loadRedirects']
+                ['loadRedirects'],
             ],
         ];
     }
@@ -183,7 +183,7 @@ class Session implements EventSubscriberInterface
         }
 
         /** @var AccessToken $accessToken */
-        foreach ($this->authorisation->getAccessTokens() as $provider => $accessToken){
+        foreach ($this->authorisation->getAccessTokens() as $provider => $accessToken) {
             $tokenEntities = $this->records->getTokensByGuid($this->authorisation->getGuid());
             if ($tokenEntities === false) {
                 $tokenEntities[] = new Entity\Token();

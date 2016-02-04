@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
 
 use Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta;
 use Bolt\Extension\Bolt\Members\Storage\Records;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User profile object class
@@ -97,7 +96,6 @@ class Profile
 
         return $this;
     }
-
 
     /**
      * @param bool $cache

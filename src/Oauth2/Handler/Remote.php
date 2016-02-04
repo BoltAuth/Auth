@@ -98,13 +98,13 @@ class Remote extends HandlerBase
         //}
     }
 
-
     /**
      * Create a redirect response to fetch an authorisation code.
      *
-     * @throws \RuntimeException
      *
      * @param string $approvalPrompt
+     *
+     * @throws \RuntimeException
      */
     protected function getAuthorisationRedirectResponse($approvalPrompt = 'auto')
     {

@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * User password login object class
  *

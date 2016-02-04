@@ -86,7 +86,6 @@ class Token extends AbstractMembersRepository
             ->setParameter('cookie', $cookie)
         ;
 
-
         return $qb;
     }
 
