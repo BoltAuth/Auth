@@ -4,6 +4,8 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
@@ -53,6 +55,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $app['dispatcher']->addSubscriber($app['members.feedback']);
         $app['dispatcher']->addSubscriber($app['members.roles']);
         $app['dispatcher']->addSubscriber($app['members.session']);
+        $app['dispatcher']->dispatch(MembersEvents::MEMBER_ROLE, new MembersRolesEvent());
         $this->container = $app;
     }
 
