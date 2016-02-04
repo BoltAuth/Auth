@@ -152,7 +152,7 @@ class Backend implements ControllerProviderInterface
     {
         $this->addTwigPath($app);
 
-        $html = $app['render']->render('@MembersAdmin/members.twig', [
+        $html = $app['twig']->render('@MembersAdmin/members.twig', [
             'members' => $app['members.records']->getAccounts(),
             'roles'   => $app['members.roles']->getRoles(),
         ]);
