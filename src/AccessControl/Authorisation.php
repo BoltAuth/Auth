@@ -169,7 +169,7 @@ class Authorisation implements \JsonSerializable
         $auth->guid = $data->guid;
         $auth->cookie = $data->cookie;
         if (is_numeric($data->expiry)) {
-            $auth->expiry = new Carbon($data->expiry);
+            $auth->expiry = Carbon::createFromTimestamp($data->expiry);
         } else {
             $auth->expiry = new Carbon(
                 $data->expiry->date,
