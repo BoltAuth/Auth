@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\AccessControl\Authorisation;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvent;
+use Bolt\Extension\Bolt\Members\Event\MembersLoginEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Exception as Ex;
 use Bolt\Extension\Bolt\Members\Feedback;
@@ -290,7 +290,7 @@ abstract class HandlerBase
             return;
         }
 
-        $event = new MembersEvent($authorisation);
+        $event = new MembersLoginEvent($authorisation);
         try {
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {

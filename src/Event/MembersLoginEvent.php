@@ -7,16 +7,14 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Members event class.
+ * Members login event class.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class MembersEvent extends GenericEvent
+class MembersLoginEvent extends GenericEvent
 {
     /** @var Entity\Account */
     protected $account;
-    /** @var array */
-    protected $roles;
 
     /**
      * @return Entity\Account
@@ -29,31 +27,11 @@ class MembersEvent extends GenericEvent
     /**
      * @param Entity\Account $account
      *
-     * @return MembersEvent
+     * @return MembersLoginEvent
      */
     public function setAccount(Entity\Account $account)
     {
         $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-
-    /**
-     * @param Role[] $roles
-     *
-     * @return MembersEvent
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
 
         return $this;
     }
