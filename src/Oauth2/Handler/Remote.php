@@ -8,7 +8,6 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Remote OAuth2 client login provider.
@@ -34,25 +33,21 @@ class Remote extends HandlerBase
         $providerName = $this->providerManager->getProviderName(true);
         $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
         $tokenEntities = $this->records->getTokensByCookie($cookie);
+
         foreach ($tokenEntities as $tokenEntity) {
             if ($tokenEntity) {
                 $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
                 if ($provider === false) {
-                    throw new Exception\MissingAccountException('No provider entry found');
+                    continue;
                 }
                 $oauth = $this->records->getOauthByResourceOwnerId($tokenEntity->getGuid(), $provider->getResourceOwnerId());
                 if ($oauth === false) {
-                    throw new Exception\MissingAccountException('No oauth entry found');
+                    continue;
                 }
                 $account = $this->records->getAccountByGuid($tokenEntity->getGuid());
-                if ($oauth === false) {
-                    throw new Exception\MissingAccountException('No account entry found');
+                if ($account !== false) {
+                    return;
                 }
-                if (!$account->isEnabled()) {
-                    throw new AccessDeniedException('Account disabled');
-                }
-
-                return null;
             }
         }
 
