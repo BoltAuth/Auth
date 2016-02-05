@@ -25,12 +25,15 @@ class ProfileType extends AbstractType
     /** @var boolean */
     protected $requirePassword = true;
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('displayname', TextType::class,   [
                 'label'       => Trans::__('Public name:'),
-                'data'        => $options['data']['displayname'],
+                'data'        => $this->getData($options, 'displayname'),
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(['min' => 2]),
@@ -38,7 +41,7 @@ class ProfileType extends AbstractType
             ])
             ->add('email',       EmailType::class,   [
                 'label'       => Trans::__('Email:'),
-                'data'        => $options['data']['email'],
+                'data'        => $this->getData($options, 'email'),
                 'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true,
@@ -56,9 +59,27 @@ class ProfileType extends AbstractType
             ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'profile';
+    }
+
+    /**
+     * @param array  $options
+     * @param string $field
+     *
+     * @return mixed|null
+     */
+    private function getData(array $options, $field)
+    {
+        if (!isset($options['data'])) {
+            return null;
+        }
+
+        return isset($options['data'][$field]) ? $options['data'][$field] : null;
     }
 
     /**
@@ -72,5 +93,4 @@ class ProfileType extends AbstractType
 
         return $this;
     }
-
 }
