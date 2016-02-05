@@ -127,7 +127,7 @@ class Frontend implements ControllerProviderInterface
         /** @var Form $form */
         $form = $app['form.factory']
             ->createBuilder(
-                $app['members.forms']['type']['profile'],
+                $app['members.forms']['type']['profile']->setRequirePassword(false),
                 $app['members.forms']['entity']['profile'],
                 $data
             )
@@ -140,6 +140,13 @@ class Frontend implements ControllerProviderInterface
             $account->setDisplayname($form->get('displayname')->getData());
             $account->setEmail($form->get('email')->getData());
             $app['members.records']->saveAccount($account);
+
+            if ($form->get('plainPassword')->getData() !== null) {
+                $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
+                $oauth = $app['members.records']->getOauthByResourceOwnerId($account->getGuid(), $account->getGuid());
+                $oauth->setPassword($encryptedPassword);
+                $app['members.records']->saveOauth($oauth);
+            }
         }
 
         $html = $app['render']->render($this->config->getTemplates('profile', 'edit'), [

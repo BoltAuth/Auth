@@ -22,6 +22,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ProfileType extends AbstractType
 {
+    /** @var boolean */
+    protected $requirePassword = true;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -45,6 +48,8 @@ class ProfileType extends AbstractType
                 'type'           => PasswordType::class,
                 'first_options'  => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
+                'empty_data'     => null,
+                'required'       => $this->requirePassword,
             ])
             ->add('submit',      'submit', [
                 'label'   => Trans::__('Save & continue'),
@@ -55,4 +60,17 @@ class ProfileType extends AbstractType
     {
         return 'profile';
     }
+
+    /**
+     * @param boolean $requirePassword
+     *
+     * @return ProfileType
+     */
+    public function setRequirePassword($requirePassword)
+    {
+        $this->requirePassword = $requirePassword;
+
+        return $this;
+    }
+
 }
