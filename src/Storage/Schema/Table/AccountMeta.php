@@ -19,7 +19,7 @@ class AccountMeta extends BaseTable
         $this->table->addColumn('id',     'integer', ['autoincrement' => true]);
         $this->table->addColumn('guid',   'guid',    []);
         $this->table->addColumn('meta',   'string',  ['length' => 64]);
-        $this->table->addColumn('value',  'text');
+        $this->table->addColumn('value',  'text',    ['notnull' => false, 'default' => null]);
     }
 
     /**
