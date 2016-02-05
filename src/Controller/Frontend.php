@@ -4,6 +4,8 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Carbon\Carbon;
@@ -146,6 +148,22 @@ class Frontend implements ControllerProviderInterface
                 $oauth = $app['members.records']->getOauthByResourceOwnerId($account->getGuid(), $account->getGuid());
                 $oauth->setPassword($encryptedPassword);
                 $app['members.records']->saveOauth($oauth);
+            }
+
+            // Dispatch the account profile save event
+            $event = new MembersProfileEvent();
+            $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_SAVE, $event);
+
+            // Save any defined meta fields
+            foreach ($event->getMetaFields() as $metaField) {
+                $metaEntity = $app['members.records']->getAccountMeta($memberSession->getGuid(), $metaField);
+                if ($metaEntity === false) {
+                    $metaEntity = new Entity\AccountMeta();
+                }
+                $metaEntity->setGuid($memberSession->getGuid());
+                $metaEntity->setMeta($metaField);
+                $metaEntity->setValue($form->get($metaField)->getData());
+                $app['members.records']->saveAccountMeta($metaEntity);
             }
         }
 
