@@ -36,7 +36,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUsername()
     {
@@ -44,7 +44,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $username
+     * @param string $username
      */
     public function setUsername($username)
     {
@@ -52,7 +52,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEmail()
     {
@@ -60,7 +60,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      */
     public function setEmail($email)
     {
@@ -68,7 +68,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getLastseen()
     {
@@ -76,7 +76,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $lastseen
+     * @param \DateTime $lastseen
      */
     public function setLastseen($lastseen)
     {
@@ -84,7 +84,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLastip()
     {
@@ -92,7 +92,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $lastip
+     * @param string $lastip
      */
     public function setLastip($lastip)
     {
@@ -100,7 +100,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDisplayname()
     {
@@ -108,7 +108,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $displayname
+     * @param string $displayname
      */
     public function setDisplayname($displayname)
     {
@@ -116,15 +116,15 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
-    public function getEnabled()
+    public function isEnabled()
     {
         return $this->enabled;
     }
 
     /**
-     * @param mixed $enabled
+     * @param boolean $enabled
      */
     public function setEnabled($enabled)
     {
@@ -132,7 +132,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getRoles()
     {
@@ -140,7 +140,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $roles
+     * @param array $roles
      */
     public function setRoles($roles)
     {

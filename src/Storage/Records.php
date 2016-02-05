@@ -216,7 +216,7 @@ class Records
      * @param string $guid
      * @param string $provider
      *
-     * @return Entity\Provider[]
+     * @return Entity\Provider
      */
     public function getProvision($guid, $provider)
     {
