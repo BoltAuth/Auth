@@ -167,7 +167,7 @@ class Frontend implements ControllerProviderInterface
             }
         }
 
-        $html = $app['render']->render($this->config->getTemplates('profile', 'edit'), [
+        $html = $app['twig']->render($this->config->getTemplates('profile', 'edit'), [
             'form'       => $form->createView(),
             'twigparent' => $this->config->getTemplates('profile', 'parent'),
         ]);
@@ -245,7 +245,7 @@ class Frontend implements ControllerProviderInterface
             return $response;
         }
 
-        $html = $app['render']->render($this->config->getTemplates('profile', 'register'), [
+        $html = $app['twig']->render($this->config->getTemplates('profile', 'register'), [
             'form'       => $form->createView(),
             'twigparent' => $this->config->getTemplates('profile', 'parent'),
         ]);
