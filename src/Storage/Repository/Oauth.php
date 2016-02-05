@@ -17,13 +17,13 @@ class Oauth extends AbstractMembersRepository
      *
      * @param string $guid
      *
-     * @return Entity\Oauth
+     * @return Entity\Oauth[]
      */
     public function getOauthByGuid($guid)
     {
         $query = $this->getOauthByGuidQuery($guid);
 
-        return $this->findOneWith($query);
+        return $this->findWith($query);
     }
 
     public function getOauthByGuidQuery($guid)
@@ -65,22 +65,25 @@ class Oauth extends AbstractMembersRepository
     /**
      * Fetches an OAuth entries by Resource Owner ID.
      *
+     * @param string $guid
      * @param string $resourceOwnerId
      *
      * @return Entity\Oauth
      */
-    public function getOauthByResourceOwnerId($resourceOwnerId)
+    public function getOauthByResourceOwnerId($guid, $resourceOwnerId)
     {
-        $query = $this->getOauthByResourceOwnerIdQuery($resourceOwnerId);
+        $query = $this->getOauthByResourceOwnerIdQuery($guid, $resourceOwnerId);
 
         return $this->findOneWith($query);
     }
 
-    public function getOauthByResourceOwnerIdQuery($resourceOwnerId)
+    public function getOauthByResourceOwnerIdQuery($guid, $resourceOwnerId)
     {
         $qb = $this->createQueryBuilder();
         $qb->select('*')
-            ->where('resource_owner_id = :resource_owner_id')
+            ->where('guid = :guid')
+            ->andWhere('resource_owner_id = :resource_owner_id')
+            ->setParameter('guid', $guid)
             ->setParameter('resource_owner_id', $resourceOwnerId)
         ;
 

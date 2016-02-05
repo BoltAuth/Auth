@@ -167,7 +167,7 @@ class Records
      *
      * @param string $guid
      *
-     * @return Entity\Oauth
+     * @return Entity\Oauth[]
      */
     public function getOauthByGuid($guid)
     {
@@ -175,27 +175,16 @@ class Records
     }
 
     /**
-     * Fetches an OAuth entries by GUID.
-     *
-     * @param string $email
-     *
-     * @return Entity\Oauth
-     */
-    public function getOauthByEmail($email)
-    {
-        return $this->oauth->getOauthByEmail($email);
-    }
-
-    /**
      * Fetches an OAuth entries by Resource Owner ID.
      *
+     * @param string $guid
      * @param string $resourceOwnerId
      *
      * @return Entity\Oauth
      */
-    public function getOauthByResourceOwnerId($resourceOwnerId)
+    public function getOauthByResourceOwnerId($guid, $resourceOwnerId)
     {
-        return $this->oauth->getOauthByResourceOwnerId($resourceOwnerId);
+        return $this->oauth->getOauthByResourceOwnerId($guid, $resourceOwnerId);
     }
 
     /**

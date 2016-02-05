@@ -33,21 +33,27 @@ class Remote extends HandlerBase
 
         $providerName = $this->providerManager->getProviderName(true);
         $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
-        $tokenEntity = $this->records->getTokensByCookie($cookie);
-        if ($tokenEntity) {
-            $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
-            if ($provider === false) {
-                throw new Exception\MissingAccountException('No provider entry found');
-            }
-            $oauth = $this->records->getOauthByResourceOwnerId($provider->getResourceOwnerId());
-            if ($oauth === false) {
-                throw new Exception\MissingAccountException('No oauth entry found');
-            }
-            if (!$oauth->isEnabled()) {
-                throw new AccessDeniedException('Account disabled');
-            }
+        $tokenEntities = $this->records->getTokensByCookie($cookie);
+        foreach ($tokenEntities as $tokenEntity) {
+            if ($tokenEntity) {
+                $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
+                if ($provider === false) {
+                    throw new Exception\MissingAccountException('No provider entry found');
+                }
+                $oauth = $this->records->getOauthByResourceOwnerId($tokenEntity->getGuid(), $provider->getResourceOwnerId());
+                if ($oauth === false) {
+                    throw new Exception\MissingAccountException('No oauth entry found');
+                }
+                $account = $this->records->getAccountByGuid($tokenEntity->getGuid());
+                if ($oauth === false) {
+                    throw new Exception\MissingAccountException('No account entry found');
+                }
+                if (!$account->isEnabled()) {
+                    throw new AccessDeniedException('Account disabled');
+                }
 
-            return null;
+                return null;
+            }
         }
 
         $this->getAuthorisationRedirectResponse();
