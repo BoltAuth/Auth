@@ -14,7 +14,7 @@ use Bolt\Extension\Bolt\Members\Storage\Records;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Profile
+class Profile implements EntityInterface
 {
     /** @var string */
     protected $guid;

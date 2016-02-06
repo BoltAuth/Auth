@@ -11,7 +11,7 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Register
+class Register implements EntityInterface
 {
     /** string */
     protected $email;
