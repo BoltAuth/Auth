@@ -2,23 +2,24 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
-use Bolt\Storage\Entity\Entity;
-
 /**
- * Oauth entity class.
+ * Local Oauth entity class.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
 class Oauth extends AbstractGuidEntity
 {
+    /** @var integer */
     protected $id;
+    /** @var string */
     protected $resource_owner_id;
+    /** @var string */
     protected $password;
-    protected $email;
+    /** @var boolean */
     protected $enabled;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getResourceOwnerId()
     {
@@ -26,7 +27,7 @@ class Oauth extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $resource_owner_id
+     * @param string $resource_owner_id
      */
     public function setResourceOwnerId($resource_owner_id)
     {
@@ -34,7 +35,7 @@ class Oauth extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPassword()
     {
@@ -42,7 +43,7 @@ class Oauth extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $password
+     * @param string $password
      */
     public function setPassword($password)
     {
@@ -50,23 +51,15 @@ class Oauth extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
-    public function getEmail()
+    public function isEnabled()
     {
-        return $this->email;
+        return $this->enabled;
     }
 
     /**
-     * @param mixed $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return mixed
+     * @return boolean
      */
     public function getEnabled()
     {
@@ -74,7 +67,7 @@ class Oauth extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $enabled
+     * @param boolean $enabled
      */
     public function setEnabled($enabled)
     {
