@@ -11,11 +11,17 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
  */
 class Provider extends AbstractGuidEntity
 {
+    /** @var integer */
     protected $id;
+    /** @var string */
     protected $provider;
+    /** @var string */
     protected $resource_owner_id;
+    /** @var string */
     protected $refresh_token;
+    /** @var array */
     protected $resource_owner;
+    /** @var \DateTime */
     protected $lastupdate;
 
     /**

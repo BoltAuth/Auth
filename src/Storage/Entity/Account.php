@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
-use Bolt\Storage\Entity\Entity;
-
 /**
  * Account entity class.
  *
@@ -11,12 +9,19 @@ use Bolt\Storage\Entity\Entity;
  */
 class Account extends AbstractGuidEntity
 {
+    /** @var string */
     protected $username;
+    /** @var string */
     protected $email;
+    /** @var \DateTime */
     protected $lastseen;
+    /** @var string */
     protected $lastip;
+    /** @var string */
     protected $displayname;
+    /** @var boolean */
     protected $enabled;
+    /** @var array */
     protected $roles;
 
     /**

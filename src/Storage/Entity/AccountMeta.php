@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
-use Bolt\Storage\Entity\Entity;
-
 /**
  * Account meta entity class.
  *
@@ -11,12 +9,15 @@ use Bolt\Storage\Entity\Entity;
  */
 class AccountMeta extends AbstractGuidEntity
 {
+    /** @var integer */
     protected $id;
+    /** @var string */
     protected $meta;
+    /** @var string */
     protected $value;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getMeta()
     {
@@ -24,7 +25,7 @@ class AccountMeta extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $meta
+     * @param string $meta
      */
     public function setMeta($meta)
     {
@@ -32,7 +33,7 @@ class AccountMeta extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getValue()
     {
@@ -40,7 +41,7 @@ class AccountMeta extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      */
     public function setValue($value)
     {

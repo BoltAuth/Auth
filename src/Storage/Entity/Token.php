@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
-use Bolt\Storage\Entity\Entity;
-
 /**
  * Token entity class.
  *
@@ -11,15 +9,21 @@ use Bolt\Storage\Entity\Entity;
  */
 class Token extends AbstractGuidEntity
 {
+    /** @var integer */
     protected $id;
+    /** @var string */
     protected $token_type;
+    /** @var string */
     protected $token;
+    /** @var array */
     protected $token_data;
+    /** @var integer */
     protected $expires;
+    /** @var string */
     protected $cookie;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTokenType()
     {
@@ -27,7 +31,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $token_type
+     * @param string $token_type
      */
     public function setTokenType($token_type)
     {
@@ -35,7 +39,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getToken()
     {
@@ -43,7 +47,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $token
+     * @param string $token
      */
     public function setToken($token)
     {
@@ -51,7 +55,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getTokenData()
     {
@@ -59,7 +63,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $token_data
+     * @param array $token_data
      */
     public function setTokenData($token_data)
     {
@@ -67,7 +71,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getExpires()
     {
@@ -75,7 +79,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $expires
+     * @param int $expires
      */
     public function setExpires($expires)
     {
@@ -83,7 +87,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCookie()
     {
@@ -91,7 +95,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param mixed $cookie
+     * @param string $cookie
      */
     public function setCookie($cookie)
     {
