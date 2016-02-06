@@ -43,7 +43,7 @@ class Frontend implements ControllerProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function connect(Application $app)
     {

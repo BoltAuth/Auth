@@ -43,7 +43,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function register(Application $app)
     {
@@ -62,7 +62,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function boot(Application $app)
     {
@@ -70,7 +70,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {

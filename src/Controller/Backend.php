@@ -42,7 +42,7 @@ class Backend implements ControllerProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function connect(Application $app)
     {

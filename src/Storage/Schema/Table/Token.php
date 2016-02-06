@@ -12,7 +12,7 @@ use Bolt\Storage\Database\Schema\Table\BaseTable;
 class Token extends BaseTable
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addColumns()
     {
@@ -26,7 +26,7 @@ class Token extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addIndexes()
     {
@@ -42,7 +42,7 @@ class Token extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setPrimaryKey()
     {
@@ -50,7 +50,7 @@ class Token extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addForeignKeyConstraint()
     {

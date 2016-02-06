@@ -12,7 +12,7 @@ use Bolt\Storage\Database\Schema\Table\BaseTable;
 class Oauth extends BaseTable
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addColumns()
     {
@@ -24,7 +24,7 @@ class Oauth extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addIndexes()
     {
@@ -37,7 +37,7 @@ class Oauth extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setPrimaryKey()
     {
@@ -45,7 +45,7 @@ class Oauth extends BaseTable
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function addForeignKeyConstraint()
     {

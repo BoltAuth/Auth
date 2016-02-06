@@ -49,7 +49,7 @@ class Authentication implements ControllerProviderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function connect(Application $app)
     {
