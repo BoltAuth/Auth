@@ -20,7 +20,6 @@ class Oauth extends BaseTable
         $this->table->addColumn('guid',              'guid',    []);
         $this->table->addColumn('resource_owner_id', 'string',  ['notnull' => false, 'length' => 128]);
         $this->table->addColumn('password',          'string',  ['notnull' => false, 'length' => 64]);
-        $this->table->addColumn('email',             'string',  ['notnull' => false, 'length' => 254]);
         $this->table->addColumn('enabled',           'boolean', ['default' => false]);
     }
 
@@ -30,7 +29,6 @@ class Oauth extends BaseTable
     protected function addIndexes()
     {
         $this->table->addUniqueIndex(['resource_owner_id']);
-        $this->table->addUniqueIndex(['email']);
         $this->table->addIndex(['guid']);
         $this->table->addIndex(['enabled']);
 
@@ -51,6 +49,7 @@ class Oauth extends BaseTable
      */
     protected function addForeignKeyConstraint()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_constraint');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_oauth');
+        $this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], [], 'resource_owner_id_oauth');
     }
 }
