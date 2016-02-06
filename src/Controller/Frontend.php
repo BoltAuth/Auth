@@ -145,7 +145,7 @@ class Frontend implements ControllerProviderInterface
 
             if ($form->get('plainPassword')->getData() !== null) {
                 $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
-                $oauth = $app['members.records']->getOauthByResourceOwnerId($account->getGuid(), $account->getGuid());
+                $oauth = $app['members.records']->getOauthByResourceOwnerId($account->getGuid());
                 $oauth->setPassword($encryptedPassword);
                 $app['members.records']->saveOauth($oauth);
             }
