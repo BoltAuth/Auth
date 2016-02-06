@@ -3,9 +3,42 @@ Membership Extension for Bolt
 
 To be completed!
 
+Extending Members
+=================
 
-Event Handling
-==============
+Members is event driven and provides a number of dispatcher that your own extension can listen for, and affect the 
+behaviour of different parts of the Members extension. 
+
+### Adding Meta Fields
+
+```php
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
+```
+
+```php
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $dispatcher->addListener(MembersEvents::MEMBER_PROFILE_SAVE, [$this, 'onProfileSave']);
+    }
+
+    /**
+     * @param MembersProfileEvent $event
+     */
+    public function onProfileSave(MembersProfileEvent $event)
+    {
+        $fields = [
+            'website',
+            'address_street',
+            'address_street_meta',
+            'address_city',
+            'address_state',
+            'address_country',
+            'phone_number',
+        ];
+        $event->setMetaFields($fields);
+    }
+```
 
 ### Adding Roles 
 
