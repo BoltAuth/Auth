@@ -19,7 +19,7 @@ use Twig_Markup as TwigMarkup;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Functions
+class Functions extends \Twig_Extension
 {
     /** @var Config */
     private $config;
@@ -44,6 +44,32 @@ class Functions
         $this->session = $session;
         $this->records = $records;
         $this->resourceManager = $resourceManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'Members';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        $safe = ['is_safe' => ['html'], 'is_safe_callback' => true];
+        $env  = ['needs_environment' => true];
+
+        return [
+            new \Twig_SimpleFunction('is_member'            , [$this, 'isMember'],       $safe),
+            new \Twig_SimpleFunction('member_has_role'      , [$this, 'hasRole'],        $safe),
+            new \Twig_SimpleFunction('member_providers'     , [$this, 'getProviders'],   $safe),
+            new \Twig_SimpleFunction('members_auth_switcher', [$this, 'renderSwitcher'], $safe + $env),
+            new \Twig_SimpleFunction('members_auth_login'   , [$this, 'renderLogin'],    $safe + $env),
+            new \Twig_SimpleFunction('members_auth_logout'  , [$this, 'renderLogout'],   $safe + $env),
+        ];
     }
 
     /**

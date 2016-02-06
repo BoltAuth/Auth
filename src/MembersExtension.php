@@ -117,25 +117,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     /**
      * {@inheritdoc}
      */
-    protected function registerTwigFunctions()
-    {
-        $app = $this->getContainer();
-        $options = ['is_safe' => ['html'], 'is_safe_callback' => true];
-        $env = ['needs_environment' => true];
-
-        return [
-            'is_member'             => [[$app['members.twig'], 'isMember'], $options],
-            'member_has_role'       => [[$app['members.twig'], 'hasRole'], $options],
-            'member_providers'      => [[$app['members.twig'], 'getProviders'], $options],
-            'members_auth_switcher' => [[$app['members.twig'], 'renderSwitcher'], $options + $env],
-            'members_auth_login'    => [[$app['members.twig'], 'renderLogin'], $options + $env],
-            'members_auth_logout'   => [[$app['members.twig'], 'renderLogout'], $options + $env],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents()
     {
         return [
