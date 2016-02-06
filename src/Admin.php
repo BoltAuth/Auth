@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Storage\Records;
-use Bolt\Extension\Bolt\Members\Storage\Schema\Table\Account;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Users;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -41,11 +41,11 @@ class Admin implements EventSubscriberInterface
     /**
      * Add a new member account.
      *
-     * @param Account $account
+     * @param Entity\Account $account
      *
      * @return bool
      */
-    public function addAccount(Account $account)
+    public function addAccount(Entity\Account $account)
     {
         return $this->records->saveAccount($account);
     }
