@@ -3,6 +3,18 @@ Membership Extension for Bolt
 
 To be completed!
 
+Twig Functions
+==============
+
+The following Twig functions are available:
+  * `{{ is_member() }}` 
+  * `{{ member_has_role() }}`
+  * `{{ member_providers() }}`
+  * `{{ members_auth_switcher([true | false]) }}`
+  * `{{ members_auth_login([true | false]) }}`
+  * `{{ members_auth_logout([true | false]) }}`
+
+
 Extending Members
 =================
 
