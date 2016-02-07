@@ -30,6 +30,34 @@ class Profile extends AbstractForm
     protected $guid;
 
     /**
+     * @return Storage\Entity\Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Storage\Entity\Account $account
+     *
+     * @return Profile
+     */
+    public function setAccount(Storage\Entity\Account $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Storage\Entity\AccountMeta
+     */
+    public function getAccountMeta()
+    {
+        return $this->accountMeta;
+    }
+
+    /**
      * @param string $guid
      *
      * @return Profile
@@ -94,7 +122,6 @@ class Profile extends AbstractForm
 
         if ($this->account === false) {
             $this->account = new Storage\Entity\Account();
-            $this->account->setGuid($this->guid);
         }
 
         // Add account fields and meta fields to the form data
