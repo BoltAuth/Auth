@@ -241,6 +241,36 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 ]);
             }
         );
+
+        $app['members.form.login'] = $app->share(
+            function ($app) {
+                return new Form\Login(
+                    $app['form.factory'],
+                    $app['members.forms']['type']['login'],
+                    $app['members.forms']['entity']['login']
+                );
+            }
+        );
+
+        $app['members.form.profile'] = $app->share(
+            function ($app) {
+                return new Form\Profile(
+                    $app['form.factory'],
+                    $app['members.forms']['type']['profile'],
+                    $app['members.forms']['entity']['profile']
+                );
+            }
+        );
+
+        $app['members.form.register'] = $app->share(
+            function ($app) {
+                return new Form\Register(
+                    $app['form.factory'],
+                    $app['members.forms']['type']['register'],
+                    $app['members.forms']['entity']['register']
+                );
+            }
+        );
     }
 
     private function registerOauthHandlers(Application $app)
