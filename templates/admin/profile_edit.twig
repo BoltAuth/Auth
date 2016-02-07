@@ -1,0 +1,69 @@
+{# Page: NavSecondary > Extensions > Members #}
+
+{% extends "_base/_page-nav.twig" %}
+
+{% block page_nav 'Extensions' %}
+
+{% block page_title %}
+    {{ __('Members') }}
+{% endblock page_title %}
+
+{% block page_subtitle %}
+    Manage Site Membership Roles
+{% endblock page_subtitle %}
+
+{# clear default messages, because we use them in a different spot, in this template #}
+{% block messages "" %}
+
+{% block page_main %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <div class="row">
+        <h4>Edit Profile</h4>
+    </div>
+
+    <div class="row profile">
+
+        <div class="col-md-9">
+            {{ form_start(form) }}
+
+            {{ form_label(form.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+            {{ form_widget(form.displayname, { 'attr': {'class': 'form-control large'} }) }}
+
+            {{ form_label(form.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+            {{ form_widget(form.email, { 'attr': {'class': 'form-control large'} }) }}
+
+            {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+            {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control large'} }) }}
+
+            {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+            {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control large'} }) }}
+
+            {% block profile_meta %}
+            {% endblock profile_meta %}
+
+            <br>
+
+            {{ form_row(form.submit) }}
+            {{ form_end(form) }}
+
+        </div>
+
+        <aside class="col-md-3">
+            <div class="panel panel-default">
+
+                <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
+
+                <div class="panel-body">
+                    <ul>
+                        {%- for provider in member_providers() %}
+                            <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
+                        {% endfor -%}
+                    </ul>
+                </div>
+
+            </div>
+        </aside>
+
+
+    </div>
+{% endblock page_main %}
