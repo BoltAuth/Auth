@@ -44,7 +44,7 @@ class Remote extends HandlerBase
                 if ($provider === false) {
                     continue;
                 }
-                $oauth = $this->records->getOauthByResourceOwnerId($tokenEntity->getGuid(), $provider->getResourceOwnerId());
+                $oauth = $this->records->getOauthByResourceOwnerId($provider->getResourceOwnerId());
                 if ($oauth === false) {
                     continue;
                 }
