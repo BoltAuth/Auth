@@ -4,15 +4,11 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Carbon\Carbon;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,6 +82,8 @@ class Frontend implements ControllerProviderInterface
         } else {
             $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, 86400));
         }
+
+        $request->attributes->set('members-cookies', 'set');
     }
 
     /**
@@ -107,64 +105,16 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        // Get the stored account & meta
-        $account = $app['members.records']->getAccountByGuid($memberSession->getGuid());
-        $meta = $app['members.records']->getAccountMetaAll($memberSession->getGuid());
-
-        // Add account fields and meta fields to the form data
-        $fields = [
-            'displayname' => $account->getDisplayname(),
-            'email'       => $account->getEmail(),
-        ];
-        if ($meta !== false) {
-            /** @var Entity\AccountMeta $metaEntity */
-            foreach ((array) $meta as $metaEntity) {
-                $fields[$metaEntity->getMeta()] = $metaEntity->getValue();
-            }
-        }
-        $data = [
-            'csrf_protection' => true,
-            'data'            => $fields,
-        ];
-        /** @var Form $form */
-        $form = $app['form.factory']
-            ->createBuilder(
-                $app['members.forms']['type']['profile']->setRequirePassword(false),
-                $app['members.forms']['entity']['profile'],
-                $data
-            )
-            ->getForm()
+        $app['members.forms']['type']['profile']->setRequirePassword(false);
+        $form = $app['members.form.profile']
+            ->setGuid($memberSession->getGuid())
+            ->createForm($app['members.records'])
         ;
 
         // Handle the form request data
         $form->handleRequest($request);
         if ($form->isValid()) {
-            $account->setDisplayname($form->get('displayname')->getData());
-            $account->setEmail($form->get('email')->getData());
-            $app['members.records']->saveAccount($account);
-
-            if ($form->get('plainPassword')->getData() !== null) {
-                $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
-                $oauth = $app['members.records']->getOauthByResourceOwnerId($account->getGuid());
-                $oauth->setPassword($encryptedPassword);
-                $app['members.records']->saveOauth($oauth);
-            }
-
-            // Dispatch the account profile save event
-            $event = new MembersProfileEvent();
-            $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_SAVE, $event);
-
-            // Save any defined meta fields
-            foreach ($event->getMetaFields() as $metaField) {
-                $metaEntity = $app['members.records']->getAccountMeta($memberSession->getGuid(), $metaField);
-                if ($metaEntity === false) {
-                    $metaEntity = new Entity\AccountMeta();
-                }
-                $metaEntity->setGuid($memberSession->getGuid());
-                $metaEntity->setMeta($metaField);
-                $metaEntity->setValue($form->get($metaField)->getData());
-                $app['members.records']->saveAccountMeta($metaEntity);
-            }
+            $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
         }
 
         $html = $app['twig']->render($this->config->getTemplates('profile', 'edit'), [
@@ -187,57 +137,19 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        $data = [
-            'csrf_protection' => true,
-            'data'            => [],
-        ];
-        /** @var Form $form */
-        $form = $app['form.factory']
-            ->createBuilder(
-                $app['members.forms']['type']['register'],
-                $app['members.forms']['entity']['register'],
-                $data
-            )
-            ->getForm()
+        $form = $app['members.form.register']
+            ->setClientIp($app['request_stack']->getCurrentRequest()->getClientIp())
+            ->setProvider($app['members.oauth.provider'])
+            ->setRoles($app['members.config']->getRolesRegister())
+            ->setSession($app['members.session'])
+            ->createForm($app['members.records'])
         ;
 
         // Handle the form request data
         $form->handleRequest($request);
         if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
-
-            // Create and store the account entity
-            $account = new Entity\Account();
-            $account->setDisplayname($form->get('displayname')->getData());
-            $account->setEmail($form->get('email')->getData());
-            $account->setRoles($app['members.config']->getRolesRegister());
-            $account->setEnabled(true);
-            $account->setLastseen(Carbon::now());
-            $account->setLastip($app['request_stack']->getCurrentRequest()->getClientIp());
-            $app['members.records']->saveAccount($account);
-
-            // Save the password to a meta record
-            $encryptedPassword = password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
-            $oauth = new Entity\Oauth();
-            $oauth->setGuid($account->getGuid());
-            $oauth->setResourceOwnerId($account->getGuid());
-            $oauth->setEnabled(true);
-            $oauth->setPassword($encryptedPassword);
-            $app['members.records']->saveOauth($oauth);
-
-            // Set up the initial session.
-            /** @var Provider\Local $localProvider */
-            $localProvider = $app['members.oauth.provider'];
-            $localAccessToken = $localProvider->getAccessToken('password', []);
-            $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
-
-            // Create a local provider entry
-            $provider = new Entity\Provider();
-            $provider->setGuid($account->getGuid());
-            $provider->setProvider('Local');
-            $provider->setResourceOwnerId($account->getGuid());
-            $provider->setLastupdate(Carbon::now());
-            $app['members.records']->saveProvider($provider);
+            $app['members.form.register']->saveForm($app['members.records'], $app['dispatcher']);
 
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
