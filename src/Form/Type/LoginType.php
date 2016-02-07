@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Bolt\Translation\Translator as Trans;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +24,7 @@ class LoginType extends AbstractType
         $builder
             ->add('email',       EmailType::class,   [
                 'label'       => Trans::__('Email:'),
-                'data'        => isset($options['data']['email']) ? $options['data']['email'] : null,
+                'data'        => $this->getData($options, 'email'),
                 'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true,

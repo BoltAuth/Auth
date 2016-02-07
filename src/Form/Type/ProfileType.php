@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Bolt\Translation\Translator as Trans;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -65,21 +64,6 @@ class ProfileType extends AbstractType
     public function getName()
     {
         return 'profile';
-    }
-
-    /**
-     * @param array  $options
-     * @param string $field
-     *
-     * @return mixed|null
-     */
-    private function getData(array $options, $field)
-    {
-        if (!isset($options['data'])) {
-            return null;
-        }
-
-        return isset($options['data'][$field]) ? $options['data'][$field] : null;
     }
 
     /**

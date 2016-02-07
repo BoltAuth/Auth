@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Translation\Translator as Trans;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -46,7 +45,7 @@ class RegisterType extends AbstractType
         $builder
             ->add('displayname', TextType::class,   [
                 'label'       => Trans::__('Publicly visible name:'),
-                'data'        => isset($options['data']['displayname']) ? $options['data']['displayname'] : null,
+                'data'        => $this->getData($options, 'displayname'),
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(['min' => 2]),
@@ -54,7 +53,7 @@ class RegisterType extends AbstractType
             ])
             ->add('email',       EmailType::class,   [
                 'label'       => Trans::__('Email:'),
-                'data'        => isset($options['data']['email']) ? $options['data']['email'] : null,
+                'data'        => $this->getData($options, 'email'),
                 'constraints' => [
                     new UniqueEmail($this->records),
                     new Assert\Email([
