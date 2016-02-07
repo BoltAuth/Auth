@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * User registration type
+ * User registration type.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *

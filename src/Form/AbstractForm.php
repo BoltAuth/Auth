@@ -11,7 +11,11 @@ use Symfony\Component\Form\FormTypeInterface;
 /**
  * Abstract Form class.
  *
- * @author Gawain Lynch <gawain.lynch@gmail.com>
+ * Copyright (C) 2014-2016 Gawain Lynch
+ *
+ * @author    Gawain Lynch <gawain.lynch@gmail.com>
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 abstract class AbstractForm implements MembersFormInterface
 {

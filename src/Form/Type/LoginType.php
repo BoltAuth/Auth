@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Login type
+ * Login type.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *

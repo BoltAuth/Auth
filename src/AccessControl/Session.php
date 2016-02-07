@@ -16,7 +16,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Session state class.
  *
- * @author Gawain Lynch <gawain.lynch@gmail.com>
+ * Copyright (C) 2014-2016 Gawain Lynch
+ *
+ * @author    Gawain Lynch <gawain.lynch@gmail.com>
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 class Session implements EventSubscriberInterface
 {
