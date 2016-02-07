@@ -85,6 +85,12 @@ class Backend implements ControllerProviderInterface
             ->method('POST')
         ;
 
+        $ctr->match('/extend/members/edit/{guid}', [$this, 'userEdit'])
+            ->assert('guid', '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
+            ->bind('membersAdminUserEdit')
+            ->method('GET|POST')
+        ;
+
         $ctr->before([$this, 'before']);
 
         return $ctr;
@@ -206,6 +212,32 @@ class Backend implements ControllerProviderInterface
         }
 
         return new JsonResponse($this->getResult('userDelete'));
+    }
+
+    public function userEdit(Application $app, Request $request, $guid)
+    {
+        $app['members.forms']['type']['profile']->setRequirePassword(false);
+        $form = $app['members.form.profile']
+            ->setGuid($guid)
+            ->createForm($app['members.records'])
+        ;
+
+        // Handle the form request data
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
+        }
+
+        $this->addTwigPath($app);
+
+        $html = $app['twig']->render('@MembersAdmin/profile_edit.twig', [
+            'form'       => $form->createView(),
+            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+        ]);
+
+        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
+
+        return $response;
     }
 
     /**
