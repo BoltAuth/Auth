@@ -16,7 +16,6 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,6 +123,8 @@ class Authentication implements ControllerProviderInterface
         } else {
             $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, Carbon::now()->addSeconds(86400)));
         }
+
+        $request->attributes->set('members-cookies', 'set');
     }
 
     /**
@@ -143,21 +144,10 @@ class Authentication implements ControllerProviderInterface
             ;
         }
         $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
-
-        $data = [
-            'csrf_protection' => true,
-            'data'            => [
-                'email' => $request->request->get('email'),
-            ],
-        ];
-        /** @var Form $form */
-        $form = $app['form.factory']
-            ->createBuilder(
-                $app['members.forms']['type']['login'],
-                $app['members.forms']['entity']['login'],
-                $data
-            )
-            ->getForm()
+        $app['members.forms']['type']['profile'];
+        $form = $app['members.form.login']
+            ->setRequest($request)
+            ->createForm($app['members.records'])
         ;
 
         // Handle the form request data
@@ -186,6 +176,8 @@ class Authentication implements ControllerProviderInterface
             }
 
             if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
+                $app['members.form.login']->saveForm($app['members.records'], $app['dispatcher']);
+
                 /** @var Provider\Local $localProvider */
                 $localProvider = $app['members.oauth.provider'];
                 $localAccessToken = $localProvider->getAccessToken('password', []);
