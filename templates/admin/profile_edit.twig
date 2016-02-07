@@ -24,28 +24,28 @@
     <div class="row profile">
 
         <div class="col-md-9">
-            {{ form_start(form) }}
+            {% block profile %}
+                {{ form_start(form) }}
 
-            {{ form_label(form.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-            {{ form_widget(form.displayname, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_widget(form.displayname, { 'attr': {'class': 'form-control large'} }) }}
 
-            {{ form_label(form.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-            {{ form_widget(form.email, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_widget(form.email, { 'attr': {'class': 'form-control large'} }) }}
 
-            {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-            {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control large'} }) }}
 
-            {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-            {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control large'} }) }}
 
-            {% block profile_meta %}
-            {% endblock profile_meta %}
+                {% include 'profile_edit_meta.twig' ignore missing %}
 
-            <br>
+                <br>
 
-            {{ form_row(form.submit) }}
-            {{ form_end(form) }}
-
+                {{ form_row(form.submit) }}
+                {{ form_end(form) }}
+            {% endblock profile %}
         </div>
 
         <aside class="col-md-3">
