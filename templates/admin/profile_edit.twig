@@ -28,15 +28,19 @@
                 {{ form_start(form, {'attr': {'id': 'profile'}}) }}
 
                 {{ form_label(form.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form.displayname) }}
                 {{ form_widget(form.displayname, { 'attr': {'class': 'form-control large'} }) }}
 
                 {{ form_label(form.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form.displayname) }}
                 {{ form_widget(form.email, { 'attr': {'class': 'form-control large'} }) }}
 
                 {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form.plainPassword.first) }}
                 {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control large'} }) }}
 
                 {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form.plainPassword.first) }}
                 {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control large'} }) }}
 
                 {% include 'profile_edit_meta.twig' ignore missing %}
