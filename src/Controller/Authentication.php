@@ -295,9 +295,8 @@ class Authentication implements ControllerProviderInterface
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof MissingAccountException) {
             // Thrown deliberately internally
-            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
-            // 'Access denied!'
-            $response = new Response('', Response::HTTP_FORBIDDEN);
+            $app['members.feedback']->error('No registered account.');
+            $response = new RedirectResponse($app['url_generator']->generate('registerProfile'));
         } else {
             // Yeah, this can't be good…
             $app['members.feedback']->error('A server error occurred, we are very sorry and someone has been notified!');
