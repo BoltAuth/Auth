@@ -9,7 +9,7 @@
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Manage Site Membership Roles
+    Editing Membership Profile: {{ form.vars.value.displayname|default('New User') }}
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -25,7 +25,7 @@
 
         <div class="col-md-9">
             {% block profile %}
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'id': 'profile'}}) }}
 
                 {{ form_label(form.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
                 {{ form_widget(form.displayname, { 'attr': {'class': 'form-control large'} }) }}
@@ -42,15 +42,25 @@
                 {% include 'profile_edit_meta.twig' ignore missing %}
 
                 <br>
-
+            <div class="hidden">
                 {{ form_row(form.submit) }}
+            </div>
                 {{ form_end(form) }}
             {% endblock profile %}
         </div>
 
         <aside class="col-md-3">
             <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-cog fa-fw"></i> Actions
+                </div>
 
+                <div class="panel-body">
+                    {% include '@MembersAdmin/_aside-save.twig' %}
+                </div>
+            </div>
+
+            <div class="panel panel-default">
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
 
                 <div class="panel-body">
@@ -60,10 +70,8 @@
                         {% endfor -%}
                     </ul>
                 </div>
-
             </div>
         </aside>
-
 
     </div>
 {% endblock page_main %}
