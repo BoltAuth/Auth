@@ -7,7 +7,9 @@ use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
-use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
+use Bolt\Extension\Bolt\Members\Storage;
+use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -55,9 +57,9 @@ class Backend implements ControllerProviderInterface
             ->method('GET')
         ;
 
-        $ctr->match('/extend/members/action/userAdd', [$this, 'userAdd'])
+        $ctr->match('/extend/members/add', [$this, 'userAdd'])
             ->bind('membersAdminUserAdd')
-            ->method('POST')
+            ->method('GET|POST')
         ;
 
         $ctr->match('/extend/members/action/userDelete', [$this, 'userDelete'])
@@ -176,21 +178,57 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        try {
-            $account = new Account();
-            //$account->setGuid();
-            //$account->setUsername();
-            //$account->setDisplayname();
-            //$account->setEmail();
-            //$account->setEnabled();
-            //$account->setRoles();
+        $app['members.forms']['type']['profile']->setRequirePassword(true);
+        $form = $app['members.form.profile']
+            ->setGuid($guid = Uuid::uuid4()->toString())
+            ->createForm($app['members.records'])
+        ;
 
-            $app['members.admin']->addAccount($account);
-        } catch (\Exception $e) {
-            return new JsonResponse($this->getResult('userAdd', $e), Response::HTTP_INTERNAL_SERVER_ERROR);
+        // Handle the form request data
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            // Create and store the account entity
+            $account = new Storage\Entity\Account();
+            $account->setDisplayname($form->get('displayname')->getData());
+            $account->setEmail($form->get('email')->getData());
+            $account->setRoles([]);
+            $account->setEnabled(true);
+            $app['members.records']->saveAccount($account);
+
+            // Save the password to a meta record
+            $oauth = new Storage\Entity\Oauth();
+            $oauth->setGuid($account->getGuid());
+            $oauth->setResourceOwnerId($account->getGuid());
+            $oauth->setEnabled(true);
+            $app['members.records']->saveOauth($oauth);
+
+            // Create a local provider entry
+            $provider = new Storage\Entity\Provider();
+            $provider->setGuid($account->getGuid());
+            $provider->setProvider('Local');
+            $provider->setResourceOwnerId($account->getGuid());
+            $provider->setLastupdate(Carbon::now());
+            $app['members.records']->saveProvider($provider);
+
+            $app['members.form.profile']
+                ->setAccount($account)
+                ->setGuid($account->getGuid())
+                ->saveForm($app['members.records'], $app['dispatcher'])
+            ;
+
+            return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        return new JsonResponse($this->getResult('userAdd'));
+        $this->addTwigPath($app);
+
+        $html = $app['twig']->render('@MembersAdmin/profile_add.twig', [
+            'form'       => $form->createView(),
+            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+        ]);
+
+        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
+
+        return $response;
     }
 
     /**
