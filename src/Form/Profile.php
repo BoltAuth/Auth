@@ -92,6 +92,11 @@ class Profile extends AbstractForm
         $this->account = $records->getAccountByGuid($this->guid);
         $this->accountMeta = $records->getAccountMetaAll($this->guid);
 
+        if ($this->account === false) {
+            $this->account = new Storage\Entity\Account();
+            $this->account->setGuid($this->guid);
+        }
+
         // Add account fields and meta fields to the form data
         $fields = [
             'displayname' => $this->account->getDisplayname(),
