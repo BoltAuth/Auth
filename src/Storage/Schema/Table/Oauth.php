@@ -54,6 +54,7 @@ class Oauth extends BaseTable
     protected function addForeignKeyConstraint()
     {
         $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_oauth');
-        $this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], [], 'resource_owner_id_oauth');
+        // This breaks on MySQL
+        //$this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], [], 'resource_owner_id_oauth');
     }
 }
