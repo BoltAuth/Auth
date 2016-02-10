@@ -139,7 +139,6 @@ class Frontend implements ControllerProviderInterface
     {
         $form = $app['members.form.register']
             ->setClientIp($app['request_stack']->getCurrentRequest()->getClientIp())
-            ->setProvider($app['members.oauth.provider'])
             ->setRoles($app['members.config']->getRolesRegister())
             ->setSession($app['members.session'])
             ->createForm($app['members.records'])
@@ -149,7 +148,10 @@ class Frontend implements ControllerProviderInterface
         $form->handleRequest($request);
         if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
-            $app['members.form.register']->saveForm($app['members.records'], $app['dispatcher']);
+            $app['members.form.register']
+                ->setProvider($app['members.oauth.provider'])
+                ->saveForm($app['members.records'], $app['dispatcher'])
+            ;
 
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
