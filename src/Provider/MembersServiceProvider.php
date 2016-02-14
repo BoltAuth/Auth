@@ -164,14 +164,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function () use ($app) {
                 /** @var \Doctrine\DBAL\Platforms\AbstractPlatform $platform */
                 $platform = $app['db']->getDatabasePlatform();
+                $prefix = $app['schema.prefix'];
 
                 // @codingStandardsIgnoreStart
                 return new \Pimple([
-                    'members_account'      => $app->share(function () use ($platform) { return new Table\Account($platform); }),
-                    'members_account_meta' => $app->share(function () use ($platform) { return new Table\AccountMeta($platform); }),
-                    'members_oauth'        => $app->share(function () use ($platform) { return new Table\Oauth($platform); }),
-                    'members_provider'     => $app->share(function () use ($platform) { return new Table\Provider($platform); }),
-                    'members_token'        => $app->share(function () use ($platform) { return new Table\Token($platform); }),
+                    'members_account'      => $app->share(function () use ($platform, $prefix) { return new Table\Account($platform, $prefix); }),
+                    'members_account_meta' => $app->share(function () use ($platform, $prefix) { return new Table\AccountMeta($platform, $prefix); }),
+                    'members_oauth'        => $app->share(function () use ($platform, $prefix) { return new Table\Oauth($platform, $prefix); }),
+                    'members_provider'     => $app->share(function () use ($platform, $prefix) { return new Table\Provider($platform, $prefix); }),
+                    'members_token'        => $app->share(function () use ($platform, $prefix) { return new Table\Token($platform, $prefix); }),
                 ]);
                 // @codingStandardsIgnoreEnd
             }

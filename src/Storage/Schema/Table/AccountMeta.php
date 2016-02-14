@@ -35,9 +35,6 @@ class AccountMeta extends BaseTable
         $this->table->addIndex(['meta']);
 
         $this->table->addUniqueIndex(['guid', 'meta']);
-
-        // Temporary until done upstream
-        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -51,8 +48,8 @@ class AccountMeta extends BaseTable
     /**
      * {@inheritdoc}
      */
-    protected function addForeignKeyConstraint()
+    protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_account_meta');
+        $this->table->addForeignKeyConstraint($this->tablePrefix . 'members_account', ['guid'], ['guid'], [], 'guid_account_meta');
     }
 }
