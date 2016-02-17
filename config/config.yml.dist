@@ -16,7 +16,7 @@ templates:
         edit: members_profile_edit.twig
         view: members_profile_view.twig
     authentication:
-        parent: password.twig
+        parent: login.twig
         login: _login.twig
         password: _password.twig
         feedback: _feedback.twig
