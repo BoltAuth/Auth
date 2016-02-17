@@ -125,6 +125,17 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 }
             )
         );
+
+        $app['safe_twig'] = $app->share(
+            $app->extend(
+                'safe_twig',
+                function (\Twig_Environment $twig, $app) {
+                    $twig->addExtension(new Twig\Functions($app['members.config'], $app['members.session'], $app['members.records'], $app['resources']));
+
+                    return $twig;
+                }
+            )
+        );
     }
 
     /**
