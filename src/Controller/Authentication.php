@@ -191,7 +191,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
-            'form'       => $form->createView(),
+            'auth_form'  => $form->createView(),
             'twigparent' => $this->config->getTemplates('authentication', 'parent'),
             'feedback'   => $app['members.feedback']->get(),
             'has_local'  => $hasLocal,

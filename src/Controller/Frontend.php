@@ -118,8 +118,8 @@ class Frontend implements ControllerProviderInterface
         }
 
         $html = $app['twig']->render($this->config->getTemplates('profile', 'edit'), [
-            'form'       => $form->createView(),
-            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+            'profile_form' => $form->createView(),
+            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
         ]);
 
         $response = new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -160,8 +160,8 @@ class Frontend implements ControllerProviderInterface
         }
 
         $html = $app['twig']->render($this->config->getTemplates('profile', 'register'), [
-            'form'       => $form->createView(),
-            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+            'profile_form' => $form->createView(),
+            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
         ]);
 
         $response = new Response(new \Twig_Markup($html, 'UTF-8'));
