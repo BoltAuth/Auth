@@ -138,31 +138,28 @@ class Functions extends \Twig_Extension
      * Display login/logout button(s) depending on status.
      *
      * @param TwigEnvironment $twig
-     * @param bool            $redirect
      *
      * @return TwigMarkup
      */
-    public function renderSwitcher(TwigEnvironment $twig, $redirect = false)
+    public function renderSwitcher(TwigEnvironment $twig)
     {
         if ($this->session->getAuthorisation()) {
-            return $this->renderLogout($twig, $redirect);
+            return $this->renderLogout($twig);
         }
 
-        return $this->renderLogin($twig, $redirect);
+        return $this->renderLogin($twig);
     }
 
     /**
      * Display logout button(s).
      *
      * @param TwigEnvironment $twig
-     * @param bool            $redirect If we should redirect after login
      *
      * @return TwigMarkup
      */
-    public function renderLogin(TwigEnvironment $twig, $redirect = false)
+    public function renderLogin(TwigEnvironment $twig)
     {
-        $request = new Request();
-        $form = $this->formManager->getFormLogin($twig, $request);
+        $form = $this->formManager->getFormLogin($twig, new Request(), false);
         $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'login'));
 
         return new TwigMarkup($html, 'UTF-8');
@@ -172,11 +169,10 @@ class Functions extends \Twig_Extension
      * Display logout button.
      *
      * @param TwigEnvironment $twig
-     * @param bool            $redirect
      *
      * @return TwigMarkup
      */
-    public function renderLogout(TwigEnvironment $twig, $redirect = false)
+    public function renderLogout(TwigEnvironment $twig)
     {
         // Set redirect if requested
         $link = sprintf('%s/logout', $this->config->getUrlAuthenticate());

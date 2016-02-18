@@ -69,10 +69,11 @@ class Manager
      *
      * @param TwigEnvironment $twig
      * @param Request         $request
+     * @param bool            $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormLogin(TwigEnvironment $twig, Request $request)
+    public function getFormLogin(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
         $form = $this->formLogin
             ->setRequest($request)
@@ -82,7 +83,7 @@ class Manager
         ;
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
-            'twigparent' => $this->config->getTemplates('authentication', 'parent'),
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
             'auth_form'  => $form->createView(),
             'feedback'   => $this->feedback,
             'providers'  => $this->config->getEnabledProviders(),
@@ -96,10 +97,11 @@ class Manager
      *
      * @param TwigEnvironment $twig
      * @param Request         $request
+     * @param bool            $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormProfile(TwigEnvironment $twig, Request $request)
+    public function getFormProfile(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
         $form = $this->formProfile
             ->setGuid($this->session->getAuthorisation()->getGuid())
@@ -109,7 +111,7 @@ class Manager
         ;
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
-            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
+            'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
             'profile_form' => $form->createView(),
             'feedback'     => $this->feedback,
         ]);
@@ -123,10 +125,11 @@ class Manager
      * @param TwigEnvironment $twig
      * @param Request         $request
      * @param array           $defaultRoles
+     * @param bool            $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormRegister(TwigEnvironment $twig, Request $request, array $defaultRoles)
+    public function getFormRegister(TwigEnvironment $twig, Request $request, array $defaultRoles, $includeParent = true)
     {
         $form = $this->formRegister
             ->setClientIp($request->getClientIp())
@@ -138,7 +141,7 @@ class Manager
         ;
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
-            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
+            'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
             'profile_form' => $form->createView(),
             'feedback'     => $this->feedback,
         ]);
