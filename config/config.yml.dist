@@ -9,25 +9,27 @@ debug: false
 ## Template overrides
 #
 # The template names that you wish to use in your theme to override the defaults
-templates:
-    profile:
-        parent: members.twig
-        register: members_register.twig
-        edit: members_profile_edit.twig
-        view: members_profile_view.twig
-    authentication:
-        parent: login.twig
-        login: _login.twig
-        password: _password.twig
-        feedback: _feedback.twig
-        button: _button.twig
-    error:
-        parent: members_error.twig
-        error: _members_error.twig
+#templates:
+#    profile:
+#        parent: members.twig
+#        register: _register.twig
+#        edit: _edit.twig
+#        view: _view.twig
+#    authentication:
+#        parent: login.twig
+#        login: _login.twig
+#        password: _password.twig
+#        feedback: _feedback.twig
+#        button: _button.twig
+#    error:
+#        parent: members_error.twig
+#        error: _members_error.twig
 
-labels:
-    login: Login
-    logout: Logout
+## Button Labels
+#
+#labels:
+#    login: Login
+#    logout: Logout
 
 ## Add-ons
 #
