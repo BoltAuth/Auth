@@ -41,6 +41,9 @@ class LoginType extends AbstractType
             ->add('email',       EmailType::class,   [
                 'label'       => Trans::__($this->config->getLabel('email')),
                 'data'        => $this->getData($options, 'email'),
+                'attr'        => [
+                    'placeholder' => $this->config->getPlaceholder('email'),
+                ],
                 'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true,
@@ -49,6 +52,9 @@ class LoginType extends AbstractType
             ->add('password', PasswordType::class, [
                 'label'       => Trans::__($this->config->getLabel('password_first')),
                 'data'        => null,
+                'attr'        => [
+                    'placeholder' => $this->config->getPlaceholder('password_first'),
+                ],
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(['min' => 6]),

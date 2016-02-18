@@ -36,6 +36,14 @@ debug: false
 #    password_second: Repeat Password
 #    profile_save: Save & Continue
 
+## Placeholders
+#
+#placeholders:
+#    displayname: The name you would like to display publicly…
+#    email: Your email address…
+#    password_first: Enter your password…
+#    password_second: Repeat the above password…
+
 ## Add-ons
 #
 addons:

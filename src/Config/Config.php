@@ -19,6 +19,8 @@ class Config
     protected $addOns;
     /** @var array */
     protected $labels;
+    /** @var array */
+    protected $placeholders;
     /** @var Provider[] */
     protected $providers;
     /** @var  boolean */
@@ -49,6 +51,7 @@ class Config
         $this->addOns =  $config['addons'];
         $this->debug = (boolean) $config['debug'];
         $this->labels =  $config['labels'];
+        $this->placeholders =  $config['placeholders'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
@@ -139,6 +142,36 @@ class Config
     public function setLabels($labels)
     {
         $this->labels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * @param $placeholder
+     *
+     * @return array
+     */
+    public function getPlaceholder($placeholder)
+    {
+        return $this->placeholders[$placeholder];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPlaceholders()
+    {
+        return $this->placeholders;
+    }
+
+    /**
+     * @param array $placeholders
+     *
+     * @return Config
+     */
+    public function setPlaceholders($placeholders)
+    {
+        $this->placeholders = $placeholders;
 
         return $this;
     }
@@ -355,6 +388,12 @@ class Config
                 'password_first'  => 'Password',
                 'password_second' => 'Repeat Password',
                 'profile_save'    => 'Save & Continue',
+            ],
+            'placeholders' => [
+                'displayname'     => 'The name you would like to display publicly…',
+                'email'           => 'Your email address…',
+                'password_first'  => 'Enter your password…',
+                'password_second' => 'Repeat the above password…',
             ],
             'registration' => true,
             'roles'        => [
