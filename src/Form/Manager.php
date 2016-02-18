@@ -30,6 +30,8 @@ class Manager
     protected $records;
     /** @var Login */
     protected $formLogin;
+    /** @var Logout */
+    protected $formLogout;
     /** @var Profile */
     protected $formProfile;
     /** @var Register */
@@ -52,6 +54,7 @@ class Manager
         Feedback $feedback,
         Storage\Records $records,
         Login $formLogin,
+        Logout $formLogout,
         Profile $formProfile,
         Register $formRegister
     ) {
@@ -60,6 +63,7 @@ class Manager
         $this->feedback = $feedback;
         $this->records = $records;
         $this->formLogin = $formLogin;
+        $this->formLogout = $formLogout;
         $this->formProfile = $formProfile;
         $this->formRegister = $formRegister;
     }
@@ -84,6 +88,32 @@ class Manager
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+            'auth_form'  => $form->createView(),
+            'feedback'   => $this->feedback,
+            'providers'  => $this->config->getEnabledProviders(),
+        ]);
+
+        return $resolved;
+    }
+
+    /**
+     * Return the resolved logout form.
+     *
+     * @param TwigEnvironment $twig
+     * @param Request         $request
+     * @param bool            $includeParent
+     *
+     * @return ResolvedForm
+     */
+    public function getFormLogout(TwigEnvironment $twig, Request $request, $includeParent = true)
+    {
+        $form = $this->formLogout
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+        $resolved = new ResolvedForm($form, $twig);
+        $resolved->setContext([
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
             'auth_form'  => $form->createView(),
             'feedback'   => $this->feedback,
             'providers'  => $this->config->getEnabledProviders(),

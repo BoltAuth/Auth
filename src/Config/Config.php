@@ -374,7 +374,7 @@ class Config
                     'parent'   => 'login.twig',
                     'feedback' => 'feedback.twig',
                     'login'    => '_login.twig',
-                    'button'   => '_button.twig',
+                    'logout'   => '_logout.twig',
                 ],
                 'error'          => [
                     'parent' => 'members_error.twig',

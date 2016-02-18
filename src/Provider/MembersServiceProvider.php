@@ -17,6 +17,7 @@ use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Members service provider.
@@ -238,6 +239,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     [
                         // @codingStandardsIgnoreStart
                         'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType($app['members.config']); }),
+                        'logout'   => $app->share(function () use ($app) { return new Form\Type\LogoutType($app['members.config']); }),
                         'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
                         'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
                         // @codingStandardsIgnoreEnd
@@ -247,6 +249,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     [
                         // @codingStandardsIgnoreStart
                         'login'    => $app->share(function () use ($app) { return new Form\Entity\Login(); }),
+                        'logout'   => $app->share(function () use ($app) { return new Form\Entity\Logout(); }),
                         'profile'  => $app->share(function () use ($app) { return new Form\Entity\Profile($app['members.records']); }),
                         'register' => $app->share(function () use ($app) { return new Form\Entity\Register(); }),
                         // @codingStandardsIgnoreEnd
@@ -274,6 +277,16 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['form.factory'],
                     $app['members.forms']['type']['login'],
                     $app['members.forms']['entity']['login']
+                );
+            }
+        );
+
+        $app['members.form.logout'] = $app->share(
+            function ($app) {
+                return new Form\Logout(
+                    $app['form.factory'],
+                    $app['members.forms']['type']['logout'],
+                    $app['members.forms']['entity']['logout']
                 );
             }
         );
@@ -306,6 +319,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.feedback'],
                     $app['members.records'],
                     $app['members.form.login'],
+                    $app['members.form.logout'],
                     $app['members.form.profile'],
                     $app['members.form.register']
                 );

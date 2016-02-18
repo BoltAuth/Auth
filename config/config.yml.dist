@@ -18,9 +18,9 @@ debug: false
 #    authentication:
 #        parent: login.twig
 #        login: _login.twig
+#        logout: _logout.twig
 #        password: _password.twig
 #        feedback: _feedback.twig
-#        button: _button.twig
 #    error:
 #        parent: members_error.twig
 #        error: _members_error.twig

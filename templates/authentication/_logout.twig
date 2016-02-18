@@ -1,0 +1,15 @@
+{% extends twigparent %}
+
+{% block logout %}
+    {% include "feedback.twig" %}
+
+    <div class="logout">
+        <div class="row member-logout">
+            {{ form_start(auth_form) }}
+
+            {{ form_row(auth_form.logout) }}
+
+            {{ form_end(auth_form) }}
+        </div>
+    </div>
+{% endblock logout %}

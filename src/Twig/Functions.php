@@ -176,19 +176,8 @@ class Functions extends \Twig_Extension
      */
     public function renderLogout(TwigEnvironment $twig)
     {
-        // Set redirect if requested
-        $link = sprintf('%s/logout', $this->config->getUrlAuthenticate());
-        $context = [
-            'providers' => [
-                'logout' => [
-                    'link'  => $link,
-                    'label' => $this->config->getLabel('logout'),
-                    'class' => 'logout',
-                ],
-            ],
-        ];
-
-        $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
+        $form = $this->formManager->getFormLogout($twig, new Request(), false);
+        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'logout'));
 
         return new TwigMarkup($html, 'UTF-8');
     }
