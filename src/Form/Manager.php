@@ -28,8 +28,6 @@ class Manager
     protected $feedback;
     /** @var Storage\Records  */
     protected $records;
-    /** @var TwigEnvironment */
-    protected $twig;
     /** @var Login */
     protected $formLogin;
     /** @var Profile */
@@ -44,7 +42,6 @@ class Manager
      * @param AccessControl\Session $session
      * @param Feedback              $feedback
      * @param Storage\Records       $records
-     * @param TwigEnvironment       $twig
      * @param Login                 $formLogin
      * @param Profile               $formProfile
      * @param Register              $formRegister
@@ -54,7 +51,6 @@ class Manager
         AccessControl\Session $session,
         Feedback $feedback,
         Storage\Records $records,
-        TwigEnvironment $twig,
         Login $formLogin,
         Profile $formProfile,
         Register $formRegister
@@ -63,7 +59,6 @@ class Manager
         $this->session = $session;
         $this->feedback = $feedback;
         $this->records = $records;
-        $this->twig = $twig;
         $this->formLogin = $formLogin;
         $this->formProfile = $formProfile;
         $this->formRegister = $formRegister;
@@ -72,11 +67,12 @@ class Manager
     /**
      * Return the resolved login form.
      *
-     * @param Request $request
+     * @param TwigEnvironment $twig
+     * @param Request         $request
      *
      * @return ResolvedForm
      */
-    public function getFormLogin(Request $request)
+    public function getFormLogin(TwigEnvironment $twig, Request $request)
     {
         $form = $this->formLogin
             ->setRequest($request)
@@ -84,7 +80,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $this->twig);
+        $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
             'twigparent' => $this->config->getTemplates('authentication', 'parent'),
             'auth_form'  => $form->createView(),
@@ -98,11 +94,12 @@ class Manager
     /**
      * Return the resolved profile editing form.
      *
-     * @param Request $request
+     * @param TwigEnvironment $twig
+     * @param Request         $request
      *
      * @return ResolvedForm
      */
-    public function getFormProfile(Request $request)
+    public function getFormProfile(TwigEnvironment $twig, Request $request)
     {
         $form = $this->formProfile
             ->setGuid($this->session->getAuthorisation()->getGuid())
@@ -110,7 +107,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $this->twig);
+        $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
             'twigparent'   => $this->config->getTemplates('profile', 'parent'),
             'profile_form' => $form->createView(),
@@ -123,12 +120,13 @@ class Manager
     /**
      * Return the resolved registration form.
      *
-     * @param Request $request
-     * @param array   $defaultRoles
+     * @param TwigEnvironment $twig
+     * @param Request         $request
+     * @param array           $defaultRoles
      *
      * @return ResolvedForm
      */
-    public function getFormRegister(Request $request, array $defaultRoles)
+    public function getFormRegister(TwigEnvironment $twig, Request $request, array $defaultRoles)
     {
         $form = $this->formRegister
             ->setClientIp($request->getClientIp())
@@ -138,7 +136,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $this->twig);
+        $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
             'twigparent'   => $this->config->getTemplates('profile', 'parent'),
             'profile_form' => $form->createView(),

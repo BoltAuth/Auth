@@ -119,7 +119,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app->extend(
                 'twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(new Twig\Functions($app['members.config'], $app['members.session'], $app['members.records'], $app['resources']));
+                    $twig->addExtension(
+                        new Twig\Functions(
+                            $app['members.config'],
+                            $app['members.session'],
+                            $app['members.records'],
+                            $app['members.forms.manager'],
+                            $app['resources']
+                        )
+                    );
 
                     return $twig;
                 }
@@ -130,7 +138,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app->extend(
                 'safe_twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(new Twig\Functions($app['members.config'], $app['members.session'], $app['members.records'], $app['resources']));
+                    $twig->addExtension(
+                        new Twig\Functions(
+                            $app['members.config'],
+                            $app['members.session'],
+                            $app['members.records'],
+                            $app['members.forms.manager'],
+                            $app['resources']
+                        )
+                    );
 
                     return $twig;
                 }
@@ -291,7 +307,6 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.session'],
                     $app['members.feedback'],
                     $app['members.records'],
-                    $app['twig'],
                     $app['members.form.login'],
                     $app['members.form.profile'],
                     $app['members.form.register']

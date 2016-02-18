@@ -144,7 +144,7 @@ class Authentication implements ControllerProviderInterface
                 ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
             ;
         }
-        $form = $app['members.forms.manager']->getFormLogin($request);
+        $form = $app['members.forms.manager']->getFormLogin($app['twig'], $request);
 
         $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
         if ($hasLocal && $form->getForm()->isValid()) {
