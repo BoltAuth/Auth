@@ -283,6 +283,21 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 );
             }
         );
+
+        $app['members.forms.manager'] = $app->share(
+            function ($app) {
+                return new Form\Manager(
+                    $app['members.config'],
+                    $app['members.session'],
+                    $app['members.feedback'],
+                    $app['members.records'],
+                    $app['twig'],
+                    $app['members.form.login'],
+                    $app['members.form.profile'],
+                    $app['members.form.register']
+                );
+            }
+        );
     }
 
     private function registerOauthHandlers(Application $app)
