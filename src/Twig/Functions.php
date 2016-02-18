@@ -3,10 +3,11 @@
 namespace Bolt\Extension\Bolt\Members\Twig;
 
 use Bolt\Configuration\ResourceManager;
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Storage;
+use Symfony\Component\HttpFoundation\Request;
 use Twig_Environment as TwigEnvironment;
 use Twig_Markup as TwigMarkup;
 
@@ -23,26 +24,35 @@ class Functions extends \Twig_Extension
 {
     /** @var Config */
     private $config;
-    /** @var Session */
+    /** @var AccessControl\Session */
     private $session;
-    /** @var Records */
+    /** @var Storage\Records */
     private $records;
+    /** @var Form\Manager */
+    private $formManager;
     /** @var ResourceManager */
     private $resourceManager;
 
     /**
      * Constructor.
      *
-     * @param Config          $config
-     * @param Session         $session
-     * @param Records         $records
-     * @param ResourceManager $resourceManager
+     * @param Config                $config
+     * @param AccessControl\Session $session
+     * @param Storage\Records       $records
+     * @param Form\Manager          $formManager
+     * @param ResourceManager       $resourceManager
      */
-    public function __construct(Config $config, Session $session, Records $records, ResourceManager $resourceManager)
-    {
+    public function __construct(
+        Config $config,
+        AccessControl\Session $session,
+        Storage\Records $records,
+        Form\Manager $formManager,
+        ResourceManager $resourceManager
+    ) {
         $this->config = $config;
         $this->session = $session;
         $this->records = $records;
+        $this->formManager = $formManager;
         $this->resourceManager = $resourceManager;
     }
 
@@ -63,12 +73,13 @@ class Functions extends \Twig_Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new \Twig_SimpleFunction('is_member'            , [$this, 'isMember'],       $safe),
-            new \Twig_SimpleFunction('member_has_role'      , [$this, 'hasRole'],        $safe),
-            new \Twig_SimpleFunction('member_providers'     , [$this, 'getProviders'],   $safe),
+            new \Twig_SimpleFunction('is_member', [$this, 'isMember'],       $safe),
+            new \Twig_SimpleFunction('member_has_role', [$this, 'hasRole'],        $safe),
+            new \Twig_SimpleFunction('member_providers', [$this, 'getProviders'],   $safe),
             new \Twig_SimpleFunction('members_auth_switcher', [$this, 'renderSwitcher'], $safe + $env),
-            new \Twig_SimpleFunction('members_auth_login'   , [$this, 'renderLogin'],    $safe + $env),
-            new \Twig_SimpleFunction('members_auth_logout'  , [$this, 'renderLogout'],   $safe + $env),
+            new \Twig_SimpleFunction('members_auth_login', [$this, 'renderLogin'],    $safe + $env),
+            new \Twig_SimpleFunction('members_auth_logout', [$this, 'renderLogout'],   $safe + $env),
+            new \Twig_SimpleFunction('members_auth_password', [$this, 'renderPassword'], $safe + $env),
         ];
     }
 
@@ -122,7 +133,7 @@ class Functions extends \Twig_Extension
             return $providers;
         }
 
-        /** @var Entity\Provider $providerEntity */
+        /** @var Storage\Entity\Provider $providerEntity */
         foreach ($providerEntities as $providerEntity) {
             $providers[] = $providerEntity->getProvider();
         }
@@ -160,7 +171,7 @@ class Functions extends \Twig_Extension
     {
         // Set redirect if requested
         $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
-        $context = [];
+        $context = ['providers' => null];
 
         foreach ($this->config->getProviders() as $provider => $providerConf) {
             if (!$providerConf->isEnabled() || in_array($providerConf->getName(), $exclude)) {
@@ -213,6 +224,22 @@ class Functions extends \Twig_Extension
         ];
 
         $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
+
+        return new TwigMarkup($html, 'UTF-8');
+    }
+
+    /**
+     * Display the login prompt.
+     *
+     * @param TwigEnvironment $twig
+     *
+     * @return TwigMarkup
+     */
+    public function renderPassword(TwigEnvironment $twig)
+    {
+        $request = new Request();
+        $form = $this->formManager->getFormLogin($twig, $request);
+        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'login'));
 
         return new TwigMarkup($html, 'UTF-8');
     }
