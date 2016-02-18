@@ -239,7 +239,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $type = new \Pimple(
                     [
                         // @codingStandardsIgnoreStart
-                        'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType(); }),
+                        'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType($app['members.config']); }),
                         'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
                         'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
                         // @codingStandardsIgnoreEnd

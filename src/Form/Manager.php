@@ -85,7 +85,7 @@ class Manager
             'twigparent' => $this->config->getTemplates('authentication', 'parent'),
             'auth_form'  => $form->createView(),
             'feedback'   => $this->feedback,
-            'has_local'  => $this->config->getProvider('Local')->isEnabled(),
+            'providers'  => $this->config->getEnabledProviders(),
         ]);
 
         return $resolved;

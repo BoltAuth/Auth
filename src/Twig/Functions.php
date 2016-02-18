@@ -79,7 +79,6 @@ class Functions extends \Twig_Extension
             new \Twig_SimpleFunction('members_auth_switcher', [$this, 'renderSwitcher'], $safe + $env),
             new \Twig_SimpleFunction('members_auth_login', [$this, 'renderLogin'],    $safe + $env),
             new \Twig_SimpleFunction('members_auth_logout', [$this, 'renderLogout'],   $safe + $env),
-            new \Twig_SimpleFunction('members_auth_password', [$this, 'renderPassword'], $safe + $env),
         ];
     }
 
@@ -163,35 +162,14 @@ class Functions extends \Twig_Extension
      *
      * @param TwigEnvironment $twig
      * @param bool            $redirect If we should redirect after login
-     * @param array           $exclude  An array of provider names to not include
      *
      * @return TwigMarkup
      */
-    public function renderLogin(TwigEnvironment $twig, $redirect = false, $exclude = [])
+    public function renderLogin(TwigEnvironment $twig, $redirect = false)
     {
-        // Set redirect if requested
-        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
-        $context = ['providers' => null];
-
-        foreach ($this->config->getEnabledProviders() as $provider => $providerConf) {
-            if (in_array($providerConf->getName(), $exclude)) {
-                continue;
-            }
-
-            $link = sprintf('%s%s/login/process?%s',
-                $this->resourceManager->getUrl('root'),
-                $this->config->getUrlAuthenticate(),
-                http_build_query(['provider' => $provider] + $target)
-            );
-
-            $context['providers'][$provider] = [
-                'link'  => $link,
-                'label' => $providerConf->getLabel() ?: $provider,
-                'class' => $this->getCssClass(strtolower($provider)),
-            ];
-        }
-
-        $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
+        $request = new Request();
+        $form = $this->formManager->getFormLogin($twig, $request);
+        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'login'));
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -224,22 +202,6 @@ class Functions extends \Twig_Extension
         ];
 
         $html = $twig->render($this->config->getTemplates('authentication', 'button'), $context);
-
-        return new TwigMarkup($html, 'UTF-8');
-    }
-
-    /**
-     * Display the login prompt.
-     *
-     * @param TwigEnvironment $twig
-     *
-     * @return TwigMarkup
-     */
-    public function renderPassword(TwigEnvironment $twig)
-    {
-        $request = new Request();
-        $form = $this->formManager->getFormLogin($twig, $request);
-        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'login'));
 
         return new TwigMarkup($html, 'UTF-8');
     }
