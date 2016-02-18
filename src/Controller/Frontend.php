@@ -106,21 +106,13 @@ class Frontend implements ControllerProviderInterface
         }
 
         $app['members.forms']['type']['profile']->setRequirePassword(false);
-        $form = $app['members.form.profile']
-            ->setGuid($memberSession->getGuid())
-            ->createForm($app['members.records'])
-        ;
+        $form = $app['members.forms.manager']->getFormProfile($request);
 
         // Handle the form request data
-        $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->getForm()->isValid()) {
             $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
         }
-
-        $html = $app['twig']->render($this->config->getTemplates('profile', 'edit'), [
-            'profile_form' => $form->createView(),
-            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
-        ]);
+        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'edit'));
 
         $response = new Response(new \Twig_Markup($html, 'UTF-8'));
 
@@ -137,32 +129,21 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        $form = $app['members.form.register']
-            ->setClientIp($app['request_stack']->getCurrentRequest()->getClientIp())
-            ->setRoles($app['members.config']->getRolesRegister())
-            ->setSession($app['members.session'])
-            ->createForm($app['members.records'])
-        ;
+        $form = $app['members.forms.manager']->getFormRegister($request, $app['members.config']->getRolesRegister());
 
         // Handle the form request data
-        $form->handleRequest($request);
-        if ($form->isValid()) {
+        if ($form->getForm()->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
             $app['members.form.register']
                 ->setProvider($app['members.oauth.provider'])
                 ->saveForm($app['members.records'], $app['dispatcher'])
             ;
-
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
             return $response;
         }
-
-        $html = $app['twig']->render($this->config->getTemplates('profile', 'register'), [
-            'profile_form' => $form->createView(),
-            'twigparent'   => $this->config->getTemplates('profile', 'parent'),
-        ]);
+        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'register'));
 
         $response = new Response(new \Twig_Markup($html, 'UTF-8'));
 

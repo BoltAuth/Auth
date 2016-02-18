@@ -16,6 +16,7 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -143,61 +144,64 @@ class Authentication implements ControllerProviderInterface
                 ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
             ;
         }
-        $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
-        $app['members.forms']['type']['profile'];
-        $form = $app['members.form.login']
-            ->setRequest($request)
-            ->createForm($app['members.records'])
-        ;
+        $form = $app['members.forms.manager']->getFormLogin($request);
 
-        // Handle the form request data
-        $form->handleRequest($request);
-        if ($hasLocal && $form->isValid()) {
+        $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
+        if ($hasLocal && $form->getForm()->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
 
-            $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
-            if (!$account instanceof Entity\Account) {
-                $app['members.feedback']->info('Registration is required.');
-
-                return new RedirectResponse($app['url_generator']->generate('registerProfile'));
-            }
-
-            $oauth = $app['members.records']->getOauthByGuid($account->getGuid());
-            if (!$oauth instanceof Entity\Oauth) {
-                $app['members.feedback']->info('Registration is required.');
-
-                return new RedirectResponse($app['url_generator']->generate('registerProfile'));
-            }
-
-            if (!$oauth->getEnabled()) {
-                $app['members.feedback']->info('Account disabled.');
-
-                return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
-            }
-
-            if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
-                $app['members.form.login']->saveForm($app['members.records'], $app['dispatcher']);
-
-                /** @var Provider\Local $localProvider */
-                $localProvider = $app['members.oauth.provider'];
-                $localAccessToken = $localProvider->getAccessToken('password', []);
-                $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
-                $app['members.feedback']->info('Login successful.');
-
-                return $app['members.session']->popRedirect()->getResponse();
+            $response = $this->getLoginResponse($app, $form->getForm());
+            if ($response instanceof Response) {
+                return $response;
             }
 
             $app['members.feedback']->info('Login details are incorrect.');
         }
 
-        $html = $app['render']->render($this->config->getTemplates('authentication', 'login'), [
-            'auth_form'  => $form->createView(),
-            'twigparent' => $this->config->getTemplates('authentication', 'parent'),
-            'feedback'   => $app['members.feedback']->get(),
-            'has_local'  => $hasLocal,
-        ]);
+        return new Response($form->getRenderedForm($this->config->getTemplates('authentication', 'login')));
+    }
 
-        return new Response(new \Twig_Markup($html, 'UTF-8'));
+    /**
+     * @param Application $app
+     * @param Form        $form
+     *
+     * @return RedirectResponse|null
+     */
+    private function getLoginResponse(Application $app, Form $form)
+    {
+        $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
+        if (!$account instanceof Entity\Account) {
+            $app['members.feedback']->info('Registration is required.');
+
+            return new RedirectResponse($app['url_generator']->generate('registerProfile'));
+        }
+
+        $oauth = $app['members.records']->getOauthByGuid($account->getGuid());
+        if (!$oauth instanceof Entity\Oauth) {
+            $app['members.feedback']->info('Registration is required.');
+
+            return new RedirectResponse($app['url_generator']->generate('registerProfile'));
+        }
+
+        if (!$oauth->getEnabled()) {
+            $app['members.feedback']->info('Account disabled.');
+
+            return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
+        }
+
+        if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
+            $app['members.form.login']->saveForm($app['members.records'], $app['dispatcher']);
+
+            /** @var Provider\Local $localProvider */
+            $localProvider = $app['members.oauth.provider'];
+            $localAccessToken = $localProvider->getAccessToken('password', []);
+            $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+            $app['members.feedback']->info('Login successful.');
+
+            return $app['members.session']->popRedirect()->getResponse();
+        }
+
+        return null;
     }
 
     /**

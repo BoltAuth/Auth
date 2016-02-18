@@ -6,7 +6,8 @@
  #}
 {#% set feedback = clientlogin.feedback.get() %#}
 
-{% if feedback|default(null) %}
+{% set feedback = feedback.get|default(null) %}
+{% if feedback %}
 <div class="panel members-feedback">
     {% if feedback.debug|default(null) and app['members.debug']%}
     <div class="members-messages-debug">
