@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Event;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Role;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**

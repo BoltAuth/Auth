@@ -17,7 +17,6 @@ use Bolt\Extension\Bolt\Members\Twig;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 /**
  * Members service provider.

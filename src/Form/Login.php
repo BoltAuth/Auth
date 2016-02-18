@@ -57,7 +57,7 @@ class Login extends AbstractForm
             'csrf_protection' => true,
             'data'            => [
                 'email' => $this->request->request->get('email'),
-            ]
+            ],
         ];
     }
 }

@@ -4,8 +4,8 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Users;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;

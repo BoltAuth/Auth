@@ -76,13 +76,13 @@ class RegisterType extends AbstractType
             ->add('plainPassword', RepeatedType::class, [
                 'type'           => PasswordType::class,
                 'first_options'  => [
-                    'label' => Trans::__($this->config->getLabel('password_first')),
+                    'label'       => Trans::__($this->config->getLabel('password_first')),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('password_first'),
                     ],
                 ],
                 'second_options' => [
-                    'label' => Trans::__($this->config->getLabel('password_second')),
+                    'label'       => Trans::__($this->config->getLabel('password_second')),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('password_second'),
                     ],

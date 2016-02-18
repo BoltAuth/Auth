@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;

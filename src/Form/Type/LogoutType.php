@@ -6,7 +6,6 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Logout type.
@@ -37,7 +36,7 @@ class LogoutType extends AbstractType
         $builder
             ->add('logout',   ButtonType::class, [
                 'label'   => Trans::__($this->config->getLabel('logout')),
-                'attr'  => [
+                'attr'    => [
                     'class' => 'members-logout-button',
                     'href'  => sprintf('/%s/logout', $this->config->getUrlAuthenticate()),
                 ],
