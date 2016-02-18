@@ -27,6 +27,8 @@ abstract class AbstractForm implements MembersFormInterface
     protected $entity;
     /** @var Form */
     protected $form;
+    /** @var string */
+    protected $action;
 
     public function __construct(FormFactoryInterface $formFactory, FormTypeInterface $type, EntityInterface $entity)
     {
@@ -56,6 +58,9 @@ abstract class AbstractForm implements MembersFormInterface
             $this->entity,
             $data
         );
+        if ($this->action !== null) {
+            $builder->setAction($this->action);
+        }
 
         return $this->form = $builder->getForm();
     }
@@ -74,6 +79,20 @@ abstract class AbstractForm implements MembersFormInterface
         }
 
         return $this->form;
+    }
+
+    /**
+     * Set the HTML 'action' URL for a form's POST target URL.
+     *
+     * @param string $action
+     *
+     * @return AbstractForm
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+
+        return $this;
     }
 
     /**
