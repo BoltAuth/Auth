@@ -173,8 +173,8 @@ class Functions extends \Twig_Extension
         $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
         $context = ['providers' => null];
 
-        foreach ($this->config->getProviders() as $provider => $providerConf) {
-            if (!$providerConf->isEnabled() || in_array($providerConf->getName(), $exclude)) {
+        foreach ($this->config->getEnabledProviders() as $provider => $providerConf) {
+            if (in_array($providerConf->getName(), $exclude)) {
                 continue;
             }
 

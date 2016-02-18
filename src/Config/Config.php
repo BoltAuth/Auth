@@ -162,6 +162,23 @@ class Config
     }
 
     /**
+     * @return Provider[]
+     */
+    public function getEnabledProviders()
+    {
+        $enabled = [];
+        /** @var Provider $provider */
+        foreach ($this->providers as $provider) {
+            if ($provider->isEnabled()) {
+                $name = strtolower($provider->getName());
+                $enabled[$name] = $provider;
+            }
+        }
+
+        return $enabled;
+    }
+
+    /**
      * @param Provider[] $providers
      *
      * @return Config
