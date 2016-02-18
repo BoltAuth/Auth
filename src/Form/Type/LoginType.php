@@ -83,7 +83,7 @@ class LoginType extends AbstractType
                     'label' => $provider->getLabel(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),
-                        'href'  => '/authentication/login/process?provider=' . $provider->getName(),
+                        'href'  => sprintf('/%s/login/process?provider=%s', $this->config->getUrlAuthenticate(), $provider->getName()),
                     ],
                 ]
             );
