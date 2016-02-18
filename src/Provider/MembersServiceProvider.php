@@ -122,10 +122,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $twig->addExtension(
                         new Twig\Functions(
                             $app['members.config'],
-                            $app['members.session'],
-                            $app['members.records'],
                             $app['members.forms.manager'],
-                            $app['resources']
+                            $app['members.records'],
+                            $app['members.session']
                         )
                     );
 
@@ -141,10 +140,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $twig->addExtension(
                         new Twig\Functions(
                             $app['members.config'],
-                            $app['members.session'],
-                            $app['members.records'],
                             $app['members.forms.manager'],
-                            $app['resources']
+                            $app['members.records'],
+                            $app['members.session']
                         )
                     );
 

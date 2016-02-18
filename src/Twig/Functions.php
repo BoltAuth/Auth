@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Twig;
 
-use Bolt\Configuration\ResourceManager;
 use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
@@ -24,36 +23,31 @@ class Functions extends \Twig_Extension
 {
     /** @var Config */
     private $config;
-    /** @var AccessControl\Session */
-    private $session;
-    /** @var Storage\Records */
-    private $records;
     /** @var Form\Manager */
     private $formManager;
-    /** @var ResourceManager */
-    private $resourceManager;
+    /** @var Storage\Records */
+    private $records;
+    /** @var AccessControl\Session */
+    private $session;
 
     /**
      * Constructor.
      *
      * @param Config                $config
-     * @param AccessControl\Session $session
-     * @param Storage\Records       $records
      * @param Form\Manager          $formManager
-     * @param ResourceManager       $resourceManager
+     * @param Storage\Records       $records
+     * @param AccessControl\Session $session
      */
     public function __construct(
         Config $config,
-        AccessControl\Session $session,
-        Storage\Records $records,
         Form\Manager $formManager,
-        ResourceManager $resourceManager
+        Storage\Records $records,
+        AccessControl\Session $session
     ) {
         $this->config = $config;
-        $this->session = $session;
-        $this->records = $records;
         $this->formManager = $formManager;
-        $this->resourceManager = $resourceManager;
+        $this->records = $records;
+        $this->session = $session;
     }
 
     /**
@@ -185,12 +179,7 @@ class Functions extends \Twig_Extension
     public function renderLogout(TwigEnvironment $twig, $redirect = false)
     {
         // Set redirect if requested
-        $target = $redirect ? ['redirect' => $this->resourceManager->getUrl('current')] : [];
-        $link = sprintf('%s%s/logout?',
-            $this->resourceManager->getUrl('root'),
-            $this->config->getUrlAuthenticate(),
-            http_build_query($target)
-        );
+        $link = sprintf('%s/logout', $this->config->getUrlAuthenticate());
         $context = [
             'providers' => [
                 'logout' => [
