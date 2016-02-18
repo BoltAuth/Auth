@@ -73,6 +73,8 @@ class Functions extends \Twig_Extension
             new \Twig_SimpleFunction('members_auth_switcher', [$this, 'renderSwitcher'], $safe + $env),
             new \Twig_SimpleFunction('members_auth_login', [$this, 'renderLogin'],    $safe + $env),
             new \Twig_SimpleFunction('members_auth_logout', [$this, 'renderLogout'],   $safe + $env),
+            new \Twig_SimpleFunction('members_profile_edit', [$this, 'renderEdit'],    $safe + $env),
+            new \Twig_SimpleFunction('members_profile_register', [$this, 'renderRegister'],   $safe + $env),
         ];
     }
 
@@ -192,14 +194,32 @@ class Functions extends \Twig_Extension
     }
 
     /**
-     * Get a button's CSS class
+     * @param TwigEnvironment $twig
      *
-     * @param string $provider
-     *
-     * @return string
+     * @return TwigMarkup
      */
-    private function getCssClass($provider)
+    public function renderEdit(TwigEnvironment $twig)
     {
-        return $this->config->getAddOn('zocial') ? "zocial $provider" : $provider;
+        if (!$this->session->hasAuthorisation()) {
+            return $this->renderLogin($twig);
+        }
+
+        $form = $this->formManager->getFormProfile($twig, new Request(), false);
+        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'edit'));
+
+        return new TwigMarkup($html, 'UTF-8');
+    }
+
+    /**
+     * @param TwigEnvironment $twig
+     *
+     * @return TwigMarkup
+     */
+    public function renderRegister(TwigEnvironment $twig)
+    {
+        $form = $this->formManager->getFormRegister($twig, new Request(), $this->config->getRolesRegister(), false);
+        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'register'));
+
+        return new TwigMarkup($html, 'UTF-8');
     }
 }
