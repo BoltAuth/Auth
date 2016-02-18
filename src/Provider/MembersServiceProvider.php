@@ -240,8 +240,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         // @codingStandardsIgnoreStart
                         'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType($app['members.config']); }),
                         'logout'   => $app->share(function () use ($app) { return new Form\Type\LogoutType($app['members.config']); }),
-                        'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType(); }),
-                        'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.records']); }),
+                        'profile'  => $app->share(function () use ($app) { return new Form\Type\ProfileType($app['members.config']); }),
+                        'register' => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.config'], $app['members.records']); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );

@@ -39,7 +39,7 @@ class LoginType extends AbstractType
     {
         $builder
             ->add('email',       EmailType::class,   [
-                'label'       => Trans::__('Email:'),
+                'label'       => Trans::__($this->config->getLabel('email')),
                 'data'        => $this->getData($options, 'email'),
                 'constraints' => new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
@@ -47,7 +47,7 @@ class LoginType extends AbstractType
                 ]),
             ])
             ->add('password', PasswordType::class, [
-                'label'       => Trans::__('Password:'),
+                'label'       => Trans::__($this->config->getLabel('password_first')),
                 'data'        => null,
                 'constraints' => [
                     new Assert\NotBlank(),
@@ -55,7 +55,7 @@ class LoginType extends AbstractType
                 ],
             ])
             ->add('submit',   SubmitType::class, [
-                'label'   => Trans::__('Login'),
+                'label'   => Trans::__($this->config->getLabel('login')),
             ])
         ;
         $this->addProviderButtons($builder);

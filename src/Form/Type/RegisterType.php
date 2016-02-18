@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Translation\Translator as Trans;
@@ -24,6 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class RegisterType extends AbstractType
 {
+    /** @var Config */
+    private $config;
     /** @var Records */
     private $records;
 
@@ -33,8 +36,9 @@ class RegisterType extends AbstractType
      * @param Records $records
      * @param mixed   $options
      */
-    public function __construct(Records $records, $options = null)
+    public function __construct(Config $config, Records $records, $options = null)
     {
+        $this->config = $config;
         $this->records = $records;
     }
 
@@ -45,7 +49,7 @@ class RegisterType extends AbstractType
     {
         $builder
             ->add('displayname', TextType::class,   [
-                'label'       => Trans::__('Publicly visible name:'),
+                'label'       => Trans::__($this->config->getLabel('displayname')),
                 'data'        => $this->getData($options, 'displayname'),
                 'constraints' => [
                     new Assert\NotBlank(),
@@ -53,7 +57,7 @@ class RegisterType extends AbstractType
                 ],
             ])
             ->add('email',       EmailType::class,   [
-                'label'       => Trans::__('Email:'),
+                'label'       => Trans::__($this->config->getLabel('email')),
                 'data'        => $this->getData($options, 'email'),
                 'constraints' => [
                     new UniqueEmail($this->records),
@@ -65,11 +69,11 @@ class RegisterType extends AbstractType
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type'           => PasswordType::class,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                'first_options'  => ['label' => Trans::__($this->config->getLabel('password_first'))],
+                'second_options' => ['label' => Trans::__($this->config->getLabel('password_second'))],
             ])
             ->add('submit',      SubmitType::class, [
-                'label'       => Trans::__('Save & continue'),
+                'label'   => Trans::__($this->config->getLabel('profile_save')),
             ]);
     }
 

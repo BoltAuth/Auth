@@ -348,8 +348,13 @@ class Config
             ],
             'debug'        => false,
             'labels'       => [
-                'login'  => 'Login',
-                'logout' => 'Logout',
+                'login'           => 'Login',
+                'logout'          => 'Logout',
+                'displayname'     => 'Public Name',
+                'email'           => 'Email Address',
+                'password_first'  => 'Password',
+                'password_second' => 'Repeat Password',
+                'profile_save'    => 'Save & Continue',
             ],
             'registration' => true,
             'roles'        => [

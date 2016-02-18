@@ -25,11 +25,16 @@ debug: false
 #        parent: members_error.twig
 #        error: _members_error.twig
 
-## Button Labels
+## Labels
 #
 #labels:
 #    login: Login
 #    logout: Logout
+#    displayname: Public Name
+#    email: Email Address
+#    password_first: Password
+#    password_second: Repeat Password
+#    profile_save: Save & Continue
 
 ## Add-ons
 #
