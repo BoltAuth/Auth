@@ -89,7 +89,7 @@ class Manager
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
-            ->setAction(sprintf('/%s/register', $this->config->getUrlMembers()))
+            ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
@@ -144,7 +144,7 @@ class Manager
     {
         $form = $this->formProfile
             ->setGuid($this->session->getAuthorisation()->getGuid())
-            ->setAction(sprintf('/%s/register', $this->config->getUrlMembers()))
+            ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
@@ -179,7 +179,7 @@ class Manager
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
-            ->setAction(sprintf('/%s/register', $this->config->getUrlMembers()))
+            ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
