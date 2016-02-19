@@ -67,14 +67,16 @@ class Functions extends \Twig_Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new \Twig_SimpleFunction('is_member', [$this, 'isMember'],       $safe),
-            new \Twig_SimpleFunction('member_has_role', [$this, 'hasRole'],        $safe),
-            new \Twig_SimpleFunction('member_providers', [$this, 'getProviders'],   $safe),
-            new \Twig_SimpleFunction('members_auth_switcher', [$this, 'renderSwitcher'], $safe + $env),
-            new \Twig_SimpleFunction('members_auth_login', [$this, 'renderLogin'],    $safe + $env),
-            new \Twig_SimpleFunction('members_auth_logout', [$this, 'renderLogout'],   $safe + $env),
-            new \Twig_SimpleFunction('members_profile_edit', [$this, 'renderEdit'],    $safe + $env),
-            new \Twig_SimpleFunction('members_profile_register', [$this, 'renderRegister'],   $safe + $env),
+            new \Twig_SimpleFunction('is_member',                [$this, 'isMember'],       $safe),
+            new \Twig_SimpleFunction('member',                   [$this, 'getMember'],      $safe),
+            new \Twig_SimpleFunction('member_meta',              [$this, 'getMemberMeta'],  $safe),
+            new \Twig_SimpleFunction('member_has_role',          [$this, 'hasRole'],        $safe),
+            new \Twig_SimpleFunction('member_providers',         [$this, 'getProviders'],   $safe),
+            new \Twig_SimpleFunction('members_auth_switcher',    [$this, 'renderSwitcher'], $safe + $env),
+            new \Twig_SimpleFunction('members_auth_login',       [$this, 'renderLogin'],    $safe + $env),
+            new \Twig_SimpleFunction('members_auth_logout',      [$this, 'renderLogout'],   $safe + $env),
+            new \Twig_SimpleFunction('members_profile_edit',     [$this, 'renderEdit'],     $safe + $env),
+            new \Twig_SimpleFunction('members_profile_register', [$this, 'renderRegister'], $safe + $env),
         ];
     }
 
@@ -86,6 +88,38 @@ class Functions extends \Twig_Extension
     public function isMember()
     {
         return $this->session->hasAuthorisation();
+    }
+
+    /**
+     * Return a member's account.
+     *
+     * @return Storage\Entity\Account|null
+     */
+    public function getMember()
+    {
+        if (!$this->session->hasAuthorisation()) {
+            return null;
+        }
+        $auth = $this->session->getAuthorisation();
+        $account = $this->records->getAccountByGuid($auth->getGuid());
+
+        return $account ?: null;
+    }
+
+    /**
+     * Return a member's account meta data.
+     *
+     * @return Storage\Entity\AccountMeta[]|null
+     */
+    public function getMemberMeta()
+    {
+        if (!$this->session->hasAuthorisation()) {
+            return null;
+        }
+        $auth = $this->session->getAuthorisation();
+        $meta = $this->records->getAccountMetaAll($auth->getGuid());
+
+        return $meta ?: null;
     }
 
     /**
