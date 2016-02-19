@@ -183,6 +183,8 @@ class Functions extends \Twig_Extension
     }
 
     /**
+     * Display that profile editing form.
+     *
      * @param TwigEnvironment $twig
      *
      * @return TwigMarkup
@@ -200,6 +202,8 @@ class Functions extends \Twig_Extension
     }
 
     /**
+     * Display the registration form.
+     *
      * @param TwigEnvironment $twig
      *
      * @return TwigMarkup
