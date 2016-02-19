@@ -158,7 +158,7 @@ class Functions extends \Twig_Extension
         }
 
         $providerEntities = $this->records->getProvisionsByGuid($auth->getGuid());
-        if ($providerEntities === null) {
+        if ($providerEntities === false) {
             return $providers;
         }
 
