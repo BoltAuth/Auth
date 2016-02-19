@@ -79,18 +79,27 @@ class Manager
      */
     public function getFormLogin(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $form = $this->formLogin
+        $formLogin = $this->formLogin
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $twig);
+        $formRegister = $this->formRegister
+            ->setClientIp($request->getClientIp())
+            ->setRoles($this->config->getRolesRegister())
+            ->setSession($this->session)
+            ->setAction(sprintf('/%s/register', $this->config->getUrlMembers()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+        $resolved = new ResolvedForm($formLogin, $twig);
         $resolved->setContext([
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
-            'auth_form'  => $form->createView(),
-            'feedback'   => $this->feedback,
-            'providers'  => $this->config->getEnabledProviders(),
+            'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+            'auth_form'    => $formLogin->createView(),
+            'profile_form' => $formRegister->createView(),
+            'feedback'     => $this->feedback,
+            'providers'    => $this->config->getEnabledProviders(),
         ]);
 
         return $resolved;
@@ -154,25 +163,31 @@ class Manager
      *
      * @param TwigEnvironment $twig
      * @param Request         $request
-     * @param array           $defaultRoles
      * @param bool            $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormRegister(TwigEnvironment $twig, Request $request, array $defaultRoles, $includeParent = true)
+    public function getFormRegister(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $form = $this->formRegister
+        $formLogin = $this->formLogin
+            ->setRequest($request)
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+        $formRegister = $this->formRegister
             ->setClientIp($request->getClientIp())
-            ->setRoles($defaultRoles)
+            ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
             ->setAction(sprintf('/%s/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $twig);
+        $resolved = new ResolvedForm($formRegister, $twig);
         $resolved->setContext([
             'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
-            'profile_form' => $form->createView(),
+            'auth_form'    => $formLogin->createView(),
+            'profile_form' => $formRegister->createView(),
             'feedback'     => $this->feedback,
         ]);
 

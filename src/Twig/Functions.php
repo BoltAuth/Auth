@@ -206,7 +206,7 @@ class Functions extends \Twig_Extension
      */
     public function renderRegister(TwigEnvironment $twig)
     {
-        $form = $this->formManager->getFormRegister($twig, new Request(), $this->config->getRolesRegister(), false);
+        $form = $this->formManager->getFormRegister($twig, new Request(), false);
         $html = $form->getRenderedForm($this->config->getTemplates('profile', 'register'));
 
         return new TwigMarkup($html, 'UTF-8');

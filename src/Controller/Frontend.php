@@ -105,7 +105,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $app['members.forms']['type']['profile']->setRequirePassword(false);
-        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request);
+        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
 
         // Handle the form request data
         if ($form->getForm()->isValid()) {
@@ -128,7 +128,7 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        $form = $app['members.forms.manager']->getFormRegister($app['twig'], $request, $app['members.config']->getRolesRegister());
+        $form = $app['members.forms.manager']->getFormRegister($app['twig'], $request, true);
 
         // Handle the form request data
         if ($form->getForm()->isValid()) {
