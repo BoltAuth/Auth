@@ -140,29 +140,32 @@ class Functions extends \Twig_Extension
      * Display login/logout button(s) depending on status.
      *
      * @param TwigEnvironment $twig
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderSwitcher(TwigEnvironment $twig)
+    public function renderSwitcher(TwigEnvironment $twig, $template = null)
     {
         if ($this->session->getAuthorisation()) {
-            return $this->renderLogout($twig);
+            return $this->renderLogout($twig, $template);
         }
 
-        return $this->renderLogin($twig);
+        return $this->renderLogin($twig, $template);
     }
 
     /**
      * Display logout button(s).
      *
      * @param TwigEnvironment $twig
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderLogin(TwigEnvironment $twig)
+    public function renderLogin(TwigEnvironment $twig, $template = null)
     {
         $form = $this->formManager->getFormLogin($twig, new Request(), false);
-        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'login'));
+        $template = $template ?: $this->config->getTemplates('authentication', 'login');
+        $html = $form->getRenderedForm($template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -171,13 +174,15 @@ class Functions extends \Twig_Extension
      * Display logout button.
      *
      * @param TwigEnvironment $twig
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderLogout(TwigEnvironment $twig)
+    public function renderLogout(TwigEnvironment $twig, $template = null)
     {
         $form = $this->formManager->getFormLogout($twig, new Request(), false);
-        $html = $form->getRenderedForm($this->config->getTemplates('authentication', 'logout'));
+        $template = $template ?: $this->config->getTemplates('authentication', 'logout');
+        $html = $form->getRenderedForm($template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -186,17 +191,19 @@ class Functions extends \Twig_Extension
      * Display that profile editing form.
      *
      * @param TwigEnvironment $twig
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderEdit(TwigEnvironment $twig)
+    public function renderEdit(TwigEnvironment $twig, $template = null)
     {
         if (!$this->session->hasAuthorisation()) {
-            return $this->renderLogin($twig);
+            return $this->renderLogin($twig, $template);
         }
 
         $form = $this->formManager->getFormProfile($twig, new Request(), false);
-        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'edit'));
+        $template = $template ?: $this->config->getTemplates('profile', 'edit');
+        $html = $form->getRenderedForm($template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -205,13 +212,15 @@ class Functions extends \Twig_Extension
      * Display the registration form.
      *
      * @param TwigEnvironment $twig
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderRegister(TwigEnvironment $twig)
+    public function renderRegister(TwigEnvironment $twig, $template = null)
     {
         $form = $this->formManager->getFormRegister($twig, new Request(), false);
-        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'register'));
+        $template = $template ?: $this->config->getTemplates('profile', 'register');
+        $html = $form->getRenderedForm($template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
