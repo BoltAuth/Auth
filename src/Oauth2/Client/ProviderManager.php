@@ -226,10 +226,6 @@ class ProviderManager
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
-        if ($providerName === 'Local' && !isset($app['boltforms'])) {
-            throw new \RuntimeException('Local handler requires BoltForms (v2.5.0 or later preferred).');
-        }
-
         $handlerKey = $this->getHandlerKey($providerName);
         $app['members.oauth.handler'] = $app->share(
             function ($app) use ($app, $handlerKey) {
