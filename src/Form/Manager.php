@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Storage;
+use Pimple as Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig_Environment as TwigEnvironment;
 
@@ -28,6 +29,8 @@ class Manager
     protected $feedback;
     /** @var Storage\Records  */
     protected $records;
+    /** @var Container */
+    protected $forms;
     /** @var Login */
     protected $formLogin;
     /** @var Logout */
@@ -44,28 +47,20 @@ class Manager
      * @param AccessControl\Session $session
      * @param Feedback              $feedback
      * @param Storage\Records       $records
-     * @param Login                 $formLogin
-     * @param Profile               $formProfile
-     * @param Register              $formRegister
+     * @param Container             $forms
      */
     public function __construct(
         Config $config,
         AccessControl\Session $session,
         Feedback $feedback,
         Storage\Records $records,
-        Login $formLogin,
-        Logout $formLogout,
-        Profile $formProfile,
-        Register $formRegister
+        Container $forms
     ) {
         $this->config = $config;
         $this->session = $session;
         $this->feedback = $feedback;
         $this->records = $records;
-        $this->formLogin = $formLogin;
-        $this->formLogout = $formLogout;
-        $this->formProfile = $formProfile;
-        $this->formRegister = $formRegister;
+        $this->forms = $forms;
     }
 
     /**
@@ -79,13 +74,13 @@ class Manager
      */
     public function getFormLogin(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $formLogin = $this->formLogin
+        $formLogin = $this->getFormServiceLogin()
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $formRegister = $this->formRegister
+        $formRegister = $this->getFormServiceRegister()
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
@@ -116,7 +111,7 @@ class Manager
      */
     public function getFormLogout(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $form = $this->formLogout
+        $form = $this->getFormServiceLogout()
             ->createForm($this->records)
             ->handleRequest($request)
         ;
@@ -146,7 +141,7 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        $form = $this->formProfile
+        $form = $this->getFormServiceProfile()
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
@@ -173,13 +168,13 @@ class Manager
      */
     public function getFormRegister(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $formLogin = $this->formLogin
+        $formLogin = $this->getFormServiceLogin()
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $formRegister = $this->formRegister
+        $formRegister = $this->getFormServiceRegister()
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
@@ -196,5 +191,61 @@ class Manager
         ]);
 
         return $resolved;
+    }
+
+    /**
+     * Return the login form service provider.
+     *
+     * @return Login
+     */
+    protected function getFormServiceLogin()
+    {
+        if ($this->formLogin === null) {
+            $this->formLogin = $this->forms['login'];
+        }
+
+        return $this->formLogin;
+    }
+
+    /**
+     * Return the logout form service provider.
+     *
+     * @return Logout
+     */
+    protected function getFormServiceLogout()
+    {
+        if ($this->formLogout === null) {
+            $this->formLogout = $this->forms['logout'];
+        }
+
+        return $this->formLogout;
+    }
+
+    /**
+     * Return the profile form service provider.
+     *
+     * @return Profile
+     */
+    protected function getFormServiceProfile()
+    {
+        if ($this->formProfile === null) {
+            $this->formProfile = $this->forms['profile'];
+        }
+
+        return $this->formProfile;
+    }
+
+    /**
+     * Return the register form service provider.
+     *
+     * @return Register
+     */
+    protected function getFormServiceRegister()
+    {
+        if ($this->formRegister === null) {
+            $this->formRegister = $this->forms['register'];
+        }
+
+        return $this->formRegister;
     }
 }

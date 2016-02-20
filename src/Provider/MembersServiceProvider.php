@@ -14,6 +14,7 @@ use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
+use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -192,7 +193,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $prefix = $app['schema.prefix'];
 
                 // @codingStandardsIgnoreStart
-                return new \Pimple([
+                return new Container([
                     'members_account'      => $app->share(function () use ($platform, $prefix) { return new Table\Account($platform, $prefix); }),
                     'members_account_meta' => $app->share(function () use ($platform, $prefix) { return new Table\AccountMeta($platform, $prefix); }),
                     'members_oauth'        => $app->share(function () use ($platform, $prefix) { return new Table\Oauth($platform, $prefix); }),
@@ -234,7 +235,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     {
         $app['members.form.components'] = $app->share(
             function ($app) {
-                $type = new \Pimple(
+                $type = new Container(
                     [
                         // @codingStandardsIgnoreStart
                         'login'    => $app->share(function () use ($app) { return new Form\Type\LoginType($app['members.config']); }),
@@ -244,7 +245,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         // @codingStandardsIgnoreEnd
                     ]
                 );
-                $entity = new \Pimple(
+                $entity = new Container(
                     [
                         // @codingStandardsIgnoreStart
                         'login'    => $app->share(function () use ($app) { return new Form\Entity\Login(); }),
@@ -254,7 +255,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         // @codingStandardsIgnoreEnd
                     ]
                 );
-                $constraint = new \Pimple(
+                $constraint = new Container(
                     [
                         // @codingStandardsIgnoreStart
                         'email' => $app->share(function () use ($app) { return new Form\Validator\Constraint\UniqueEmail($app['members.records']); }),
@@ -262,7 +263,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     ]
                 );
 
-                return new \Pimple([
+                return new Container([
                     'type'       => $type,
                     'entity'     => $entity,
                     'constraint' => $constraint,
@@ -310,6 +311,17 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
+        $app['members.forms'] = $app->share(
+            function ($app) {
+                return new Container([
+                    'login'    => $app->share(function () use ($app) { return $app['members.form.login']; }),
+                    'logout'   => $app->share(function () use ($app) { return $app['members.form.logout']; }),
+                    'profile'  => $app->share(function () use ($app) { return $app['members.form.profile']; }),
+                    'register' => $app->share(function () use ($app) { return $app['members.form.register']; }),
+                ]);
+            }
+        );
+
         $app['members.forms.manager'] = $app->share(
             function ($app) {
                 return new Form\Manager(
@@ -317,10 +329,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.session'],
                     $app['members.feedback'],
                     $app['members.records'],
-                    $app['members.form.login'],
-                    $app['members.form.logout'],
-                    $app['members.form.profile'],
-                    $app['members.form.register']
+                    $app['members.forms']
                 );
             }
         );
