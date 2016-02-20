@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -62,7 +62,7 @@ class AbstractType extends BaseAbstractType
                 continue;
             }
             $builder->add(
-                $name, ButtonType::class, [
+                $name, SubmitType::class, [
                     'label' => $isLogin ? $provider->getLabelSignIn() : $provider->getLabelAssociate(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),
