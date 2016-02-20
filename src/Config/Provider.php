@@ -18,7 +18,9 @@ class Provider
     /** @var string */
     protected $name;
     /** @var string */
-    protected $label;
+    protected $labelSignIn;
+    /** @var string */
+    protected $labelAssociate;
     /** @var boolean */
     protected $enabled;
     /** @var string */
@@ -37,10 +39,12 @@ class Provider
     public function __construct($name, array $providerConfig)
     {
         $providerConfig = $this->setDefaultConfig($providerConfig);
+
         $this->name = $name;
-        $this->label = $providerConfig['label'];
-        $this->clientId = $providerConfig['keys']['clientId'];
-        $this->clientSecret = $providerConfig['keys']['clientSecret'];
+        $this->labelSignIn = $providerConfig['label']['sign_in'] ?: 'Sign-in with ' . $name;
+        $this->labelAssociate = $providerConfig['label']['associate'] ?: 'Add ' . $name;
+        $this->clientId = $providerConfig['keys']['client_id'];
+        $this->clientSecret = $providerConfig['keys']['client_secret'];
         $this->scopes = $providerConfig['scopes'];
 
         if ($this->clientId === null || $this->clientSecret === null) {
@@ -73,19 +77,39 @@ class Provider
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabelSignIn()
     {
-        return $this->label;
+        return $this->labelSignIn;
     }
 
     /**
-     * @param string $label
+     * @param string $labelSignIn
      *
      * @return Provider
      */
-    public function setLabel($label)
+    public function setLabelSignIn($labelSignIn)
     {
-        $this->label = $label;
+        $this->labelSignIn = $labelSignIn;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabelAssociate()
+    {
+        return $this->labelAssociate;
+    }
+
+    /**
+     * @param string $labelAssociate
+     *
+     * @return Provider
+     */
+    public function setLabelAssociate($labelAssociate)
+    {
+        $this->labelAssociate = $labelAssociate;
 
         return $this;
     }
@@ -178,10 +202,13 @@ class Provider
     private function setDefaultConfig(array $providerConfig)
     {
         $default = [
-            'label'   => null,
+            'label'   => [
+                'sign_in'   => null,
+                'associate' => null,
+            ],
             'keys'    => [
-                'clientId'     => null,
-                'clientSecret' => null,
+                'client_id'     => null,
+                'client_secret' => null,
             ],
             'scopes'  => null,
             'enabled' => false,

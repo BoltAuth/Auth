@@ -86,7 +86,7 @@ class LoginType extends AbstractType
             }
             $builder->add(
                 $name, ButtonType::class, [
-                    'label' => $provider->getLabel(),
+                    'label' => $provider->getLabelSignIn(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),
                         'href'  => sprintf('/%s/login/process?provider=%s', $this->config->getUrlAuthenticate(), $provider->getName()),
