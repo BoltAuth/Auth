@@ -43,7 +43,7 @@
                 {{ form_errors(profile_form.plainPassword.first) }}
                 {{ form_widget(profile_form.plainPassword.second, { 'attr': {'class': 'form-control large'} }) }}
 
-                {% include 'profile_edit_meta.twig' ignore missing %}
+                {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
 
                 <br>
             <div class="hidden">
