@@ -415,10 +415,11 @@ class Config
                     'view'     => '_view.twig',
                 ],
                 'authentication' => [
-                    'parent'   => 'login.twig',
-                    'feedback' => 'feedback.twig',
-                    'login'    => '_login.twig',
-                    'logout'   => '_logout.twig',
+                    'parent'    => 'login.twig',
+                    'feedback'  => 'feedback.twig',
+                    'associate' => '_associate.twig',
+                    'login'     => '_login.twig',
+                    'logout'    => '_logout.twig',
                 ],
                 'error'          => [
                     'parent' => 'members_error.twig',

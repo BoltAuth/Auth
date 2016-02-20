@@ -31,6 +31,8 @@ class Manager
     protected $records;
     /** @var Container */
     protected $forms;
+    /** @var Associate */
+    protected $formAssociate;
     /** @var Login */
     protected $formLogin;
     /** @var Logout */
@@ -61,6 +63,34 @@ class Manager
         $this->feedback = $feedback;
         $this->records = $records;
         $this->forms = $forms;
+    }
+
+    /**
+     * Return the resolved association form.
+     *
+     * @param TwigEnvironment $twig
+     * @param Request         $request
+     * @param bool            $includeParent
+     *
+     * @return ResolvedForm
+     */
+    public function getFormAssociate(TwigEnvironment $twig, Request $request, $includeParent = true)
+    {
+        $form = $this->getFormServiceAssociate()
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+
+        $resolved = new ResolvedForm($form, $twig);
+        $resolved->setContext([
+            'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+            'auth_form'    => $form->createView(),
+            'feedback'     => $this->feedback,
+            'providers'    => $this->config->getEnabledProviders(),
+        ]);
+
+        return $resolved;
     }
 
     /**
@@ -191,6 +221,20 @@ class Manager
         ]);
 
         return $resolved;
+    }
+
+    /**
+     * Return the association form service provider.
+     *
+     * @return Login
+     */
+    protected function getFormServiceAssociate()
+    {
+        if ($this->formAssociate === null) {
+            $this->formAssociate = $this->forms['associate'];
+        }
+
+        return $this->formAssociate;
     }
 
     /**

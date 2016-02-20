@@ -328,10 +328,11 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $app['members.forms'] = $app->share(
             function ($app) {
                 return new Container([
-                    'login'    => $app->share(function () use ($app) { return $app['members.form.login']; }),
-                    'logout'   => $app->share(function () use ($app) { return $app['members.form.logout']; }),
-                    'profile'  => $app->share(function () use ($app) { return $app['members.form.profile']; }),
-                    'register' => $app->share(function () use ($app) { return $app['members.form.register']; }),
+                    'associate' => $app->share(function () use ($app) { return $app['members.form.associate']; }),
+                    'login'     => $app->share(function () use ($app) { return $app['members.form.login']; }),
+                    'logout'    => $app->share(function () use ($app) { return $app['members.form.logout']; }),
+                    'profile'   => $app->share(function () use ($app) { return $app['members.form.profile']; }),
+                    'register'  => $app->share(function () use ($app) { return $app['members.form.register']; }),
                 ]);
             }
         );

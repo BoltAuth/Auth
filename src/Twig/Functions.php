@@ -67,16 +67,17 @@ class Functions extends \Twig_Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new \Twig_SimpleFunction('is_member',                [$this, 'isMember'],       $safe),
-            new \Twig_SimpleFunction('member',                   [$this, 'getMember'],      $safe),
-            new \Twig_SimpleFunction('member_meta',              [$this, 'getMemberMeta'],  $safe),
-            new \Twig_SimpleFunction('member_has_role',          [$this, 'hasRole'],        $safe),
-            new \Twig_SimpleFunction('member_providers',         [$this, 'getProviders'],   $safe),
-            new \Twig_SimpleFunction('members_auth_switcher',    [$this, 'renderSwitcher'], $safe + $env),
-            new \Twig_SimpleFunction('members_auth_login',       [$this, 'renderLogin'],    $safe + $env),
-            new \Twig_SimpleFunction('members_auth_logout',      [$this, 'renderLogout'],   $safe + $env),
-            new \Twig_SimpleFunction('members_profile_edit',     [$this, 'renderEdit'],     $safe + $env),
-            new \Twig_SimpleFunction('members_profile_register', [$this, 'renderRegister'], $safe + $env),
+            new \Twig_SimpleFunction('is_member',                [$this, 'isMember'],        $safe),
+            new \Twig_SimpleFunction('member',                   [$this, 'getMember'],       $safe),
+            new \Twig_SimpleFunction('member_meta',              [$this, 'getMemberMeta'],   $safe),
+            new \Twig_SimpleFunction('member_has_role',          [$this, 'hasRole'],         $safe),
+            new \Twig_SimpleFunction('member_providers',         [$this, 'getProviders'],    $safe),
+            new \Twig_SimpleFunction('members_auth_switcher',    [$this, 'renderSwitcher'],  $safe + $env),
+            new \Twig_SimpleFunction('members_auth_associate',   [$this, 'renderAssociate'], $safe + $env),
+            new \Twig_SimpleFunction('members_auth_login',       [$this, 'renderLogin'],     $safe + $env),
+            new \Twig_SimpleFunction('members_auth_logout',      [$this, 'renderLogout'],    $safe + $env),
+            new \Twig_SimpleFunction('members_profile_edit',     [$this, 'renderEdit'],      $safe + $env),
+            new \Twig_SimpleFunction('members_profile_register', [$this, 'renderRegister'],  $safe + $env),
         ];
     }
 
@@ -185,6 +186,27 @@ class Functions extends \Twig_Extension
         }
 
         return $this->renderLogin($twig, $template);
+    }
+
+    /**
+     * Display social login buttons to associate with an existing account.
+     *
+     * @param TwigEnvironment $twig
+     * @param string          $template
+     *
+     * @return TwigMarkup
+     */
+    public function renderAssociate(TwigEnvironment $twig, $template = null)
+    {
+        if (!$this->session->hasAuthorisation()) {
+            return $this->renderLogin($twig, $template);
+        }
+
+        $form = $this->formManager->getFormAssociate($twig, new Request(), false);
+        $template = $template ?: $this->config->getTemplates('authentication', 'associate');
+        $html = $form->getRenderedForm($template);
+
+        return new TwigMarkup($html, 'UTF-8');
     }
 
     /**
