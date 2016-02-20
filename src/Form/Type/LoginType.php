@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class LoginType extends AbstractType
 {
     /** @var Config */
-    private $config;
+    protected $config;
 
     /**
      * Constructor.

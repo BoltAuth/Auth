@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ProfileType extends AbstractType
 {
     /** @var Config */
-    private $config;
+    protected $config;
     /** @var boolean */
     protected $requirePassword = true;
 

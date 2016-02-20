@@ -26,17 +26,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RegisterType extends AbstractType
 {
     /** @var Config */
-    private $config;
+    protected $config;
     /** @var Records */
-    private $records;
+    protected $records;
 
     /**
      * Constructor.
      *
+     * @param Config  $config
      * @param Records $records
-     * @param mixed   $options
      */
-    public function __construct(Config $config, Records $records, $options = null)
+    public function __construct(Config $config, Records $records)
     {
         $this->config = $config;
         $this->records = $records;

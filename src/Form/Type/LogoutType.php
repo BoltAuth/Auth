@@ -19,7 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class LogoutType extends AbstractType
 {
     /** @var Config */
-    private $config;
+    protected $config;
 
     /**
      * Constructor.
