@@ -52,8 +52,9 @@ class AbstractType extends BaseAbstractType
      * Add any configured provider buttons to the form.
      *
      * @param FormBuilderInterface $builder
+     * @param bool                 $isLogin
      */
-    protected function addProviderButtons(FormBuilderInterface $builder)
+    protected function addProviderButtons(FormBuilderInterface $builder, $isLogin)
     {
         foreach ($this->config->getEnabledProviders() as $provider) {
             $name = strtolower($provider->getName());
@@ -62,7 +63,7 @@ class AbstractType extends BaseAbstractType
             }
             $builder->add(
                 $name, ButtonType::class, [
-                    'label' => $provider->getLabelSignIn(),
+                    'label' => $isLogin ? $provider->getLabelSignIn() : $provider->getLabelAssociate(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),
                         'href'  => sprintf('/%s/login/process?provider=%s', $this->config->getUrlAuthenticate(), $provider->getName()),
