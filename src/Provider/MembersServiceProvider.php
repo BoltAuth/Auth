@@ -423,5 +423,20 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 );
             }
         }
+
+        $app['members.oauth.provider.map'] = $app->share(
+            function () {
+                return [
+                    'facebook'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Facebook',
+                    'generic'   => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Generic',
+                    'github'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\GitHub',
+                    'google'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Google',
+                    'instagram' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Instagram',
+                    'linkedon'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\LinkedIn',
+                    'local'     => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Local',
+                    'microsoft' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Microsoft',
+                ];
+            }
+        );
     }
 }
