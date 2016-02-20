@@ -55,6 +55,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerOauthHandlers($app);
         $this->registerOauthProviders($app);
 
+        $app['members.meta_fields'] = [];
+
         // Add the Twig Extension.
         $app['twig'] = $app->share(
             $app->extend(
