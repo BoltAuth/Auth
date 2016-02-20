@@ -22,9 +22,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class LoginType extends AbstractType
 {
-    /** @var Config */
-    protected $config;
-
     /**
      * Constructor.
      *
@@ -70,41 +67,5 @@ class LoginType extends AbstractType
     public function getName()
     {
         return 'login';
-    }
-
-    /**
-     * Add any configured provider buttons to the form.
-     *
-     * @param FormBuilderInterface $builder
-     */
-    private function addProviderButtons(FormBuilderInterface $builder)
-    {
-        foreach ($this->config->getEnabledProviders() as $provider) {
-            $name = strtolower($provider->getName());
-            if ($name === 'local') {
-                continue;
-            }
-            $builder->add(
-                $name, ButtonType::class, [
-                    'label' => $provider->getLabelSignIn(),
-                    'attr'  => [
-                        'class' => $this->getCssClass($name),
-                        'href'  => sprintf('/%s/login/process?provider=%s', $this->config->getUrlAuthenticate(), $provider->getName()),
-                    ],
-                ]
-            );
-        }
-    }
-
-    /**
-     * Determine a button's CSS class
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    private function getCssClass($name)
-    {
-        return $this->config->getAddOn('zocial') ? "members-oauth-provider zocial $name" : "members-oauth-provider $name";
     }
 }

@@ -18,9 +18,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class LogoutType extends AbstractType
 {
-    /** @var Config */
-    protected $config;
-
     /**
      * Constructor.
      *

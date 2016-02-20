@@ -25,8 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class RegisterType extends AbstractType
 {
-    /** @var Config */
-    protected $config;
     /** @var Records */
     protected $records;
 
