@@ -137,13 +137,17 @@ class Manager
      * @param TwigEnvironment $twig
      * @param Request         $request
      * @param bool            $includeParent
+     * @param string          $guid
      *
      * @return ResolvedForm
      */
-    public function getFormProfile(TwigEnvironment $twig, Request $request, $includeParent = true)
+    public function getFormProfile(TwigEnvironment $twig, Request $request, $includeParent = true, $guid = null)
     {
+        if ($guid === null) {
+            $guid = $this->session->getAuthorisation()->getGuid();
+        }
         $form = $this->formProfile
-            ->setGuid($this->session->getAuthorisation()->getGuid())
+            ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)

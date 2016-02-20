@@ -180,7 +180,7 @@ class Backend implements ControllerProviderInterface
     {
         $app['members.forms']['type']['profile']->setRequirePassword(true);
         $app['members.form.profile']->setGuid($guid = Uuid::uuid4()->toString());
-        $form = $app['members.forms.manager']->getFormRegister($app['twig'], $request, true);
+        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
 
         // Handle the form request data
         if ($form->getForm()->isValid()) {
@@ -246,16 +246,20 @@ class Backend implements ControllerProviderInterface
 
     public function userEdit(Application $app, Request $request, $guid)
     {
+        if ($app['members.records']->getAccountByGuid($guid) === false) {
+            $app['logger.flash']->error(sprintf('Member GUID %s does not exist', $guid));
+
+            new RedirectResponse($app['url_generator']->generate('membersAdmin'));
+        }
+
         $app['members.forms']['type']['profile']->setRequirePassword(false);
-        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
+        $app['members.form.profile']->setGuid($guid);
+        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true, $guid);
 
         // Handle the form request data
         if ($form->getForm()->isValid()) {
             $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
-            $app['members.form.register']
-                ->setProvider($app['members.oauth.provider'])
-                ->saveForm($app['members.records'], $app['dispatcher'])
-            ;
+            $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
