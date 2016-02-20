@@ -27,16 +27,6 @@ class ProfileType extends AbstractType
     protected $requirePassword = true;
 
     /**
-     * Constructor.
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)

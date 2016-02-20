@@ -36,7 +36,7 @@ class RegisterType extends AbstractType
      */
     public function __construct(Config $config, Records $records)
     {
-        $this->config = $config;
+        parent::__construct($config);
         $this->records = $records;
     }
 

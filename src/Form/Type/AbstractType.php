@@ -22,6 +22,16 @@ class AbstractType extends BaseAbstractType
     protected $config;
 
     /**
+     * Constructor.
+     *
+     * @param Config $config
+     */
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
      * Return a valid data option.
      *
      * @param array  $options
