@@ -104,7 +104,7 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        $app['members.forms']['type']['profile']->setRequirePassword(false);
+        $app['members.form.components']['type']['profile']->setRequirePassword(false);
         $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
 
         // Handle the form request data

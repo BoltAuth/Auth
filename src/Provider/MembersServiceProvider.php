@@ -232,7 +232,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
     private function registerForms(Application $app)
     {
-        $app['members.forms'] = $app->share(
+        $app['members.form.components'] = $app->share(
             function ($app) {
                 $type = new \Pimple(
                     [
@@ -274,8 +274,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Form\Login(
                     $app['form.factory'],
-                    $app['members.forms']['type']['login'],
-                    $app['members.forms']['entity']['login']
+                    $app['members.form.components']['type']['login'],
+                    $app['members.form.components']['entity']['login']
                 );
             }
         );
@@ -284,8 +284,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Form\Logout(
                     $app['form.factory'],
-                    $app['members.forms']['type']['logout'],
-                    $app['members.forms']['entity']['logout']
+                    $app['members.form.components']['type']['logout'],
+                    $app['members.form.components']['entity']['logout']
                 );
             }
         );
@@ -294,8 +294,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Form\Profile(
                     $app['form.factory'],
-                    $app['members.forms']['type']['profile'],
-                    $app['members.forms']['entity']['profile']
+                    $app['members.form.components']['type']['profile'],
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -304,8 +304,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Form\Register(
                     $app['form.factory'],
-                    $app['members.forms']['type']['register'],
-                    $app['members.forms']['entity']['register']
+                    $app['members.form.components']['type']['register'],
+                    $app['members.form.components']['entity']['register']
                 );
             }
         );

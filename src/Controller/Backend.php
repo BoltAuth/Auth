@@ -178,7 +178,7 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        $app['members.forms']['type']['profile']->setRequirePassword(true);
+        $app['members.form.components']['type']['profile']->setRequirePassword(true);
         $app['members.form.profile']->setGuid($guid = Uuid::uuid4()->toString());
         $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
 
@@ -252,7 +252,7 @@ class Backend implements ControllerProviderInterface
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $app['members.forms']['type']['profile']->setRequirePassword(false);
+        $app['members.form.components']['type']['profile']->setRequirePassword(false);
         $app['members.form.profile']->setGuid($guid);
         $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true, $guid);
 
