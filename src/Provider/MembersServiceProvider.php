@@ -55,10 +55,41 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerOauthHandlers($app);
         $this->registerOauthProviders($app);
 
-        $app['members.admin'] = $app->share(
-            function ($app) {
-                return new Admin($app['members.records'], $app['members.config'], $app['users']);
-            }
+        // Add the Twig Extension.
+        $app['twig'] = $app->share(
+            $app->extend(
+                'twig',
+                function (\Twig_Environment $twig, $app) {
+                    $twig->addExtension(
+                        new Twig\Functions(
+                            $app['members.config'],
+                            $app['members.forms.manager'],
+                            $app['members.records'],
+                            $app['members.session']
+                        )
+                    );
+
+                    return $twig;
+                }
+            )
+        );
+
+        $app['safe_twig'] = $app->share(
+            $app->extend(
+                'safe_twig',
+                function (\Twig_Environment $twig, $app) {
+                    $twig->addExtension(
+                        new Twig\Functions(
+                            $app['members.config'],
+                            $app['members.forms.manager'],
+                            $app['members.records'],
+                            $app['members.session']
+                        )
+                    );
+
+                    return $twig;
+                }
+            )
         );
     }
 
@@ -115,41 +146,10 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        // Add the Twig Extension.
-        $app['twig'] = $app->share(
-            $app->extend(
-                'twig',
-                function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(
-                        new Twig\Functions(
-                            $app['members.config'],
-                            $app['members.forms.manager'],
-                            $app['members.records'],
-                            $app['members.session']
-                        )
-                    );
-
-                    return $twig;
-                }
-            )
-        );
-
-        $app['safe_twig'] = $app->share(
-            $app->extend(
-                'safe_twig',
-                function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(
-                        new Twig\Functions(
-                            $app['members.config'],
-                            $app['members.forms.manager'],
-                            $app['members.records'],
-                            $app['members.session']
-                        )
-                    );
-
-                    return $twig;
-                }
-            )
+        $app['members.admin'] = $app->share(
+            function ($app) {
+                return new Admin($app['members.records'], $app['members.config'], $app['users']);
+            }
         );
     }
 
