@@ -19,7 +19,7 @@ class Register implements EntityInterface
     protected $displayName;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEmail()
     {
@@ -27,7 +27,7 @@ class Register implements EntityInterface
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      *
      * @return Register
      */
@@ -39,7 +39,7 @@ class Register implements EntityInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDisplayName()
     {
@@ -47,7 +47,7 @@ class Register implements EntityInterface
     }
 
     /**
-     * @param mixed $displayName
+     * @param string $displayName
      *
      * @return Register
      */

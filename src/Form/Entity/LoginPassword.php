@@ -11,7 +11,7 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Login implements EntityInterface
+class LoginPassword implements EntityInterface
 {
     /** string */
     protected $email;
@@ -19,7 +19,7 @@ class Login implements EntityInterface
     protected $password;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEmail()
     {
@@ -27,9 +27,9 @@ class Login implements EntityInterface
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      *
-     * @return Register
+     * @return LoginPassword
      */
     public function setEmail($email)
     {
@@ -39,7 +39,7 @@ class Login implements EntityInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPassword()
     {
@@ -47,9 +47,9 @@ class Login implements EntityInterface
     }
 
     /**
-     * @param mixed $password
+     * @param string $password
      *
-     * @return Register
+     * @return LoginPassword
      */
     public function setPassword($password)
     {

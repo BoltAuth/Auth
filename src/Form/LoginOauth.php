@@ -4,10 +4,9 @@ namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Login form.
+ * OAuth login form.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -15,26 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Login extends AbstractForm
+class LoginOauth extends AbstractForm
 {
-    /** @var Type\LoginType */
+    /** @var Type\LoginOauthType */
     protected $type;
-    /** @var Entity\Login */
+    /** @var Entity\LoginOauth */
     protected $entity;
-    /** @var Request */
-    protected $request;
-
-    /**
-     * @param Request $request
-     *
-     * @return Login
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -49,15 +34,8 @@ class Login extends AbstractForm
      */
     protected function getData(Storage\Records $records)
     {
-        if ($this->request === null) {
-            throw new \RuntimeException('Request has not been set.');
-        }
-
         return [
             'csrf_protection' => true,
-            'data'            => [
-                'email' => $this->request->request->get('email'),
-            ],
         ];
     }
 }

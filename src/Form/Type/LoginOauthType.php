@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class OauthType extends AbstractType
+class LoginOauthType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

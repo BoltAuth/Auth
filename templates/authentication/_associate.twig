@@ -5,27 +5,27 @@
 
     <div class="login">
         <div class="row member-login">
-            {{ form_start(auth_form) }}
+            {{ form_start(password_form) }}
 
             <div class="small-6 columns members-login-providers">
                 {% for provider in providers|keys %}
                     {% if provider != 'local' %}
-                        {{ form_row(auth_form[provider]) }}
+                        {{ form_row(password_form[provider]) }}
                     {% endif %}
                 {% endfor %}
             </div>
 
-            {{ form_end(auth_form) }}
+            {{ form_end(password_form) }}
         </div>
     </div>
 {% endblock login %}
 
-{% macro password_login(auth_form) %}
+{% macro password_login(password_form) %}
     <div class="small-6 columns members-login-password">
-        {{ form_row(auth_form.email) }}
-        {{ form_row(auth_form.password) }}
+        {{ form_row(password_form.email) }}
+        {{ form_row(password_form.password) }}
         <br>
-        {{ form_row(auth_form.submit) }}
+        {{ form_row(password_form.submit) }}
     </div>
 {% endmacro %}
 

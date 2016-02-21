@@ -87,7 +87,7 @@ class Manager
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
             'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
-            'auth_form'    => $form->createView(),
+            'password_form'    => $form->createView(),
             'feedback'     => $this->feedback,
             'providers'    => $this->config->getEnabledProviders(),
         ]);
@@ -106,13 +106,13 @@ class Manager
      */
     public function getFormLogin(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $formLogin = $this->getFormServiceLogin()
+        $formLogin = $this->getFormServiceLoginPassword()
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $formOauth = $this->getFormServiceOauth()
+        $formOauth = $this->getFormServiceLoginOauth()
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
@@ -127,12 +127,12 @@ class Manager
         ;
         $resolved = new ResolvedForm($formLogin, $twig);
         $resolved->setContext([
-            'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
-            'auth_form'    => $formLogin->createView(),
-            'oauth_form'   => $formOauth->createView(),
-            'profile_form' => $formRegister->createView(),
-            'feedback'     => $this->feedback,
-            'providers'    => $this->config->getEnabledProviders(),
+            'twigparent'    => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+            'password_form' => $formLogin->createView(),
+            'oauth_form'    => $formOauth->createView(),
+            'profile_form'  => $formRegister->createView(),
+            'feedback'      => $this->feedback,
+            'providers'     => $this->config->getEnabledProviders(),
         ]);
 
         return $resolved;
@@ -155,10 +155,10 @@ class Manager
         ;
         $resolved = new ResolvedForm($form, $twig);
         $resolved->setContext([
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
-            'auth_form'  => $form->createView(),
-            'feedback'   => $this->feedback,
-            'providers'  => $this->config->getEnabledProviders(),
+            'twigparent'    => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
+            'password_form' => $form->createView(),
+            'feedback'      => $this->feedback,
+            'providers'     => $this->config->getEnabledProviders(),
         ]);
 
         return $resolved;
@@ -206,7 +206,7 @@ class Manager
      */
     public function getFormRegister(TwigEnvironment $twig, Request $request, $includeParent = true)
     {
-        $formLogin = $this->getFormServiceLogin()
+        $formLogin = $this->getFormServiceLoginPassword()
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
@@ -223,7 +223,7 @@ class Manager
         $resolved = new ResolvedForm($formRegister, $twig);
         $resolved->setContext([
             'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
-            'auth_form'    => $formLogin->createView(),
+            'password_form'    => $formLogin->createView(),
             'profile_form' => $formRegister->createView(),
             'feedback'     => $this->feedback,
         ]);
@@ -234,7 +234,7 @@ class Manager
     /**
      * Return the association form service provider.
      *
-     * @return Login
+     * @return Associate
      */
     protected function getFormServiceAssociate()
     {
@@ -246,14 +246,28 @@ class Manager
     }
 
     /**
+     * Return the profile form service provider.
+     *
+     * @return LoginOauth
+     */
+    protected function getFormServiceLoginOauth()
+    {
+        if ($this->formOauth === null) {
+            $this->formOauth = $this->forms['login_oauth'];
+        }
+
+        return $this->formOauth;
+    }
+
+    /**
      * Return the login form service provider.
      *
-     * @return Login
+     * @return LoginPassword
      */
-    protected function getFormServiceLogin()
+    protected function getFormServiceLoginPassword()
     {
         if ($this->formLogin === null) {
-            $this->formLogin = $this->forms['login'];
+            $this->formLogin = $this->forms['login_password'];
         }
 
         return $this->formLogin;
@@ -285,20 +299,6 @@ class Manager
         }
 
         return $this->formProfile;
-    }
-
-    /**
-     * Return the profile form service provider.
-     *
-     * @return Profile
-     */
-    protected function getFormServiceOauth()
-    {
-        if ($this->formOauth === null) {
-            $this->formOauth = $this->forms['oauth'];
-        }
-
-        return $this->formOauth;
     }
 
     /**

@@ -11,6 +11,6 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Oauth implements EntityInterface
+class LoginOauth implements EntityInterface
 {
 }
