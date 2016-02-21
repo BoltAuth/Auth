@@ -78,11 +78,19 @@ class RegisterType extends AbstractType
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('password_first'),
                     ],
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                        new Assert\Length(['min' => 6]),
+                    ],
                 ],
                 'second_options' => [
                     'label'       => Trans::__($this->config->getLabel('password_second')),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('password_second'),
+                    ],
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                        new Assert\Length(['min' => 6]),
                     ],
                 ],
             ])
