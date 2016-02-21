@@ -37,6 +37,8 @@ class Manager
     protected $formLogin;
     /** @var Logout */
     protected $formLogout;
+    /** @var Oauth */
+    protected $formOauth;
     /** @var Profile */
     protected $formProfile;
     /** @var Register */
@@ -110,6 +112,11 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
+        $formOauth = $this->getFormServiceOauth()
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
         $formRegister = $this->getFormServiceRegister()
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
@@ -122,6 +129,7 @@ class Manager
         $resolved->setContext([
             'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
             'auth_form'    => $formLogin->createView(),
+            'oauth_form'   => $formOauth->createView(),
             'profile_form' => $formRegister->createView(),
             'feedback'     => $this->feedback,
             'providers'    => $this->config->getEnabledProviders(),
@@ -277,6 +285,20 @@ class Manager
         }
 
         return $this->formProfile;
+    }
+
+    /**
+     * Return the profile form service provider.
+     *
+     * @return Profile
+     */
+    protected function getFormServiceOauth()
+    {
+        if ($this->formOauth === null) {
+            $this->formOauth = $this->forms['oauth'];
+        }
+
+        return $this->formOauth;
     }
 
     /**

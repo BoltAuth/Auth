@@ -11,15 +11,11 @@
                 {{ _self.password_login(auth_form) }}
             {% endif %}
 
-            <div class="small-6 columns members-login-providers">
-                {% for provider in providers|keys %}
-                    {% if provider != 'local' %}
-                        {{ form_row(auth_form[provider]) }}
-                    {% endif %}
-                {% endfor %}
-            </div>
-
             {{ form_end(auth_form) }}
+
+            <div class="small-6 columns members-login-providers">
+
+            </div>
         </div>
     </div>
 {% endblock login %}
@@ -33,3 +29,17 @@
     </div>
 {% endmacro %}
 
+
+{% macro oauth_login(oauth_form, providers) %}
+    <div class="small-6 columns members-login-password">
+        {{ form_start(oauth_form) }}
+
+        {% for provider in providers|keys %}
+            {% if provider != 'local' %}
+                {{ form_row(oauth_form[provider]) }}
+            {% endif %}
+        {% endfor %}
+
+        {{ form_end(oauth_form) }}
+    </div>
+{% endmacro %}

@@ -51,7 +51,6 @@ class LoginType extends AbstractType
                 'label'   => Trans::__($this->config->getLabel('login')),
             ])
         ;
-        $this->addProviderButtons($builder, true);
     }
 
     public function getName()
