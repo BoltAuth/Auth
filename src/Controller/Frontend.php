@@ -105,17 +105,17 @@ class Frontend implements ControllerProviderInterface
         }
 
         $app['members.form.components']['type']['profile']->setRequirePassword(false);
-        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
+        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true);
 
         // Handle the form request data
-        if ($form->getForm()->isValid()) {
+        if ($resolvedForm->getForm('form_profile')->isValid()) {
             $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
         }
-        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'edit'));
 
-        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
+        $template = $this->config->getTemplates('profile', 'edit');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
 
-        return $response;
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 
     /**
@@ -128,11 +128,11 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        $form = $app['members.forms.manager']->getFormRegister($app['twig'], $request, true);
+        $resolvedForm = $app['members.forms.manager']->getFormRegister($request, true);
 
         // Handle the form request data
-        if ($form->getForm()->isValid()) {
-            $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
+        if ($resolvedForm->getForm('form_regsiter')->isValid()) {
+            $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $app['members.form.register']
                 ->setProvider($app['members.oauth.provider'])
                 ->saveForm($app['members.records'], $app['dispatcher'])
@@ -142,10 +142,10 @@ class Frontend implements ControllerProviderInterface
 
             return $response;
         }
-        $html = $form->getRenderedForm($this->config->getTemplates('profile', 'register'));
 
-        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
+        $template = $this->config->getTemplates('profile', 'register');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
 
-        return $response;
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 }
