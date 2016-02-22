@@ -5,10 +5,8 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
-use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
-use Bolt\Extension\Bolt\Members\Exception\MissingAccountException;
+use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Carbon\Carbon;
@@ -132,15 +130,17 @@ class Authentication implements ControllerProviderInterface
         $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
         $oauthForm = $resolvedForm->getForm('form_login_oauth');
         if ($oauthForm->isValid()) {
-            $providerName = $oauthForm->getClickedButton()->getName();
-            $enabledProviders = $app['members.config']->getEnabledProviders();
+            $response = $this->processOauthForm($app, $request, $oauthForm);
+            if ($response instanceof Response) {
+                return $response;
+            }
+        }
 
-            if (array_key_exists($providerName, $enabledProviders)) {
-                $app['members.oauth.provider.manager']->setProvider($app, $providerName);
-                $response = $this->processLogin($app, $request);
-                if ($response instanceof Response) {
-                    return $response;
-                }
+        $associateForm = $resolvedForm->getForm('form_associate');
+        if ($associateForm->isValid()) {
+            $response = $this->processOauthForm($app, $request, $associateForm);
+            if ($response instanceof Response) {
+                return $response;
             }
         }
 
@@ -159,6 +159,30 @@ class Authentication implements ControllerProviderInterface
         $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
 
         return new Response($html);
+    }
+
+    /**
+     * Helper to process an OAuth login form.
+     *
+     * @param Application $app
+     * @param Request     $request
+     * @param Form        $form
+     *
+     * @throws Exception\InvalidProviderException
+     *
+     * @return null|Response
+     */
+    private function processOauthForm(Application $app, Request $request, Form $form)
+    {
+        $providerName = $form->getClickedButton()->getName();
+        $enabledProviders = $app['members.config']->getEnabledProviders();
+
+        if (array_key_exists($providerName, $enabledProviders)) {
+            $app['members.oauth.provider.manager']->setProvider($app, $providerName);
+            return $this->processLogin($app, $request);
+        }
+
+        return null;
     }
 
     /**
@@ -296,12 +320,12 @@ class Authentication implements ControllerProviderInterface
             $app['members.feedback']->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
-        } elseif ($e instanceof InvalidAuthorisationRequestException) {
+        } elseif ($e instanceof Exception\InvalidAuthorisationRequestException) {
             // Thrown deliberately internally
             $app['members.feedback']->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
-        } elseif ($e instanceof MissingAccountException) {
+        } elseif ($e instanceof Exception\MissingAccountException) {
             // Thrown deliberately internally
             $app['members.feedback']->error('No registered account.');
             $response = new RedirectResponse($app['url_generator']->generate('membersProfileRegister'));
