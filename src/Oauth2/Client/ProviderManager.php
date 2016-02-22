@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Client;
 
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Exception;
+use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
 use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Psr\Log\LoggerInterface;
@@ -33,6 +34,8 @@ class ProviderManager
     protected $provider;
     /** @var string */
     protected $providerName;
+    /** @var HandlerInterface */
+    protected $providerHandler;
 
     /**
      * Constructor.
@@ -53,17 +56,19 @@ class ProviderManager
     /**
      * Set the provider for this request.
      *
+     * @internal
+     *
      * @param Application $app
-     * @param Request     $request
+     * @param string      $providerName
      *
      * @throws Exception\InvalidProviderException
      */
-    public function setProvider(Application $app, Request $request)
+    public function setProvider(Application $app, $providerName)
     {
         // Set the provider name that we're using for this request
-        $this->setProviderName($request);
+        $providerName = $providerName === 'submit' ? 'local' : $providerName;
+        $this->providerName = $providerName;
 
-        $providerName = $this->getProviderName();
         $providerKey = 'members.oauth.provider.' . strtolower($providerName);
 
         $app['members.oauth.provider'] = $app->share(
@@ -78,21 +83,22 @@ class ProviderManager
             }
         );
 
+        // Get the provider class name
+        if (!isset($app['members.oauth.provider.map'][$providerName])) {
+            throw new Exception\InvalidProviderException(Exception\InvalidProviderException::UNMAPPED_PROVIDER);
+        }
+        $providerClass = $app['members.oauth.provider.map'][$providerName];
+        if (!class_exists($providerClass)) {
+            throw new Exception\InvalidProviderException(Exception\InvalidProviderException::INVALID_PROVIDER);
+        }
+        $options = $this->getProviderOptions($providerName);
+        $collaborators = ['httpClient' => $this->guzzleClient];
+
+        $this->provider = new $providerClass($options, $collaborators);
+
         $app['logger.system']->debug('[Members][Provider]: Created provider name: ' . $providerName, ['event' => 'extensions']);
 
         $this->setProviderHandler($app);
-    }
-
-    /**
-     * Set the in-use provider to the local provider.
-     *
-     * @param Application $app
-     * @param Request     $request
-     */
-    public function setLocalProvider(Application $app, Request $request)
-    {
-        $request->query->set('provider', 'Local');
-        $this->setProvider($app, $request);
     }
 
     /**
@@ -108,17 +114,11 @@ class ProviderManager
     {
         $this->logger->debug('[Members][Provider]: Fetching provider object: ' . $providerName);
 
-        /** @var \League\OAuth2\Client\Provider\AbstractProvider $providerClass */
-        $providerClass = '\\Bolt\\Extension\\Bolt\\Members\\Oauth2\\Client\\Provider\\' . $providerName;
-
-        if (!class_exists($providerClass)) {
-            throw new Exception\InvalidProviderException(Exception\InvalidProviderException::INVALID_PROVIDER);
+        if ($this->provider === null) {
+            throw new Exception\InvalidProviderException(Exception\InvalidProviderException::UNSET_PROVIDER);
         }
 
-        $options = $this->getProviderOptions($providerName);
-        $collaborators = ['httpClient' => $this->guzzleClient];
-
-        return new $providerClass($options, $collaborators);
+        return $this->provider;
     }
 
     /**
@@ -138,22 +138,6 @@ class ProviderManager
         // If we have no provider name set, and no valid request, we're out of
         // cycle… and that's like bad… 'n stuff
         throw new \RuntimeException('Attempting to get provider name outside of the request cycle.');
-    }
-
-    /**
-     * Set a corrected provider name from a request object.
-     *
-     * @param Request $request
-     *
-     * @throws \RuntimeException
-     */
-    protected function setProviderName(Request $request = null)
-    {
-        if ($request === null) {
-            throw new \RuntimeException('Attempting to set provider name outside of the request cycle.');
-        }
-
-        $this->providerName = $request->query->get('provider', 'Generic');
     }
 
     /**
@@ -200,6 +184,14 @@ class ProviderManager
     }
 
     /**
+     * @return HandlerInterface
+     */
+    public function getProviderHandler()
+    {
+        return $this->providerHandler;
+    }
+
+    /**
      * Get the Authorisation\AuthorisationInterface class to handle the request.
      *
      * @param \Silex\Application $app
@@ -211,7 +203,7 @@ class ProviderManager
     {
         $providerName = $this->getProviderName();
         if ($providerName === null) {
-            $app['logger.system']->debug('[Members][Provider]: Request was missing a provider in the GET.', ['event' => 'extensions']);
+            $app['logger.system']->debug('[Members][Provider]: Request was missing a provider.', ['event' => 'extensions']);
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
@@ -233,7 +225,7 @@ class ProviderManager
             }
         );
 
-        $this->provider = $app['members.oauth.handler'];
+        $this->providerHandler = $app['members.oauth.handler'];
     }
 
     /**
@@ -245,7 +237,7 @@ class ProviderManager
      */
     protected function getHandlerKey($providerName)
     {
-        if ($providerName === 'Local') {
+        if ($providerName === 'local') {
             return 'members.oauth.handler.local';
         }
 
