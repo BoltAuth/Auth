@@ -61,9 +61,9 @@ class Config
         $this->urlMembers = $config['urls']['members'];
 
         foreach ($config['providers'] as $name => $provider) {
-            $this->providers[$name] = new Provider($name, $provider);
+            $this->providers[strtolower($name)] = new Provider($name, $provider);
         }
-        $this->providers['Generic'] = new Provider('Generic', []);
+        $this->providers['generic'] = new Provider('Generic', []);
     }
 
     /**
