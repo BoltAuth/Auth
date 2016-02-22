@@ -13,14 +13,14 @@
 
         <div class="small-12 columns">
 
-            {{ form_start(profile_form) }}
-                {{ form_row(profile_form.displayname) }}
-            {{ form_row(profile_form.email) }}
-            {{ form_row(profile_form.plainPassword.first) }}
-            {{ form_row(profile_form.plainPassword.second) }}
+            {{ form_start(form_profile) }}
+                {{ form_row(form_profile.displayname) }}
+            {{ form_row(form_profile.email) }}
+            {{ form_row(form_profile.plainPassword.first) }}
+            {{ form_row(form_profile.plainPassword.second) }}
                 <br>
-                {{ form_row(profile_form.submit) }}
-            {{ form_end(profile_form) }}
+                {{ form_row(form_profile.submit) }}
+            {{ form_end(form_profile) }}
 
         </div>
 
