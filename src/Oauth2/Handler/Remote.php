@@ -116,7 +116,7 @@ class Remote extends HandlerBase
         $providerName = $this->providerManager->getProviderName();
         $provider = $this->providerManager->getProvider($providerName);
 
-        if ($providerName === 'Google' && $approvalPrompt == 'force') {
+        if ($providerName === 'google' && $approvalPrompt == 'force') {
             /** @var \Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Google $provider */
             $provider->setAccessType('offline');
         }

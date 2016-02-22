@@ -169,7 +169,7 @@ class ProviderManager
             'scope'        => $providerConfig->getScopes(),
             'redirectUri'  => $this->getCallbackUrl($providerName),
         ];
-        if ($providerName === 'Facebook') {
+        if ($providerName === 'facebook') {
             $options['graphApiVersion'] = 'v2.5';
         }
 
