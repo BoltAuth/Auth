@@ -80,27 +80,10 @@ class Authentication implements ControllerProviderInterface
             ->method('GET');
 
         $ctr
-            ->before([$this, 'before'])
             ->after([$this, 'after'])
         ;
 
         return $ctr;
-    }
-
-    /**
-     * Controller before render
-     *
-     * @param Request     $request
-     * @param Application $app
-     */
-    public function before(Request $request, Application $app)
-    {
-        /** @var ProviderManager $providerManager */
-        $providerManager = $app['members.oauth.provider.manager'];
-        if (in_array($request->get('_route'), ['authenticationLogin', 'authenticationLogout'])) {
-            $request->query->set('provider', 'Generic');
-        }
-        $providerManager->setProvider($app, $request);
     }
 
     /**
@@ -138,27 +121,44 @@ class Authentication implements ControllerProviderInterface
      */
     public function login(Application $app, Request $request)
     {
-        if ($request->isMethod('GET')) {
+        // Set the return redirect.
+        if ($request->headers->get('referer') !== $request->getUri()) {
             $app['members.session']
                 ->clearRedirects()
                 ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
             ;
         }
-        $form = $app['members.forms.manager']->getFormLogin($app['twig'], $request);
 
-        $hasLocal = $app['members.config']->getProvider('Local')->isEnabled();
-        if ($hasLocal && $form->getForm()->isValid()) {
-            $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
+        $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
+        $oauthForm = $resolvedForm->getForm('form_login_oauth');
+        if ($oauthForm->isValid()) {
+            $providerName = $oauthForm->getClickedButton()->getName();
+            $enabledProviders = $app['members.config']->getEnabledProviders();
 
-            $response = $this->getLoginResponse($app, $form->getForm());
+            if (array_key_exists($providerName, $enabledProviders)) {
+                $app['members.oauth.provider.manager']->setProvider($app, $providerName);
+                $response = $this->processLogin($app, $request);
+                if ($response instanceof Response) {
+                    return $response;
+                }
+            }
+        }
+
+        $passwordForm = $resolvedForm->getForm('form_login_password');
+        if ($passwordForm->isValid()) {
+            $app['members.oauth.provider.manager']->setProvider($app, 'local');
+
+            $response = $this->getLoginResponse($app, $passwordForm);
             if ($response instanceof Response) {
                 return $response;
             }
 
             $app['members.feedback']->info('Login details are incorrect.');
         }
+        $template = $this->config->getTemplates('authentication', 'login');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
 
-        return new Response($form->getRenderedForm($this->config->getTemplates('authentication', 'login')));
+        return new Response($html);
     }
 
     /**
@@ -190,7 +190,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
-            $app['members.form.login']->saveForm($app['members.records'], $app['dispatcher']);
+            $app['members.form.login_password']->saveForm($app['members.records'], $app['dispatcher']);
 
             /** @var Provider\Local $localProvider */
             $localProvider = $app['members.oauth.provider'];
@@ -241,8 +241,10 @@ class Authentication implements ControllerProviderInterface
      */
     public function logout(Application $app, Request $request)
     {
+        $app['members.oauth.provider.manager']->setProvider($app, 'local');
+
         /** @var HandlerInterface $handler */
-        $handler = $app['members.oauth.handler'];
+        $handler = $app['members.oauth.provider.manager']->getProviderHandler();
         try {
             $handler->logout($request);
         } catch (\Exception $e) {
@@ -262,9 +264,11 @@ class Authentication implements ControllerProviderInterface
      */
     public function oauthCallback(Application $app, Request $request)
     {
+        $providerName = $request->query->get('provider');
+        $app['members.oauth.provider.manager']->setProvider($app, $providerName);
+        /** @var HandlerInterface $handler */
+        $handler = $app['members.oauth.handler'];
         try {
-            /** @var HandlerInterface $handler */
-            $handler = $app['members.oauth.handler'];
             $handler->process($request, 'authorization_code');
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
@@ -300,7 +304,7 @@ class Authentication implements ControllerProviderInterface
         } elseif ($e instanceof MissingAccountException) {
             // Thrown deliberately internally
             $app['members.feedback']->error('No registered account.');
-            $response = new RedirectResponse($app['url_generator']->generate('registerProfile'));
+            $response = new RedirectResponse($app['url_generator']->generate('membersProfileRegister'));
         } else {
             // Yeah, this can't be good…
             $app['members.feedback']->error('A server error occurred, we are very sorry and someone has been notified!');
@@ -312,7 +316,7 @@ class Authentication implements ControllerProviderInterface
             try {
                 $app['dispatcher']->dispatch(ExceptionEvent::ERROR, new ExceptionEvent($e));
             } catch (\Exception $e) {
-                $app['logger.system']->critical('[ClientLogin][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
+                $app['logger.system']->critical('[Members][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
             }
         }
 
