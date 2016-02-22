@@ -216,7 +216,7 @@ class Functions extends \Twig_Extension
     public function renderLogin($template = null)
     {
         $template = $template ?: $this->config->getTemplates('authentication', 'login');
-        $form = $this->formManager->getFormLoginPassword(new Request(), false);
+        $form = $this->formManager->getFormLogin(new Request(), false);
         $html = $this->formManager->renderForms($form, $template);
 
         return new TwigMarkup($html, 'UTF-8');

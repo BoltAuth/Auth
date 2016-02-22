@@ -90,7 +90,7 @@ class Manager
      *
      * @return ResolvedForm
      */
-    public function getFormLoginPassword(Request $request, $includeParent = true)
+    public function getFormLogin(Request $request, $includeParent = true)
     {
         $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig';
 
