@@ -131,7 +131,7 @@ class Frontend implements ControllerProviderInterface
         $resolvedForm = $app['members.forms.manager']->getFormRegister($request, true);
 
         // Handle the form request data
-        if ($resolvedForm->getForm('form_regsiter')->isValid()) {
+        if ($resolvedForm->getForm('form_register')->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $app['members.form.register']
                 ->setProvider($app['members.oauth.provider'])
