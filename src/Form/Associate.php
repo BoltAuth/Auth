@@ -35,7 +35,7 @@ class Associate extends AbstractForm
     protected function getData(Storage\Records $records)
     {
         return [
-            'csrf_protection' => true,
+            'csrf_protection' => false,
         ];
     }
 }
