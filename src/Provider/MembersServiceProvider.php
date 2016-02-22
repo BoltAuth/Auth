@@ -339,14 +339,19 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.forms'] = $app->share(
             function ($app) {
-                return new Container([
-                    'associate'      => $app->share(function () use ($app) { return $app['members.form.associate']; }),
-                    'login_oauth'    => $app->share(function () use ($app) { return $app['members.form.login_oauth']; }),
-                    'login_password' => $app->share(function () use ($app) { return $app['members.form.login_password']; }),
-                    'logout'         => $app->share(function () use ($app) { return $app['members.form.logout']; }),
-                    'profile'        => $app->share(function () use ($app) { return $app['members.form.profile']; }),
-                    'register'       => $app->share(function () use ($app) { return $app['members.form.register']; }),
-                ]);
+                $forms = [
+                    'form' => new Container([
+                        'associate'      => $app->share(function () use ($app) { return $app['members.form.associate']; }),
+                        'login_oauth'    => $app->share(function () use ($app) { return $app['members.form.login_oauth']; }),
+                        'login_password' => $app->share(function () use ($app) { return $app['members.form.login_password']; }),
+                        'logout'         => $app->share(function () use ($app) { return $app['members.form.logout']; }),
+                        'profile'        => $app->share(function () use ($app) { return $app['members.form.profile']; }),
+                        'register'       => $app->share(function () use ($app) { return $app['members.form.register']; }),
+                    ]),
+                    'renderer' => $app->share(function () use ($app) { return $app['twig']; }),
+                ];
+
+                return new Container($forms);
             }
         );
 
