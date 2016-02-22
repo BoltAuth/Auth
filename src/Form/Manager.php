@@ -7,8 +7,10 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Storage;
 use Pimple as Container;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig_Environment as TwigEnvironment;
+use Twig_Markup as TwigMarkup;
 
 /**
  * Form Manager.
@@ -31,18 +33,6 @@ class Manager
     protected $records;
     /** @var Container */
     protected $forms;
-    /** @var Associate */
-    protected $formAssociate;
-    /** @var Login */
-    protected $formLogin;
-    /** @var Logout */
-    protected $formLogout;
-    /** @var Oauth */
-    protected $formOauth;
-    /** @var Profile */
-    protected $formProfile;
-    /** @var Register */
-    protected $formRegister;
 
     /**
      * Constructor.
@@ -70,149 +60,163 @@ class Manager
     /**
      * Return the resolved association form.
      *
-     * @param TwigEnvironment $twig
-     * @param Request         $request
-     * @param bool            $includeParent
+     * @param Request $request
+     * @param bool    $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormAssociate(TwigEnvironment $twig, Request $request, $includeParent = true)
+    public function getFormAssociate(Request $request, $includeParent = true)
     {
-        $form = $this->getFormServiceAssociate()
+        /** @var Associate $baseForm */
+        $baseForm = $this->forms['form']['associate'];
+        $form = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
 
-        $resolved = new ResolvedForm($form, $twig);
-        $resolved->setContext([
-            'twigparent'   => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
-            'password_form'    => $form->createView(),
-            'feedback'     => $this->feedback,
-            'providers'    => $this->config->getEnabledProviders(),
-        ]);
+        $extraContext = [
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+        ];
 
-        return $resolved;
+        return new ResolvedForm([$form], $extraContext);
     }
 
     /**
      * Return the resolved login form.
      *
-     * @param TwigEnvironment $twig
-     * @param Request         $request
-     * @param bool            $includeParent
+     * @param Request $request
+     * @param bool    $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormLogin(TwigEnvironment $twig, Request $request, $includeParent = true)
+    public function getFormLoginPassword(Request $request, $includeParent = true)
     {
-        $formLogin = $this->getFormServiceLoginPassword()
-            ->setRequest($request)
-            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
-            ->handleRequest($request)
-        ;
-        $formOauth = $this->getFormServiceLoginOauth()
-            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
-            ->handleRequest($request)
-        ;
-        $formRegister = $this->getFormServiceRegister()
-            ->setClientIp($request->getClientIp())
-            ->setRoles($this->config->getRolesRegister())
-            ->setSession($this->session)
-            ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
-            ->createForm($this->records)
-            ->handleRequest($request)
-        ;
-        $resolved = new ResolvedForm($formLogin, $twig);
-        $resolved->setContext([
-            'twigparent'    => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
-            'password_form' => $formLogin->createView(),
-            'oauth_form'    => $formOauth->createView(),
-            'profile_form'  => $formRegister->createView(),
-            'feedback'      => $this->feedback,
-            'providers'     => $this->config->getEnabledProviders(),
-        ]);
+        $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig';
 
-        return $resolved;
+        return $this->getFormCombinedLoginRegister($request, $twigParent);
     }
 
     /**
      * Return the resolved logout form.
      *
-     * @param TwigEnvironment $twig
-     * @param Request         $request
-     * @param bool            $includeParent
+     * @param Request $request
+     * @param bool    $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormLogout(TwigEnvironment $twig, Request $request, $includeParent = true)
+    public function getFormLogout(Request $request, $includeParent = true)
     {
-        $form = $this->getFormServiceLogout()
+        /** @var Logout $baseForm */
+        $baseForm = $this->forms['form']['logout'];
+        $form = $baseForm
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $twig);
-        $resolved->setContext([
-            'twigparent'    => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
-            'password_form' => $form->createView(),
-            'feedback'      => $this->feedback,
-            'providers'     => $this->config->getEnabledProviders(),
-        ]);
+        $extraContext = [
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
+        ];
 
-        return $resolved;
+        return new ResolvedForm([$form], $extraContext);
     }
 
     /**
      * Return the resolved profile editing form.
      *
-     * @param TwigEnvironment $twig
-     * @param Request         $request
-     * @param bool            $includeParent
-     * @param string          $guid
+     * @param Request $request
+     * @param bool    $includeParent
+     * @param string  $guid
      *
      * @return ResolvedForm
      */
-    public function getFormProfile(TwigEnvironment $twig, Request $request, $includeParent = true, $guid = null)
+    public function getFormProfile(Request $request, $includeParent = true, $guid = null)
     {
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        $form = $this->getFormServiceProfile()
+        /** @var Profile $baseForm */
+        $baseForm = $this->forms['form']['profile'];
+        $form = $baseForm
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($form, $twig);
-        $resolved->setContext([
-            'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
-            'profile_form' => $form->createView(),
-            'feedback'     => $this->feedback,
-        ]);
+        $extraContext = [
+            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
+        ];
 
-        return $resolved;
+        return new ResolvedForm([$form], $extraContext);
     }
 
     /**
      * Return the resolved registration form.
      *
-     * @param TwigEnvironment $twig
-     * @param Request         $request
-     * @param bool            $includeParent
+     * @param Request $request
+     * @param bool    $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormRegister(TwigEnvironment $twig, Request $request, $includeParent = true)
+    public function getFormRegister(Request $request, $includeParent = true)
     {
-        $formLogin = $this->getFormServiceLoginPassword()
+        $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig';
+
+        return $this->getFormCombinedLoginRegister($request, $twigParent);
+    }
+
+    /**
+     * Render given forms in a template.
+     *
+     * @param ResolvedForm $resolvedForm
+     * @param string       $template
+     *
+     * @return TwigMarkup
+     */
+    public function renderForms(ResolvedForm $resolvedForm, $template)
+    {
+        $context = $resolvedForm->getContext();
+        /** @var FormInterface $form */
+        foreach ($resolvedForm->getForms() as $form) {
+            $formName = sprintf('form_%s', $form->getName());
+            $context[$formName] = $form->createView();
+        }
+        $context['feedback'] = $this->feedback;
+        $context['providers'] = $this->config->getEnabledProviders();
+        /** @var TwigEnvironment $twig */
+        $twig = $this->forms['renderer'];
+        $html = $twig->render($template, $context);
+
+        return new TwigMarkup($html, 'UTF-8');
+    }
+
+    /**
+     * Return the combined login & registration resolved form object.
+     *
+     * @param Request $request
+     * @param string  $twigParent
+     *
+     * @return ResolvedForm
+     */
+    protected function getFormCombinedLoginRegister(Request $request, $twigParent)
+    {
+        /** @var LoginOauth $baseForm */
+        $baseForm = $this->forms['form']['login_oauth'];
+        $formOauth = $baseForm
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+        /** @var LoginPassword $baseForm */
+        $baseForm = $this->forms['form']['login_password'];
+        $formLogin = $baseForm
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $formRegister = $this->getFormServiceRegister()
+        /** @var Register $baseForm */
+        $baseForm = $this->forms['form']['register'];
+        $formRegister = $baseForm
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
@@ -220,98 +224,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        $resolved = new ResolvedForm($formRegister, $twig);
-        $resolved->setContext([
-            'twigparent'   => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
-            'password_form'    => $formLogin->createView(),
-            'profile_form' => $formRegister->createView(),
-            'feedback'     => $this->feedback,
-        ]);
 
-        return $resolved;
-    }
-
-    /**
-     * Return the association form service provider.
-     *
-     * @return Associate
-     */
-    protected function getFormServiceAssociate()
-    {
-        if ($this->formAssociate === null) {
-            $this->formAssociate = $this->forms['associate'];
-        }
-
-        return $this->formAssociate;
-    }
-
-    /**
-     * Return the profile form service provider.
-     *
-     * @return LoginOauth
-     */
-    protected function getFormServiceLoginOauth()
-    {
-        if ($this->formOauth === null) {
-            $this->formOauth = $this->forms['login_oauth'];
-        }
-
-        return $this->formOauth;
-    }
-
-    /**
-     * Return the login form service provider.
-     *
-     * @return LoginPassword
-     */
-    protected function getFormServiceLoginPassword()
-    {
-        if ($this->formLogin === null) {
-            $this->formLogin = $this->forms['login_password'];
-        }
-
-        return $this->formLogin;
-    }
-
-    /**
-     * Return the logout form service provider.
-     *
-     * @return Logout
-     */
-    protected function getFormServiceLogout()
-    {
-        if ($this->formLogout === null) {
-            $this->formLogout = $this->forms['logout'];
-        }
-
-        return $this->formLogout;
-    }
-
-    /**
-     * Return the profile form service provider.
-     *
-     * @return Profile
-     */
-    protected function getFormServiceProfile()
-    {
-        if ($this->formProfile === null) {
-            $this->formProfile = $this->forms['profile'];
-        }
-
-        return $this->formProfile;
-    }
-
-    /**
-     * Return the register form service provider.
-     *
-     * @return Register
-     */
-    protected function getFormServiceRegister()
-    {
-        if ($this->formRegister === null) {
-            $this->formRegister = $this->forms['register'];
-        }
-
-        return $this->formRegister;
+        return new ResolvedForm([$formOauth, $formLogin, $formRegister], ['twigparent'   => $twigParent]);
     }
 }
