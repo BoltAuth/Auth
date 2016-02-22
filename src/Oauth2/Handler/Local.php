@@ -20,6 +20,9 @@ class Local extends HandlerBase
      */
     public function login(Request $request)
     {
+        if (parent::login($request)) {
+            return;
+        }
     }
 
     /**
@@ -27,6 +30,7 @@ class Local extends HandlerBase
      */
     public function process(Request $request, $grantType = 'authorization_code')
     {
+        parent::process($request, $grantType);
     }
 
     /**
@@ -34,5 +38,6 @@ class Local extends HandlerBase
      */
     public function logout(Request $request)
     {
+        parent::logout($request);
     }
 }
