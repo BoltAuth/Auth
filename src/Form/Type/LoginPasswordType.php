@@ -51,6 +51,6 @@ class LoginPasswordType extends AbstractType
 
     public function getName()
     {
-        return 'login';
+        return 'login_password';
     }
 }

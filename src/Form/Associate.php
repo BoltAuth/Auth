@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Social media account association form.

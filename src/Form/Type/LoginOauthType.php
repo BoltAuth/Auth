@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * OAuth login type.
@@ -23,6 +22,6 @@ class LoginOauthType extends AbstractType
 
     public function getName()
     {
-        return 'oauth';
+        return 'login_oauth';
     }
 }
