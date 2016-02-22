@@ -138,7 +138,7 @@ class Manager
         $baseForm = $this->forms['form']['profile'];
         $form = $baseForm
             ->setGuid($guid)
-            ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
+            ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
