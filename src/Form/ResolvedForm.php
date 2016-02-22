@@ -4,8 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Twig_Environment as TwigEnvironment;
-use Twig_Markup as TwigMarkup;
 
 /**
  * Resolved Form object class.
@@ -18,58 +16,62 @@ use Twig_Markup as TwigMarkup;
  */
 class ResolvedForm
 {
-    /** @var Form */
-    protected $form;
-    /** @var TwigEnvironment */
-    protected $twig;
+    /** @var FormInterface[] */
+    protected $forms;
     /** @var array */
-    protected $context = [];
-    /** @var TwigMarkup */
-    protected $renderedForm;
+    protected $context;
 
     /**
      * Constructor.
      *
-     * @param FormInterface   $form
-     * @param TwigEnvironment $twig
+     * @param FormInterface[] $forms
+     * @param array           $context
      */
-    public function __construct(FormInterface $form, TwigEnvironment $twig)
+    public function __construct(array $forms, array $context)
     {
-        $this->form = $form;
-        $this->twig = $twig;
+        /** @var FormInterface $form */
+        foreach ($forms as $form) {
+            $formName = sprintf('form_%s', $form->getName());
+            $this->forms[$formName] = $form;
+        }
+        $this->context = $context;
     }
 
     /**
      * Return the Symfony Form object.
      *
+     * @param string $name
+     *
+     * @throws \BadMethodCallException
+     *
      * @return Form
      */
-    public function getForm()
+    public function getForm($name)
     {
-        return $this->form;
+        if (!isset($this->forms[$name])) {
+            throw new \BadMethodCallException(sprintf('Form %s not found.', $name));
+        }
+
+        return $this->forms[$name];
     }
 
     /**
-     * Render the form and return the HTML.
+     * Return all the Symfony Form objects.
      *
-     * @param string $template
-     *
-     * @return TwigMarkup
+     * @return Form
      */
-    public function getRenderedForm($template)
+    public function getForms()
     {
-        $html = $this->twig->render($template, $this->context);
-
-        return $this->renderedForm = new TwigMarkup($html, 'UTF-8');
+        return $this->forms;
     }
 
     /**
-     * Set the 'context' array to be passed to Twig during the render.
+     * Return the additional context parameters.
      *
-     * @param array $context
+     * @return array
      */
-    public function setContext(array $context)
+    public function getContext()
     {
-        $this->context = $context;
+        return $this->context;
     }
 }
