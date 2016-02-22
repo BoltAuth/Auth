@@ -180,14 +180,15 @@ class Backend implements ControllerProviderInterface
     {
         $app['members.form.components']['type']['profile']->setRequirePassword(true);
         $app['members.form.profile']->setGuid($guid = Uuid::uuid4()->toString());
-        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true);
+        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true);
+        $form = $resolvedForm->getForm('form_profile');
 
         // Handle the form request data
-        if ($form->getForm()->isValid()) {
+        if ($form->isValid()) {
             // Create and store the account entity
             $account = new Storage\Entity\Account();
-            $account->setDisplayname($form->getForm()->get('displayname')->getData());
-            $account->setEmail($form->getForm()->get('email')->getData());
+            $account->setDisplayname($form->get('displayname')->getData());
+            $account->setEmail($form->get('email')->getData());
             $account->setRoles([]);
             $account->setEnabled(true);
             $app['members.records']->saveAccount($account);
@@ -216,11 +217,9 @@ class Backend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
         $this->addTwigPath($app);
-        $html = $form->getRenderedForm('@MembersAdmin/profile_add.twig');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_add.twig');
 
-        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
-
-        return $response;
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 
     /**
@@ -254,11 +253,12 @@ class Backend implements ControllerProviderInterface
 
         $app['members.form.components']['type']['profile']->setRequirePassword(false);
         $app['members.form.profile']->setGuid($guid);
-        $form = $app['members.forms.manager']->getFormProfile($app['twig'], $request, true, $guid);
+        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true, $guid);
+        $form = $resolvedForm->getForm('form_profile');
 
         // Handle the form request data
-        if ($form->getForm()->isValid()) {
-            $app['members.oauth.provider.manager']->setLocalProvider($app, $request);
+        if ($form->isValid()) {
+            $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
@@ -266,11 +266,9 @@ class Backend implements ControllerProviderInterface
             return $response;
         }
         $this->addTwigPath($app);
-        $html = $form->getRenderedForm('@MembersAdmin/profile_edit.twig');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig');
 
-        $response = new Response(new \Twig_Markup($html, 'UTF-8'));
-
-        return $response;
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 
     /**
