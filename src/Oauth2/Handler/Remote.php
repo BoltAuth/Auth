@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Exception;
+use Bolt\Extension\Bolt\Members\Storage\Entity\Token;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
@@ -36,20 +37,22 @@ class Remote extends HandlerBase
         $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
         $tokenEntities = $this->records->getTokensByCookie($cookie);
 
-        foreach ($tokenEntities as $tokenEntity) {
-            if ($tokenEntity) {
-                $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
-                if ($provider === false) {
-                    continue;
-                }
-                $oauth = $this->records->getOauthByResourceOwnerId($provider->getResourceOwnerId());
-                if ($oauth === false) {
-                    continue;
-                }
-                $account = $this->records->getAccountByGuid($tokenEntity->getGuid());
-                if ($account !== false) {
-                    return;
-                }
+        /** @var Token $tokenEntity */
+        foreach ((array) $tokenEntities as $tokenEntity) {
+            if ($tokenEntity === false) {
+                continue;
+            }
+            $provider = $this->records->getProvision($tokenEntity->getGuid(), $providerName);
+            if ($provider === false) {
+                continue;
+            }
+            $oauth = $this->records->getOauthByResourceOwnerId($provider->getResourceOwnerId());
+            if ($oauth === false) {
+                continue;
+            }
+            $account = $this->records->getAccountByGuid($tokenEntity->getGuid());
+            if ($account !== false) {
+                return;
             }
         }
 
