@@ -66,7 +66,6 @@ class AbstractType extends BaseAbstractType
                     'label' => $isLogin ? $provider->getLabelSignIn() : $provider->getLabelAssociate(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),
-                        'href'  => sprintf('/%s/login/process?provider=%s', $this->config->getUrlAuthenticate(), $provider->getName()),
                     ],
                 ]
             );
