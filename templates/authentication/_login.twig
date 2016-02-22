@@ -7,38 +7,38 @@
         <div class="row member-login">
 
             {% if providers.local is defined %}
-                {{ _self.password_login(password_form) }}
+                {{ _self.password_login(form_login_password) }}
             {% endif %}
 
-            {{ _self.oauth_login(oauth_form, providers) }}
+            {{ _self.oauth_login(form_login_oauth, providers) }}
         </div>
     </div>
 {% endblock login %}
 
-{% macro password_login(password_form) %}
+{% macro password_login(form_login_password) %}
     <div class="small-6 columns members-login-password">
-        {{ form_start(password_form) }}
+        {{ form_start(form_login_password) }}
 
-        {{ form_row(password_form.email) }}
-        {{ form_row(password_form.password) }}
+        {{ form_row(form_login_password.email) }}
+        {{ form_row(form_login_password.password) }}
         <br>
-        {{ form_row(password_form.submit) }}
+        {{ form_row(form_login_password.submit) }}
 
-        {{ form_end(password_form) }}
+        {{ form_end(form_login_password) }}
     </div>
 {% endmacro %}
 
 
-{% macro oauth_login(oauth_form, providers) %}
+{% macro oauth_login(form_login_oauth, providers) %}
     <div class="small-6 columns members-login-password">
-        {{ form_start(oauth_form) }}
+        {{ form_start(form_login_oauth) }}
 
         {% for provider in providers|keys %}
             {% if provider != 'local' %}
-                {{ form_row(oauth_form[provider]) }}
+                {{ form_row(form_login_oauth[provider]) }}
             {% endif %}
         {% endfor %}
 
-        {{ form_end(oauth_form) }}
+        {{ form_end(form_login_oauth) }}
     </div>
 {% endmacro %}

@@ -5,11 +5,11 @@
 
     <div class="logout">
         <div class="row member-logout">
-            {{ form_start(password_form) }}
+            {{ form_start(form_login_password) }}
 
-            {{ form_row(password_form.logout) }}
+            {{ form_row(form_login_password.logout) }}
 
-            {{ form_end(password_form) }}
+            {{ form_end(form_login_password) }}
         </div>
     </div>
 {% endblock logout %}
