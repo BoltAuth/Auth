@@ -94,7 +94,7 @@ class Manager
     {
         $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig';
 
-        return $this->getFormCombinedLoginRegister($request, $twigParent);
+        return $this->getFormCombinedLogin($request, $twigParent);
     }
 
     /**
@@ -161,7 +161,7 @@ class Manager
     {
         $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig';
 
-        return $this->getFormCombinedLoginRegister($request, $twigParent);
+        return $this->getFormCombinedLogin($request, $twigParent);
     }
 
     /**
@@ -197,8 +197,15 @@ class Manager
      *
      * @return ResolvedForm
      */
-    protected function getFormCombinedLoginRegister(Request $request, $twigParent)
+    protected function getFormCombinedLogin(Request $request, $twigParent)
     {
+        /** @var Associate $baseForm */
+        $baseForm = $this->forms['form']['associate'];
+        $associateForm = $baseForm
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
         /** @var LoginOauth $baseForm */
         $baseForm = $this->forms['form']['login_oauth'];
         $formOauth = $baseForm
@@ -208,7 +215,7 @@ class Manager
         ;
         /** @var LoginPassword $baseForm */
         $baseForm = $this->forms['form']['login_password'];
-        $formLogin = $baseForm
+        $formPassword = $baseForm
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
@@ -225,6 +232,6 @@ class Manager
             ->handleRequest($request)
         ;
 
-        return new ResolvedForm([$formOauth, $formLogin, $formRegister], ['twigparent'   => $twigParent]);
+        return new ResolvedForm([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent'   => $twigParent]);
     }
 }
