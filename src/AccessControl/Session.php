@@ -34,6 +34,8 @@ class Session implements EventSubscriberInterface
     protected $redirectStack;
     /** @var AccessToken[] */
     protected $accessTokens;
+    /** @var boolean */
+    protected $transitional;
 
     /** @var Storage\Records */
     private $records;
@@ -50,6 +52,30 @@ class Session implements EventSubscriberInterface
     {
         $this->records = $records;
         $this->session = $session;
+    }
+
+    /**
+     * Is the session in a transition stage.
+     *
+     * @return boolean
+     */
+    public function isTransitional()
+    {
+        return (boolean) $this->transitional;
+    }
+
+    /**
+     * Set the transition state.
+     *
+     * @param boolean $transitional
+     *
+     * @return Session
+     */
+    public function setTransitional($transitional)
+    {
+        $this->transitional = $transitional;
+
+        return $this;
     }
 
     /**
@@ -104,6 +130,9 @@ class Session implements EventSubscriberInterface
     {
         if ($this->accessTokens === null) {
             throw new \RuntimeException(sprintf('Tokens not added to session for member GUID of %s', $guid));
+        }
+        if ($this->transitional) {
+            throw new \RuntimeException(sprintf('Transition still in progress for member GUID of %s', $guid));
         }
 
         $authorisation = new Authorisation();
