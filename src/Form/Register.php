@@ -120,7 +120,10 @@ class Register extends AbstractForm
 
         // Set up the initial session.
         $localAccessToken = $this->provider->getAccessToken('password', []);
-        $this->session->createAuthorisation($account->getGuid(), 'local', $localAccessToken);
+        $this->session
+            ->addAccessToken('local', $localAccessToken)
+            ->createAuthorisation($account->getGuid())
+        ;
 
         // Create a local provider entry
         $provider = new Storage\Entity\Provider();
