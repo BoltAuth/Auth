@@ -163,30 +163,6 @@ class Authentication implements ControllerProviderInterface
     }
 
     /**
-     * Helper to process an OAuth login form.
-     *
-     * @param Application $app
-     * @param Request     $request
-     * @param Form        $form
-     *
-     * @throws Exception\InvalidProviderException
-     *
-     * @return null|Response
-     */
-    private function processOauthForm(Application $app, Request $request, Form $form)
-    {
-        $providerName = $form->getClickedButton()->getName();
-        $enabledProviders = $app['members.config']->getEnabledProviders();
-
-        if (array_key_exists($providerName, $enabledProviders)) {
-            $app['members.oauth.provider.manager']->setProvider($app, $providerName);
-            return $this->processLogin($app, $request);
-        }
-
-        return null;
-    }
-
-    /**
      * Login processing route.
      *
      * @param Application $app
@@ -261,6 +237,30 @@ class Authentication implements ControllerProviderInterface
         $app['members.session']->clearRedirects();
 
         return $response;
+    }
+
+    /**
+     * Helper to process an OAuth login form.
+     *
+     * @param Application $app
+     * @param Request     $request
+     * @param Form        $form
+     *
+     * @throws Exception\InvalidProviderException
+     *
+     * @return null|Response
+     */
+    private function processOauthForm(Application $app, Request $request, Form $form)
+    {
+        $providerName = $form->getClickedButton()->getName();
+        $enabledProviders = $app['members.config']->getEnabledProviders();
+
+        if (array_key_exists($providerName, $enabledProviders)) {
+            $app['members.oauth.provider.manager']->setProvider($app, $providerName);
+            return $this->processLogin($app, $request);
+        }
+
+        return null;
     }
 
     /**
