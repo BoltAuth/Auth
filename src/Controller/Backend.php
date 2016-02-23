@@ -203,7 +203,7 @@ class Backend implements ControllerProviderInterface
             // Create a local provider entry
             $provider = new Storage\Entity\Provider();
             $provider->setGuid($account->getGuid());
-            $provider->setProvider('Local');
+            $provider->setProvider('local');
             $provider->setResourceOwnerId($account->getGuid());
             $provider->setLastupdate(Carbon::now());
             $app['members.records']->saveProvider($provider);

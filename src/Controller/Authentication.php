@@ -219,7 +219,7 @@ class Authentication implements ControllerProviderInterface
             /** @var Provider\Local $localProvider */
             $localProvider = $app['members.oauth.provider'];
             $localAccessToken = $localProvider->getAccessToken('password', []);
-            $app['members.session']->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+            $app['members.session']->createAuthorisation($account->getGuid(), 'local', $localAccessToken);
             $app['members.feedback']->info('Login successful.');
 
             return $app['members.session']->popRedirect()->getResponse();

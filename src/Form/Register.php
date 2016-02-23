@@ -120,12 +120,12 @@ class Register extends AbstractForm
 
         // Set up the initial session.
         $localAccessToken = $this->provider->getAccessToken('password', []);
-        $this->session->createAuthorisation($account->getGuid(), 'Local', $localAccessToken);
+        $this->session->createAuthorisation($account->getGuid(), 'local', $localAccessToken);
 
         // Create a local provider entry
         $provider = new Storage\Entity\Provider();
         $provider->setGuid($account->getGuid());
-        $provider->setProvider('Local');
+        $provider->setProvider('local');
         $provider->setResourceOwnerId($account->getGuid());
         $provider->setLastupdate(Carbon::now());
         $records->saveProvider($provider);

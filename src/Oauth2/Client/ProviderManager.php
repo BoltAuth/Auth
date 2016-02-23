@@ -173,7 +173,7 @@ class ProviderManager
             $options['graphApiVersion'] = 'v2.5';
         }
 
-        //if ($providerName === 'Local') {
+        //if ($providerName === 'local') {
         //    $base = $this->config->getUrlRoot() . $this->config->getUriBase() . '/';
         //    $options['urlAuthorize'] = $base . $this->config->getUriAuthorise();
         //    $options['urlAccessToken'] = $base . $this->config->getUriAccessToken();
