@@ -32,6 +32,8 @@ class Session implements EventSubscriberInterface
     protected $authorisation;
     /** @var Redirect[] */
     protected $redirectStack;
+    /** @var AccessToken[] */
+    protected $accessTokens;
 
     /** @var Storage\Records */
     private $records;
@@ -51,48 +53,74 @@ class Session implements EventSubscriberInterface
     }
 
     /**
-     * Create an authorisation object and persist to the current session.
+     * Add a provider's access token to the session.
      *
-     * @param string      $guid
      * @param string      $provider
      * @param AccessToken $accessToken
      *
-     * @throws Exception\MissingAccountException
-     *
-     * @return Authorisation
+     * @return Session
      */
-    public function createAuthorisation($guid, $provider, AccessToken $accessToken)
+    public function addAccessToken($provider, AccessToken $accessToken)
     {
-        if (!$this->records->getAccountByGuid($guid) instanceof Storage\Entity\Account) {
-            throw new Exception\MissingAccountException(sprintf('Attempted to create authorisation session for invalid account GUID: %s', $guid));
-        }
+        $this->accessTokens[$provider] = $accessToken;
 
-        $accessToken = $this->setAccessTokenExpires($accessToken);
-        $authorisation = new Authorisation();
-        $authorisation->setGuid($guid)
-            ->setCookie(Uuid::uuid4()->toString())
-            ->addAccessToken($provider, $accessToken)
-            ->setExpiry($accessToken->getExpires())
-        ;
-        $this->setAuthorisation($authorisation);
-
-        return $authorisation;
+        return $this;
     }
 
     /**
-     * Add a provider's access token to the authorisation session.
+     * Return a provider's access token
      *
-     * @param string      $provider
-     * @param AccessToken $accessToken
+     * @param string $provider
+     *
+     * @return AccessToken
      */
-    public function addProviderAccessToken($provider, AccessToken $accessToken)
+    public function getAccessToken($provider)
     {
-        if ($this->authorisation === null) {
-            throw new \RuntimeException(sprintf('Authorisation session has not been set up yet. Unable to add %s provider', $provider));
+        if (!isset($this->accessTokens[$provider])) {
+            return null;
         }
 
-        $this->authorisation->addAccessToken($provider, $accessToken);
-        $this->setAuthorisation($this->authorisation);
+        return $this->accessTokens[$provider];
+    }
+
+    /**
+     * Return all access tokens in-use in the session.
+     *
+     * @return AccessToken[]
+     */
+    public function getAccessTokens()
+    {
+        return $this->accessTokens;
+    }
+
+    /**
+     * Create an authorisation object and persist to the current session.
+     *
+     * @param string $guid
+     *
+     * @return Authorisation
+     */
+    public function createAuthorisation($guid)
+    {
+        if ($this->accessTokens === null) {
+            throw new \RuntimeException(sprintf('Tokens not added to session for member GUID of %s', $guid));
+        }
+
+        $authorisation = new Authorisation();
+        $authorisation
+            ->setGuid($guid)
+            ->setCookie(Uuid::uuid4()->toString())
+        ;
+        foreach ($this->accessTokens as $provider => $accessToken) {
+            $accessToken = $this->setAccessTokenExpires($accessToken);
+            $authorisation
+                ->addAccessToken($provider, $accessToken)
+                ->setExpiry($accessToken->getExpires())
+            ;
+        }
+        $this->setAuthorisation($authorisation);
+
+        return $authorisation;
     }
 
     /**
