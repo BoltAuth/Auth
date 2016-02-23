@@ -9,6 +9,13 @@ use League\OAuth2\Client\Provider\LinkedInResourceOwner as LeagueLinkedInResourc
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class LinkedInResourceOwner extends LeagueLinkedInResourceOwner
+class LinkedInResourceOwner extends LeagueLinkedInResourceOwner implements ResourceOwnerInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function getAvatar()
+    {
+        return $this->response['pictureUrl'] ?: null;
+    }
 }

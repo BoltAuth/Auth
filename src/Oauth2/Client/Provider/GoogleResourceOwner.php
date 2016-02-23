@@ -9,17 +9,6 @@ use League\OAuth2\Client\Provider\GoogleUser as LeagueGoogleResourceOwner;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class GoogleResourceOwner extends LeagueGoogleResourceOwner
+class GoogleResourceOwner extends LeagueGoogleResourceOwner implements ResourceOwnerInterface
 {
-    /**
-     * Get avatar image URL.
-     *
-     * @return string|null
-     */
-    public function getImageurl()
-    {
-        if (!empty($this->response['image']['url'])) {
-            return $this->response['image']['url'];
-        }
-    }
 }

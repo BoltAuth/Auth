@@ -9,17 +9,17 @@ use League\OAuth2\Client\Provider\GithubResourceOwner as LeagueGitHubResourceOwn
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class GitHubResourceOwner extends LeagueGitHubResourceOwner
+class GitHubResourceOwner extends LeagueGitHubResourceOwner implements ResourceOwnerInterface
 {
     /**
-     * Get resource avatar URL
-     *
-     * @return string|null
+     * @inheritDoc
      */
-    public function getImageurl()
+    public function getAvatar()
     {
-        if (!empty($this->response['avatar_url'])) {
-            return $this->response['avatar_url'];
+        if (empty($this->response['avatar_url'])) {
+            return null;
         }
+
+        return $this->response['avatar_url'];
     }
 }

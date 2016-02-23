@@ -9,6 +9,13 @@ use Stevenmaguire\OAuth2\Client\Provider\MicrosoftResourceOwner as LeagueMicroso
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class MicrosoftResourceOwner extends LeagueMicrosoftResourceOwner
+class MicrosoftResourceOwner extends LeagueMicrosoftResourceOwner implements ResourceOwnerInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function getAvatar()
+    {
+        return $this->imageurl;
+    }
 }
