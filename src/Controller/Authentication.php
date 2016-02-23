@@ -6,8 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
+use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -147,8 +146,10 @@ class Authentication implements ControllerProviderInterface
         $passwordForm = $resolvedForm->getForm('form_login_password');
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-
-            $response = $this->getLoginResponse($app, $passwordForm);
+            /** @var Handler\Local $handler */
+            $handler = $app['members.oauth.handler'];
+            $handler->login($request);
+            $response = $handler->getLoginResponse($passwordForm, $app['members.form.login_password'], $app['url_generator']);
             if ($response instanceof Response) {
                 return $response;
             }
@@ -186,52 +187,6 @@ class Authentication implements ControllerProviderInterface
     }
 
     /**
-     * @param Application $app
-     * @param Form        $form
-     *
-     * @return RedirectResponse|null
-     */
-    private function getLoginResponse(Application $app, Form $form)
-    {
-        $account = $app['members.records']->getAccountByEmail($form->get('email')->getData());
-        if (!$account instanceof Entity\Account) {
-            $app['members.feedback']->info('Registration is required.');
-
-            return new RedirectResponse($app['url_generator']->generate('registerProfile'));
-        }
-
-        $oauth = $app['members.records']->getOauthByGuid($account->getGuid());
-        if (!$oauth instanceof Entity\Oauth) {
-            $app['members.feedback']->info('Registration is required.');
-
-            return new RedirectResponse($app['url_generator']->generate('registerProfile'));
-        }
-
-        if (!$oauth->getEnabled()) {
-            $app['members.feedback']->info('Account disabled.');
-
-            return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
-        }
-
-        if (password_verify($form->get('password')->getData(), $oauth->getPassword())) {
-            $app['members.form.login_password']->saveForm($app['members.records'], $app['dispatcher']);
-
-            /** @var Provider\Local $localProvider */
-            $localProvider = $app['members.oauth.provider'];
-            $localAccessToken = $localProvider->getAccessToken('password', []);
-            $app['members.session']
-                ->addAccessToken('local', $localAccessToken)
-                ->createAuthorisation($account->getGuid())
-            ;
-            $app['members.feedback']->info('Login successful.');
-
-            return $app['members.session']->popRedirect()->getResponse();
-        }
-
-        return null;
-    }
-
-    /**
      * Login processing route.
      *
      * @param Application $app
@@ -247,7 +202,7 @@ class Authentication implements ControllerProviderInterface
             $app['logger.system']->critical($msg, ['event' => 'extensions']);
         }
 
-        /** @var HandlerInterface $handler */
+        /** @var Handler\HandlerInterface $handler */
         $handler = $app['members.oauth.handler'];
         try {
             $handler->login($request);
@@ -270,7 +225,7 @@ class Authentication implements ControllerProviderInterface
     {
         $app['members.oauth.provider.manager']->setProvider($app, 'local');
 
-        /** @var HandlerInterface $handler */
+        /** @var Handler\HandlerInterface $handler */
         $handler = $app['members.oauth.provider.manager']->getProviderHandler();
         try {
             $handler->logout($request);
@@ -293,7 +248,7 @@ class Authentication implements ControllerProviderInterface
     {
         $providerName = $request->query->get('provider');
         $app['members.oauth.provider.manager']->setProvider($app, $providerName);
-        /** @var HandlerInterface $handler */
+        /** @var Handler\HandlerInterface $handler */
         $handler = $app['members.oauth.handler'];
         try {
             $handler->process($request, 'authorization_code');
