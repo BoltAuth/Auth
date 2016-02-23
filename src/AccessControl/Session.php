@@ -26,6 +26,7 @@ class Session implements EventSubscriberInterface
     const COOKIE_AUTHORISATION = 'members';
     const SESSION_AUTHORISATION = 'members-authorisation';
     const SESSION_STATE = 'members-oauth-state';
+    const SESSION_TRANSITIONAL = 'members-transitional';
     const REDIRECT_STACK = 'members-redirect-stack';
 
     /** @var Authorisation */
@@ -34,8 +35,8 @@ class Session implements EventSubscriberInterface
     protected $redirectStack;
     /** @var AccessToken[] */
     protected $accessTokens;
-    /** @var boolean */
-    protected $transitional;
+    /** @var Storage\Entity\Provider */
+    protected $transitionalProvider;
 
     /** @var Storage\Records */
     private $records;
@@ -61,21 +62,44 @@ class Session implements EventSubscriberInterface
      */
     public function isTransitional()
     {
-        return (boolean) $this->transitional;
+        return $this->session->has(self::SESSION_TRANSITIONAL);
     }
 
     /**
-     * Set the transition state.
+     * Return the transitional provider entity.
      *
-     * @param boolean $transitional
+     * @return Storage\Entity\Provider
+     */
+    public function getTransitionalProvider()
+    {
+        if ($this->transitionalProvider === null) {
+            $this->transitionalProvider = $this->session->get(self::SESSION_TRANSITIONAL);
+        }
+
+        return $this->transitionalProvider;
+    }
+
+    /**
+     * Set the transitional provider entity.
+     *
+     * @param Storage\Entity\Provider $transitionalProvider
      *
      * @return Session
      */
-    public function setTransitional($transitional)
+    public function setTransitionalProvider(Storage\Entity\Provider $transitionalProvider)
     {
-        $this->transitional = $transitional;
+        $this->session->set(self::SESSION_TRANSITIONAL, $transitionalProvider);
+        $this->transitionalProvider = $transitionalProvider;
 
         return $this;
+    }
+
+    /**
+     * Remove the transitional provider entity.
+     */
+    public function removeTransitionalProvider()
+    {
+        $this->session->remove(self::SESSION_TRANSITIONAL);
     }
 
     /**
@@ -131,7 +155,7 @@ class Session implements EventSubscriberInterface
         if ($this->accessTokens === null) {
             throw new \RuntimeException(sprintf('Tokens not added to session for member GUID of %s', $guid));
         }
-        if ($this->transitional) {
+        if ($this->isTransitional()) {
             throw new \RuntimeException(sprintf('Transition still in progress for member GUID of %s', $guid));
         }
 
