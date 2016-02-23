@@ -33,7 +33,7 @@ class Remote extends HandlerBase
     {
         parent::login($request);
 
-        $providerName = $this->providerManager->getProviderName(true);
+        $providerName = $this->providerManager->getProviderName();
         $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
         $tokenEntities = $this->records->getTokensByCookie($cookie);
 
