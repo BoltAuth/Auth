@@ -3,8 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\AccessControl;
 
 use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\Bolt\Members\Storage;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
@@ -34,7 +33,7 @@ class Session implements EventSubscriberInterface
     /** @var Redirect[] */
     protected $redirectStack;
 
-    /** @var Records */
+    /** @var Storage\Records */
     private $records;
     /** @var SessionInterface */
     private $session;
@@ -42,10 +41,10 @@ class Session implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param Records          $records
+     * @param Storage\Records  $records
      * @param SessionInterface $session
      */
-    public function __construct(Records $records, SessionInterface $session)
+    public function __construct(Storage\Records $records, SessionInterface $session)
     {
         $this->records = $records;
         $this->session = $session;
@@ -58,14 +57,14 @@ class Session implements EventSubscriberInterface
      * @param string      $provider
      * @param AccessToken $accessToken
      *
-     * @throws \RuntimeException
+     * @throws Exception\MissingAccountException
      *
      * @return Authorisation
      */
     public function createAuthorisation($guid, $provider, AccessToken $accessToken)
     {
-        if (!$this->records->getAccountByGuid($guid) instanceof Entity\Account) {
-            throw new \RuntimeException(sprintf('Attempted to create authorisation session for invalid account GUID: %s', $guid));
+        if (!$this->records->getAccountByGuid($guid) instanceof Storage\Entity\Account) {
+            throw new Exception\MissingAccountException(sprintf('Attempted to create authorisation session for invalid account GUID: %s', $guid));
         }
 
         $accessToken = $this->setAccessTokenExpires($accessToken);
@@ -190,10 +189,10 @@ class Session implements EventSubscriberInterface
         foreach ($this->authorisation->getAccessTokens() as $provider => $accessToken) {
             $tokenEntities = $this->records->getTokensByGuid($this->authorisation->getGuid());
             if ($tokenEntities === false) {
-                $tokenEntities[] = new Entity\Token();
+                $tokenEntities[] = new Storage\Entity\Token();
             }
 
-            /** @var Entity\Token $tokenEntity */
+            /** @var Storage\Entity\Token $tokenEntity */
             foreach ($tokenEntities as $tokenEntity) {
                 $tokenEntity->setGuid($this->authorisation->getGuid());
                 $tokenEntity->setToken((string) $accessToken);
