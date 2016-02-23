@@ -40,7 +40,7 @@ class Provider
     {
         $providerConfig = $this->setDefaultConfig($providerConfig);
 
-        $this->name = $name;
+        $this->name = strtolower($name);
         $this->labelSignIn = $providerConfig['label']['sign_in'] ?: 'Sign-in with ' . $name;
         $this->labelAssociate = $providerConfig['label']['associate'] ?: 'Add ' . $name;
         $this->clientId = $providerConfig['keys']['client_id'];

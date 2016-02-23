@@ -76,7 +76,7 @@ roles:
 ## OAuhth2 Providers
 #
 providers:
-    Local:
+    local:
         label:
             sign_in: Sign in with a local account
             associate: --not applicable--
@@ -85,7 +85,7 @@ providers:
             client_id: localdefault
             client_secret: localdefault
         scopes: [ user ]
-    Google:
+    google:
         label:
             sign_in: Sign in with Google
             associate: Add your Google account
@@ -94,7 +94,7 @@ providers:
             client_id:
             client_secret:
         scopes: [ openid, profile, email ]
-    Facebook:
+    facebook:
         label:
             sign_in: Sign in with Facebook
             associate: Add your Facebook account
@@ -103,7 +103,7 @@ providers:
             client_id:
             client_secret:
         scopes: [ email ]
-    GitHub:
+    github:
         label:
             sign_in: Sign in with GitHub
             associate: Add your GitHub account
