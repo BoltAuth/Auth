@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
+use League\OAuth2\Client\Token\AccessToken;
+
 /**
  * Token entity class.
  *
@@ -67,7 +69,7 @@ class Token extends AbstractGuidEntity
     }
 
     /**
-     * @param array $token_data
+     * @param array|AccessToken $token_data
      */
     public function setTokenData($token_data)
     {
