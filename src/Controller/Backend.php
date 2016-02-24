@@ -261,7 +261,7 @@ class Backend implements ControllerProviderInterface
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
-            $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+            $response =  new RedirectResponse($app['url_generator']->generate('membersAdmin'));
 
             return $response;
         }
