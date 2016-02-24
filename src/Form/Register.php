@@ -141,9 +141,22 @@ class Register extends AbstractForm
      */
     protected function getData(Storage\Records $records)
     {
+        if ($this->session === null) {
+            throw new \RuntimeException('Members session not set.');
+        }
+
+        $fields = [];
+        if ($this->session->isTransitional()) {
+            $resourceOwner = $this->session->getTransitionalProvider()->getResourceOwner();
+            $fields = [
+                'displayname' => $resourceOwner->getName(),
+                'email'       => $resourceOwner->getEmail(),
+            ];
+        }
+
         return [
             'csrf_protection' => true,
-            'data'            => [],
+            'data'            => $fields,
         ];
     }
 }
