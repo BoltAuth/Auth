@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Profile extends AbstractForm
+class Profile extends BaseProfile
 {
     /** @var Type\ProfileType */
     protected $type;
@@ -26,8 +26,6 @@ class Profile extends AbstractForm
     protected $account;
     /** @var Storage\Entity\AccountMeta */
     protected $accountMeta;
-    /** @var string */
-    protected $guid;
 
     /**
      * @return Storage\Entity\Account
@@ -84,7 +82,7 @@ class Profile extends AbstractForm
 
         if ($this->form->get('plainPassword')->getData() !== null) {
             $encryptedPassword = password_hash($this->form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
-            $oauth = $records->getOauthByResourceOwnerId($this->account->getGuid());
+            $oauth = $this->getOauth($records);
             $oauth->setPassword($encryptedPassword);
             $records->saveOauth($oauth);
         }
@@ -106,6 +104,24 @@ class Profile extends AbstractForm
         }
 
         return $this;
+    }
+
+    /**
+     * Return an existing OAuth record, or create a new one.
+     *
+     * @param Storage\Records $records
+     *
+     * @return Storage\Entity\Oauth
+     */
+    protected function getOauth(Storage\Records $records)
+    {
+        $oauth = $records->getOauthByResourceOwnerId($this->guid);
+        if ($oauth === false) {
+            $oauth = $this->createLocalOauthAccount($records);
+            $this->createLocalProvider($records);
+        }
+
+        return $oauth;
     }
 
     /**

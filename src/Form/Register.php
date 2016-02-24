@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Register extends AbstractForm
+class Register extends BaseProfile
 {
     /** @var Type\RegisterType */
     protected $type;
@@ -99,7 +99,41 @@ class Register extends AbstractForm
             throw new \RuntimeException('Members session not set.');
         }
 
-        // Create and store the account entity
+        // Create and store the account record
+        $this->createAccount($records);
+
+        // Create a local OAuth account record
+        if ($this->form->get('plainPassword')->getData()) {
+            $this->createLocalOauthAccount($records);
+            $provider = $this->createLocalProvider($records);
+        }
+
+        // Create a provider entry
+        if ($this->session->isTransitional()) {
+            $accessToken = $this->session->getTransitionalProvider()->getAccessToken();
+            $provider = $this->createRemoteProvider($records);
+        } else {
+            $accessToken = $this->provider->getAccessToken('password', []);
+        }
+
+        // Set up the initial session.
+        $this->session
+            ->addAccessToken($provider->getProvider(), $accessToken)
+            ->createAuthorisation($this->guid)
+        ;
+
+        return $this;
+    }
+
+    /**
+     * Create and store the account record.
+     *
+     * @param Storage\Records $records
+     *
+     * @return Storage\Entity\Account
+     */
+    protected function createAccount(Storage\Records $records)
+    {
         $account = new Storage\Entity\Account();
         $account->setDisplayname($this->form->get('displayname')->getData());
         $account->setEmail($this->form->get('email')->getData());
@@ -107,39 +141,32 @@ class Register extends AbstractForm
         $account->setEnabled(true);
         $account->setLastseen(Carbon::now());
         $account->setLastip($this->clientIp);
+
         $records->saveAccount($account);
 
-        // Save the password to a meta record
-        $encryptedPassword = password_hash($this->form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
-        $oauth = new Storage\Entity\Oauth();
-        $oauth->setGuid($account->getGuid());
-        $oauth->setResourceOwnerId($account->getGuid());
-        $oauth->setEnabled(true);
-        $oauth->setPassword($encryptedPassword);
-        $records->saveOauth($oauth);
+        $this->guid = $account->getGuid();
 
-        // Create a provider entry
-        if ($this->session->isTransitional()) {
-            $provider = $this->session->getTransitionalProvider()->getProviderEntity();
-            $accessToken = $this->session->getTransitionalProvider()->getAccessToken();
-            $this->session->removeTransitionalProvider();
-        } else {
-            $provider = new Storage\Entity\Provider();
-            $provider->setProvider('local');
-            $provider->setResourceOwnerId($account->getGuid());
-            $accessToken = $this->provider->getAccessToken('password', []);
-        }
-        $provider->setGuid($account->getGuid());
+        return $account;
+    }
+
+    /**
+     * Create a 'remote' provider record.
+     *
+     * @param Storage\Records $records
+     *
+     * @return Storage\Entity\Provider
+     */
+    protected function createRemoteProvider(Storage\Records $records)
+    {
+        $provider = $this->session->getTransitionalProvider()->getProviderEntity();
+        $provider->setGuid($this->guid);
         $provider->setLastupdate(Carbon::now());
+
         $records->saveProvider($provider);
 
-        // Set up the initial session.
-        $this->session
-            ->addAccessToken($provider->getProvider(), $accessToken)
-            ->createAuthorisation($account->getGuid())
-        ;
+        $this->session->removeTransitionalProvider();
 
-        return $this;
+        return $provider;
     }
 
     /**
