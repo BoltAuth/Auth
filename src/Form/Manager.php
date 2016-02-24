@@ -169,12 +169,13 @@ class Manager
      *
      * @param ResolvedForm $resolvedForm
      * @param string       $template
+     * @param array        $context
      *
      * @return TwigMarkup
      */
-    public function renderForms(ResolvedForm $resolvedForm, $template)
+    public function renderForms(ResolvedForm $resolvedForm, $template, array $context = [])
     {
-        $context = $resolvedForm->getContext();
+        $context += $resolvedForm->getContext();
         /** @var FormInterface $form */
         foreach ($resolvedForm->getForms() as $form) {
             $formName = sprintf('form_%s', $form->getName());
