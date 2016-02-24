@@ -62,7 +62,9 @@ class AbstractType extends BaseAbstractType
                 continue;
             }
             $builder->add(
-                $name, SubmitType::class, [
+                $name,
+                SubmitType::class,
+                [
                     'label' => $isLogin ? $provider->getLabelSignIn() : $provider->getLabelAssociate(),
                     'attr'  => [
                         'class' => $this->getCssClass($name),

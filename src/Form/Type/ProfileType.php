@@ -32,48 +32,65 @@ class ProfileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('displayname', TextType::class,   [
-                'label'       => Trans::__($this->config->getLabel('displayname')),
-                'data'        => $this->getData($options, 'displayname'),
-                'attr'        => [
-                    'placeholder' => $this->config->getPlaceholder('displayname'),
-                ],
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['min' => 2]),
-                ],
-            ])
-            ->add('email',       EmailType::class,   [
-                'label'       => Trans::__($this->config->getLabel('email')),
-                'data'        => $this->getData($options, 'email'),
-                'attr'        => [
-                    'placeholder' => $this->config->getPlaceholder('email'),
-                ],
-                'constraints' => new Assert\Email([
-                    'message' => 'The address "{{ value }}" is not a valid email.',
-                    'checkMX' => true,
-                ]),
-            ])
-            ->add('plainPassword', RepeatedType::class, [
-                'type'           => PasswordType::class,
-                'first_options'  => [
-                    'label'       => Trans::__($this->config->getLabel('password_first')),
+            ->add(
+                'displayname',
+                TextType::class,
+                [
+                    'label'       => Trans::__($this->config->getLabel('displayname')),
+                    'data'        => $this->getData($options, 'displayname'),
                     'attr'        => [
-                        'placeholder' => $this->config->getPlaceholder('password_first'),
+                        'placeholder' => $this->config->getPlaceholder('displayname'),
                     ],
-                ],
-                'second_options' => [
-                    'label'       => Trans::__($this->config->getLabel('password_second')),
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                        new Assert\Length(['min' => 2]),
+                    ],
+                ]
+            )
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label'       => Trans::__($this->config->getLabel('email')),
+                    'data'        => $this->getData($options, 'email'),
                     'attr'        => [
-                        'placeholder' => $this->config->getPlaceholder('password_second'),
+                        'placeholder' => $this->config->getPlaceholder('email'),
                     ],
-                ],
-                'empty_data'     => null,
-                'required'       => $this->requirePassword,
-            ])
-            ->add('submit',      SubmitType::class, [
-                'label'   => Trans::__($this->config->getLabel('profile_save')),
-            ]);
+                    'constraints' => new Assert\Email([
+                        'message' => 'The address "{{ value }}" is not a valid email.',
+                        'checkMX' => true,
+                    ]),
+                ]
+            )
+            ->add(
+                'plainPassword',
+                RepeatedType::class,
+                [
+                    'type'           => PasswordType::class,
+                    'first_options'  => [
+                        'label'       => Trans::__($this->config->getLabel('password_first')),
+                        'attr'        => [
+                            'placeholder' => $this->config->getPlaceholder('password_first'),
+                        ],
+                    ],
+                    'second_options' => [
+                        'label'       => Trans::__($this->config->getLabel('password_second')),
+                        'attr'        => [
+                            'placeholder' => $this->config->getPlaceholder('password_second'),
+                        ],
+                    ],
+                    'empty_data'     => null,
+                    'required'       => $this->requirePassword,
+                ]
+            )
+            ->add(
+                'submit',
+                SubmitType::class,
+                [
+                    'label'   => Trans::__($this->config->getLabel('profile_save')),
+                ]
+            )
+        ;
     }
 
     /**

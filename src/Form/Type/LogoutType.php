@@ -21,13 +21,17 @@ class LogoutType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('logout',   ButtonType::class, [
-                'label'   => Trans::__($this->config->getLabel('logout')),
-                'attr'    => [
-                    'class' => 'members-logout-button',
-                    'href'  => sprintf('/%s/logout', $this->config->getUrlAuthenticate()),
-                ],
-            ])
+            ->add(
+                'logout',
+                ButtonType::class,
+                [
+                    'label'   => Trans::__($this->config->getLabel('logout')),
+                    'attr'    => [
+                        'class' => 'members-logout-button',
+                        'href'  => sprintf('/%s/logout', $this->config->getUrlAuthenticate()),
+                    ],
+                ]
+            )
         ;
     }
 

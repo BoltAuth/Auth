@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Extension\Bolt\Members\Storage\Records;
@@ -27,6 +28,8 @@ class RegisterType extends AbstractType
 {
     /** @var Records */
     protected $records;
+    /** @var Session */
+    protected $session;
 
     /**
      * Constructor.
@@ -34,10 +37,11 @@ class RegisterType extends AbstractType
      * @param Config  $config
      * @param Records $records
      */
-    public function __construct(Config $config, Records $records)
+    public function __construct(Config $config, Records $records, Session $session)
     {
         parent::__construct($config);
         $this->records = $records;
+        $this->session = $session;
     }
 
     /**
@@ -46,57 +50,74 @@ class RegisterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('displayname', TextType::class,   [
-                'label'       => Trans::__($this->config->getLabel('displayname')),
-                'data'        => $this->getData($options, 'displayname'),
-                'attr'        => [
-                    'placeholder' => $this->config->getPlaceholder('displayname'),
-                ],
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['min' => 2]),
-                ],
-            ])
-            ->add('email',       EmailType::class,   [
-                'label'       => Trans::__($this->config->getLabel('email')),
-                'data'        => $this->getData($options, 'email'),
-                'attr'        => [
-                    'placeholder' => $this->config->getPlaceholder('email'),
-                ],
-                'constraints' => [
-                    new UniqueEmail($this->records),
-                    new Assert\Email([
-                        'message' => 'The address "{{ value }}" is not a valid email.',
-                        'checkMX' => true,
-                    ]),
-                ],
-            ])
-            ->add('plainPassword', RepeatedType::class, [
-                'type'           => PasswordType::class,
-                'first_options'  => [
-                    'label'       => Trans::__($this->config->getLabel('password_first')),
+            ->add(
+                'displayname',
+                TextType::class,
+                [
+                    'label'       => Trans::__($this->config->getLabel('displayname')),
+                    'data'        => $this->getData($options, 'displayname'),
                     'attr'        => [
-                        'placeholder' => $this->config->getPlaceholder('password_first'),
+                        'placeholder' => $this->config->getPlaceholder('displayname'),
                     ],
                     'constraints' => [
                         new Assert\NotBlank(),
-                        new Assert\Length(['min' => 6]),
+                        new Assert\Length(['min' => 2]),
                     ],
-                ],
-                'second_options' => [
-                    'label'       => Trans::__($this->config->getLabel('password_second')),
+                ]
+            )
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label'       => Trans::__($this->config->getLabel('email')),
+                    'data'        => $this->getData($options, 'email'),
                     'attr'        => [
-                        'placeholder' => $this->config->getPlaceholder('password_second'),
+                        'placeholder' => $this->config->getPlaceholder('email'),
                     ],
                     'constraints' => [
-                        new Assert\NotBlank(),
-                        new Assert\Length(['min' => 6]),
+                        new UniqueEmail($this->records),
+                        new Assert\Email([
+                            'message' => 'The address "{{ value }}" is not a valid email.',
+                            'checkMX' => true,
+                        ]),
                     ],
-                ],
-            ])
-            ->add('submit',      SubmitType::class, [
+                ]
+            )
+            ->add(
+                'plainPassword',
+                RepeatedType::class,
+                [
+                    'type'           => PasswordType::class,
+                    'first_options'  => [
+                        'label' => Trans::__($this->config->getLabel('password_first')),
+                        'attr'  => [
+                            'placeholder' => $this->config->getPlaceholder('password_first'),
+                        ],
+                        'constraints' => [
+                            new Assert\NotBlank(),
+                            new Assert\Length(['min' => 6]),
+                        ],
+                    ],
+                    'second_options'  => [
+                        'label' => Trans::__($this->config->getLabel('password_second')),
+                        'attr'  => [
+                            'placeholder' => $this->config->getPlaceholder('password_second'),
+                        ],
+                        'constraints' => [
+                            new Assert\NotBlank(),
+                            new Assert\Length(['min' => 6]),
+                        ],
+                    ],
+                ]
+            )
+            ->add(
+                'submit',
+                SubmitType::class,
+                [
                 'label'   => Trans::__($this->config->getLabel('profile_save')),
-            ]);
+                ]
+            )
+        ;
     }
 
     /**
