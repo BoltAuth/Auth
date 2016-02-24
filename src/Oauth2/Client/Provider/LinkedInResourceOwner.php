@@ -18,4 +18,12 @@ class LinkedInResourceOwner extends LeagueLinkedInResourceOwner implements Resou
     {
         return $this->response['pictureUrl'] ?: null;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return trim(sprintf('%s %s', $this->getFirstname(), $this->getLastname()));
+    }
 }

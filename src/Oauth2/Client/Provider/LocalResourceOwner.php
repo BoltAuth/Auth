@@ -14,6 +14,13 @@ class LocalResourceOwner extends LeagueGenericResourceOwner implements ResourceO
     /**
      * @inheritDoc
      */
+    public function getAvatar()
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getEmail()
     {
     }
@@ -21,7 +28,7 @@ class LocalResourceOwner extends LeagueGenericResourceOwner implements ResourceO
     /**
      * @inheritDoc
      */
-    public function getAvatar()
+    public function getName()
     {
     }
 }

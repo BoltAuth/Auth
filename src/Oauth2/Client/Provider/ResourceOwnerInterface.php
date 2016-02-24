@@ -7,6 +7,13 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface as LeagueResourceOwnerI
 interface ResourceOwnerInterface extends LeagueResourceOwnerInterface
 {
     /**
+     * Get account name.
+     *
+     * @return string|null
+     */
+    public function getName();
+
+    /**
      * Get email address.
      *
      * @return string|null
