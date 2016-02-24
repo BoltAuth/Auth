@@ -10,12 +10,12 @@ use Bolt\Extension\Bolt\Members\Event\MembersLoginEvent;
 use Bolt\Extension\Bolt\Members\Exception as Ex;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
@@ -41,6 +41,8 @@ abstract class HandlerBase
     protected $providerManager;
     /** @var string */
     protected $providerName;
+    /** @var Entity\Provider */
+    protected $providerEntity;
     /** @var Request */
     protected $request;
     /** @var Records */
@@ -119,12 +121,17 @@ abstract class HandlerBase
         // Check that state token matches the stored one
         $this->session->checkStateToken($request);
         $accessToken = $this->getAccessToken($request, $grantType);
-        $guid = $this->handleAccountTransition($accessToken);
+        $this->setSession($accessToken);
 
-        // Update the PHP session
-        $authorisation = $this->session->createAuthorisation($guid, $this->providerManager->getProviderName(), $accessToken);
+        if ($this->session->isTransitional()) {
+            $this->handleAccountTransition($accessToken);
+        }
+
+        $this->providerEntity->setLastupdate(Carbon::now());
+        $this->records->saveProvider($this->providerEntity);
+
         // Send the event
-        $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $authorisation);
+        $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
     }
 
     /**
@@ -132,69 +139,114 @@ abstract class HandlerBase
      *
      * @param AccessToken $accessToken
      *
-     * @throws Ex\InvalidAuthorisationRequestException
      * @throws Ex\MissingAccountException
+     * @throws Ex\InvalidAuthorisationRequestException
      *
      * @return string
      */
     protected function handleAccountTransition(AccessToken $accessToken)
     {
-        $providerName = $this->providerManager->getProviderName(true);
+        $providerName = $this->providerManager->getProviderName();
         $resourceOwner = $this->getResourceOwner($accessToken);
-        $providerEntity = $this->records->getProvisionByResourceOwnerId($providerName, $resourceOwner->getId());
-        if ($providerEntity === false) {
-            throw new Ex\MissingAccountException(sprintf('No stored provider data for %s ID %s', $providerName, $resourceOwner->getId()));
+        $email = $resourceOwner->getEmail();
+
+        if ((bool) $email === false) {
+            // Redirect to registration
+            $this->setDebugMessage(sprintf('No email address found for transitional %s provider ID %s', $providerName, $resourceOwner->getId()));
+
+            throw new Ex\MissingAccountException(sprintf('Provider %s data for ID %s does not include an email address.', $providerName, $resourceOwner->getId()));
         }
 
-        if ($this->session->hasAuthorisation()) {
+        $accountEntity = $this->records->getAccountByEmail($email);
+        if ($accountEntity === false) {
+            $this->setDebugMessage(sprintf('No account found for transitional %s provider ID %s', $providerName, $resourceOwner->getId()));
+
+            throw new Ex\MissingAccountException(sprintf('No account for %s provider ID %s during transition', $providerName, $resourceOwner->getId()));
+        }
+
+        $providerEntity = $this->session->getTransitionalProvider();
+        $providerEntity->setGuid($accountEntity->getGuid());
+        $providerEntity->setLastupdate(Carbon::now());
+        $this->records->saveProvider($providerEntity);
+        $this->session->removeTransitionalProvider();
+
+        $this->setSession($accessToken);
+    }
+
+    /**
+     * Set up the session for this request.
+     *
+     * @param AccessToken $accessToken
+     */
+    protected function setSession(AccessToken $accessToken)
+    {
+        $providerName = $this->providerManager->getProviderName();
+        $resourceOwner = $this->getResourceOwner($accessToken);
+        $this->providerEntity = $this->records->getProvisionByResourceOwnerId($providerName, $resourceOwner->getId());
+
+        // Member is already in possession of another login, and the provider exists, add the access token
+        if ($this->session->hasAuthorisation() && $this->providerEntity !== false) {
             $this->session
                 ->getAuthorisation()
-                ->addAccessToken($providerName, $accessToken);
-        } else {
-            $this->session
-                ->createAuthorisation($providerEntity->getGuid(), $providerName, $accessToken);
+                ->addAccessToken($providerName, $accessToken)
+            ;
+            $this->setDebugMessage(sprintf('Adding %s access token %s for ID %s', $providerName, $accessToken, $resourceOwner->getId()));
+
+            return;
         }
+
+        // Existing user with a new login, and the provider exists
+        if ($this->providerEntity !== false) {
+            $this->session
+                ->addAccessToken($providerName, $accessToken)
+                ->createAuthorisation($this->providerEntity->getGuid())
+            ;
+            $this->setDebugMessage(sprintf(
+                'Creating authorisation  for GUID %s, and %s provider access token %s for ID %s',
+                $this->providerEntity->getGuid(),
+                $providerName,
+                $accessToken,
+                $resourceOwner->getId()
+            ));
+
+            return;
+        }
+
+        // New provider call
+        $this->createProviderEntity($accessToken, $resourceOwner);
+        $this->session
+            ->addAccessToken($providerName, $accessToken)
+            ->setTransitionalProvider($this->providerEntity)
+        ;
+        $this->setDebugMessage(sprintf(
+            'Creating provisional %s provider entity for access token %s for ID %s',
+            $providerName,
+            $accessToken,
+            $resourceOwner->getId()
+        ));
+    }
+
+    /**
+     * Create a new provider entity object.
+     *
+     * @param AccessToken            $accessToken
+     * @param ResourceOwnerInterface $resourceOwner
+     */
+    protected function createProviderEntity(AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
+    {
+        // Create a new provider entry
+        $providerName = $this->providerManager->getProviderName();
         $authorisation = $this->session->getAuthorisation();
 
-        $providerEntity = false;
-        $providerEntities = $this->records->getProvisionsByGuid($authorisation->getGuid());
-        if ($authorisation === null) {
-            throw new Ex\InvalidAuthorisationRequestException('Session authorisation missing');
-        }
-        $authorisation->addAccessToken($providerName, $accessToken);
+        $providerEntity = new Entity\Provider();
+        $providerEntity->setProvider($providerName);
+        $providerEntity->setRefreshToken($accessToken->getRefreshToken());
+        $providerEntity->setResourceOwnerId($resourceOwner->getId());
+        $providerEntity->setResourceOwner($resourceOwner);
 
-        /** @var Entity\Provider $entity */
-        foreach ((array) $providerEntities as $entity) {
-            if ($entity->getProvider() === $providerName) {
-                $providerEntity = $entity;
-                $this->setDebugMessage(sprintf('Profile provider found for %s ID %s with GUID of %s', $providerName, $resourceOwner->getId(), $providerEntity->getGuid()));
-                break;
-            }
-        }
+        $this->providerEntity = $providerEntity;
 
-        if ($providerEntity === false) {
-            // Create a new provider entry
-            $this->setDebugMessage(sprintf('No provider profile found for %s ID %s', $providerName, $resourceOwner->getId()));
-            $providerEntity = new Entity\Provider();
-            $providerEntity->setGuid($authorisation->getGuid());
-            $providerEntity->setProvider($providerName);
-            $providerEntity->setRefreshToken($accessToken->getRefreshToken());
-            $providerEntity->setResourceOwnerId($resourceOwner->getId());
-            $providerEntity->setResourceOwner($resourceOwner);
-        }
-
-        // Update the provider record
-        $providerEntity->setLastupdate(Carbon::now());
-        $this->records->saveProvider($providerEntity);
-
-        // Update the session token record
-        $this->setDebugMessage(sprintf('Writing session token for %s ID %s', $providerName, $resourceOwner->getId()));
-
-        $authorisation->addAccessToken($providerName, $accessToken);
-        $providerEntity->setLastupdate(Carbon::now());
-        $this->records->saveProvider($providerEntity);
-
-        return $providerEntity->getGuid();
+        $this->setDebugMessage(sprintf('Creating provider profile for %s ID %s', $providerName, $resourceOwner->getId()));
     }
 
     /**
