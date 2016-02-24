@@ -245,7 +245,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         'login_password' => $app->share(function () use ($app) { return new Form\Type\LoginPasswordType($app['members.config']); }),
                         'logout'         => $app->share(function () use ($app) { return new Form\Type\LogoutType($app['members.config']); }),
                         'profile'        => $app->share(function () use ($app) { return new Form\Type\ProfileType($app['members.config']); }),
-                        'register'       => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.config'], $app['members.records']); }),
+                        'register'       => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.config'], $app['members.records'], $app['members.session']); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );

@@ -49,6 +49,14 @@ class RegisterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($this->session->isTransitional() === false) {
+            $passwordConstraints = [
+                new Assert\NotBlank(),
+                new Assert\Length(['min' => 6]),
+            ];
+        } else {
+            $passwordConstraints = [];
+        }
         $builder
             ->add(
                 'displayname',
@@ -93,21 +101,17 @@ class RegisterType extends AbstractType
                         'attr'  => [
                             'placeholder' => $this->config->getPlaceholder('password_first'),
                         ],
-                        'constraints' => [
-                            new Assert\NotBlank(),
-                            new Assert\Length(['min' => 6]),
-                        ],
+                        'constraints' => $passwordConstraints,
                     ],
                     'second_options'  => [
                         'label' => Trans::__($this->config->getLabel('password_second')),
                         'attr'  => [
                             'placeholder' => $this->config->getPlaceholder('password_second'),
                         ],
-                        'constraints' => [
-                            new Assert\NotBlank(),
-                            new Assert\Length(['min' => 6]),
-                        ],
+                        'constraints' => $passwordConstraints,
                     ],
+                    'empty_data'      => null,
+                    'required'        => !$this->session->isTransitional(),
                 ]
             )
             ->add(

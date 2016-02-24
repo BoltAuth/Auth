@@ -159,8 +159,9 @@ class Frontend implements ControllerProviderInterface
             return $response;
         }
 
+        $context = ['transitional' => $app['members.session']->isTransitional()];
         $template = $this->config->getTemplates('profile', 'register');
-        $html = $formsManager->renderForms($resolvedForm, $template);
+        $html = $formsManager->renderForms($resolvedForm, $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }

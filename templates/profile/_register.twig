@@ -14,12 +14,22 @@
         <div class="small-12 columns">
 
             {{ form_start(form_register) }}
-                {{ form_row(form_register.displayname) }}
+
+            {{ form_errors(form_register) }}
+
+            {{ form_row(form_register.displayname) }}
             {{ form_row(form_register.email) }}
-            {{ form_row(form_register.plainPassword.first) }}
-            {{ form_row(form_register.plainPassword.second) }}
+
+            {% if transitional %}
+                {% do form_register.plainPassword.setRendered %}
+            {% else %}
+                {{ form_row(form_register.plainPassword.first) }}
+                {{ form_row(form_register.plainPassword.second) }}
+            {% endif %}
+
                 <br>
-                {{ form_row(form_register.submit) }}
+            {{ form_row(form_register.submit) }}
+
             {{ form_end(form_register) }}
 
         </div>
