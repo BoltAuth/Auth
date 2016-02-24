@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -69,13 +70,15 @@ class Frontend implements ControllerProviderInterface
      */
     public function after(Request $request, Response $response, Application $app)
     {
-        if ($app['members.session']->getAuthorisation() === null) {
+        /** @var Session $session */
+        $session = $app['members.session'];
+        if ($session->getAuthorisation() === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
 
             return;
         }
 
-        $cookie = $app['members.session']->getAuthorisation()->getCookie();
+        $cookie = $session->getAuthorisation()->getCookie();
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
         } else {
@@ -95,7 +98,14 @@ class Frontend implements ControllerProviderInterface
      */
     public function editProfile(Application $app, Request $request)
     {
-        $memberSession = $app['members.session']->getAuthorisation();
+        /** @var Session $session */
+        $session = $app['members.session'];
+        /** @var Form\Manager $formsManager */
+        $formsManager = $app['members.forms.manager'];
+        /** @var Form\Type\ProfileType $profileFormType */
+        $profileFormType = $app['members.form.components']['type']['profile'];
+
+        $memberSession = $session->getAuthorisation();
 
         if ($memberSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
@@ -104,16 +114,18 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        $app['members.form.components']['type']['profile']->setRequirePassword(false);
-        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true);
+        $profileFormType->setRequirePassword(false);
+        $resolvedForm = $formsManager->getFormProfile($request, true);
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_profile')->isValid()) {
-            $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
+            /** @var Form\Profile $profileForm */
+            $profileForm = $app['members.form.profile'];
+            $profileForm->saveForm($app['members.records'], $app['dispatcher']);
         }
 
         $template = $this->config->getTemplates('profile', 'edit');
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
+        $html = $formsManager->renderForms($resolvedForm, $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -128,12 +140,16 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        $resolvedForm = $app['members.forms.manager']->getFormRegister($request, true);
+        /** @var Form\Manager $formsManager */
+        $formsManager = $app['members.forms.manager'];
+        $resolvedForm = $formsManager->getFormRegister($request, true);
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_register')->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            $app['members.form.register']
+            /** @var Form\Register $registerForm */
+            $registerForm = $app['members.form.register'];
+            $registerForm
                 ->setProvider($app['members.oauth.provider'])
                 ->saveForm($app['members.records'], $app['dispatcher'])
             ;
@@ -144,7 +160,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplates('profile', 'register');
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
+        $html = $formsManager->renderForms($resolvedForm, $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
