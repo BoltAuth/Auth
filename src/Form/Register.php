@@ -118,20 +118,26 @@ class Register extends AbstractForm
         $oauth->setPassword($encryptedPassword);
         $records->saveOauth($oauth);
 
-        // Set up the initial session.
-        $localAccessToken = $this->provider->getAccessToken('password', []);
-        $this->session
-            ->addAccessToken('local', $localAccessToken)
-            ->createAuthorisation($account->getGuid())
-        ;
-
-        // Create a local provider entry
-        $provider = new Storage\Entity\Provider();
+        // Create a provider entry
+        if ($this->session->isTransitional()) {
+            $provider = $this->session->getTransitionalProvider()->getProviderEntity();
+            $accessToken = $this->session->getTransitionalProvider()->getAccessToken();
+            $this->session->removeTransitionalProvider();
+        } else {
+            $provider = new Storage\Entity\Provider();
+            $provider->setProvider('local');
+            $provider->setResourceOwnerId($account->getGuid());
+            $accessToken = $this->provider->getAccessToken('password', []);
+        }
         $provider->setGuid($account->getGuid());
-        $provider->setProvider('local');
-        $provider->setResourceOwnerId($account->getGuid());
         $provider->setLastupdate(Carbon::now());
         $records->saveProvider($provider);
+
+        // Set up the initial session.
+        $this->session
+            ->addAccessToken($provider->getProvider(), $accessToken)
+            ->createAuthorisation($account->getGuid())
+        ;
 
         return $this;
     }
