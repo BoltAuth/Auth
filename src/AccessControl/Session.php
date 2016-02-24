@@ -68,7 +68,7 @@ class Session implements EventSubscriberInterface
     /**
      * Return the transitional provider entity.
      *
-     * @return Storage\Entity\Provider
+     * @return Transition
      */
     public function getTransitionalProvider()
     {
@@ -82,11 +82,11 @@ class Session implements EventSubscriberInterface
     /**
      * Set the transitional provider entity.
      *
-     * @param Storage\Entity\Provider $transitionalProvider
+     * @param Transition $transitionalProvider
      *
      * @return Session
      */
-    public function setTransitionalProvider(Storage\Entity\Provider $transitionalProvider)
+    public function setTransitionalProvider(Transition $transitionalProvider)
     {
         $this->session->set(self::SESSION_TRANSITIONAL, $transitionalProvider);
         $this->transitionalProvider = $transitionalProvider;

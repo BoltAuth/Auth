@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Authorisation;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\AccessControl\Transition;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersLoginEvent;
@@ -164,7 +165,7 @@ abstract class HandlerBase
             throw new Ex\MissingAccountException(sprintf('No account for %s provider ID %s during transition', $providerName, $resourceOwner->getId()));
         }
 
-        $providerEntity = $this->session->getTransitionalProvider();
+        $providerEntity = $this->session->getTransitionalProvider()->getProviderEntity();
         $providerEntity->setGuid($accountEntity->getGuid());
         $providerEntity->setLastupdate(Carbon::now());
         $this->records->saveProvider($providerEntity);
@@ -213,17 +214,7 @@ abstract class HandlerBase
         }
 
         // New provider call
-        $this->createProviderEntity($accessToken, $resourceOwner);
-        $this->session
-            ->addAccessToken($providerName, $accessToken)
-            ->setTransitionalProvider($this->providerEntity)
-        ;
-        $this->setDebugMessage(sprintf(
-            'Creating provisional %s provider entity for access token %s for ID %s',
-            $providerName,
-            $accessToken,
-            $resourceOwner->getId()
-        ));
+        $this->createProviderTransition($accessToken, $resourceOwner);
     }
 
     /**
@@ -232,21 +223,24 @@ abstract class HandlerBase
      * @param AccessToken            $accessToken
      * @param ResourceOwnerInterface $resourceOwner
      */
-    protected function createProviderEntity(AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
+    protected function createProviderTransition(AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
     {
         // Create a new provider entry
         $providerName = $this->providerManager->getProviderName();
-        $authorisation = $this->session->getAuthorisation();
+        $transition = new Transition($providerName, $accessToken, $resourceOwner);
 
-        $providerEntity = new Entity\Provider();
-        $providerEntity->setProvider($providerName);
-        $providerEntity->setRefreshToken($accessToken->getRefreshToken());
-        $providerEntity->setResourceOwnerId($resourceOwner->getId());
-        $providerEntity->setResourceOwner($resourceOwner);
-
-        $this->providerEntity = $providerEntity;
+        $this->session
+            ->addAccessToken($providerName, $accessToken)
+            ->setTransitionalProvider($transition)
+        ;
 
         $this->setDebugMessage(sprintf('Creating provider profile for %s ID %s', $providerName, $resourceOwner->getId()));
+        $this->setDebugMessage(sprintf(
+            'Creating provisional %s provider entity for access token %s for ID %s',
+            $providerName,
+            $accessToken,
+            $resourceOwner->getId()
+        ));
     }
 
     /**
