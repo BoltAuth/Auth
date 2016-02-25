@@ -4,8 +4,10 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+use Bolt\Extension\Bolt\Members\Storage;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -54,6 +56,11 @@ class Frontend implements ControllerProviderInterface
         $ctr->match('/profile/register', [$this, 'registerProfile'])
             ->bind('membersProfileRegister')
             ->method('GET|POST')
+        ;
+
+        $ctr->match('/profile/verify', [$this, 'verifyProfile'])
+            ->bind('membersProfileVerify')
+            ->method('GET')
         ;
 
         // Own the rest of the base route
@@ -191,5 +198,44 @@ class Frontend implements ControllerProviderInterface
         $html = $formsManager->renderForms($resolvedForm, $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
+    }
+
+    /**
+     * Handles the user profile verification call.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return Response
+     */
+    public function verifyProfile(Application $app, Request $request)
+    {
+        // Get the verification code
+        $code = $request->query->get('code');
+        if (strlen($code) !== 40) {
+            throw new InvalidAuthorisationRequestException('Invalid code');
+        }
+
+        // Get the verification key meta entity
+        $metaEntities = $app['members.records']->getAccountMetaValues('account-verification-key', $code);
+        if ($metaEntities === false) {
+            throw new InvalidAuthorisationRequestException('No meta code');
+        }
+        /** @var Storage\Entity\AccountMeta $metaEntity */
+        $metaEntity = reset($metaEntities);
+        $guid = $metaEntity->getGuid();
+
+        // Get the account and set it as verified
+        $account = $app['members.records']->getAccountByGuid($guid);
+        if ($account === false) {
+            throw new InvalidAuthorisationRequestException('No account');
+        }
+        $account->setVerified(true);
+        $app['members.records']->saveAccount($account);
+
+        // Remove meta record
+        $app['members.records']->deleteAccountMeta($metaEntity);
+
+        return 'Success';
     }
 }
