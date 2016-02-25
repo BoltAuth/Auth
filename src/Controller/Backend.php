@@ -180,7 +180,7 @@ class Backend implements ControllerProviderInterface
     {
         $app['members.form.components']['type']['profile']->setRequirePassword(true);
         $app['members.form.profile']->setGuid($guid = Uuid::uuid4()->toString());
-        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true, $guid);
+        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
 
         // Handle the form request data
@@ -253,7 +253,7 @@ class Backend implements ControllerProviderInterface
 
         $app['members.form.components']['type']['profile']->setRequirePassword(false);
         $app['members.form.profile']->setGuid($guid);
-        $resolvedForm = $app['members.forms.manager']->getFormProfile($request, true, $guid);
+        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
 
         // Handle the form request data

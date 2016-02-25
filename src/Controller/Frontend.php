@@ -115,7 +115,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $profileFormType->setRequirePassword(false);
-        $resolvedForm = $formsManager->getFormProfile($request, true);
+        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_profile')->isValid()) {
@@ -142,7 +142,7 @@ class Frontend implements ControllerProviderInterface
     {
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        $resolvedForm = $formsManager->getFormRegister($request, true);
+        $resolvedForm = $formsManager->getFormProfileRegister($request, true);
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_register')->isValid()) {

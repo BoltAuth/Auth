@@ -129,7 +129,7 @@ class Manager
      *
      * @return ResolvedForm
      */
-    public function getFormProfile(Request $request, $includeParent = true, $guid = null)
+    public function getFormProfileEdit(Request $request, $includeParent = true, $guid = null)
     {
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
@@ -157,7 +157,7 @@ class Manager
      *
      * @return ResolvedForm
      */
-    public function getFormRegister(Request $request, $includeParent = true)
+    public function getFormProfileRegister(Request $request, $includeParent = true)
     {
         $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig';
 

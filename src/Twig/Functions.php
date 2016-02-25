@@ -252,7 +252,7 @@ class Functions extends \Twig_Extension
         }
 
         $template = $template ?: $this->config->getTemplates('profile', 'edit');
-        $form = $this->formManager->getFormProfile(new Request(), false);
+        $form = $this->formManager->getFormProfileEdit(new Request(), false);
         $html = $this->formManager->renderForms($form, $template);
 
         return new TwigMarkup($html, 'UTF-8');
@@ -268,7 +268,7 @@ class Functions extends \Twig_Extension
     public function renderRegister($template = null)
     {
         $template = $template ?: $this->config->getTemplates('profile', 'register');
-        $form = $this->formManager->getFormRegister(new Request(), false);
+        $form = $this->formManager->getFormProfileRegister(new Request(), false);
         $html = $this->formManager->renderForms($form, $template);
 
         return new TwigMarkup($html, 'UTF-8');
