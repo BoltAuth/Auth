@@ -52,8 +52,10 @@ addons:
 
 ## Registration
 #
-# If registration should be allowed [true|false]
-registration: true
+registration:
+    enabled: true                        # If registration should be allowed [true|false]
+    verify_name: Site Admin              # Display name used as the sender name
+    verify_email: no-reply@example.com   # Email address as the sender address
 
 # Base URLs
 urls:

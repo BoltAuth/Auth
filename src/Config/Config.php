@@ -23,7 +23,7 @@ class Config
     protected $placeholders;
     /** @var Provider[] */
     protected $providers;
-    /** @var  boolean */
+    /** @var  array */
     protected $registration;
     /** @var array */
     protected $rolesAdmin;
@@ -275,15 +275,23 @@ class Config
      */
     public function isRegistrationOpen()
     {
+        return $this->registration['enabled'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getRegistration()
+    {
         return $this->registration;
     }
 
     /**
-     * @param boolean $registration
+     * @param array $registration
      *
      * @return Config
      */
-    public function setRegistration($registration)
+    public function setRegistration(array $registration)
     {
         $this->registration = $registration;
 
@@ -395,7 +403,11 @@ class Config
                 'password_first'  => 'Enter your password…',
                 'password_second' => 'Repeat the above password…',
             ],
-            'registration' => true,
+            'registration' => [
+                'enabled' => true,
+                'verify_name'  => null,
+                'verify_email' => null,
+            ],
             'roles'        => [
                 'admin'  => [
                     'root',
