@@ -20,7 +20,8 @@ class MembersEvents
     const MEMBER_ENABLE = 'member.enable';
     const MEMBER_DISBALE = 'member.disable';
     const MEMBER_PROFILE_EDIT = 'member.profile.edit';
-    const MEMBER_PROFILE_SAVE = 'member.profile.save';
+    const MEMBER_PROFILE_PRE_SAVE = 'member.profile.pre_save';
+    const MEMBER_PROFILE_POST_SAVE = 'member.profile.post_save';
     const MEMBER_ROLE = 'member.role';
 
     /**

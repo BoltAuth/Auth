@@ -78,6 +78,11 @@ class ProfileEditForm extends BaseProfile
 
         $this->account->setDisplayname($this->form->get('displayname')->getData());
         $this->account->setEmail($this->form->get('email')->getData());
+
+        // Dispatch the account profile pre-save event
+        $event = new MembersProfileEvent($this->account);
+        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_PRE_SAVE, $event);
+
         $records->saveAccount($this->account);
 
         if ($this->form->get('plainPassword')->getData() !== null) {
@@ -86,10 +91,6 @@ class ProfileEditForm extends BaseProfile
             $oauth->setPassword($encryptedPassword);
             $records->saveOauth($oauth);
         }
-
-        // Dispatch the account profile save event
-        $event = new MembersProfileEvent();
-        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_SAVE, $event);
 
         // Save any defined meta fields
         foreach ($event->getMetaFields() as $metaField) {
@@ -102,6 +103,9 @@ class ProfileEditForm extends BaseProfile
             $metaEntity->setValue($this->form->get($metaField)->getData());
             $records->saveAccountMeta($metaEntity);
         }
+
+        // Dispatch the account profile post-save event
+        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_POST_SAVE, $event);
 
         return $this;
     }
