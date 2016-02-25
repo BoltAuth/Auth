@@ -3,6 +3,8 @@
 namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
@@ -100,7 +102,8 @@ class ProfileRegisterForm extends BaseProfile
         }
 
         // Create and store the account record
-        $this->createAccount($records);
+        $account = $this->createAccount($records);
+
 
         // Create a local OAuth account record
         if ($this->form->get('plainPassword')->getData()) {
@@ -121,6 +124,10 @@ class ProfileRegisterForm extends BaseProfile
             ->addAccessToken($provider->getProvider(), $accessToken)
             ->createAuthorisation($this->guid)
         ;
+
+        // Dispatch the account profile pre-save event
+        $event = new MembersProfileEvent($account);
+        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_REGISTER, $event);
 
         return $this;
     }
