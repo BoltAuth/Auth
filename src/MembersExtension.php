@@ -65,7 +65,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerFrontendControllers()
     {
         $app = $this->getContainer();
-        $config = (array) $this->getConfig();
 
         return [
             $app['members.config']->getUrlAuthenticate() => $app['members.controller.authentication'],
