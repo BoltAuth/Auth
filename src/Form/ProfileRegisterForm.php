@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -103,7 +104,10 @@ class ProfileRegisterForm extends BaseProfile
 
         // Create and store the account record
         $account = $this->createAccount($records);
-
+        // Create the event
+        $event = new MembersProfileEvent($account);
+        // Create verification meta
+        $this->createAccountVerificationKey($records, $event);
 
         // Create a local OAuth account record
         if ($this->form->get('plainPassword')->getData()) {
@@ -126,7 +130,6 @@ class ProfileRegisterForm extends BaseProfile
         ;
 
         // Dispatch the account profile pre-save event
-        $event = new MembersProfileEvent($account);
         $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_REGISTER, $event);
 
         return $this;
@@ -146,14 +149,32 @@ class ProfileRegisterForm extends BaseProfile
         $account->setEmail($this->form->get('email')->getData());
         $account->setRoles($this->roles);
         $account->setEnabled(true);
+        $account->setVerified(false);
         $account->setLastseen(Carbon::now());
         $account->setLastip($this->clientIp);
 
         $records->saveAccount($account);
 
+        // Keep track of the new GUID
         $this->guid = $account->getGuid();
 
         return $account;
+    }
+
+    protected function createAccountVerificationKey(Storage\Records $records, MembersProfileEvent $event)
+    {
+        $metaName = 'account-verification-key';
+        $metaValue = sha1(Uuid::uuid4()->toString());
+
+        // Set the email verification key in the account meta
+        $meta = new Storage\Entity\AccountMeta();
+        $meta->setGuid($this->guid);
+        $meta->setMeta($metaName);
+        $meta->setValue($metaValue);
+
+        $records->saveAccountMeta($meta);
+
+        $event->setMetaFields([$metaName => $metaValue]);
     }
 
     /**
