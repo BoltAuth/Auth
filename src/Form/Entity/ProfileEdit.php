@@ -14,7 +14,7 @@ use Bolt\Extension\Bolt\Members\Storage\Records;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Profile implements EntityInterface
+class ProfileEdit implements EntityInterface
 {
     /** @var string */
     protected $guid;
@@ -48,7 +48,7 @@ class Profile implements EntityInterface
     /**
      * @param string $guid
      *
-     * @return Profile
+     * @return ProfileEdit
      */
     public function setGuid($guid)
     {
@@ -68,7 +68,7 @@ class Profile implements EntityInterface
     /**
      * @param string $email
      *
-     * @return Profile
+     * @return ProfileEdit
      */
     public function setEmail($email)
     {
@@ -88,7 +88,7 @@ class Profile implements EntityInterface
     /**
      * @param string $displayName
      *
-     * @return Profile
+     * @return ProfileEdit
      */
     public function setDisplayName($displayName)
     {

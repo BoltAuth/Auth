@@ -134,7 +134,7 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        /** @var Profile $baseForm */
+        /** @var ProfileEditForm $baseForm */
         $baseForm = $this->forms['form']['profile'];
         $form = $baseForm
             ->setGuid($guid)
@@ -222,7 +222,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Register $baseForm */
+        /** @var ProfileRegisterForm $baseForm */
         $baseForm = $this->forms['form']['register'];
         $formRegister = $baseForm
             ->setClientIp($request->getClientIp())

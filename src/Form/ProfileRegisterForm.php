@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Register extends BaseProfile
+class ProfileRegisterForm extends BaseProfile
 {
     /** @var Type\RegisterType */
     protected $type;
@@ -36,7 +36,7 @@ class Register extends BaseProfile
     /**
      * @param string $clientIp
      *
-     * @return Register
+     * @return ProfileRegisterForm
      */
     public function setClientIp($clientIp)
     {
@@ -48,7 +48,7 @@ class Register extends BaseProfile
     /**
      * @param AbstractProvider $provider
      *
-     * @return Register
+     * @return ProfileRegisterForm
      */
     public function setProvider(AbstractProvider $provider)
     {
@@ -60,7 +60,7 @@ class Register extends BaseProfile
     /**
      * @param array $roles
      *
-     * @return Register
+     * @return ProfileRegisterForm
      */
     public function setRoles(array $roles)
     {
@@ -72,7 +72,7 @@ class Register extends BaseProfile
     /**
      * @param Session $session
      *
-     * @return Register
+     * @return ProfileRegisterForm
      */
     public function setSession(Session $session)
     {

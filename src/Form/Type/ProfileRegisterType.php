@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class RegisterType extends AbstractType
+class ProfileRegisterType extends AbstractType
 {
     /** @var Records */
     protected $records;

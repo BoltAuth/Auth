@@ -244,8 +244,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         'login_oauth'    => $app->share(function () use ($app) { return new Form\Type\LoginOauthType($app['members.config']); }),
                         'login_password' => $app->share(function () use ($app) { return new Form\Type\LoginPasswordType($app['members.config']); }),
                         'logout'         => $app->share(function () use ($app) { return new Form\Type\LogoutType($app['members.config']); }),
-                        'profile'        => $app->share(function () use ($app) { return new Form\Type\ProfileType($app['members.config']); }),
-                        'register'       => $app->share(function () use ($app) { return new Form\Type\RegisterType($app['members.config'], $app['members.records'], $app['members.session']); }),
+                        'profile'        => $app->share(function () use ($app) { return new Form\Type\ProfileEditType($app['members.config']); }),
+                        'register'       => $app->share(function () use ($app) { return new Form\Type\ProfileRegisterType($app['members.config'], $app['members.records'], $app['members.session']); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );
@@ -256,8 +256,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         'login_oauth'    => $app->share(function () use ($app) { return new Form\Entity\LoginOauth(); }),
                         'login_password' => $app->share(function () use ($app) { return new Form\Entity\LoginPassword(); }),
                         'logout'         => $app->share(function () use ($app) { return new Form\Entity\Logout(); }),
-                        'profile'        => $app->share(function () use ($app) { return new Form\Entity\Profile($app['members.records']); }),
-                        'register'       => $app->share(function () use ($app) { return new Form\Entity\Register(); }),
+                        'profile'        => $app->share(function () use ($app) { return new Form\Entity\ProfileEdit($app['members.records']); }),
+                        'register'       => $app->share(function () use ($app) { return new Form\Entity\ProfileRegister(); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );
@@ -319,7 +319,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.form.profile'] = $app->share(
             function ($app) {
-                return new Form\Profile(
+                return new Form\ProfileEditForm(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile'],
                     $app['members.form.components']['entity']['profile']
@@ -329,7 +329,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.form.register'] = $app->share(
             function ($app) {
-                return new Form\Register(
+                return new Form\ProfileRegisterForm(
                     $app['form.factory'],
                     $app['members.form.components']['type']['register'],
                     $app['members.form.components']['entity']['register']

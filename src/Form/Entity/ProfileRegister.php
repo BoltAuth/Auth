@@ -11,7 +11,7 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Register implements EntityInterface
+class ProfileRegister implements EntityInterface
 {
     /** string */
     protected $email;
@@ -29,7 +29,7 @@ class Register implements EntityInterface
     /**
      * @param string $email
      *
-     * @return Register
+     * @return ProfileRegister
      */
     public function setEmail($email)
     {
@@ -49,7 +49,7 @@ class Register implements EntityInterface
     /**
      * @param string $displayName
      *
-     * @return Register
+     * @return ProfileRegister
      */
     public function setDisplayName($displayName)
     {

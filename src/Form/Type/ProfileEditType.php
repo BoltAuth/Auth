@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileType extends AbstractType
+class ProfileEditType extends AbstractType
 {
     /** @var boolean */
     protected $requirePassword = true;

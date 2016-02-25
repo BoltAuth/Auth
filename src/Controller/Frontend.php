@@ -102,7 +102,7 @@ class Frontend implements ControllerProviderInterface
         $session = $app['members.session'];
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        /** @var Form\Type\ProfileType $profileFormType */
+        /** @var Form\Type\ProfileEditType $profileFormType */
         $profileFormType = $app['members.form.components']['type']['profile'];
 
         $memberSession = $session->getAuthorisation();
@@ -119,7 +119,7 @@ class Frontend implements ControllerProviderInterface
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_profile')->isValid()) {
-            /** @var Form\Profile $profileForm */
+            /** @var Form\ProfileEditForm $profileForm */
             $profileForm = $app['members.form.profile'];
             $profileForm->saveForm($app['members.records'], $app['dispatcher']);
         }
@@ -147,7 +147,7 @@ class Frontend implements ControllerProviderInterface
         // Handle the form request data
         if ($resolvedForm->getForm('form_register')->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            /** @var Form\Register $registerForm */
+            /** @var Form\ProfileRegisterForm $registerForm */
             $registerForm = $app['members.form.register'];
             $registerForm
                 ->setProvider($app['members.oauth.provider'])
