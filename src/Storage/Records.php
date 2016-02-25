@@ -155,6 +155,19 @@ class Records
     }
 
     /**
+     * Fetches all meta data by name and value match.
+     *
+     * @param string $metaName
+     * @param string $metaValue
+     *
+     * @return Entity\AccountMeta[]
+     */
+    public function getAccountMetaValues($metaName, $metaValue)
+    {
+        return $this->accountMeta->getAccountMetaValues($metaName, $metaValue);
+    }
+
+    /**
      * Save an account meta entity.
      *
      * @param Entity\AccountMeta $accountMeta

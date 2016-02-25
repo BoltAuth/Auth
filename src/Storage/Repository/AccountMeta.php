@@ -68,4 +68,32 @@ class AccountMeta extends AbstractMembersRepository
 
         return $qb;
     }
+
+    /**
+     * Fetches all meta data by name and value match.
+     *
+     * @param string $metaName
+     * @param string $metaValue
+     *
+     * @return Entity\AccountMeta[]
+     */
+    public function getAccountMetaValues($metaName, $metaValue)
+    {
+        $query = $this->getAccountMetaValuesQuery($metaName, $metaValue);
+
+        return $this->findWith($query);
+    }
+
+    public function getAccountMetaValuesQuery($metaName, $metaValue)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where('meta = :meta')
+            ->andWhere('value = :value')
+            ->setParameter('meta', $metaName)
+            ->setParameter('value', $metaValue)
+        ;
+
+        return $qb;
+    }
 }
