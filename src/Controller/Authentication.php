@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
@@ -257,6 +256,7 @@ class Authentication implements ControllerProviderInterface
 
         if (array_key_exists($providerName, $enabledProviders)) {
             $app['members.oauth.provider.manager']->setProvider($app, $providerName);
+
             return $this->processLogin($app, $request);
         }
 

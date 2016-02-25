@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\Form\LoginPassword;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Silex\Application;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
