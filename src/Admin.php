@@ -34,6 +34,7 @@ class Admin implements EventSubscriberInterface
      *
      * @param Records $records
      * @param Config  $config
+     * @param Users   $users
      */
     public function __construct(Records $records, Config $config, Users $users)
     {
