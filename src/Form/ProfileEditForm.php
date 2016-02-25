@@ -18,9 +18,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProfileEditForm extends BaseProfile
 {
-    /** @var Type\ProfileType */
+    /** @var Type\ProfileEditType */
     protected $type;
-    /** @var Entity\Profile */
+    /** @var Entity\ProfileEdit */
     protected $entity;
     /** @var Storage\Entity\Account */
     protected $account;
@@ -38,7 +38,7 @@ class ProfileEditForm extends BaseProfile
     /**
      * @param Storage\Entity\Account $account
      *
-     * @return
+     * @return ProfileEditForm
      */
     public function setAccount(Storage\Entity\Account $account)
     {
@@ -58,7 +58,7 @@ class ProfileEditForm extends BaseProfile
     /**
      * @param string $guid
      *
-     * @return
+     * @return ProfileEditForm
      */
     public function setGuid($guid)
     {

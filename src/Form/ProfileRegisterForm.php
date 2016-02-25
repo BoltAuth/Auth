@@ -20,9 +20,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProfileRegisterForm extends BaseProfile
 {
-    /** @var Type\RegisterType */
+    /** @var Type\ProfileRegisterType */
     protected $type;
-    /** @var Entity\Register */
+    /** @var Entity\ProfileRegister */
     protected $entity;
     /** @var string */
     protected $clientIp;
