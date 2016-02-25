@@ -64,10 +64,11 @@ class ProfileListener implements EventSubscriberInterface
     private function getRegisterHtml(MembersProfileEvent $event)
     {
         $meta = $event->getMetaFields();
+        $query = http_build_query(['code' => $meta['account-verification-key']]);
         $context = [
             'name'  => $event->getAccount()->getDisplayname(),
             'email' => $event->getAccount()->getEmail(),
-            'link'  => sprintf('%s%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(),$meta['account-verification-key']),
+            'link'  => sprintf('%s%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
         ];
         $mailHtml = $this->twig->render($this->config->getTemplates('verification', 'body'), $context);
 
