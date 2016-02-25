@@ -15,8 +15,6 @@ class MembersEvents
 {
     const MEMBER_LOGIN = 'member.login';
     const MEMBER_LOGOUT = 'member.logout';
-    const MEMBER_REGISTER = 'member.register';
-    const MEMBER_UNREGISTER = 'member.unregister';
     const MEMBER_ENABLE = 'member.enable';
     const MEMBER_DISBALE = 'member.disable';
     const MEMBER_PROFILE_EDIT = 'member.profile.edit';
