@@ -178,8 +178,8 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        $app['members.form.components']['type']['profile']->setRequirePassword(true);
-        $app['members.form.profile']->setGuid($guid = Uuid::uuid4()->toString());
+        $app['members.form.components']['type']['profile_edit']->setRequirePassword(true);
+        $app['members.form.profile_edit']->setGuid($guid = Uuid::uuid4()->toString());
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
 
@@ -208,7 +208,7 @@ class Backend implements ControllerProviderInterface
             $provider->setLastupdate(Carbon::now());
             $app['members.records']->saveProvider($provider);
 
-            $app['members.form.profile']
+            $app['members.form.profile_edit']
                 ->setAccount($account)
                 ->setGuid($account->getGuid())
                 ->saveForm($app['members.records'], $app['dispatcher'])
@@ -251,15 +251,15 @@ class Backend implements ControllerProviderInterface
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $app['members.form.components']['type']['profile']->setRequirePassword(false);
-        $app['members.form.profile']->setGuid($guid);
+        $app['members.form.components']['type']['profile_edit']->setRequirePassword(false);
+        $app['members.form.profile_edit']->setGuid($guid);
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
 
         // Handle the form request data
         if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            $app['members.form.profile']->saveForm($app['members.records'], $app['dispatcher']);
+            $app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
             $response =  new RedirectResponse($app['url_generator']->generate('membersAdmin'));
 

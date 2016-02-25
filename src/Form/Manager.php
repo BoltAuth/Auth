@@ -135,7 +135,7 @@ class Manager
             $guid = $this->session->getAuthorisation()->getGuid();
         }
         /** @var ProfileEditForm $baseForm */
-        $baseForm = $this->forms['form']['profile'];
+        $baseForm = $this->forms['form']['profile_edit'];
         $form = $baseForm
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
@@ -223,7 +223,7 @@ class Manager
             ->handleRequest($request)
         ;
         /** @var ProfileRegisterForm $baseForm */
-        $baseForm = $this->forms['form']['register'];
+        $baseForm = $this->forms['form']['profile_register'];
         $formRegister = $baseForm
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
