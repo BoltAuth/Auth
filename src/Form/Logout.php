@@ -16,9 +16,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class Logout extends AbstractForm
 {
-    /** @var Type\LoginType */
+    /** @var Type\LogoutType */
     protected $type;
-    /** @var Entity\Login */
+    /** @var Entity\Logout */
     protected $entity;
 
     /**

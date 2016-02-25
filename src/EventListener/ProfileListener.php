@@ -40,7 +40,7 @@ class ProfileListener implements EventSubscriberInterface
     {
         $registration = $this->config->getRegistration();
         $from = [(string) $registration['verify_email'] => $registration['verify_name']];
-        $email = [$event->getAccount()->getEmail() =>$event->getAccount()->getDisplayname()];
+        $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
         $subject = $this->twig->render($this->config->getTemplates('verification', 'subject'));
         $mailHtml = $this->getRegisterHtml($event);
 
@@ -84,5 +84,4 @@ class ProfileListener implements EventSubscriberInterface
             MembersEvents::MEMBER_PROFILE_REGISTER => 'onProfileRegister',
         ];
     }
-
 }

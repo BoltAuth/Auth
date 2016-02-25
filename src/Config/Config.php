@@ -404,7 +404,7 @@ class Config
                 'password_second' => 'Repeat the above password…',
             ],
             'registration' => [
-                'enabled' => true,
+                'enabled'      => true,
                 'verify_name'  => null,
                 'verify_email' => null,
             ],
