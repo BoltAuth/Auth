@@ -180,6 +180,18 @@ class Records
     }
 
     /**
+     * Delete an account meta entity.
+     *
+     * @param Entity\AccountMeta $accountMeta
+     *
+     * @return bool
+     */
+    public function deleteAccountMeta(Entity\AccountMeta $accountMeta)
+    {
+        return $this->accountMeta->delete($accountMeta);
+    }
+
+    /**
      * Fetches an OAuth entries by GUID.
      *
      * @param string $guid
