@@ -25,6 +25,9 @@ debug: false
 #    error:
 #        parent: members_error.twig
 #        error: _members_error.twig
+#    verification:
+#        subject: subject.twig
+#        body: body.twig
 
 ## Labels
 #

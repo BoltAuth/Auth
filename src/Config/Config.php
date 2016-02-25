@@ -437,6 +437,10 @@ class Config
                     'parent' => 'members_error.twig',
                     'error'  => '_members_error.twig',
                 ],
+                'verification'   => [
+                    'subject' => 'registration/subject.twig',
+                    'body'    => 'registration/body.twig',
+                ],
             ],
             'urls'         => [
                 'authenticate' => 'authentication',
