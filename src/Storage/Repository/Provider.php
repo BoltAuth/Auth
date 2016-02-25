@@ -140,6 +140,7 @@ class Provider extends AbstractMembersRepository
         $qb->select('*')
             ->where('provider = :provider')
             ->where('resource_owner_id = :resource_owner_id')
+            ->setParameter('provider', $provider)
             ->setParameter('resource_owner_id', $resourceOwnerId)
         ;
 
