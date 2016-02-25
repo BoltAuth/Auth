@@ -1,0 +1,11 @@
+{#
+ # Passed in fields:
+ #   * name  — Display name of the newly registered user
+ #   * email — Email address of the newly registered user
+ #   * link  — Account verification URL
+ #}
+<p>Dear {{ name }},</p>
+
+<p>Thank you for registering on {{ app.config.get('general/branding/name') }}.</p>
+
+<p>Please confirm your email by following this link: {{ link }}</p>
