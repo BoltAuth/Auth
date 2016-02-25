@@ -25,6 +25,8 @@ class Account extends AbstractGuidEntity
     protected $displayname;
     /** @var boolean */
     protected $enabled;
+    /** @var boolean */
+    protected $verified;
     /** @var array */
     protected $roles;
 
@@ -138,6 +140,22 @@ class Account extends AbstractGuidEntity
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVerified()
+    {
+        return $this->verified;
+    }
+
+    /**
+     * @param boolean $verified
+     */
+    public function setVerified($verified)
+    {
+        $this->verified = $verified;
     }
 
     /**
