@@ -215,9 +215,10 @@ class Functions extends \Twig_Extension
      */
     public function renderLogin($template = null)
     {
+        $context = ['transitional' => $this->session->isTransitional()];
         $template = $template ?: $this->config->getTemplates('authentication', 'login');
         $form = $this->formManager->getFormLogin(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template);
+        $html = $this->formManager->renderForms($form, $template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -267,9 +268,10 @@ class Functions extends \Twig_Extension
      */
     public function renderRegister($template = null)
     {
+        $context = ['transitional' => $this->session->isTransitional()];
         $template = $template ?: $this->config->getTemplates('profile', 'register');
         $form = $this->formManager->getFormProfileRegister(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template);
+        $html = $this->formManager->renderForms($form, $template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
     }
