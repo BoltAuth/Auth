@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
+use Bolt\Extension\Bolt\Members\EventListener;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
@@ -54,6 +55,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerForms($app);
         $this->registerOauthHandlers($app);
         $this->registerOauthProviders($app);
+        $this->registerEventListeners($app);
 
         $app['members.meta_fields'] = [];
 
@@ -454,6 +456,20 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     'local'     => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Local',
                     'microsoft' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Microsoft',
                 ];
+            }
+        );
+    }
+
+    private function registerEventListeners(Application $app)
+    {
+        $app['members.listener.profile'] = $app->share(
+            function ($app) {
+                return new EventListener\ProfileListener(
+                    $app['members.config'],
+                    $app['twig'],
+                    $app['mailer'],
+                    $app['resources']->getUrl('rooturl')
+                );
             }
         );
     }

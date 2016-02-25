@@ -55,7 +55,10 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $app['dispatcher']->addSubscriber($app['members.feedback']);
         $app['dispatcher']->addSubscriber($app['members.roles']);
         $app['dispatcher']->addSubscriber($app['members.session']);
+        $app['dispatcher']->addSubscriber($app['members.listener.profile']);
+
         $app['dispatcher']->dispatch(MembersEvents::MEMBER_ROLE, new MembersRolesEvent());
+
         $this->container = $app;
     }
 
