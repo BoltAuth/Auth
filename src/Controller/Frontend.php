@@ -56,6 +56,16 @@ class Frontend implements ControllerProviderInterface
             ->method('GET|POST')
         ;
 
+        // Own the rest of the base route
+        $ctr->match('/', [$this, 'defaultRoute'])
+            ->bind('membersDefaultBase')
+        ;
+
+        $ctr->match('/{url}', [$this, 'defaultRoute'])
+            ->bind('membersDefault')
+            ->assert('url', '.+')
+        ;
+
         $ctr->after([$this, 'after']);
 
         return $ctr;
@@ -86,6 +96,23 @@ class Frontend implements ControllerProviderInterface
         }
 
         $request->attributes->set('members-cookies', 'set');
+    }
+
+    /**
+     * Default catch-all route.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return RedirectResponse
+     */
+    public function defaultRoute(Application $app, Request $request)
+    {
+        if ($app['members.session']->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        }
+
+        return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
     }
 
     /**

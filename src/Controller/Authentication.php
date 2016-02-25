@@ -73,7 +73,18 @@ class Authentication implements ControllerProviderInterface
         // OAuth callback URI
         $ctr->match('/oauth2/callback', [$this, 'oauthCallback'])
             ->bind('authenticationCallback')
-            ->method('GET');
+            ->method('GET')
+        ;
+
+        // Own the rest of the base route
+        $ctr->match('/', [$this, 'defaultRoute'])
+            ->bind('authenticationDefaultBase')
+        ;
+
+        $ctr->match('/{url}', [$this, 'defaultRoute'])
+            ->bind('authenticationDefault')
+            ->assert('url', '.+')
+        ;
 
         $ctr
             ->after([$this, 'after'])
@@ -105,6 +116,23 @@ class Authentication implements ControllerProviderInterface
         }
 
         $request->attributes->set('members-cookies', 'set');
+    }
+
+    /**
+     * Default catch-all route.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return RedirectResponse
+     */
+    public function defaultRoute(Application $app, Request $request)
+    {
+        if ($app['members.session']->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        }
+
+        return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
     }
 
     /**
@@ -316,7 +344,7 @@ class Authentication implements ControllerProviderInterface
      *
      * @return \Twig_Markup
      */
-    public function displayExceptionPage(Application $app, \Exception $e)
+    private function displayExceptionPage(Application $app, \Exception $e)
     {
         $ext = $app['extensions']->get('Bolt/Members');
         $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
