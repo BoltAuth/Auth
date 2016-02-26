@@ -36,6 +36,7 @@ class ProfileRegisterType extends AbstractType
      *
      * @param Config  $config
      * @param Records $records
+     * @param Session $session
      */
     public function __construct(Config $config, Records $records, Session $session)
     {
