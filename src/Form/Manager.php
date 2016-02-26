@@ -150,6 +150,29 @@ class Manager
     }
 
     /**
+     * Return the resolved profile password reset form.
+     *
+     * @param Request $request
+     * @param bool    $includeParent
+     *
+     * @return ResolvedForm
+     */
+    public function getFormProfilePasswordReset(Request $request, $includeParent = true)
+    {
+        /** @var ProfilePasswordResetForm $baseForm */
+        $baseForm = $this->forms['form']['profile_password_reset'];
+        $form = $baseForm
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+        $extraContext = [
+            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
+        ];
+
+        return new ResolvedForm([$form], $extraContext);
+    }
+
+    /**
      * Return the resolved registration form.
      *
      * @param Request $request
