@@ -12,6 +12,8 @@ use Bolt\Extension\Bolt\Members\Storage\Records;
  */
 class Verification
 {
+    const KEY_NAME = 'account-verification-key';
+
     /** @var boolean */
     protected $success = false;
     /** @var string */
@@ -71,7 +73,7 @@ class Verification
         }
 
         // Get the verification key meta entity
-        $metaEntities = $this->records->getAccountMetaValues('account-verification-key', $code);
+        $metaEntities = $this->records->getAccountMetaValues(self::KEY_NAME, $code);
         if ($metaEntities === false) {
             $this->message = 'Expired meta code';
 

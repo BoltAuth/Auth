@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\AccessControl\Verification;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
@@ -163,18 +164,17 @@ class ProfileRegisterForm extends BaseProfile
 
     protected function createAccountVerificationKey(Storage\Records $records, MembersProfileEvent $event)
     {
-        $metaName = 'account-verification-key';
         $metaValue = sha1(Uuid::uuid4()->toString());
 
         // Set the email verification key in the account meta
         $meta = new Storage\Entity\AccountMeta();
         $meta->setGuid($this->guid);
-        $meta->setMeta($metaName);
+        $meta->setMeta(Verification::KEY_NAME);
         $meta->setValue($metaValue);
 
         $records->saveAccountMeta($meta);
 
-        $event->addMetaFieldNames([$metaName => $metaValue]);
+        $event->addMetaFieldNames([Verification::KEY_NAME => $metaValue]);
     }
 
     /**

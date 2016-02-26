@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\EventListener;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Verification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
@@ -64,7 +65,7 @@ class ProfileListener implements EventSubscriberInterface
     private function getRegisterHtml(MembersProfileEvent $event)
     {
         $meta = $event->getMetaFieldNames();
-        $query = http_build_query(['code' => $meta['account-verification-key']]);
+        $query = http_build_query(['code' => $meta[Verification::KEY_NAME]]);
         $context = [
             'name'  => $event->getAccount()->getDisplayname(),
             'email' => $event->getAccount()->getEmail(),
