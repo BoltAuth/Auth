@@ -48,7 +48,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
             'address_country',
             'phone_number',
         ];
-        $event->setMetaFields($fields);
+        $event->addMetaFieldNames($fields);
     }
 ```
 

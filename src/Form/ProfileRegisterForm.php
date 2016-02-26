@@ -174,7 +174,7 @@ class ProfileRegisterForm extends BaseProfile
 
         $records->saveAccountMeta($meta);
 
-        $event->setMetaFields([$metaName => $metaValue]);
+        $event->addMetaFieldNames([$metaName => $metaValue]);
     }
 
     /**

@@ -93,7 +93,7 @@ class ProfileEditForm extends BaseProfile
         }
 
         // Save any defined meta fields
-        foreach ($event->getMetaFields() as $metaField) {
+        foreach ($event->getMetaFieldNames() as $metaField) {
             $metaEntity = $records->getAccountMeta($this->guid, $metaField);
             if ($metaEntity === false) {
                 $metaEntity = new Storage\Entity\AccountMeta();
@@ -102,6 +102,7 @@ class ProfileEditForm extends BaseProfile
             $metaEntity->setMeta($metaField);
             $metaEntity->setValue($this->form->get($metaField)->getData());
             $records->saveAccountMeta($metaEntity);
+            $event->addMetaField($metaField, $metaEntity);
         }
 
         // Dispatch the account profile post-save event

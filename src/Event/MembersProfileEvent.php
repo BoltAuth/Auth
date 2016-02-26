@@ -18,8 +18,10 @@ class MembersProfileEvent extends Event
 {
     /** @var Entity\Account */
     protected $account;
-    /** @var array */
+    /** @var Entity\AccountMeta */
     protected $metaFields;
+    /** @var array */
+    protected $metaFieldNames;
 
     /**
      * Constructor.
@@ -32,6 +34,8 @@ class MembersProfileEvent extends Event
     }
 
     /**
+     * Return the account entity.
+     *
      * @return Entity\Account
      */
     public function getAccount()
@@ -40,24 +44,57 @@ class MembersProfileEvent extends Event
     }
 
     /**
-     * @return array
+     * Return the saved meta field entities. Only available on post-save.
+     *
+     * @return Entity\AccountMeta
      */
     public function getMetaFields()
     {
-        return (array) $this->metaFields;
+        return $this->metaFields;
     }
 
     /**
-     * @param array $metaFields
+     * Add a meta field entity to the event.
+     *
+     * @internal
+     *
+     * @param string             $fieldName
+     * @param Entity\AccountMeta $metaField
      *
      * @return MembersProfileEvent
      */
-    public function setMetaFields(array $metaFields)
+    public function addMetaField($fieldName, Entity\AccountMeta $metaField)
     {
-        if ($this->metaFields === null) {
-            $this->metaFields = $metaFields;
+        $this->metaFields[$fieldName] = $metaField;
+
+        return $this;
+    }
+
+    /**
+     * Return the meta field name array.
+     *
+     * @internal
+     *
+     * @return array
+     */
+    public function getMetaFieldNames()
+    {
+        return (array) $this->metaFieldNames;
+    }
+
+    /**
+     * Add an array of field names to be used as meta fields.
+     *
+     * @param array $metaFieldNames
+     *
+     * @return MembersProfileEvent
+     */
+    public function addMetaFieldNames(array $metaFieldNames)
+    {
+        if ($this->metaFieldNames === null) {
+            $this->metaFieldNames = $metaFieldNames;
         } else {
-            $this->metaFields = array_merge($this->metaFields, $metaFields);
+            $this->metaFieldNames = array_merge($this->metaFieldNames, $metaFieldNames);
         }
 
         return $this;
