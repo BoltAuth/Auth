@@ -58,6 +58,7 @@ class ProfileRegisterType extends AbstractType
         } else {
             $passwordConstraints = [];
         }
+
         $builder
             ->add(
                 'displayname',
@@ -93,7 +94,7 @@ class ProfileRegisterType extends AbstractType
                 ]
             )
             ->add(
-                'plainPassword',
+                'password',
                 RepeatedType::class,
                 [
                     'type'           => PasswordType::class,
