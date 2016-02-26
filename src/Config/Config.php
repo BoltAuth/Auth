@@ -424,6 +424,7 @@ class Config
                     'parent'   => 'members.twig',
                     'edit'     => '_edit.twig',
                     'register' => '_register.twig',
+                    'verify'   => '_verify.twig',
                     'view'     => '_view.twig',
                 ],
                 'authentication' => [

@@ -14,6 +14,7 @@ debug: false
 #        parent: members.twig
 #        associate: _register.twig
 #        edit: _edit.twig
+#        verify: _verify.twig
 #        view: _view.twig
 #    authentication:
 #        parent: login.twig
