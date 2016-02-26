@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\AccessControl\Verification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Bolt\Extension\Bolt\Members\Form;
@@ -210,32 +211,20 @@ class Frontend implements ControllerProviderInterface
      */
     public function verifyProfile(Application $app, Request $request)
     {
-        // Get the verification code
-        $code = $request->query->get('code');
-        if (strlen($code) !== 40) {
-            throw new InvalidAuthorisationRequestException('Invalid code');
-        }
+        // Check the verification code
+        $verification = new Verification($app['members.records']);
+        $verification->validateCode($request->query->get('code'));
 
-        // Get the verification key meta entity
-        $metaEntities = $app['members.records']->getAccountMetaValues('account-verification-key', $code);
-        if ($metaEntities === false) {
-            throw new InvalidAuthorisationRequestException('No meta code');
-        }
-        /** @var Storage\Entity\AccountMeta $metaEntity */
-        $metaEntity = reset($metaEntities);
-        $guid = $metaEntity->getGuid();
+        $context = [
+            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+            'code'       => $verification->getCode(),
+            'success'    => $verification->isSuccess(),
+            'message'    => $verification->getMessage(),
+        ];
 
-        // Get the account and set it as verified
-        $account = $app['members.records']->getAccountByGuid($guid);
-        if ($account === false) {
-            throw new InvalidAuthorisationRequestException('No account');
-        }
-        $account->setVerified(true);
-        $app['members.records']->saveAccount($account);
+        $template = $this->config->getTemplates('profile', 'verify');
+        $html = $app['twig']->render($template, $context);
 
-        // Remove meta record
-        $app['members.records']->deleteAccountMeta($metaEntity);
-
-        return 'Success';
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
 }

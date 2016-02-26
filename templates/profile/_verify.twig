@@ -1,0 +1,29 @@
+{#
+ # Passed in variables:
+ #   * success — True or false
+ #   * message — Message from validator
+ #   * code    — The request code
+ #}
+{% extends twigparent %}
+
+{% block members %}
+    <div class="row">
+        <h4>Account Verification</h4>
+    </div>
+
+    <div class="row verify">
+
+        <div class="small-12 columns">
+
+            {% if success %}
+                <p>Your account has been successfully verified!</p>
+            {% else %}
+                <p>Account verification code is invalid!</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% include 'feedback.twig' %}
+{% endblock %}
