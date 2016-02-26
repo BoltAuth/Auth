@@ -29,7 +29,7 @@ abstract class BaseProfile extends AbstractForm
      */
     protected function createLocalOauthAccount(Storage\Records $records)
     {
-        $encryptedPassword = password_hash($this->form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
+        $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
         $oauth = new Storage\Entity\Oauth();
         $oauth->setGuid($this->guid);
         $oauth->setResourceOwnerId($this->guid);

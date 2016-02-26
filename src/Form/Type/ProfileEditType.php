@@ -62,7 +62,7 @@ class ProfileEditType extends AbstractType
                 ]
             )
             ->add(
-                'plainPassword',
+                'password',
                 RepeatedType::class,
                 [
                     'type'           => PasswordType::class,

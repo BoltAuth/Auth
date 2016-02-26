@@ -39,7 +39,7 @@ class ProfilePasswordResetForm extends AbstractForm
         /** @var Storage\Entity\Oauth $oauth */
         $oauth = $records->getOauthByGuid($this->guid);
         if ($oauth !== false) {
-            $encryptedPassword = password_hash($this->form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
+            $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
             $oauth->setPassword($encryptedPassword);
             $records->saveOauth($oauth);
         }

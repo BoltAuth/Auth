@@ -21,10 +21,10 @@
             {{ form_row(form_register.email) }}
 
             {% if transitional %}
-                {% do form_register.plainPassword.setRendered %}
+                {% do form_register.password.setRendered %}
             {% else %}
-                {{ form_row(form_register.plainPassword.first) }}
-                {{ form_row(form_register.plainPassword.second) }}
+                {{ form_row(form_register.password.first) }}
+                {{ form_row(form_register.password.second) }}
             {% endif %}
 
                 <br>

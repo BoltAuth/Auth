@@ -111,7 +111,7 @@ class ProfileRegisterForm extends BaseProfile
         $this->createAccountVerificationKey($records, $event);
 
         // Create a local OAuth account record
-        if ($this->form->get('plainPassword')->getData()) {
+        if ($this->form->get('password')->getData()) {
             $this->createLocalOauthAccount($records);
             $provider = $this->createLocalProvider($records);
         }

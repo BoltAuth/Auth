@@ -85,8 +85,8 @@ class ProfileEditForm extends BaseProfile
 
         $records->saveAccount($this->account);
 
-        if ($this->form->get('plainPassword')->getData() !== null) {
-            $encryptedPassword = password_hash($this->form->get('plainPassword')->getData(), PASSWORD_BCRYPT);
+        if ($this->form->get('password')->getData() !== null) {
+            $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
             $oauth = $this->getOauth($records);
             $oauth->setPassword($encryptedPassword);
             $records->saveOauth($oauth);
