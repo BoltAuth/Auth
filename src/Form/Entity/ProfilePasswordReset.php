@@ -13,4 +13,48 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  */
 class ProfilePasswordReset implements EntityInterface
 {
+    /** string */
+    protected $email;
+    /** string */
+    protected $password;
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return ProfileRegister
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $password
+     *
+     * @return ProfilePasswordReset
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
 }
