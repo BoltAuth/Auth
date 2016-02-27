@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\Bolt\Members\AccessControl\Validator;
 
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
