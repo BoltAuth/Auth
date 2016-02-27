@@ -433,6 +433,7 @@ class Config
                     'associate' => '_associate.twig',
                     'login'     => '_login.twig',
                     'logout'    => '_logout.twig',
+                    'recovery'  => '_recovery.twig',
                 ],
                 'error'          => [
                     'parent' => 'members_error.twig',

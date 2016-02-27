@@ -21,7 +21,7 @@ debug: false
 #        associate: _associate.twig
 #        login: _login.twig
 #        logout: _logout.twig
-#        password: _password.twig
+#        recovery: _recovery.twig
 #        feedback: _feedback.twig
 #    error:
 #        parent: members_error.twig
