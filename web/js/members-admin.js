@@ -82,20 +82,35 @@ var MembersAdmin = Object.extend(
                 }
             );
 
+            if (selected_members.length === 0) {
+                swal({title: "Nothing Selected!", text: "You need to choose at least one member.", type: "warning"});
+                return;
+            }
+
             console.debug("Deleting user(s): " + selected_members);
 
-            $.post(baseurl + '/userDel', {members: selected_members}, function(selected_members) {})
-                .done(
-                    function() {
-                        swal({title: "", text: "Feature coming soon!", type: "info"});
-                        //                location.reload(true);
-                    }
-                )
-                .fail(
-                    function() {
-                        swal({title: "Error!", text: "The server returned an error.", type: "error"});
-                    }
-                )
+            swal({
+                title: "Confim deletion",
+                text: "Are you sure you want to delete these accounts?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes!",
+                closeOnConfirm: false },
+                function(){
+                    $.post(baseurl + '/userDelete', {members: selected_members}, function(selected_members) {})
+                        .done(
+                            function() {
+                                location.reload(true);
+                            }
+                        )
+                        .fail(
+                            function() {
+                                swal({title: "Error!", text: "The server returned an error.", type: "error"});
+                            }
+                        )
+                }
+            );
         },
 
         doUserEnable: function(e) {
@@ -108,8 +123,8 @@ var MembersAdmin = Object.extend(
                 }
             );
 
-            if (selected_members == []) {
-                swal({title: "Nothing Selected!", text: "You need to chose a member.", type: "warning"});
+            if (selected_members.length === 0) {
+                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
                 return;
             }
 
@@ -139,7 +154,7 @@ var MembersAdmin = Object.extend(
             );
 
             if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to chose a member.", type: "warning"});
+                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
                 return;
             }
 
@@ -170,12 +185,12 @@ var MembersAdmin = Object.extend(
             );
 
             if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to chose a member.", type: "warning"});
+                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
                 return;
             }
 
             if (selected_role == '') {
-                swal({title: "Nothing Selected!", text: "You need to chose a role.", type: "warning"});
+                swal({title: "Nothing Selected!", text: "You need to choose a role.", type: "warning"});
                 return;
             }
 
@@ -217,12 +232,12 @@ var MembersAdmin = Object.extend(
             );
 
             if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to chose a member.", type: "warning"});
+                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
                 return;
             }
 
             if (selected_role == '') {
-                swal({title: "Nothing Selected!", text: "You need to chose a role.", type: "warning"});
+                swal({title: "Nothing Selected!", text: "You need to choose a role.", type: "warning"});
                 return;
             }
 
