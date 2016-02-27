@@ -1,3 +1,12 @@
+{#
+ # Passed in variables:
+ #   * stage — The stage of the workflow, either
+ #             email     — Form to enter the account email address
+ #             submitted — After the email address has been submitted
+ #             password  — Form to enter *new* password
+ #             reset     — After the new password has been saved to the database
+ #   * link  — Relative URL to the login page
+ #}
 {% extends twigparent %}
 
 {% block recovery %}
