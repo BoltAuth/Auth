@@ -1,0 +1,45 @@
+{% extends twigparent %}
+
+{% block recovery %}
+    {% include "feedback.twig" %}
+
+    <div class="logout">
+        <div class="row member-logout">
+            {%  if stage == 'email' %}
+                {{ _self.recovery_start(form_profile_recovery) }}
+            {% elseif stage == 'email' %}
+                {{ _self.recovery_finish(form_profile_recovery) }}
+            {% elseif stage == 'submitted' %}
+                <p>An email has been send to {{ email }}. Please follow the instructions to complete the process.</p>
+            {% elseif stage == 'reset' %}
+                <p>Password reset!</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock recovery %}
+
+{% macro recovery_start(form_profile_recovery) %}
+    <p>Enter the email address associated with your account:</p>
+
+    {{ form_start(form_profile_recovery) }}
+
+    {{ form_row(form_profile_recovery.email) }}
+    {% do form_profile_recovery.password.setRendered %}
+
+    {{ form_row(form_profile_recovery.submit, {'label': 'Submit »'}) }}
+
+    {{ form_end(form_profile_recovery) }}
+{% endmacro %}
+
+{% macro recovery_finish(form_profile_recovery) %}
+    <p>Enter a new password for your account</p>
+
+    {{ form_start(form_profile_recovery) }}
+
+    {% do form_profile_recovery.email.setRendered %}
+    {{ form_row(form_profile_recovery.password) }}
+
+    {{ form_row(form_profile_recovery.submit, {'label': 'Continue »'}) }}
+
+    {{ form_end(form_profile_recovery) }}
+{% endmacro %}
