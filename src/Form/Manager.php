@@ -150,17 +150,17 @@ class Manager
     }
 
     /**
-     * Return the resolved profile password reset form.
+     * Return the resolved profile account recovery form.
      *
      * @param Request $request
      * @param bool    $includeParent
      *
      * @return ResolvedForm
      */
-    public function getFormProfilePasswordReset(Request $request, $includeParent = true)
+    public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
-        /** @var ProfilePasswordReset $baseForm */
-        $baseForm = $this->forms['form']['profile_password_reset'];
+        /** @var ProfileRecovery $baseForm */
+        $baseForm = $this->forms['form']['profile_recovery'];
         $form = $baseForm
             ->createForm($this->records)
             ->handleRequest($request)

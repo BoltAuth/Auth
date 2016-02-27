@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfilePasswordReset extends AbstractForm
+class ProfileRecovery extends AbstractForm
 {
     /** @var string */
     protected $guid;

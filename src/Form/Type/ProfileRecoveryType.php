@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfilePasswordResetType extends AbstractType
+class ProfileRecoveryType extends AbstractType
 {
     /** @var boolean */
     protected $requirePassword = true;
@@ -88,7 +88,7 @@ class ProfilePasswordResetType extends AbstractType
 
     public function getName()
     {
-        return 'password_reset';
+        return 'profile_recovery';
     }
 
     /**
