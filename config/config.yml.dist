@@ -21,12 +21,14 @@ debug: false
 #        associate: _associate.twig
 #        login: _login.twig
 #        logout: _logout.twig
-#        recovery: _recovery.twig
 #        feedback: _feedback.twig
 #    error:
 #        parent: members_error.twig
 #        error: _members_error.twig
 #    verification:
+#        subject: subject.twig
+#        body: body.twig
+#    recovery:
 #        subject: subject.twig
 #        body: body.twig
 
@@ -59,7 +61,7 @@ addons:
 registration:
     enabled: true                        # If registration should be allowed [true|false]
 
-## Nofification email addresses
+## Notification email addresses
 notification:
     name: Site Admin              # Display name used as the sender name
     email: no-reply@example.com   # Email address as the sender address

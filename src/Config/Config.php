@@ -487,6 +487,10 @@ class Config
                     'parent' => 'members_error.twig',
                     'error'  => '_members_error.twig',
                 ],
+                'recovery'   => [
+                    'subject' => 'recovery/subject.twig',
+                    'body'    => 'recovery/body.twig',
+                ],
                 'verification'   => [
                     'subject' => 'registration/subject.twig',
                     'body'    => 'registration/body.twig',
