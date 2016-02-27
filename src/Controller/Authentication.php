@@ -2,11 +2,19 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
+use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
+use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
+use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Exception;
+use Bolt\Extension\Bolt\Members\Form\Entity;
+use Bolt\Extension\Bolt\Members\Form\Manager;
+use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
+use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
@@ -74,6 +82,11 @@ class Authentication implements ControllerProviderInterface
         $ctr->match('/oauth2/callback', [$this, 'oauthCallback'])
             ->bind('authenticationCallback')
             ->method('GET')
+        ;
+
+        $ctr->match('/reset', [$this, 'resetPassword'])
+            ->bind('authenticationPasswordReset')
+            ->method('GET|POST')
         ;
 
         // Own the rest of the base route
@@ -264,6 +277,149 @@ class Authentication implements ControllerProviderInterface
         $app['members.session']->clearRedirects();
 
         return $response;
+    }
+
+    /**
+     * Password reset route.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return RedirectResponse|Response
+     */
+    public function resetPassword(Application $app, Request $request)
+    {
+        if ($app['members.session']->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        }
+        /** @var Manager $formsManager */
+        $formsManager = $app['members.forms.manager'];
+        /** @var Type\ProfileRecoveryType $profileFormType */
+        $resetFormType = $app['members.form.components']['type']['profile_recovery'];
+        $response = new Response();
+        $context = ['stage' => null, 'email' => null, 'link' => $app['url_generator']->generate('authenticationLogin')];
+
+        if ($request->query->has('code')) {
+            /*
+             * Process reset request
+             */
+            $resetFormType->setRequirePassword(true);
+            $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
+            $form = $resolvedForm->getForm('form_profile_recovery');
+
+            /** @var PasswordReset $passwordReset */
+            $passwordReset = $app['session']->get(PasswordReset::COOKIE_NAME);
+            if ($passwordReset && $passwordReset->validate($request)) {
+                $guid = $passwordReset->getGuid();
+                $oauth = $app['members.records']->getOauthByGuid($guid);
+
+                $context['stage'] = 'password';
+
+                if ($form->isValid()) {
+                    // Password reset on an account that was registered via OAuth, sans a password
+                    if ($oauth === false) {
+                        $oauth = new Storage\Entity\Oauth();
+                        $oauth->setGuid($guid);
+                        $oauth->setResourceOwnerId($guid);
+                        $oauth->setEnabled(true);
+                    }
+
+                    // Reset password
+                    $encryptedPassword = password_hash($form->get('password')->getData(), PASSWORD_BCRYPT);
+                    $oauth->setPassword($encryptedPassword);
+
+                    $app['members.records']->saveOauth($oauth);
+                    $context['stage'] = 'reset';
+                    $app['session']->remove(PasswordReset::COOKIE_NAME);
+                }
+            } else {
+                $context['stage'] = 'invalid';
+            }
+        } else {
+            /*
+             * Handle new request
+             */
+            $resetFormType->setRequirePassword(false);
+            $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
+            $form = $resolvedForm->getForm('form_profile_recovery');
+            $context['stage'] = 'email';
+
+            if ($form->isValid()) {
+                $email = $form->get('email')->getData();
+                $account = $app['members.records']->getAccountByEmail($email);
+                $context['email'] = $email;
+                if ($account !== false) {
+                    // Create and store the password reset in the session
+                    $passwordReset = (new PasswordReset())
+                        ->setGuid($account->getGuid())
+                        ->setCookieValue()
+                        ->setQueryCode()
+                    ;
+                    $app['session']->set(PasswordReset::COOKIE_NAME, $passwordReset);
+
+                    // Add cookie to response
+                    $cookie = new Cookie(PasswordReset::COOKIE_NAME, $passwordReset->getCookieValue(), Carbon::now()->addHour(1));
+                    $response->headers->setCookie($cookie);
+
+                    /** @var \Swift_Mailer $mailer */
+                    $mailer = $app['mailer'];
+                    $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
+                    $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
+
+                    $message = $mailer->createMessage('message')
+                        ->setSubject($app['twig']->render($this->config->getTemplates('recovery', 'subject')))
+                        ->setBody(strip_tags($mailHtml))
+                        ->addPart($mailHtml, 'text/html')
+                    ;
+                    try {
+                        $message
+                            ->setFrom($from)
+                            ->setReplyTo($from)
+                            ->setTo($email)
+                        ;
+                        $failedRecipients = [];
+
+                        // Dispatch an event
+                        $event = new MembersNotificationEvent($message);
+                        $app['dispatcher']->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
+
+                        $mailer->send($message, $failedRecipients);
+                    } catch (\Swift_RfcComplianceException $e) {
+                        // Dispatch an event
+                        $event = new MembersNotificationFailureEvent($message, $e);
+                        $app['dispatcher']->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+                    }
+                }
+                $context['stage'] = 'submitted';
+            }
+        }
+
+        $template = $this->config->getTemplates('authentication', 'recovery');
+        $html = $formsManager->renderForms($resolvedForm, $template, $context);
+        $response->setContent(new \Twig_Markup($html, 'UTF-8'));
+
+        return $response;
+    }
+
+    /**
+     * @param Storage\Entity\Account $account
+     * @param PasswordReset          $passwordReset
+     * @param \Twig_Environment      $twig
+     * @param string                 $siteUrl
+     *
+     * @return string
+     */
+    private function getResetHtml(Storage\Entity\Account $account, PasswordReset $passwordReset, \Twig_Environment $twig, $siteUrl)
+    {
+        $query = http_build_query(['code' => $passwordReset->getQueryCode()]);
+        $context = [
+            'name'  => $account->getDisplayname(),
+            'email' => $account->getEmail(),
+            'link'  => sprintf('%s%s/profile/verify?%s', $siteUrl, $this->config->getUrlMembers(), $query),
+        ];
+        $mailHtml = $twig->render($this->config->getTemplates('recovery', 'body'), $context);
+
+        return $mailHtml;
     }
 
     /**
