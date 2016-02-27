@@ -134,7 +134,7 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        /** @var ProfileEditForm $baseForm */
+        /** @var ProfileEdit $baseForm */
         $baseForm = $this->forms['form']['profile_edit'];
         $form = $baseForm
             ->setGuid($guid)
@@ -159,7 +159,7 @@ class Manager
      */
     public function getFormProfilePasswordReset(Request $request, $includeParent = true)
     {
-        /** @var ProfilePasswordResetForm $baseForm */
+        /** @var ProfilePasswordReset $baseForm */
         $baseForm = $this->forms['form']['profile_password_reset'];
         $form = $baseForm
             ->createForm($this->records)
@@ -245,7 +245,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var ProfileRegisterForm $baseForm */
+        /** @var ProfileRegister $baseForm */
         $baseForm = $this->forms['form']['profile_register'];
         $formRegister = $baseForm
             ->setClientIp($request->getClientIp())

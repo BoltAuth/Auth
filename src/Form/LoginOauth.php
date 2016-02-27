@@ -18,7 +18,7 @@ class LoginOauth extends AbstractForm
 {
     /** @var Type\LoginOauthType */
     protected $type;
-    /** @var Entity\LoginOauth */
+    /** @var Entity\Profile */
     protected $entity;
 
     /**

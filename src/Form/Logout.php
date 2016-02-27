@@ -18,7 +18,7 @@ class Logout extends AbstractForm
 {
     /** @var Type\LogoutType */
     protected $type;
-    /** @var Entity\Logout */
+    /** @var Entity\Profile */
     protected $entity;
 
     /**

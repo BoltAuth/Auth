@@ -18,7 +18,7 @@ class Associate extends AbstractForm
 {
     /** @var Type\AssociateType */
     protected $type;
-    /** @var Entity\Associate */
+    /** @var Entity\Profile */
     protected $entity;
 
     /**

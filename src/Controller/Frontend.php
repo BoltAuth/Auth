@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\AccessControl\Verification;
 use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage;
@@ -154,7 +153,7 @@ class Frontend implements ControllerProviderInterface
 
         // Handle the form request data
         if ($resolvedForm->getForm('form_profile')->isValid()) {
-            /** @var Form\ProfileEditForm $profileForm */
+            /** @var Form\ProfileEdit $profileForm */
             $profileForm = $app['members.form.profile_edit'];
             $profileForm->saveForm($app['members.records'], $app['dispatcher']);
         }
@@ -182,7 +181,7 @@ class Frontend implements ControllerProviderInterface
         // Handle the form request data
         if ($resolvedForm->getForm('form_register')->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            /** @var Form\ProfileRegisterForm $registerForm */
+            /** @var Form\ProfileRegister $registerForm */
             $registerForm = $app['members.form.profile_register'];
             $registerForm
                 ->setProvider($app['members.oauth.provider'])

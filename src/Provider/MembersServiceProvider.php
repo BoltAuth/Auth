@@ -317,7 +317,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.form.profile_edit'] = $app->share(
             function ($app) {
-                return new Form\ProfileEditForm(
+                return new Form\ProfileEdit(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_edit'],
                     $app['members.form.components']['entity']['profile']
@@ -327,7 +327,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.form.profile_password_reset'] = $app->share(
             function ($app) {
-                return new Form\ProfilePasswordResetForm(
+                return new Form\ProfilePasswordReset(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_password_reset'],
                     $app['members.form.components']['entity']['profile']
@@ -337,7 +337,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.form.profile_register'] = $app->share(
             function ($app) {
-                return new Form\ProfileRegisterForm(
+                return new Form\ProfileRegister(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_register'],
                     $app['members.form.components']['entity']['profile']

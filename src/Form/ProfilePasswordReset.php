@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfilePasswordResetForm extends AbstractForm
+class ProfilePasswordReset extends AbstractForm
 {
     /** @var string */
     protected $guid;
@@ -22,7 +22,7 @@ class ProfilePasswordResetForm extends AbstractForm
     /**
      * @param string $guid
      *
-     * @return ProfileEditForm
+     * @return ProfileEdit
      */
     public function setGuid($guid)
     {

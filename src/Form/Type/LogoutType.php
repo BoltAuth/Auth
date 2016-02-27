@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\FormBuilderInterface;

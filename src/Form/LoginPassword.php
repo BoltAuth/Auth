@@ -19,7 +19,7 @@ class LoginPassword extends AbstractForm
 {
     /** @var Type\LoginPasswordType */
     protected $type;
-    /** @var Entity\LoginPassword */
+    /** @var Entity\Profile */
     protected $entity;
     /** @var Request */
     protected $request;
