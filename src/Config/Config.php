@@ -37,6 +37,10 @@ class Config
     protected $urlAuthenticate;
     /** @var string */
     protected $urlMembers;
+    /** @var string */
+    protected $notificationName;
+    /** @var string */
+    protected $notificationEmail;
 
     /**
      * Constructor.
@@ -59,6 +63,8 @@ class Config
         $this->templates = $config['templates'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
+        $this->notificationName = $config['notification']['name'];
+        $this->notificationEmail = $config['notification']['email'];
 
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[strtolower($name)] = new Provider($name, $provider);
@@ -379,6 +385,46 @@ class Config
     }
 
     /**
+     * @return string
+     */
+    public function getNotificationName()
+    {
+        return $this->notificationName;
+    }
+
+    /**
+     * @param string $notificationName
+     *
+     * @return Config
+     */
+    public function setNotificationName($notificationName)
+    {
+        $this->notificationName = $notificationName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotificationEmail()
+    {
+        return $this->notificationEmail;
+    }
+
+    /**
+     * @param string $notificationEmail
+     *
+     * @return Config
+     */
+    public function setNotificationEmail($notificationEmail)
+    {
+        $this->notificationEmail = $notificationEmail;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getDefaultConfig()
@@ -405,8 +451,10 @@ class Config
             ],
             'registration' => [
                 'enabled'      => true,
-                'verify_name'  => null,
-                'verify_email' => null,
+            ],
+            'notification' => [
+                'name'  => null,
+                'email' => null,
             ],
             'roles'        => [
                 'admin'  => [

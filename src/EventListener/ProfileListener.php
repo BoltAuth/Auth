@@ -39,24 +39,27 @@ class ProfileListener implements EventSubscriberInterface
 
     public function onProfileRegister(MembersProfileEvent $event)
     {
-        $registration = $this->config->getRegistration();
-        $from = [(string) $registration['verify_email'] => $registration['verify_name']];
+        $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
         $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
         $subject = $this->twig->render($this->config->getTemplates('verification', 'subject'));
         $mailHtml = $this->getRegisterHtml($event);
 
-        $message = $this->mailer
-            ->createMessage('message')
-            ->setSubject($subject)
-            ->setFrom($from)
-            ->setReplyTo($from)
-            ->setTo($email)
-            ->setBody(strip_tags($mailHtml))
-            ->addPart($mailHtml, 'text/html')
-        ;
-        $failedRecipients = [];
+        try {
+            $message = $this->mailer
+                ->createMessage('message')
+                ->setSubject($subject)
+                ->setFrom($from)
+                ->setReplyTo($from)
+                ->setTo($email)
+                ->setBody(strip_tags($mailHtml))
+                ->addPart($mailHtml, 'text/html')
+            ;
+            $failedRecipients = [];
 
-        $this->mailer->send($message, $failedRecipients);
+            $this->mailer->send($message, $failedRecipients);
+        } catch (\Swift_RfcComplianceException $e) {
+            // Email not configured
+        }
     }
 
     /**

@@ -58,8 +58,11 @@ addons:
 #
 registration:
     enabled: true                        # If registration should be allowed [true|false]
-    verify_name: Site Admin              # Display name used as the sender name
-    verify_email: no-reply@example.com   # Email address as the sender address
+
+## Nofification email addresses
+notification:
+    name: Site Admin              # Display name used as the sender name
+    email: no-reply@example.com   # Email address as the sender address
 
 # Base URLs
 urls:
