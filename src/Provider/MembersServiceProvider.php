@@ -255,13 +255,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $entity = new Container(
                     [
                         // @codingStandardsIgnoreStart
-                        'associate'              => $app->share(function () use ($app) { return new Form\Entity\Associate(); }),
-                        'login_oauth'            => $app->share(function () use ($app) { return new Form\Entity\LoginOauth(); }),
-                        'login_password'         => $app->share(function () use ($app) { return new Form\Entity\LoginPassword(); }),
-                        'logout'                 => $app->share(function () use ($app) { return new Form\Entity\Logout(); }),
-                        'profile_edit'           => $app->share(function () use ($app) { return new Form\Entity\ProfileEdit($app['members.records']); }),
-                        'profile_password_reset' => $app->share(function () use ($app) { return new Form\Entity\ProfilePasswordReset(); }),
-                        'profile_register'       => $app->share(function () use ($app) { return new Form\Entity\ProfileRegister(); }),
+                        'profile' => $app->share(function () use ($app) { return new Form\Entity\Profile(); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );
@@ -286,7 +280,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\Associate(
                     $app['form.factory'],
                     $app['members.form.components']['type']['associate'],
-                    $app['members.form.components']['entity']['associate']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -296,7 +290,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\LoginOauth(
                     $app['form.factory'],
                     $app['members.form.components']['type']['login_oauth'],
-                    $app['members.form.components']['entity']['login_oauth']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -306,7 +300,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\LoginPassword(
                     $app['form.factory'],
                     $app['members.form.components']['type']['login_password'],
-                    $app['members.form.components']['entity']['login_password']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -316,7 +310,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\Logout(
                     $app['form.factory'],
                     $app['members.form.components']['type']['logout'],
-                    $app['members.form.components']['entity']['logout']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -326,7 +320,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\ProfileEditForm(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_edit'],
-                    $app['members.form.components']['entity']['profile_edit']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -336,7 +330,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\ProfilePasswordResetForm(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_password_reset'],
-                    $app['members.form.components']['entity']['profile_password_reset']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );
@@ -346,7 +340,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\ProfileRegisterForm(
                     $app['form.factory'],
                     $app['members.form.components']['type']['profile_register'],
-                    $app['members.form.components']['entity']['profile_register']
+                    $app['members.form.components']['entity']['profile']
                 );
             }
         );

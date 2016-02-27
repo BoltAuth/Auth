@@ -2,8 +2,10 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Entity;
 
+use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
+
 /**
- * User profile password reset object.
+ * Member profile data entity.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -11,32 +13,10 @@ namespace Bolt\Extension\Bolt\Members\Form\Entity;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfilePasswordReset implements EntityInterface
+class Profile extends Account implements EntityInterface
 {
     /** string */
-    protected $email;
-    /** string */
     protected $password;
-
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     *
-     * @return ProfileRegister
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -48,13 +28,9 @@ class ProfilePasswordReset implements EntityInterface
 
     /**
      * @param mixed $password
-     *
-     * @return ProfilePasswordReset
      */
     public function setPassword($password)
     {
         $this->password = $password;
-
-        return $this;
     }
 }
