@@ -17,6 +17,8 @@ class PasswordReset
     /** @var string */
     protected $cookieValue;
     /** @var string */
+    protected $queryCode;
+    /** @var string */
     protected $guid;
 
     /**
@@ -38,6 +40,25 @@ class PasswordReset
     {
         $this->cookieValue = sha1(Uuid::uuid4()->toString());
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryCode()
+    {
+        return $this->queryCode;
+    }
+
+    /**
+     * Create a string to be used as the query code.
+     *
+     * @return PasswordReset
+     */
+    public function setQueryCode()
+    {
+        $this->queryCode = sha1(Uuid::uuid4()->toString());
 
         return $this;
     }
