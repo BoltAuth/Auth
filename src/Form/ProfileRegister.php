@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\AccessControl\Verification;
+use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
@@ -169,12 +169,12 @@ class ProfileRegister extends BaseProfile
         // Set the email verification key in the account meta
         $meta = new Storage\Entity\AccountMeta();
         $meta->setGuid($this->guid);
-        $meta->setMeta(Verification::KEY_NAME);
+        $meta->setMeta(AccountVerification::KEY_NAME);
         $meta->setValue($metaValue);
 
         $records->saveAccountMeta($meta);
 
-        $event->addMetaFieldNames([Verification::KEY_NAME => $metaValue]);
+        $event->addMetaFieldNames([AccountVerification::KEY_NAME => $metaValue]);
     }
 
     /**

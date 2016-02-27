@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\Bolt\Members\AccessControl\Validator;
 
 use Bolt\Extension\Bolt\Members\Storage;
 use Bolt\Extension\Bolt\Members\Storage\Records;
@@ -14,7 +14,7 @@ use Bolt\Extension\Bolt\Members\Storage\Records;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Verification
+class AccountVerification
 {
     const KEY_NAME = 'account-verification-key';
 
@@ -24,19 +24,6 @@ class Verification
     protected $message;
     /** @var string */
     protected $code;
-
-    /** @var  Records */
-    private $records;
-
-    /**
-     * Constructor.
-     *
-     * @param Records $records
-     */
-    public function __construct(Records $records)
-    {
-        $this->records = $records;
-    }
 
     /**
      * @return boolean
@@ -67,7 +54,7 @@ class Verification
      *
      * @param string $code
      */
-    public function validateCode($code)
+    public function validateCode(Records $records, $code)
     {
         $this->code = $code;
         if (strlen($code) !== 40) {
@@ -77,7 +64,7 @@ class Verification
         }
 
         // Get the verification key meta entity
-        $metaEntities = $this->records->getAccountMetaValues(self::KEY_NAME, $code);
+        $metaEntities = $records->getAccountMetaValues(self::KEY_NAME, $code);
         if ($metaEntities === false) {
             $this->message = 'Expired meta code';
 
@@ -88,17 +75,17 @@ class Verification
         $guid = $metaEntity->getGuid();
 
         // Get the account and set it as verified
-        $account = $this->records->getAccountByGuid($guid);
+        $account = $records->getAccountByGuid($guid);
         if ($account === false) {
             $this->message = 'Expired meta code';
 
             return;
         }
         $account->setVerified(true);
-        $this->records->saveAccount($account);
+        $records->saveAccount($account);
 
         // Remove meta record
-        $this->records->deleteAccountMeta($metaEntity);
+        $records->deleteAccountMeta($metaEntity);
 
         $this->success = true;
         $this->message = 'Account validated!';

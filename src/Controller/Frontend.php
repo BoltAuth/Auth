@@ -3,7 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\AccessControl\Verification;
+use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
@@ -211,8 +211,8 @@ class Frontend implements ControllerProviderInterface
     public function verifyProfile(Application $app, Request $request)
     {
         // Check the verification code
-        $verification = new Verification($app['members.records']);
-        $verification->validateCode($request->query->get('code'));
+        $verification = new AccountVerification();
+        $verification->validateCode($app['members.records'], $request->query->get('code'));
 
         $context = [
             'twigparent' => $this->config->getTemplates('profile', 'parent'),
