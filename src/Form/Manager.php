@@ -143,7 +143,7 @@ class Manager
             ->handleRequest($request)
         ;
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/profile.twig',
         ];
 
         return new ResolvedForm([$form], $extraContext);
@@ -166,7 +166,7 @@ class Manager
             ->handleRequest($request)
         ;
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/profile.twig',
         ];
 
         return new ResolvedForm([$form], $extraContext);
@@ -182,7 +182,7 @@ class Manager
      */
     public function getFormProfileRegister(Request $request, $includeParent = true)
     {
-        $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/members.twig';
+        $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/profile.twig';
 
         return $this->getFormCombinedLogin($request, $twigParent);
     }

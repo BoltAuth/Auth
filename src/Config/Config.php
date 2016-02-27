@@ -421,14 +421,14 @@ class Config
             ],
             'templates' => [
                 'profile'        => [
-                    'parent'   => 'members.twig',
+                    'parent'   => 'profile.twig',
                     'edit'     => '_edit.twig',
                     'register' => '_register.twig',
                     'verify'   => '_verify.twig',
                     'view'     => '_view.twig',
                 ],
                 'authentication' => [
-                    'parent'    => 'login.twig',
+                    'parent'    => 'authentication.twig',
                     'feedback'  => 'feedback.twig',
                     'associate' => '_associate.twig',
                     'login'     => '_login.twig',

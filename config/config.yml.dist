@@ -11,13 +11,13 @@ debug: false
 # The template names that you wish to use in your theme to override the defaults
 #templates:
 #    profile:
-#        parent: members.twig
+#        parent: profile.twig
 #        associate: _register.twig
 #        edit: _edit.twig
 #        verify: _verify.twig
 #        view: _view.twig
 #    authentication:
-#        parent: login.twig
+#        parent: authentication.twig
 #        associate: _associate.twig
 #        login: _login.twig
 #        logout: _logout.twig
