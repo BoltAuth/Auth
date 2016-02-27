@@ -1,0 +1,13 @@
+{#
+ # Passed in fields:
+ #   * name  — Display name of the registered user
+ #   * email — Email address of the registered user
+ #   * link  — Password reset URL
+ #}
+<p>Dear {{ name }},</p>
+
+<p>You or someone else has requested to reset your account password on {{ app.config.get('general/branding/name') }}.</p>
+
+<p><strong>If this was not you, please delete this email.</strong></p>
+
+<p>You can complete the process by following this link: {{ link }}</p>
