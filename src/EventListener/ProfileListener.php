@@ -5,8 +5,11 @@ namespace Bolt\Extension\Bolt\Members\EventListener;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
+use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Swift_Mailer as SwiftMailer;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Twig_Environment as TwigEnvironment;
 
@@ -20,20 +23,24 @@ class ProfileListener implements EventSubscriberInterface
     private $mailer;
     /** @var string */
     private $siteUrl;
+    /** @var TraceableEventDispatcherInterface */
+    private $dispatcher;
 
     /**
      * Constructor.
      *
-     * @param Config          $config
-     * @param TwigEnvironment $twig
-     * @param SwiftMailer     $mailer
-     * @param string          $siteUrl
+     * @param Config                            $config
+     * @param TwigEnvironment                   $twig
+     * @param SwiftMailer                       $mailer
+     * @param TraceableEventDispatcherInterface $dispatcher
+     * @param                                   $siteUrl
      */
-    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, $siteUrl)
+    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, TraceableEventDispatcherInterface $dispatcher, $siteUrl)
     {
         $this->config = $config;
         $this->twig = $twig;
         $this->mailer = $mailer;
+        $this->dispatcher = $dispatcher;
         $this->siteUrl = $siteUrl;
     }
 
@@ -44,21 +51,30 @@ class ProfileListener implements EventSubscriberInterface
         $subject = $this->twig->render($this->config->getTemplates('verification', 'subject'));
         $mailHtml = $this->getRegisterHtml($event);
 
+        $message = $this->mailer
+            ->createMessage('message')
+            ->setSubject($subject)
+            ->setBody(strip_tags($mailHtml))
+            ->addPart($mailHtml, 'text/html')
+        ;
+
         try {
-            $message = $this->mailer
-                ->createMessage('message')
-                ->setSubject($subject)
+            $message
                 ->setFrom($from)
                 ->setReplyTo($from)
                 ->setTo($email)
-                ->setBody(strip_tags($mailHtml))
-                ->addPart($mailHtml, 'text/html')
-            ;
+                ;
             $failedRecipients = [];
+
+            // Dispatch an event
+            $event = new MembersNotificationEvent($message);
+            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
 
             $this->mailer->send($message, $failedRecipients);
         } catch (\Swift_RfcComplianceException $e) {
-            // Email not configured
+            // Dispatch an event
+            $event = new MembersNotificationFailureEvent($message, $e);
+            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
         }
     }
 
