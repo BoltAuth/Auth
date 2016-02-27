@@ -7,7 +7,6 @@ use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Storage;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;

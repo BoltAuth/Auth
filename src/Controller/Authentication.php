@@ -2,15 +2,14 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Form\Entity;
 use Bolt\Extension\Bolt\Members\Form\Manager;
 use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
