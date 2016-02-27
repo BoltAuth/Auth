@@ -108,6 +108,6 @@ class PasswordReset
 
         $cookie = $request->cookies->get(self::COOKIE_NAME);
 
-        return $cookie === $this->cookieValue;
+        return $cookie === $this->cookieValue && $request->query->has('code') === $this->queryCode;
     }
 }
