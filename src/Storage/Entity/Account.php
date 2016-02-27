@@ -14,8 +14,6 @@ namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 class Account extends AbstractGuidEntity
 {
     /** @var string */
-    protected $username;
-    /** @var string */
     protected $email;
     /** @var \DateTime */
     protected $lastseen;
@@ -44,22 +42,6 @@ class Account extends AbstractGuidEntity
     public function setId($guid)
     {
         $this->guid = $guid;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
     }
 
     /**
