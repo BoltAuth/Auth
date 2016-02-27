@@ -4,18 +4,24 @@
     {% include "feedback.twig" %}
 
     <div class="logout">
-        <div class="row member-logout">
+        <div class="row member-recovery">
+
             {%  if stage == 'email' %}
                 {{ _self.recovery_start(form_profile_recovery) }}
-            {% elseif stage == 'email' %}
+            {% elseif stage == 'password' %}
                 {{ _self.recovery_finish(form_profile_recovery) }}
             {% elseif stage == 'submitted' %}
                 <p>An email has been send to {{ email }}. Please follow the instructions to complete the process.</p>
             {% elseif stage == 'reset' %}
-                <p>Password reset!</p>
+                <p>Password reset was successful!</p>
+                <p><a href="{{ link }}">Click here to go to the login page…</a></p>
+            {% else %}
+                <p>Invalid request!</p>
             {% endif %}
+
         </div>
     </div>
+
 {% endblock recovery %}
 
 {% macro recovery_start(form_profile_recovery) %}
