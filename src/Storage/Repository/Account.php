@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
+use Bolt\Events\StorageEvent;
+use Bolt\Events\StorageEvents;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\QuerySet;
 use Bolt\Storage\Repository;
@@ -71,6 +73,25 @@ class Account extends AbstractMembersRepository
         $this->persist($querySet, $entity, ['id'] + $exclusions);
 
         return $querySet->execute();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete($entity)
+    {
+        $event = new StorageEvent($entity);
+        $this->event()->dispatch(StorageEvents::PRE_DELETE, $event);
+        $qb = $this->em->createQueryBuilder()
+            ->delete($this->getTableName())
+            ->where('guid = :guid')
+            ->setParameter('guid', $entity->getGuid());
+
+        $response = $qb->execute();
+        $event = new StorageEvent($entity);
+        $this->event()->dispatch(StorageEvents::POST_DELETE, $event);
+
+        return $response;
     }
 
     /**
