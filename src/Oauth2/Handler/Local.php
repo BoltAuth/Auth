@@ -61,14 +61,14 @@ class Local extends HandlerBase
         if (!$account instanceof Entity\Account) {
             $this->feedback->info('Registration is required.');
 
-            return new RedirectResponse($urlGeneratorInterface->generate('registerProfile'));
+            return new RedirectResponse($urlGeneratorInterface->generate('membersProfileRegister'));
         }
 
         $oauth = $this->records->getOauthByGuid($account->getGuid());
         if (!$oauth instanceof Entity\Oauth) {
             $this->feedback->info('Registration is required.');
 
-            return new RedirectResponse($urlGeneratorInterface->generate('registerProfile'));
+            return new RedirectResponse($urlGeneratorInterface->generate('membersProfileRegister'));
         }
 
         if (!$oauth->getEnabled()) {
