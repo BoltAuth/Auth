@@ -59,9 +59,7 @@ class Local extends HandlerBase
     {
         $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
         if (!$account instanceof Entity\Account) {
-            $this->feedback->info('Registration is required.');
-
-            return new RedirectResponse($urlGeneratorInterface->generate('membersProfileRegister'));
+            return null;
         }
 
         $oauth = $this->records->getOauthByGuid($account->getGuid());
