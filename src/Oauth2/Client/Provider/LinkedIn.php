@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\LinkedIn as LeagueLinkedIn;
-use League\OAuth2\Client\Provider\LinkedInResourceOwner;
 use League\OAuth2\Client\Token\AccessToken;
 
 /**

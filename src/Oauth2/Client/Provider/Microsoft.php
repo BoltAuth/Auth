@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 
 use League\OAuth2\Client\Token\AccessToken;
 use Stevenmaguire\OAuth2\Client\Provider\Microsoft as LeagueMicrosoft;
-use Stevenmaguire\OAuth2\Client\Provider\MicrosoftResourceOwner;
 
 /**
  * Microsoft provider extension.
