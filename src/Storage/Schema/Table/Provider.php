@@ -38,7 +38,7 @@ class Provider extends BaseTable
         $this->table->addIndex(['provider']);
         $this->table->addIndex(['resource_owner_id']);
 
-        $this->table->addUniqueIndex(['guid', 'provider', 'resource_owner_id']);
+        $this->table->addUniqueIndex(['provider', 'resource_owner_id']);
 
         // Temporary until done upstream
         $this->addForeignKeyConstraint();
