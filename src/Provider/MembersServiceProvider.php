@@ -459,7 +459,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     'github'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\GitHub',
                     'google'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Google',
                     'instagram' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Instagram',
-                    'linkedon'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\LinkedIn',
+                    'linkedin'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\LinkedIn',
                     'local'     => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Local',
                     'microsoft' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Microsoft',
                 ];
