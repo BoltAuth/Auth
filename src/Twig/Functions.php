@@ -146,7 +146,7 @@ class Functions extends \Twig_Extension
 
     /**
      * Return an array of registered OAuth providers for an account.
-     * 
+     *
      * @param string $guid
      *
      * @return array
@@ -154,13 +154,12 @@ class Functions extends \Twig_Extension
     public function getProviders($guid = null)
     {
         $providers = [];
-        if(empty($guid)) {
+        if($guid === null) {
             $auth = $this->session->getAuthorisation();
 
             if ($auth === null) {
                 return $providers;
             }
-
             $guid = $auth->getGuid();
         }
 
