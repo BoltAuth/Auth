@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use League\OAuth2\Client\Token\AccessToken;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Provider transition class.
@@ -17,6 +18,8 @@ use League\OAuth2\Client\Token\AccessToken;
  */
 class Transition
 {
+    /** @var string */
+    protected $guid;
     /** @var AccessToken */
     protected $accessToken;
     /** @var ResourceOwnerInterface */
@@ -27,12 +30,18 @@ class Transition
     /**
      * Constructor.
      *
+     * @param string                 $guid
      * @param string                 $providerName
      * @param AccessToken            $accessToken
      * @param ResourceOwnerInterface $resourceOwner
      */
-    public function __construct($providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
+    public function __construct($guid, $providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
     {
+        if (Uuid::isValid($guid) == false) {
+            throw new \RuntimeException('Tried to create Transition object with an invalid GUID.');
+        }
+
+        $this->guid = $guid;
         $this->accessToken = $accessToken;
         $this->resourceOwner = $resourceOwner;
 
@@ -42,6 +51,26 @@ class Transition
         $providerEntity->setResourceOwnerId($resourceOwner->getId());
         $providerEntity->setResourceOwner($resourceOwner);
         $this->providerEntity = $providerEntity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuid()
+    {
+        return $this->guid;
+    }
+
+    /**
+     * @param string $guid
+     *
+     * @return Transition
+     */
+    public function setGuid($guid)
+    {
+        $this->guid = $guid;
+
+        return $this;
     }
 
     /**

@@ -177,7 +177,7 @@ abstract class AbstractHandler
     /**
      * Set up the session for this request.
      *
-     * @param AccessToken $accessToken
+     * @param AccessToken    $accessToken
      */
     protected function setSession(AccessToken $accessToken)
     {
@@ -227,7 +227,8 @@ abstract class AbstractHandler
     {
         // Create a new provider entry
         $providerName = $this->providerManager->getProviderName();
-        $transition = new Transition($providerName, $accessToken, $resourceOwner);
+        $guid = $this->session->getAuthorisation()->getGuid();
+        $transition = new Transition($guid, $providerName, $accessToken, $resourceOwner);
 
         $this->session
             ->addAccessToken($providerName, $accessToken)
@@ -241,20 +242,6 @@ abstract class AbstractHandler
             $accessToken,
             $resourceOwner->getId()
         ));
-    }
-
-    /**
-     * Check that a GUID we've been given is valid.
-     *
-     * @param string $guid
-     *
-     * @throws \RuntimeException
-     */
-    protected function assertValidGuid($guid)
-    {
-        if (strlen($guid) !== 36) {
-            throw new \RuntimeException('Invalid GUID value being used!');
-        }
     }
 
     /**
