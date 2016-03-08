@@ -13,6 +13,15 @@ use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Twig_Environment as TwigEnvironment;
 
+/**
+ * Profile events listener.
+ *
+ * Copyright (C) 2014-2016 Gawain Lynch
+ *
+ * @author    Gawain Lynch <gawain.lynch@gmail.com>
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ * @license   https://opensource.org/licenses/MIT MIT
+ */
 class ProfileListener implements EventSubscriberInterface
 {
     /** @var Config */
@@ -44,6 +53,11 @@ class ProfileListener implements EventSubscriberInterface
         $this->siteUrl = $siteUrl;
     }
 
+    /**
+     * Profile registration event.
+     *
+     * @param MembersProfileEvent $event
+     */
     public function onProfileRegister(MembersProfileEvent $event)
     {
         $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
@@ -79,6 +93,10 @@ class ProfileListener implements EventSubscriberInterface
     }
 
     /**
+     * Generate the HTML for the verification email.
+     *
+     * @param MembersProfileEvent $event
+     *
      * @return string
      */
     private function getRegisterHtml(MembersProfileEvent $event)
