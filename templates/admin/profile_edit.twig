@@ -68,20 +68,14 @@
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
 
                 <div class="panel-body">
-                    <ul class="no-bullet">
-                        {%- for provider in member_providers() %}
-                            {% set providericon = provider %}
-                            {% if provider == 'local' %}
-                                {% set providericon = 'user' %}
-                            {% endif %}
-                            <li>
-                                <span class="info">
-                                    <i class="fa fa-{{ providericon }}"></i>
-                                    {{ provider|title }}
-                                </span>
-                            </li>
-                        {% endfor -%}
-                    </ul>
+                    {%- for provider in member_providers() %}
+                        {% set providericon = provider %}
+                        {% if provider == 'local' %}{% set providericon = 'user' %}{% endif %}
+                        <a href="#" type="button" class="btn btn-default btn-block btn-sm">
+                            <i class="fa fa-{{ providericon }}"></i>
+                            {{ provider|title }}
+                        </a>
+                    {% endfor -%}
                 </div>
             </div>
         </aside>
