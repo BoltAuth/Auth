@@ -68,14 +68,15 @@
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
 
                 <div class="panel-body">
-                    {%- for provider in member_providers() %}
+                    {% set member = member() %}
+                    {% for provider in member_providers(member.guid) %}
                         {% set providericon = provider %}
                         {% if provider == 'local' %}{% set providericon = 'user' %}{% endif %}
                         <a href="#" type="button" class="btn btn-default btn-block btn-sm">
                             <i class="fa fa-{{ providericon }}"></i>
                             {{ provider|title }}
                         </a>
-                    {% endfor -%}
+                    {% endfor %}
                 </div>
             </div>
         </aside>
