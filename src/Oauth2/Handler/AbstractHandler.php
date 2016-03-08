@@ -158,7 +158,11 @@ abstract class AbstractHandler
             throw new Ex\MissingAccountException(sprintf('Provider %s data for ID %s does not include an email address.', $providerName, $resourceOwner->getId()));
         }
 
-        $accountEntity = $this->records->getAccountByEmail($email);
+        $guid = $this->session->getAuthorisation()->getGuid();
+        $accountEntity = $this->records->getAccountByGuid($guid);
+        if ($accountEntity === false) {
+            $accountEntity = $this->records->getAccountByEmail($email);
+        }
         if ($accountEntity === false) {
             $this->setDebugMessage(sprintf('No account found for transitional %s provider ID %s', $providerName, $resourceOwner->getId()));
 
