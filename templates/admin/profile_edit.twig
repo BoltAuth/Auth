@@ -68,8 +68,7 @@
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
 
                 <div class="panel-body">
-                    {% set member = member() %}
-                    {% for provider in member_providers(member.guid) %}
+                    {% for provider in member_providers(guid) %}
                         {% set providericon = provider %}
                         {% if provider == 'local' %}{% set providericon = 'user' %}{% endif %}
                         <a href="#" type="button" class="btn btn-default btn-block btn-sm">

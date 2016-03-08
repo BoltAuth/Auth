@@ -266,7 +266,7 @@ class Backend implements ControllerProviderInterface
             return $response;
         }
         $this->addTwigPath($app);
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
