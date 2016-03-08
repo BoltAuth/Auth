@@ -146,18 +146,25 @@ class Functions extends \Twig_Extension
 
     /**
      * Return an array of registered OAuth providers for an account.
+     * 
+     * @param string $guid
      *
      * @return array
      */
-    public function getProviders()
+    public function getProviders($guid = null)
     {
         $providers = [];
-        $auth = $this->session->getAuthorisation();
-        if ($auth === null) {
-            return $providers;
+        if(empty($guid)) {
+            $auth = $this->session->getAuthorisation();
+
+            if ($auth === null) {
+                return $providers;
+            }
+
+            $guid = $auth->getGuid();
         }
 
-        $providerEntities = $this->records->getProvisionsByGuid($auth->getGuid());
+        $providerEntities = $this->records->getProvisionsByGuid($guid);
         if ($providerEntities === false) {
             return $providers;
         }
@@ -169,6 +176,7 @@ class Functions extends \Twig_Extension
 
         return $providers;
     }
+
 
     /**
      * Display login/logout button(s) depending on status.
