@@ -136,17 +136,25 @@ class Manager
         }
         /** @var ProfileEdit $baseForm */
         $baseForm = $this->forms['form']['profile_edit'];
-        $form = $baseForm
+        $formEdit = $baseForm
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
+        /** @var Associate $baseForm */
+        $baseForm = $this->forms['form']['associate'];
+        $formAssociate = $baseForm
+            ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+            ->createForm($this->records)
+            ->handleRequest($request)
+        ;
+
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '_sub/profile.twig',
         ];
 
-        return new ResolvedForm([$form], $extraContext);
+        return new ResolvedForm([$formEdit, $formAssociate], $extraContext);
     }
 
     /**

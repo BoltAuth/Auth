@@ -38,7 +38,15 @@
         <div class="small-12 columns">
             <h5>Add Social Media Account</h5>
 
-            {{ members_auth_associate() }}
+            {{ form_start(form_associate) }}
+
+            {% for provider in providers|keys %}
+                {% if provider != 'local' %}
+                    {{ form_row(form_associate[provider]) }}
+                {% endif %}
+            {% endfor %}
+
+            {{ form_end(form_associate) }}
         </div>
 
     </div>
