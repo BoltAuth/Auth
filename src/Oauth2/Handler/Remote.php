@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Remote extends HandlerBase
+class Remote extends AbstractHandler
 {
     /** @var AccessToken */
     protected $accessToken;
