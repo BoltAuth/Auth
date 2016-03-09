@@ -30,6 +30,13 @@ abstract class AbstractForm implements MembersFormInterface
     /** @var string */
     protected $action;
 
+    /**
+     * Constructor.
+     *
+     * @param FormFactoryInterface $formFactory
+     * @param FormTypeInterface    $type
+     * @param EntityInterface      $entity
+     */
     public function __construct(FormFactoryInterface $formFactory, FormTypeInterface $type, EntityInterface $entity)
     {
         $this->formFactory = $formFactory;
