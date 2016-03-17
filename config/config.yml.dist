@@ -82,8 +82,8 @@ urls:
 # and the homepage after logout.
 #
 #redirects:
-#    login:
-#    logout:
+#    login:  /membership/profile
+#    logout: /authentication/login
 
 ## Access Control #############################################################
 #
