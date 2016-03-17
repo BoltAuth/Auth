@@ -60,7 +60,7 @@ debug: false
 ## Registration ###############################################################
 #
 registration:
-    enabled: true                        # If registration should be allowed [true|false]
+    enabled: true  # If registration should be allowed [true|false]
 
 ## Notification email addresses ###############################################
 #
@@ -68,13 +68,22 @@ notification:
     name: Site Admin              # Display name used as the sender name
     email: no-reply@example.com   # Email address as the sender address
 
-# Base URLs ###################################################################
+# URLs ########################################################################
 #
 # URLs that the controllers will be mounted on
 #
 urls:
     authenticate: authentication
     members: membership
+
+# URLs that a member will be redirected to after login/logout
+#
+# If commented out, members will be redirected to the refering page after login,
+# and the homepage after logout.
+#
+#redirects:
+#    login:
+#    logout:
 
 ## Access Control #############################################################
 #

@@ -41,6 +41,10 @@ class Config
     protected $notificationName;
     /** @var string */
     protected $notificationEmail;
+    /** @var string */
+    protected $redirectLogin;
+    /** @var string */
+    protected $redirectLogout;
 
     /**
      * Constructor.
@@ -65,6 +69,8 @@ class Config
         $this->urlMembers = $config['urls']['members'];
         $this->notificationName = $config['notification']['name'];
         $this->notificationEmail = $config['notification']['email'];
+        $this->redirectLogin = $config['redirects']['login'];
+        $this->redirectLogout = $config['redirects']['logout'];
 
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[strtolower($name)] = new Provider($name, $provider);
@@ -225,6 +231,46 @@ class Config
     public function setProviders($providers)
     {
         $this->providers = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectLogin()
+    {
+        return $this->redirectLogin;
+    }
+
+    /**
+     * @param string $redirectLogin
+     *
+     * @return Config
+     */
+    public function setRedirectLogin($redirectLogin)
+    {
+        $this->redirectLogin = $redirectLogin;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectLogout()
+    {
+        return $this->redirectLogout;
+    }
+
+    /**
+     * @param string $redirectLogout
+     *
+     * @return Config
+     */
+    public function setRedirectLogout($redirectLogout)
+    {
+        $this->redirectLogout = $redirectLogout;
 
         return $this;
     }
@@ -455,6 +501,10 @@ class Config
             'notification' => [
                 'name'  => null,
                 'email' => null,
+            ],
+            'redirects'    => [
+                'login'  => null,
+                'logout' => null,
             ],
             'roles'        => [
                 'admin'  => [
