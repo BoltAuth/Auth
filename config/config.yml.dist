@@ -9,8 +9,8 @@ debug: false
 ## Template overrides #########################################################
 #
 # The template names that you wish to use in your theme to override the default
-# templates:
 #
+#templates:
 #    profile:
 #        parent: profile.twig
 #        associate: _register.twig
@@ -78,7 +78,7 @@ urls:
 
 # URLs that a member will be redirected to after login/logout
 #
-# If commented out, members will be redirected to the refering page after login,
+# If commented out, members will be redirected to the referring page after login,
 # and the homepage after logout.
 #
 #redirects:
@@ -98,7 +98,7 @@ roles:
     associate:
         - participant
 
-## OAuhth2 Providers ##########################################################
+## OAuth2 Providers ##########################################################
 #
 providers:
     local:
