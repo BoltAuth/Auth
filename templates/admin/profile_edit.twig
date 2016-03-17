@@ -18,7 +18,7 @@
 {% block page_main %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
-        <h4>Edit Profile</h4>
+        <h4>Edit Existing Profile</h4>
     </div>
 
     <div class="row profile">
@@ -40,7 +40,7 @@
                 {{ form_widget(form_profile.password.first, { 'attr': {'class': 'form-control large'} }) }}
 
                 {{ form_label(form_profile.password.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-                {{ form_errors(form_profile.password.first) }}
+                {{ form_errors(form_profile.password.second) }}
                 {{ form_widget(form_profile.password.second, { 'attr': {'class': 'form-control large'} }) }}
 
                 {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
