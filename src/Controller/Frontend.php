@@ -173,6 +173,10 @@ class Frontend implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
+        if ($app['members.session']->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        }
+
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
         $resolvedForm = $formsManager->getFormProfileRegister($request, true);
