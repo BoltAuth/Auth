@@ -158,7 +158,12 @@ class Authentication implements ControllerProviderInterface
     public function login(Application $app, Request $request)
     {
         // Set the return redirect.
-        if ($request->headers->get('referer') !== $request->getUri()) {
+        if ($app['members.config']->getRedirectLogin()) {
+            $app['members.session']
+                ->clearRedirects()
+                ->addRedirect($app['members.config']->getRedirectLogin())
+            ;
+        } elseif ($request->headers->get('referer') !== $request->getUri()) {
             $app['members.session']
                 ->clearRedirects()
                 ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
@@ -246,6 +251,10 @@ class Authentication implements ControllerProviderInterface
             $handler->logout($request);
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
+        }
+
+        if ($app['members.config']->getRedirectLogout()) {
+            return new RedirectResponse($app['members.config']->getRedirectLogout());
         }
 
         return $app['members.session']->popRedirect()->getResponse();
