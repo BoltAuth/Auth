@@ -2,14 +2,15 @@
 ## Bolt Members configuration options
 ##
 
-## Debugging
+## Debugging ##################################################################
 #
 debug: false
 
-## Template overrides
+## Template overrides #########################################################
 #
-# The template names that you wish to use in your theme to override the defaults
-#templates:
+# The template names that you wish to use in your theme to override the default
+# templates:
+#
 #    profile:
 #        parent: profile.twig
 #        associate: _register.twig
@@ -32,7 +33,7 @@ debug: false
 #        subject: subject.twig
 #        body: body.twig
 
-## Labels
+## Labels #####################################################################
 #
 #labels:
 #    login: Login
@@ -43,7 +44,7 @@ debug: false
 #    password_second: Repeat Password
 #    profile_save: Save & Continue
 
-## Placeholders
+## Placeholders ###############################################################
 #
 #placeholders:
 #    displayname: The name you would like to display publicly…
@@ -51,27 +52,31 @@ debug: false
 #    password_first: Enter your password…
 #    password_second: Repeat the above password…
 
-## Add-ons
+## Add-ons ####################################################################
 #
-addons:
-    zocial: false # Set to true to enable using Zocial icons. Requires the bolt/zocial-icons extension to be installed.
+#addons:
+#    zocial: false # Requires the bolt/zocial-icons extension to be installed.
 
-## Registration
+## Registration ###############################################################
 #
 registration:
     enabled: true                        # If registration should be allowed [true|false]
 
-## Notification email addresses
+## Notification email addresses ###############################################
+#
 notification:
     name: Site Admin              # Display name used as the sender name
     email: no-reply@example.com   # Email address as the sender address
 
-# Base URLs
+# Base URLs ###################################################################
+#
+# URLs that the controllers will be mounted on
+#
 urls:
     authenticate: authentication
     members: membership
 
-## Access Control
+## Access Control #############################################################
 #
 roles:
     admin:
@@ -84,7 +89,7 @@ roles:
     associate:
         - participant
 
-## OAuhth2 Providers
+## OAuhth2 Providers ##########################################################
 #
 providers:
     local:
