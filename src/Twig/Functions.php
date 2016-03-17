@@ -154,7 +154,7 @@ class Functions extends \Twig_Extension
     public function getProviders($guid = null)
     {
         $providers = [];
-        if($guid === null) {
+        if ($guid === null) {
             $auth = $this->session->getAuthorisation();
 
             if ($auth === null) {
@@ -175,7 +175,6 @@ class Functions extends \Twig_Extension
 
         return $providers;
     }
-
 
     /**
      * Display login/logout button(s) depending on status.

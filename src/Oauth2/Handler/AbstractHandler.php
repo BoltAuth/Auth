@@ -181,7 +181,7 @@ abstract class AbstractHandler
     /**
      * Set up the session for this request.
      *
-     * @param AccessToken    $accessToken
+     * @param AccessToken $accessToken
      */
     protected function setSession(AccessToken $accessToken)
     {
