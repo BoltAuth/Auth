@@ -12,6 +12,8 @@ use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\Bolt\Members\Twig;
@@ -209,11 +211,11 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         );
 
         $mapping = [
-            'members_account'      => ['Bolt\Extension\Bolt\Members\Storage\Entity\Account'     => 'Bolt\Extension\Bolt\Members\Storage\Repository\Account'],
-            'members_account_meta' => ['Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta' => 'Bolt\Extension\Bolt\Members\Storage\Repository\AccountMeta'],
-            'members_oauth'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Oauth'],
-            'members_provider'     => ['Bolt\Extension\Bolt\Members\Storage\Entity\Provider'    => 'Bolt\Extension\Bolt\Members\Storage\Repository\Provider'],
-            'members_token'        => ['Bolt\Extension\Bolt\Members\Storage\Entity\Token'       => 'Bolt\Extension\Bolt\Members\Storage\Repository\Token'],
+            'members_account'      => [Entity\Account::class     => Repository\Account::class],
+            'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
+            'members_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
+            'members_provider'     => [Entity\Provider::class    => Repository\Provider::class],
+            'members_token'        => [Entity\Token::class       => Repository\Token::class],
         ];
 
         foreach ($mapping as $alias => $map) {
@@ -224,12 +226,23 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.records'] = $app->share(
             function () use ($app) {
+                /** @var Repository\Account $accountRepo */
+                $accountRepo = $app['storage']->getRepository(Entity\Account::class);
+                /** @var Repository\AccountMeta $accountMetaRepo */
+                $accountMetaRepo = $app['storage']->getRepository(Entity\AccountMeta::class);
+                /** @var Repository\Oauth $oauthRepo */
+                $oauthRepo = $app['storage']->getRepository(Entity\Oauth::class);
+                /** @var Repository\Provider $providerRepo */
+                $providerRepo = $app['storage']->getRepository(Entity\Provider::class);
+                /** @var Repository\Token $tokenRepo */
+                $tokenRepo = $app['storage']->getRepository(Entity\Token::class);
+                
                 return new Records(
-                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Account'),
-                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta'),
-                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Oauth'),
-                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Provider'),
-                    $app['storage']->getRepository('Bolt\Extension\Bolt\Members\Storage\Entity\Token')
+                    $accountRepo,
+                    $accountMetaRepo,
+                    $oauthRepo,
+                    $providerRepo,
+                    $tokenRepo
                 );
             }
         );
