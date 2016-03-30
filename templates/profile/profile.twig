@@ -1,19 +1,8 @@
-{% include '_header.twig' %}
+{% extends "partials/_master.twig" %}
 
-<!-- Main Page Content and Sidebar -->
+{% block main %}
 
-    <!-- Main Blog Content -->
-    <div class="large-8 columns">
+    {% block members %}
+    {% endblock members %}
 
-        {% block members %}
-        {% endblock members %}
-
-    </div>
-
-    <!-- End Main Content -->
-
-    {% include '_aside.twig' %}
-
-<!-- End Main Content and Sidebar -->
-
-{% include '_footer.twig' %}
+{% endblock main %}

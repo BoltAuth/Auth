@@ -23,12 +23,9 @@
  #       authentication:
  #         parent: extensions/members/login.twig
  #}
-{% include '_header.twig' %}
+{% extends "partials/_master.twig" %}
 
-<!-- Main Page Content and Sidebar -->
-
-<!-- Main Blog Content -->
-<div class="large-8 columns">
+{% block main %}
 
     {% block login %}
     {% endblock login %}
@@ -39,12 +36,4 @@
     {% block recovery %}
     {% endblock recovery %}
 
-</div>
-
-<!-- End Main Content -->
-
-{% include '_aside.twig' %}
-
-<!-- End Main Content and Sidebar -->
-
-{% include '_footer.twig' %}
+{% endblock main %}
