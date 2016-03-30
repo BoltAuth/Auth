@@ -95,7 +95,7 @@ class Functions extends \Twig_Extension
      *
      * @param string|null $guid
      *
-     * @return Storage\Entity\Account|null
+     * @return Storage\Entity\Member|null
      */
     public function getMember($guid = null)
     {
@@ -107,8 +107,14 @@ class Functions extends \Twig_Extension
             $guid = $auth->getGuid();
         }
         $account = $this->records->getAccountByGuid($guid);
+        if ($account) {
+            $meta = $this->records->getAccountMetaAll($guid);
+            $member = new Storage\Entity\Member($account, $meta);
 
-        return $account ?: null;
+            return $member;
+        }
+
+        return null;
     }
 
     /**
