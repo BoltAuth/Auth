@@ -93,15 +93,20 @@ class Functions extends \Twig_Extension
     /**
      * Return a member's account.
      *
+     * @param string|null $guid
+     *
      * @return Storage\Entity\Account|null
      */
-    public function getMember()
+    public function getMember($guid = null)
     {
-        if (!$this->session->hasAuthorisation()) {
-            return null;
+        if ($guid === null) {
+            if (!$this->session->hasAuthorisation()) {
+                return null;
+            }
+            $auth = $this->session->getAuthorisation();
+            $guid = $auth->getGuid();
         }
-        $auth = $this->session->getAuthorisation();
-        $account = $this->records->getAccountByGuid($auth->getGuid());
+        $account = $this->records->getAccountByGuid($guid);
 
         return $account ?: null;
     }
@@ -109,15 +114,20 @@ class Functions extends \Twig_Extension
     /**
      * Return a member's account meta data.
      *
+     * @param string|null $guid
+     *
      * @return Storage\Entity\AccountMeta[]|null
      */
-    public function getMemberMeta()
+    public function getMemberMeta($guid = null)
     {
-        if (!$this->session->hasAuthorisation()) {
-            return null;
+        if ($guid === null) {
+            if (!$this->session->hasAuthorisation()) {
+                return null;
+            }
+            $auth = $this->session->getAuthorisation();
+            $guid = $auth->getGuid();
         }
-        $auth = $this->session->getAuthorisation();
-        $meta = $this->records->getAccountMetaAll($auth->getGuid());
+        $meta = $this->records->getAccountMetaAll($guid);
 
         return $meta ?: null;
     }
