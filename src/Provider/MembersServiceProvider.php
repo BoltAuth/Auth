@@ -192,38 +192,6 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerStorage(Application $app)
     {
-        $app['members.schema.table'] = $app->share(
-            function () use ($app) {
-                /** @var \Doctrine\DBAL\Platforms\AbstractPlatform $platform */
-                $platform = $app['db']->getDatabasePlatform();
-                $prefix = $app['schema.prefix'];
-
-                // @codingStandardsIgnoreStart
-                return new Container([
-                    'members_account'      => $app->share(function () use ($platform, $prefix) { return new Table\Account($platform, $prefix); }),
-                    'members_account_meta' => $app->share(function () use ($platform, $prefix) { return new Table\AccountMeta($platform, $prefix); }),
-                    'members_oauth'        => $app->share(function () use ($platform, $prefix) { return new Table\Oauth($platform, $prefix); }),
-                    'members_provider'     => $app->share(function () use ($platform, $prefix) { return new Table\Provider($platform, $prefix); }),
-                    'members_token'        => $app->share(function () use ($platform, $prefix) { return new Table\Token($platform, $prefix); }),
-                ]);
-                // @codingStandardsIgnoreEnd
-            }
-        );
-
-        $mapping = [
-            'members_account'      => [Entity\Account::class     => Repository\Account::class],
-            'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
-            'members_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
-            'members_provider'     => [Entity\Provider::class    => Repository\Provider::class],
-            'members_token'        => [Entity\Token::class       => Repository\Token::class],
-        ];
-
-        foreach ($mapping as $alias => $map) {
-            $app['storage.repositories'] += $map;
-            $app['storage.metadata']->setDefaultAlias($app['schema.prefix'] . $alias, key($map));
-            $app['storage']->setRepository(key($map), current($map));
-        }
-
         $app['members.records'] = $app->share(
             function () use ($app) {
                 /** @var Repository\Account $accountRepo */
@@ -236,7 +204,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 $providerRepo = $app['storage']->getRepository(Entity\Provider::class);
                 /** @var Repository\Token $tokenRepo */
                 $tokenRepo = $app['storage']->getRepository(Entity\Token::class);
-                
+
                 return new Records(
                     $accountRepo,
                     $accountMetaRepo,

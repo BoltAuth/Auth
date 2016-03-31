@@ -7,9 +7,13 @@ use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\Bolt\Members\Storage\Repository;
+use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\DatabaseSchemaTrait;
+use Bolt\Extension\StorageTrait;
 use Bolt\Extension\MenuTrait;
 use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
@@ -33,6 +37,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     use ControllerMountTrait;
     use DatabaseSchemaTrait;
     use MenuTrait;
+    use StorageTrait;
     use TwigTrait;
 
     /**
@@ -43,6 +48,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $this->extendMenuService();
         $this->extendTwigService();
         $this->extendDatabaseSchemaServices();
+        $this->extendRepositoryMapping();
     }
 
     /**
@@ -144,14 +150,26 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     protected function registerExtensionTables()
     {
-        $app = $this->getContainer();
-
         return [
-            'members_account'      => $app['members.schema.table']['members_account'],
-            'members_account_meta' => $app['members.schema.table']['members_account_meta'],
-            'members_oauth'        => $app['members.schema.table']['members_oauth'],
-            'members_provider'     => $app['members.schema.table']['members_provider'],
-            'members_token'        => $app['members.schema.table']['members_token'],
+            'members_account'      => Table\Account::class,
+            'members_account_meta' => Table\AccountMeta::class,
+            'members_oauth'        => Table\Oauth::class,
+            'members_provider'     => Table\Provider::class,
+            'members_token'        => Table\Token::class,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function registerRepositoryMappings()
+    {
+        return [
+            'members_account'      => [Entity\Account::class     => Repository\Account::class],
+            'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
+            'members_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
+            'members_provider'     => [Entity\Provider::class    => Repository\Provider::class],
+            'members_token'        => [Entity\Token::class       => Repository\Token::class],
         ];
     }
 }
