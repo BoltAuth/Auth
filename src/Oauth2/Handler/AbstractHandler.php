@@ -100,7 +100,7 @@ abstract class AbstractHandler
         }
 
         // Set user feedback messages
-        $this->feedback->info('Login was route complete, redirecting for authentication.');
+        $this->setDebugMessage('Login was route complete, redirecting for authentication.');
     }
 
     /**
