@@ -145,19 +145,16 @@ class ProfileRegister extends BaseProfile
      */
     protected function createAccount(Storage\Records $records)
     {
-        $account = new Storage\Entity\Account();
-        $account->setDisplayname($this->form->get('displayname')->getData());
-        $account->setEmail($this->form->get('email')->getData());
-        $account->setRoles($this->roles);
-        $account->setEnabled(true);
-        $account->setVerified(false);
-        $account->setLastseen(Carbon::now());
-        $account->setLastip($this->clientIp);
+        $account = $records->createAccount(
+            $this->form->get('displayname')->getData(),
+            $this->form->get('email')->getData(),
+            $this->roles
+        );
 
-        $records->saveAccount($account);
-
-        // Keep track of the new GUID
-        $this->guid = $account->getGuid();
+        if ($account) {
+            // Keep track of the new GUID
+            $this->guid = $account->getGuid();
+        }
 
         return $account;
     }

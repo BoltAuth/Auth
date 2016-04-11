@@ -189,8 +189,63 @@ abstract class AbstractHandler
         $resourceOwner = $this->getResourceOwner($accessToken);
         $this->providerEntity = $this->records->getProvisionByResourceOwnerId($providerName, $resourceOwner->getId());
 
-        // Member is already in possession of another login, and the provider exists, add the access token
-        if ($this->session->hasAuthorisation() && $this->providerEntity !== false) {
+        if ($this->providerEntity === false) {
+            $this->setSessionNewProvider($providerName, $accessToken, $resourceOwner);
+        } else {
+            $this->setSessionExistingProvider($providerName, $accessToken, $resourceOwner);
+        }
+    }
+
+    /**
+     * .
+     *
+     * @param string                 $providerName
+     * @param AccessToken            $accessToken
+     * @param ResourceOwnerInterface $resourceOwner
+     */
+    protected function setSessionNewProvider($providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
+    {
+        if ($this->session->hasAuthorisation()) {
+            // Member is already in possession of another login, and the provider does NOT exist
+            $this->createProviderTransition($accessToken, $resourceOwner);
+
+            return;
+        }
+
+        $account = $this->records->getAccountByEmail($resourceOwner->getEmail());
+        if ($account === false) {
+            $account = $this->records->createAccount(
+                $resourceOwner->getName(),
+                $resourceOwner->getEmail(),
+                $this->config->getRolesRegister()
+            );
+        }
+
+        $this->providerEntity = new Entity\Provider();
+        $this->providerEntity->setGuid($account->getGuid());
+        $this->providerEntity->setProvider($providerName);
+        $this->providerEntity->setResourceOwner($resourceOwner);
+        $this->providerEntity->setLastupdate(Carbon::now());
+
+        $this->records->saveProvider($this->providerEntity);
+
+        $this->session
+            ->addAccessToken($providerName, $accessToken)
+            ->createAuthorisation($this->providerEntity->getGuid())
+        ;
+    }
+
+    /**
+     * Set up a session for an existing provider registration.
+     *
+     * @param string                 $providerName
+     * @param AccessToken            $accessToken
+     * @param ResourceOwnerInterface $resourceOwner
+     */
+    protected function setSessionExistingProvider($providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
+    {
+        if ($this->session->hasAuthorisation()) {
+            // Member is already in possession of another login, and the provider exists, add the access token
             $this->session
                 ->getAuthorisation()
                 ->addAccessToken($providerName, $accessToken)
@@ -201,24 +256,17 @@ abstract class AbstractHandler
         }
 
         // Existing user with a new login, and the provider exists
-        if ($this->providerEntity !== false) {
-            $this->session
-                ->addAccessToken($providerName, $accessToken)
-                ->createAuthorisation($this->providerEntity->getGuid())
-            ;
-            $this->setDebugMessage(sprintf(
-                'Creating authorisation  for GUID %s, and %s provider access token %s for ID %s',
-                $this->providerEntity->getGuid(),
-                $providerName,
-                $accessToken,
-                $resourceOwner->getId()
-            ));
-
-            return;
-        }
-
-        // New provider call
-        $this->createProviderTransition($accessToken, $resourceOwner);
+        $this->session
+            ->addAccessToken($providerName, $accessToken)
+            ->createAuthorisation($this->providerEntity->getGuid())
+        ;
+        $this->setDebugMessage(sprintf(
+            'Creating authorisation  for GUID %s, and %s provider access token %s for ID %s',
+            $this->providerEntity->getGuid(),
+            $providerName,
+            $accessToken,
+            $resourceOwner->getId()
+        ));
     }
 
     /**
@@ -231,6 +279,9 @@ abstract class AbstractHandler
     {
         // Create a new provider entry
         $providerName = $this->providerManager->getProviderName();
+
+        // If we have an authorisation, this is for an existing and logged in account,
+        // else we either have a new registration or one we need to find an associate.
         $guid = $this->session->getAuthorisation()->getGuid();
         $transition = new Transition($guid, $providerName, $accessToken, $resourceOwner);
 

@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage;
 
+use Carbon\Carbon;
+
 /**
  * Membership records.
  *
@@ -45,6 +47,30 @@ class Records
         $this->oauth = $oauth;
         $this->provider = $provider;
         $this->token = $token;
+    }
+
+    /**
+     * Create and store the account record.
+     *
+     * @param string $displayName
+     * @param string $emailAddress
+     * @param array  $roles
+     *
+     * @return Entity\Account|false
+     */
+    public function createAccount($displayName, $emailAddress, array $roles)
+    {
+        $account = new Entity\Account();
+        $account->setDisplayname($displayName);
+        $account->setEmail($emailAddress);
+        $account->setRoles($roles);
+        $account->setEnabled(true);
+        $account->setVerified(false);
+        $account->setLastseen(Carbon::now());
+
+        $this->account->save($account);
+
+        return $this->account->save($account) ? $account : false;
     }
 
     /**

@@ -37,7 +37,7 @@ class Transition
      */
     public function __construct($guid, $providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
     {
-        if (Uuid::isValid($guid) == false) {
+        if (Uuid::isValid($guid) === false) {
             throw new \RuntimeException('Tried to create Transition object with an invalid GUID.');
         }
 
