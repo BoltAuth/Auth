@@ -41,7 +41,7 @@
     {{ form_row(form_profile_recovery.email) }}
     {% do form_profile_recovery.password.setRendered %}
 
-    {{ form_row(form_profile_recovery.submit, {'label': 'Submit »'}) }}
+    {{ form_row(form_profile_recovery.submit, {'label': 'Submit »', 'attr': {'class': 'button btn btn-default'}}) }}
 
     {{ form_end(form_profile_recovery) }}
 {% endmacro %}
@@ -54,7 +54,7 @@
     {% do form_profile_recovery.email.setRendered %}
     {{ form_row(form_profile_recovery.password) }}
 
-    {{ form_row(form_profile_recovery.submit, {'label': 'Continue »'}) }}
+    {{ form_row(form_profile_recovery.submit, {'label': 'Continue »', 'attr': {'class': 'button btn btn-default'}}) }}
 
     {{ form_end(form_profile_recovery) }}
 {% endmacro %}
