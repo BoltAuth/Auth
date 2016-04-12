@@ -68,8 +68,6 @@ class Records
         $account->setVerified(false);
         $account->setLastseen(Carbon::now());
 
-        $this->account->save($account);
-
         return $this->account->save($account) ? $account : false;
     }
 
