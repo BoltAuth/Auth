@@ -12,6 +12,8 @@ use Bolt\Storage\Entity\Entity;
 class Member extends Entity
 {
     /** @var string */
+    protected $guid;
+    /** @var string */
     protected $email;
     /** @var \DateTime */
     protected $lastseen;
@@ -50,6 +52,14 @@ class Member extends Entity
 
             $this->metaFields[] = $meta;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getGuid()
+    {
+        return $this->guid;
     }
 
     /**
