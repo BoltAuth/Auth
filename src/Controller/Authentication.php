@@ -423,7 +423,7 @@ class Authentication implements ControllerProviderInterface
         $context = [
             'name'  => $account->getDisplayname(),
             'email' => $account->getEmail(),
-            'link'  => sprintf('%s%s/profile/verify?%s', $siteUrl, $this->config->getUrlMembers(), $query),
+            'link'  => sprintf('%s%s/reset?%s', $siteUrl, $this->config->getUrlAuthenticate(), $query),
         ];
         $mailHtml = $twig->render($this->config->getTemplates('recovery', 'body'), $context);
 
