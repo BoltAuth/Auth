@@ -225,6 +225,7 @@ abstract class AbstractHandler
         $this->providerEntity->setGuid($account->getGuid());
         $this->providerEntity->setProvider($providerName);
         $this->providerEntity->setResourceOwner($resourceOwner);
+        $this->providerEntity->setResourceOwnerId($resourceOwner->getId());
         $this->providerEntity->setLastupdate(Carbon::now());
 
         $this->records->saveProvider($this->providerEntity);
