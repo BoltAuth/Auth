@@ -9,7 +9,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Swift_Mailer as SwiftMailer;
-use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Twig_Environment as TwigEnvironment;
 
@@ -32,7 +32,7 @@ class ProfileListener implements EventSubscriberInterface
     private $mailer;
     /** @var string */
     private $siteUrl;
-    /** @var TraceableEventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
 
     /**
@@ -41,10 +41,10 @@ class ProfileListener implements EventSubscriberInterface
      * @param Config                            $config
      * @param TwigEnvironment                   $twig
      * @param SwiftMailer                       $mailer
-     * @param TraceableEventDispatcherInterface $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      * @param                                   $siteUrl
      */
-    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, TraceableEventDispatcherInterface $dispatcher, $siteUrl)
+    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, EventDispatcherInterface $dispatcher, $siteUrl)
     {
         $this->config = $config;
         $this->twig = $twig;
