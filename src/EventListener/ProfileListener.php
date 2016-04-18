@@ -38,11 +38,11 @@ class ProfileListener implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param Config                            $config
-     * @param TwigEnvironment                   $twig
-     * @param SwiftMailer                       $mailer
+     * @param Config                   $config
+     * @param TwigEnvironment          $twig
+     * @param SwiftMailer              $mailer
      * @param EventDispatcherInterface $dispatcher
-     * @param                                   $siteUrl
+     * @param                          $siteUrl
      */
     public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, EventDispatcherInterface $dispatcher, $siteUrl)
     {
