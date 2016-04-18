@@ -188,6 +188,9 @@ class Session implements EventSubscriberInterface
         if ($this->authorisation === null) {
             $this->getAuthorisation();
         }
+        if ($this->authorisation !== null && !$this->authorisation->getAccount()->isEnabled()) {
+            return false;
+        }
 
         return (boolean) $this->authorisation ?: false;
     }
