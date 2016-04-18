@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\AccessControl;
 
+use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
 use Carbon\Carbon;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
@@ -25,6 +26,8 @@ class Authorisation implements \JsonSerializable
     protected $expiry;
     /** @var AccessToken[] */
     protected $accessTokens;
+    /** @var Account */
+    protected $account;
 
     /**
      * @return string
@@ -140,6 +143,26 @@ class Authorisation implements \JsonSerializable
     }
 
     /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return Authorisation
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function jsonSerialize()
@@ -149,6 +172,7 @@ class Authorisation implements \JsonSerializable
             'cookie'       => $this->cookie,
             'expiry'       => $this->expiry,
             'accessTokens' => $this->accessTokens,
+            'account'      => $this->account->toArray(),
         ];
     }
 
@@ -170,6 +194,7 @@ class Authorisation implements \JsonSerializable
 
         $auth = new self();
         $auth->guid = $data->guid;
+        $auth->account = new Account($data->account);
         $auth->cookie = $data->cookie;
         if (is_numeric($data->expiry)) {
             $auth->expiry = Carbon::createFromTimestamp($data->expiry);

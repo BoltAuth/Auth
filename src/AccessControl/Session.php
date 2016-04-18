@@ -159,10 +159,12 @@ class Session implements EventSubscriberInterface
             throw new \RuntimeException(sprintf('Transition still in progress for member GUID of %s', $guid));
         }
 
+        $accountEntity = $this->records->getAccountByGuid($guid);
         $authorisation = new Authorisation();
         $authorisation
             ->setGuid($guid)
             ->setCookie(Uuid::uuid4()->toString())
+            ->setAccount($accountEntity)
         ;
         foreach ($this->accessTokens as $provider => $accessToken) {
             $accessToken = $this->setAccessTokenExpires($accessToken);
