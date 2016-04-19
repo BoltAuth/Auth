@@ -53,11 +53,11 @@ class LoginPassword extends AbstractForm
             throw new \RuntimeException('Request has not been set.');
         }
 
+        $this->entity->setEmail($this->request->request->get('email'));
+
         return [
             'csrf_protection' => true,
-            'data'            => [
-                'email' => $this->request->request->get('email'),
-            ],
+            'data'            => $this->entity,
         ];
     }
 }

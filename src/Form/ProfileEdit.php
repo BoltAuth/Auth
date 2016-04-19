@@ -157,9 +157,14 @@ class ProfileEdit extends BaseProfile
             }
         }
 
+        foreach($fields as $fieldName => $fieldValue){
+            //we use the bolt MagicAttributeTrait for convenience
+            $this->entity->$fieldName = $fieldValue;
+        }
+
         return [
             'csrf_protection' => true,
-            'data'            => $fields,
+            'data'            => $this->entity,
         ];
     }
 }
