@@ -320,6 +320,7 @@ class Authentication implements ControllerProviderInterface
             if ($passwordReset && $passwordReset->validate($request)) {
                 $guid = $passwordReset->getGuid();
                 $oauth = $app['members.records']->getOauthByGuid($guid);
+                $provider = $app['members.records']->getProvision($guid, 'local');
 
                 $context['stage'] = 'password';
 
@@ -330,6 +331,14 @@ class Authentication implements ControllerProviderInterface
                         $oauth->setGuid($guid);
                         $oauth->setResourceOwnerId($guid);
                         $oauth->setEnabled(true);
+                    }
+                    if ($provider === false) {
+                        $provider = new Storage\Entity\Provider();
+                        $provider->setGuid($guid);
+                        $provider->setProvider('local');
+                        $provider->setResourceOwnerId($guid);
+                        $provider->setLastupdate(Carbon::now());
+                        $app['members.records']->saveProvider($provider);
                     }
 
                     // Reset password
