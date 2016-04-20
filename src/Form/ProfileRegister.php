@@ -203,18 +203,15 @@ class ProfileRegister extends BaseProfile
             throw new \RuntimeException('Members session not set.');
         }
 
-        $fields = [];
         if ($this->session->isTransitional()) {
             $resourceOwner = $this->session->getTransitionalProvider()->getResourceOwner();
-            $fields = [
-                'displayname' => $resourceOwner->getName(),
-                'email'       => $resourceOwner->getEmail(),
-            ];
+            $this->entity->setDisplayname($resourceOwner->getName());
+            $this->entity->setEmail($resourceOwner->getEmail());
         }
 
         return [
             'csrf_protection' => true,
-            'data'            => $fields,
+            'data'            => $this->entity,
         ];
     }
 }
