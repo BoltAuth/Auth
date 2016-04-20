@@ -30,10 +30,7 @@ abstract class BaseProfile extends AbstractForm
     protected function createLocalOauthAccount(Storage\Records $records)
     {
         $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
-        $oauth = new Storage\Entity\Oauth();
-        $oauth->setGuid($this->guid);
-        $oauth->setResourceOwnerId($this->guid);
-        $oauth->setEnabled(true);
+        $oauth = $records->createOauth($this->guid, $this->guid, true);
         $oauth->setPassword($encryptedPassword);
 
         $records->saveOauth($oauth);
@@ -50,13 +47,7 @@ abstract class BaseProfile extends AbstractForm
      */
     protected function createLocalProvider(Storage\Records $records)
     {
-        $provider = new Storage\Entity\Provider();
-        $provider->setProvider('local');
-        $provider->setResourceOwnerId($this->guid);
-        $provider->setGuid($this->guid);
-        $provider->setLastupdate(Carbon::now());
-
-        $records->saveProvider($provider);
+        $provider = $records->createProvision($this->guid, 'local', $this->guid);
 
         return $provider;
     }

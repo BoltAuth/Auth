@@ -327,18 +327,10 @@ class Authentication implements ControllerProviderInterface
                 if ($form->isValid()) {
                     // Password reset on an account that was registered via OAuth, sans a password
                     if ($oauth === false) {
-                        $oauth = new Storage\Entity\Oauth();
-                        $oauth->setGuid($guid);
-                        $oauth->setResourceOwnerId($guid);
-                        $oauth->setEnabled(true);
+                        $oauth = $app['members.records']->createOauth($guid, $guid, true);
                     }
                     if ($provider === false) {
-                        $provider = new Storage\Entity\Provider();
-                        $provider->setGuid($guid);
-                        $provider->setProvider('local');
-                        $provider->setResourceOwnerId($guid);
-                        $provider->setLastupdate(Carbon::now());
-                        $app['members.records']->saveProvider($provider);
+                        $app['members.records']->createProvision($guid, 'local', $guid);
                     }
 
                     // Reset password

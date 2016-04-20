@@ -216,6 +216,25 @@ class Records
     }
 
     /**
+     * @param string $guid
+     * @param string $resourceOwnerId
+     * @param bool   $enabled
+     *
+     * @return Entity\Oauth
+     */
+    public function createOauth($guid, $resourceOwnerId, $enabled = true)
+    {
+        $oauth = new Entity\Oauth();
+        $oauth->setGuid($guid);
+        $oauth->setResourceOwnerId($resourceOwnerId);
+        $oauth->setEnabled($enabled);
+
+        $this->oauth->save($oauth);
+
+        return $oauth;
+    }
+    
+    /**
      * Fetches an OAuth entries by GUID.
      *
      * @param string $guid
@@ -251,6 +270,28 @@ class Records
         return $this->oauth->save($oauth);
     }
 
+    /**
+     * Create and store a new provider.
+     *
+     * @param string $guid
+     * @param string $providerName
+     * @param string $resourceOwnerId
+     *
+     * @return Entity\Provider
+     */
+    public function createProvision($guid, $providerName, $resourceOwnerId)
+    {
+        $provider = new Entity\Provider();
+        $provider->setGuid($guid);
+        $provider->setProvider($providerName);
+        $provider->setResourceOwnerId($resourceOwnerId);
+        $provider->setLastupdate(Carbon::now());
+
+        $this->provider->save($provider);
+        
+        return $provider;
+    }
+    
     /**
      * Fetches Provider entries by GUID.
      *
