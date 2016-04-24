@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -160,9 +161,19 @@ class Backend implements ControllerProviderInterface
     {
         $this->addTwigPath($app);
 
+        try {
+            $members = $app['members.records']->getAccounts();
+            $roles = $app['members.roles']->getRoles();
+        } catch (TableNotFoundException $e) {
+            $msg = sprintf('Members database tables have not been created! Please <a href="%s">update your database</a>.', $app['url_generator']->generate('dbcheck'));
+            $app['logger.flash']->error($msg);
+            $members = [];
+            $roles = [];
+        }
+
         $html = $app['twig']->render('@MembersAdmin/members.twig', [
-            'members' => $app['members.records']->getAccounts(),
-            'roles'   => $app['members.roles']->getRoles(),
+            'members' => $members,
+            'roles'   => $roles,
         ]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
