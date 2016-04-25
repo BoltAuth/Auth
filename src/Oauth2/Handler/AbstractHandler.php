@@ -301,7 +301,7 @@ abstract class AbstractHandler
     }
 
     /**
-     * Query the provider for the resrouce owner.
+     * Query the provider for the resource owner.
      *
      * @param AccessToken $accessToken
      *
@@ -353,7 +353,7 @@ abstract class AbstractHandler
         } catch (\RuntimeException $e) {
             return new AccessToken([
                 'access_token'      => $accessToken->getToken(),
-                'resource_owner_id' => $this->getResourceOwner($accessToken)->getResourceOwnerId(),
+                'resource_owner_id' => $accessToken->getResourceOwnerId(),
                 'refresh_token'     => $accessToken->getRefreshToken(),
                 'expires_in'        => 3600,
             ]);
