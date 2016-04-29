@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
-use Bolt\Extension\AssetTrait;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Storage;

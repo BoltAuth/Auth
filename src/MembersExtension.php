@@ -2,11 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Asset\File\JavaScript;
-use Bolt\Asset\File\Stylesheet;
-use Bolt\Controller\Zone;
-use Bolt\Events\ControllerEvents;
-use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\AssetTrait;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
@@ -14,14 +9,9 @@ use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
-use Bolt\Extension\ConfigTrait;
-use Bolt\Extension\ControllerMountTrait;
-use Bolt\Extension\ControllerTrait;
 use Bolt\Extension\DatabaseSchemaTrait;
-use Bolt\Extension\MenuTrait;
 use Bolt\Extension\SimpleExtension;
 use Bolt\Extension\StorageTrait;
-use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
