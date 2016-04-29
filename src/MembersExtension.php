@@ -43,7 +43,7 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
 
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
-        $app = $this->container;
+        $app = $this->getContainer();
         $dispatcher->addSubscriber($app['members.admin']);
         $dispatcher->addSubscriber($app['members.feedback']);
         $dispatcher->addSubscriber($app['members.roles']);
@@ -57,7 +57,7 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
      */
     protected function registerFrontendControllers()
     {
-        $app = $this->container;
+        $app = $this->getContainer();
 
         return [
             $app['members.config']->getUrlAuthenticate() => $app['members.controller.authentication'],
@@ -70,7 +70,7 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
      */
     protected function registerBackendControllers()
     {
-        $app = $this->container;
+        $app = $this->getContainer();
 
         return [
             '/' => $app['members.controller.backend'],
@@ -99,11 +99,11 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     protected function registerTwigPaths()
     {
         return [
-            'templates/authentication' => ['position' => 'prepend'],
-            'templates/error' => ['position' => 'prepend'],
-            'templates/feedback' => ['position' => 'prepend'],
-            'templates/profile' => ['position' => 'prepend'],
-            'templates/admin' => ['position' => 'prepend', 'namespace' => 'MembersAdmin'],
+            'templates/authentication' => ['position' => 'append'],
+            'templates/error' => ['position' => 'append'],
+            'templates/feedback' => ['position' => 'append'],
+            'templates/profile' => ['position' => 'append'],
+            'templates/admin' => ['position' => 'append', 'namespace' => 'MembersAdmin'],
         ];
     }
 
@@ -127,11 +127,11 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     protected function registerExtensionTables()
     {
         return [
-            'members_account' => Table\Account::class,
+            'members_account'      => Table\Account::class,
             'members_account_meta' => Table\AccountMeta::class,
-            'members_oauth' => Table\Oauth::class,
-            'members_provider' => Table\Provider::class,
-            'members_token' => Table\Token::class,
+            'members_oauth'        => Table\Oauth::class,
+            'members_provider'     => Table\Provider::class,
+            'members_token'        => Table\Token::class,
         ];
     }
 
@@ -141,11 +141,11 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     protected function registerRepositoryMappings()
     {
         return [
-            'members_account' => [Entity\Account::class => Repository\Account::class],
+            'members_account'      => [Entity\Account::class => Repository\Account::class],
             'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
-            'members_oauth' => [Entity\Oauth::class => Repository\Oauth::class],
-            'members_provider' => [Entity\Provider::class => Repository\Provider::class],
-            'members_token' => [Entity\Token::class => Repository\Token::class],
+            'members_oauth'        => [Entity\Oauth::class => Repository\Oauth::class],
+            'members_provider'     => [Entity\Provider::class => Repository\Provider::class],
+            'members_token'        => [Entity\Token::class => Repository\Token::class],
         ];
     }
 }
