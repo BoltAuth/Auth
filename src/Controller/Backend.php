@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
+use Bolt\Extension\AssetTrait;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Storage;
@@ -114,10 +115,7 @@ class Backend implements ControllerProviderInterface
 
         foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
-                if (!$request->isXmlHttpRequest()) {
-                    $this->addWebAssets($app);
-                }
-
+                $this->addWebAssets($app);
                 return null;
             }
         }
@@ -137,16 +135,17 @@ class Backend implements ControllerProviderInterface
     {
         /** @var MembersExtension $extension */
         $extension = $app['extensions']->get('Bolt/Members');
-        $dir = $extension->getWebDirectory()->getPath();
-        $saCss = (new Stylesheet('/' . $dir . '/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $saJs = (new JavaScript('/' . $dir . '/js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
-        $mCss = (new Stylesheet('/' . $dir . '/css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $mJs = (new JavaScript('/' . $dir . '/js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
 
-        $app['asset.queue.file']->add($saCss);
-        $app['asset.queue.file']->add($saJs);
-        $app['asset.queue.file']->add($mCss);
-        $app['asset.queue.file']->add($mJs);
+        $assets = [];
+        $assets[] = (new Stylesheet('/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
+        $assets[] = (new JavaScript('/js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
+        $assets[] = (new Stylesheet('/css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false);
+        $assets[] = (new JavaScript('/js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
+
+        foreach($assets as $asset){
+            $extension->normalizeAsset($asset);
+            $app['asset.queue.file']->add($asset);
+        }
     }
 
     /**
@@ -159,8 +158,6 @@ class Backend implements ControllerProviderInterface
      */
     public function admin(Application $app, Request $request)
     {
-        $this->addTwigPath($app);
-
         try {
             $members = $app['members.records']->getAccounts();
             $roles = $app['members.roles']->getRoles();
@@ -227,7 +224,7 @@ class Backend implements ControllerProviderInterface
 
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
-        $this->addTwigPath($app);
+
         $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_add.twig');
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -276,7 +273,7 @@ class Backend implements ControllerProviderInterface
 
             return $response;
         }
-        $this->addTwigPath($app);
+
         $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -401,17 +398,4 @@ class Backend implements ControllerProviderInterface
         ];
     }
 
-    /**
-     * Set our Twig template path
-     *
-     * @param Application $app
-     */
-    private function addTwigPath(Application $app)
-    {
-        /** @var MembersExtension $extension */
-        $extension = $app['extensions']->get('Bolt/Members');
-        $dir = sprintf('extensions://%s/templates/admin', $extension->getBaseDirectory()->getFullPath());
-
-        $app['twig.loader.bolt_filesystem']->addPath($dir, 'MembersAdmin');
-    }
 }
