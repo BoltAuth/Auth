@@ -53,45 +53,46 @@ class Backend implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
-        $ctr->match('/extend/members', [$this, 'admin'])
+        $memberBaseUrl = '/extend/members';
+        $ctr->match($memberBaseUrl, [$this, 'admin'])
             ->bind('membersAdmin')
-            ->method('GET')
+            ->method(Request::METHOD_GET)
         ;
 
-        $ctr->match('/extend/members/add', [$this, 'userAdd'])
+        $ctr->match($memberBaseUrl.'/add', [$this, 'userAdd'])
             ->bind('membersAdminUserAdd')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userDelete', [$this, 'userDelete'])
+        $ctr->match($memberBaseUrl.'/action/userDelete', [$this, 'userDelete'])
             ->bind('membersAdminUserDel')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userEnable', [$this, 'userEnable'])
+        $ctr->match($memberBaseUrl.'/action/userEnable', [$this, 'userEnable'])
             ->bind('membersAdminUserEnable')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userDisable', [$this, 'userDisable'])
+        $ctr->match($memberBaseUrl.'/action/userDisable', [$this, 'userDisable'])
             ->bind('membersAdminUserDisable')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/roleAdd', [$this, 'roleAdd'])
+        $ctr->match($memberBaseUrl.'/action/roleAdd', [$this, 'roleAdd'])
             ->bind('membersAdminUserRoleAdd')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/roleDel', [$this, 'roleDel'])
+        $ctr->match($memberBaseUrl.'/action/roleDel', [$this, 'roleDel'])
             ->bind('membersAdminUserRoleDel')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/edit/{guid}', [$this, 'userEdit'])
+        $ctr->match($memberBaseUrl.'/edit/{guid}', [$this, 'userEdit'])
             ->assert('guid', '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
             ->bind('membersAdminUserEdit')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
         ;
 
         $ctr->before([$this, 'before']);
@@ -135,15 +136,18 @@ class Backend implements ControllerProviderInterface
         /** @var MembersExtension $extension */
         $extension = $app['extensions']->get('Bolt/Members');
 
-        $assets = [];
-        $assets[] = (new Stylesheet('/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $assets[] = (new JavaScript('/js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
-        $assets[] = (new Stylesheet('/css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $assets[] = (new JavaScript('/js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
+        $packageName = 'extensions';
+
+        $assets = [
+            (new Stylesheet('/css/sweetalert.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript('/js/sweetalert.min.js', $packageName))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true),
+            (new Stylesheet('/css/members-admin.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript('/js/members-admin.js', $packageName))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true),
+        ];
 
         foreach($assets as $asset){
-            $extension->normalizeAsset($asset);
-            $app['asset.queue.file']->add($asset);
+            $file = $extension->getWebDirectory()->getFile($asset->getPath());
+            $app['asset.queue.file']->add($file);
         }
     }
 

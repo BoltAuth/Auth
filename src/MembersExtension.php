@@ -2,16 +2,20 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Bolt\Extension\AssetTrait;
+use Bolt\Events\ControllerEvents;
+use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
+use Bolt\Extension\ConfigTrait;
+use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\DatabaseSchemaTrait;
-use Bolt\Extension\SimpleExtension;
+use Bolt\Extension\MenuTrait;
 use Bolt\Extension\StorageTrait;
+use Bolt\Extension\TwigTrait;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
@@ -28,19 +32,40 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersExtension extends SimpleExtension implements ServiceProviderInterface, EventSubscriberInterface
+class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
+    use ConfigTrait;
+    use ControllerMountTrait;
     use DatabaseSchemaTrait;
+    use MenuTrait;
     use StorageTrait;
-    use AssetTrait { normalizeAsset as public; }
+    use TwigTrait;
 
-    protected function registerServices(Application $app)
+    /**
+     * {@inheritdoc}
+     */
+    public function register(Application $app)
     {
+        $this->extendMenuService();
+        $this->extendTwigService();
         $this->extendDatabaseSchemaServices();
         $this->extendRepositoryMapping();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function boot(Application $app)
+    {
+        $this->container = $app;
+        $this->subscribe($app['dispatcher']);
+    }
 
+    /**
+     * Define events to listen to here.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
         $app = $this->getContainer();
@@ -61,7 +86,7 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
 
         return [
             $app['members.config']->getUrlAuthenticate() => $app['members.controller.authentication'],
-            $app['members.config']->getUrlMembers() => $app['members.controller.frontend'],
+            $app['members.config']->getUrlMembers()      => $app['members.controller.frontend'],
         ];
     }
 
@@ -100,10 +125,10 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     {
         return [
             'templates/authentication' => ['position' => 'append'],
-            'templates/error' => ['position' => 'append'],
-            'templates/feedback' => ['position' => 'append'],
-            'templates/profile' => ['position' => 'append'],
-            'templates/admin' => ['position' => 'append', 'namespace' => 'MembersAdmin'],
+            'templates/error'          => ['position' => 'append'],
+            'templates/feedback'       => ['position' => 'append'],
+            'templates/profile'        => ['position' => 'append'],
+            'templates/admin'          => ['position' => 'append', 'namespace' => 'MembersAdmin'],
         ];
     }
 
@@ -111,14 +136,24 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     /**
      * {@inheritdoc}
      */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ControllerEvents::MOUNT => [
+                ['onMountControllers', 100],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getServiceProviders()
     {
-        $parentProviders = parent::getServiceProviders();
-        $localProviders = [
+        return [
+            $this,
             new MembersServiceProvider($this->getConfig()),
         ];
-
-        return $parentProviders + $localProviders;
     }
 
     /**
@@ -141,11 +176,11 @@ class MembersExtension extends SimpleExtension implements ServiceProviderInterfa
     protected function registerRepositoryMappings()
     {
         return [
-            'members_account'      => [Entity\Account::class => Repository\Account::class],
+            'members_account'      => [Entity\Account::class     => Repository\Account::class],
             'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
-            'members_oauth'        => [Entity\Oauth::class => Repository\Oauth::class],
-            'members_provider'     => [Entity\Provider::class => Repository\Provider::class],
-            'members_token'        => [Entity\Token::class => Repository\Token::class],
+            'members_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
+            'members_provider'     => [Entity\Provider::class    => Repository\Provider::class],
+            'members_token'        => [Entity\Token::class       => Repository\Token::class],
         ];
     }
 }
