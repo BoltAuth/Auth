@@ -59,40 +59,40 @@ class Backend implements ControllerProviderInterface
             ->method(Request::METHOD_GET)
         ;
 
-        $ctr->match($memberBaseUrl.'/add', [$this, 'userAdd'])
+        $ctr->match($memberBaseUrl . '/add', [$this, 'userAdd'])
             ->bind('membersAdminUserAdd')
-            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
+            ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/action/userDelete', [$this, 'userDelete'])
+        $ctr->match($memberBaseUrl . '/action/userDelete', [$this, 'userDelete'])
             ->bind('membersAdminUserDel')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/action/userEnable', [$this, 'userEnable'])
+        $ctr->match($memberBaseUrl . '/action/userEnable', [$this, 'userEnable'])
             ->bind('membersAdminUserEnable')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/action/userDisable', [$this, 'userDisable'])
+        $ctr->match($memberBaseUrl . '/action/userDisable', [$this, 'userDisable'])
             ->bind('membersAdminUserDisable')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/action/roleAdd', [$this, 'roleAdd'])
+        $ctr->match($memberBaseUrl . '/action/roleAdd', [$this, 'roleAdd'])
             ->bind('membersAdminUserRoleAdd')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/action/roleDel', [$this, 'roleDel'])
+        $ctr->match($memberBaseUrl . '/action/roleDel', [$this, 'roleDel'])
             ->bind('membersAdminUserRoleDel')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($memberBaseUrl.'/edit/{guid}', [$this, 'userEdit'])
+        $ctr->match($memberBaseUrl . '/edit/{guid}', [$this, 'userEdit'])
             ->assert('guid', '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
             ->bind('membersAdminUserEdit')
-            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
+            ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
 
         $ctr->before([$this, 'before']);
@@ -116,6 +116,7 @@ class Backend implements ControllerProviderInterface
         foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
                 $this->addWebAssets($app);
+
                 return null;
             }
         }
@@ -145,7 +146,7 @@ class Backend implements ControllerProviderInterface
             (new JavaScript('/js/members-admin.js', $packageName))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true),
         ];
 
-        foreach($assets as $asset){
+        foreach ($assets as $asset) {
             $file = $extension->getWebDirectory()->getFile($asset->getPath());
             $app['asset.queue.file']->add($file);
         }
@@ -400,5 +401,4 @@ class Backend implements ControllerProviderInterface
             'data'   => $e->getMessage(),
         ];
     }
-
 }

@@ -157,7 +157,7 @@ class ProfileEdit extends BaseProfile
             }
         }
 
-        foreach($fields as $fieldName => $fieldValue){
+        foreach ($fields as $fieldName => $fieldValue) {
             //we use the bolt MagicAttributeTrait for convenience
             $this->entity->$fieldName = $fieldValue;
         }

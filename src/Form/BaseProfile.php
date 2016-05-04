@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Storage;
-use Carbon\Carbon;
 
 /**
  * Base profile editing/registration form.

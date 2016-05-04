@@ -133,7 +133,6 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
