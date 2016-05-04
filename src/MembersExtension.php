@@ -20,6 +20,7 @@ use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -56,16 +57,24 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
      */
     public function boot(Application $app)
     {
-        $app['dispatcher']->addSubscriber($this);
-        $app['dispatcher']->addSubscriber($app['members.admin']);
-        $app['dispatcher']->addSubscriber($app['members.feedback']);
-        $app['dispatcher']->addSubscriber($app['members.roles']);
-        $app['dispatcher']->addSubscriber($app['members.session']);
-        $app['dispatcher']->addSubscriber($app['members.listener.profile']);
-
-        $app['dispatcher']->dispatch(MembersEvents::MEMBER_ROLE, new MembersRolesEvent());
-
         $this->container = $app;
+        $this->subscribe($app['dispatcher']);
+    }
+
+    /**
+     * Define events to listen to here.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
+    protected function subscribe(EventDispatcherInterface $dispatcher)
+    {
+        $app = $this->getContainer();
+        $dispatcher->addSubscriber($app['members.admin']);
+        $dispatcher->addSubscriber($app['members.feedback']);
+        $dispatcher->addSubscriber($app['members.roles']);
+        $dispatcher->addSubscriber($app['members.session']);
+        $dispatcher->addSubscriber($app['members.listener.profile']);
+        $dispatcher->dispatch(MembersEvents::MEMBER_ROLE, new MembersRolesEvent());
     }
 
     /**
@@ -115,12 +124,14 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerTwigPaths()
     {
         return [
-            'templates/authentication',
-            'templates/error',
-            'templates/feedback',
-            'templates/profile',
+            'templates/authentication' => ['position' => 'append'],
+            'templates/error'          => ['position' => 'append'],
+            'templates/feedback'       => ['position' => 'append'],
+            'templates/profile'        => ['position' => 'append'],
+            'templates/admin'          => ['position' => 'append', 'namespace' => 'MembersAdmin'],
         ];
     }
+
 
     /**
      * {@inheritdoc}

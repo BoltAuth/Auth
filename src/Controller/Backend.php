@@ -53,45 +53,46 @@ class Backend implements ControllerProviderInterface
         $ctr = $app['controllers_factory'];
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
-        $ctr->match('/extend/members', [$this, 'admin'])
+        $memberBaseUrl = '/extend/members';
+        $ctr->match($memberBaseUrl, [$this, 'admin'])
             ->bind('membersAdmin')
-            ->method('GET')
+            ->method(Request::METHOD_GET)
         ;
 
-        $ctr->match('/extend/members/add', [$this, 'userAdd'])
+        $ctr->match($memberBaseUrl.'/add', [$this, 'userAdd'])
             ->bind('membersAdminUserAdd')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userDelete', [$this, 'userDelete'])
+        $ctr->match($memberBaseUrl.'/action/userDelete', [$this, 'userDelete'])
             ->bind('membersAdminUserDel')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userEnable', [$this, 'userEnable'])
+        $ctr->match($memberBaseUrl.'/action/userEnable', [$this, 'userEnable'])
             ->bind('membersAdminUserEnable')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/userDisable', [$this, 'userDisable'])
+        $ctr->match($memberBaseUrl.'/action/userDisable', [$this, 'userDisable'])
             ->bind('membersAdminUserDisable')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/roleAdd', [$this, 'roleAdd'])
+        $ctr->match($memberBaseUrl.'/action/roleAdd', [$this, 'roleAdd'])
             ->bind('membersAdminUserRoleAdd')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/action/roleDel', [$this, 'roleDel'])
+        $ctr->match($memberBaseUrl.'/action/roleDel', [$this, 'roleDel'])
             ->bind('membersAdminUserRoleDel')
-            ->method('POST')
+            ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match('/extend/members/edit/{guid}', [$this, 'userEdit'])
+        $ctr->match($memberBaseUrl.'/edit/{guid}', [$this, 'userEdit'])
             ->assert('guid', '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
             ->bind('membersAdminUserEdit')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET.'|'.Request::METHOD_POST)
         ;
 
         $ctr->before([$this, 'before']);
@@ -114,10 +115,7 @@ class Backend implements ControllerProviderInterface
 
         foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
-                if (!$request->isXmlHttpRequest()) {
-                    $this->addWebAssets($app);
-                }
-
+                $this->addWebAssets($app);
                 return null;
             }
         }
@@ -137,16 +135,20 @@ class Backend implements ControllerProviderInterface
     {
         /** @var MembersExtension $extension */
         $extension = $app['extensions']->get('Bolt/Members');
-        $dir = $extension->getWebDirectory()->getPath();
-        $saCss = (new Stylesheet('/' . $dir . '/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $saJs = (new JavaScript('/' . $dir . '/js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true);
-        $mCss = (new Stylesheet('/' . $dir . '/css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false);
-        $mJs = (new JavaScript('/' . $dir . '/js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true);
 
-        $app['asset.queue.file']->add($saCss);
-        $app['asset.queue.file']->add($saJs);
-        $app['asset.queue.file']->add($mCss);
-        $app['asset.queue.file']->add($mJs);
+        $packageName = 'extensions';
+
+        $assets = [
+            (new Stylesheet('/css/sweetalert.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript('/js/sweetalert.min.js', $packageName))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true),
+            (new Stylesheet('/css/members-admin.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript('/js/members-admin.js', $packageName))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true),
+        ];
+
+        foreach($assets as $asset){
+            $file = $extension->getWebDirectory()->getFile($asset->getPath());
+            $app['asset.queue.file']->add($file);
+        }
     }
 
     /**
@@ -159,8 +161,6 @@ class Backend implements ControllerProviderInterface
      */
     public function admin(Application $app, Request $request)
     {
-        $this->addTwigPath($app);
-
         try {
             $members = $app['members.records']->getAccounts();
             $roles = $app['members.roles']->getRoles();
@@ -227,7 +227,7 @@ class Backend implements ControllerProviderInterface
 
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
-        $this->addTwigPath($app);
+
         $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_add.twig');
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -276,7 +276,7 @@ class Backend implements ControllerProviderInterface
 
             return $response;
         }
-        $this->addTwigPath($app);
+
         $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -401,17 +401,4 @@ class Backend implements ControllerProviderInterface
         ];
     }
 
-    /**
-     * Set our Twig template path
-     *
-     * @param Application $app
-     */
-    private function addTwigPath(Application $app)
-    {
-        /** @var MembersExtension $extension */
-        $extension = $app['extensions']->get('Bolt/Members');
-        $dir = sprintf('extensions://%s/templates/admin', $extension->getBaseDirectory()->getFullPath());
-
-        $app['twig.loader.bolt_filesystem']->addPath($dir, 'MembersAdmin');
-    }
 }
