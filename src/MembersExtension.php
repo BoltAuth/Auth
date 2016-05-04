@@ -69,6 +69,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
         $app = $this->getContainer();
+        $dispatcher->addSubscriber($this);
         $dispatcher->addSubscriber($app['members.admin']);
         $dispatcher->addSubscriber($app['members.feedback']);
         $dispatcher->addSubscriber($app['members.roles']);
