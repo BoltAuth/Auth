@@ -136,19 +136,16 @@ class Backend implements ControllerProviderInterface
     {
         /** @var MembersExtension $extension */
         $extension = $app['extensions']->get('Bolt/Members');
-
-        $packageName = 'extensions';
-
+        $dir = '/' . $extension->getWebDirectory()->getPath();
         $assets = [
-            (new Stylesheet('/css/sweetalert.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
-            (new JavaScript('/js/sweetalert.min.js', $packageName))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true),
-            (new Stylesheet('/css/members-admin.css', $packageName))->setZone(Zone::BACKEND)->setLate(false),
-            (new JavaScript('/js/members-admin.js', $packageName))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true),
+            (new Stylesheet($dir . '/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript($dir . '/js/sweetalert.min.js'))->setZone(Zone::BACKEND)->setPriority(10)->setLate(true),
+            (new Stylesheet($dir . '/css/members-admin.css'))->setZone(Zone::BACKEND)->setLate(false),
+            (new JavaScript($dir . '/js/members-admin.js'))->setZone(Zone::BACKEND)->setPriority(20)->setLate(true),
         ];
 
         foreach ($assets as $asset) {
-            $file = $extension->getWebDirectory()->getFile($asset->getPath());
-            $app['asset.queue.file']->add($file);
+            $app['asset.queue.file']->add($asset);
         }
     }
 
