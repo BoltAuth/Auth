@@ -15,6 +15,7 @@ debug: false
 #        parent: profile.twig
 #        associate: _register.twig
 #        edit: _edit.twig
+#        register: _register.twig
 #        verify: _verify.twig
 #        view: _view.twig
 #    authentication:
@@ -22,6 +23,7 @@ debug: false
 #        associate: _associate.twig
 #        login: _login.twig
 #        logout: _logout.twig
+#        recovery: _recovery.twig
 #        feedback: _feedback.twig
 #    error:
 #        parent: members_error.twig
