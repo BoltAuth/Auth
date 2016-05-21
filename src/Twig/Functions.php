@@ -149,17 +149,7 @@ class Functions extends TwigExtension
      */
     public function hasRole($role)
     {
-        $auth = $this->session->getAuthorisation();
-        if ($auth === null) {
-            return false;
-        }
-        $account = $this->records->getAccountByGuid($auth->getGuid());
-        if ($account === false) {
-            return false;
-        }
-        $roles = (array) $account->getRoles();
-
-        return in_array($role, $roles);
+        return $this->session->hasRole($role);
     }
 
     /**

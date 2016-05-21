@@ -196,6 +196,28 @@ class Session implements EventSubscriberInterface
     }
 
     /**
+     * Check if the current logged-in session has a member role.
+     *
+     * @param string $role
+     *
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        $auth = $this->getAuthorisation();
+        if ($auth === null) {
+            return false;
+        }
+        $account = $this->records->getAccountByGuid($auth->getGuid());
+        if ($account === false) {
+            return false;
+        }
+        $roles = (array) $account->getRoles();
+
+        return in_array($role, $roles);
+    }
+
+    /**
      * Return the stored authorisation session.
      *
      * @return Authorisation|null
