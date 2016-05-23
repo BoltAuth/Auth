@@ -16,6 +16,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Twig;
+use Bolt\Storage\Database\Schema\Comparison\IgnoredChange;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -211,6 +212,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $providerRepo,
                     $tokenRepo
                 );
+            }
+        );
+
+        $app['schema.comparator'] = $app->extend(
+            'schema.comparator',
+            function ($comparator) {
+                $comparator->addIgnoredChange(new IgnoredChange('changedColumns', 'type', 'bigint', 'integer'));
+
+                return $comparator;
             }
         );
     }
