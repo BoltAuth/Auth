@@ -90,7 +90,6 @@ class Backend implements ControllerProviderInterface
         ;
 
         $ctr->match($memberBaseUrl . '/edit/{guid}', [$this, 'userEdit'])
-            ->assert('guid', '^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')
             ->bind('membersAdminUserEdit')
             ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
@@ -254,6 +253,12 @@ class Backend implements ControllerProviderInterface
 
     public function userEdit(Application $app, Request $request, $guid)
     {
+        if (!Uuid::isValid($guid)) {
+            $app['logger.flash']->error(sprintf('Member GUID %s is not valid', $guid));
+
+            new RedirectResponse($app['url_generator']->generate('membersAdmin'));
+        }
+
         if ($app['members.records']->getAccountByGuid($guid) === false) {
             $app['logger.flash']->error(sprintf('Member GUID %s does not exist', $guid));
 
