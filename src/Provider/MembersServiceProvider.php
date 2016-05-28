@@ -397,7 +397,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         // Provider manager
         $app['members.oauth.provider.manager'] = $app->share(
             function ($app) {
-                $rootUrl = $app['resources']->getUrl('rooturl');
+                $rootUrl = $app['resources']->getUrl('hosturl');
 
                 return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
             }
@@ -466,7 +466,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['twig'],
                     $app['mailer'],
                     $app['dispatcher'],
-                    $app['resources']->getUrl('rooturl')
+                    $app['resources']->getUrl('hosturl')
                 );
             }
         );

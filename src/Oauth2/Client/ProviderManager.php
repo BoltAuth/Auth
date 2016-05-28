@@ -250,7 +250,7 @@ class ProviderManager
      */
     protected function getCallbackUrl($providerName)
     {
-        $url = sprintf('%s%s/oauth2/callback?provider=%s', $this->rootUrl, $this->config->getUrlAuthenticate(), $providerName);
+        $url = sprintf('%s/%s/oauth2/callback?provider=%s', $this->rootUrl, $this->config->getUrlAuthenticate(), $providerName);
         $this->logger->debug("[Members][Provider]: Setting callback URL: $url");
 
         return $url;

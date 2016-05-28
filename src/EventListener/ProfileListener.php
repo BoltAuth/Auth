@@ -106,7 +106,7 @@ class ProfileListener implements EventSubscriberInterface
         $context = [
             'name'  => $event->getAccount()->getDisplayname(),
             'email' => $event->getAccount()->getEmail(),
-            'link'  => sprintf('%s%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
+            'link'  => sprintf('%s/%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
         ];
         $mailHtml = $this->twig->render($this->config->getTemplates('verification', 'body'), $context);
 
