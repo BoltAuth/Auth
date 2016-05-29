@@ -24,6 +24,8 @@ class AccountVerification
     protected $message;
     /** @var string */
     protected $code;
+    /** @var Storage\Entity\Account */
+    protected $account;
 
     /**
      * @return boolean
@@ -47,6 +49,14 @@ class AccountVerification
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * @return Storage\Entity\Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
     }
 
     /**
@@ -75,14 +85,14 @@ class AccountVerification
         $guid = $metaEntity->getGuid();
 
         // Get the account and set it as verified
-        $account = $records->getAccountByGuid($guid);
-        if ($account === false) {
+        $this->account = $records->getAccountByGuid($guid);
+        if ($this->account === false) {
             $this->message = 'Expired meta code';
 
             return;
         }
-        $account->setVerified(true);
-        $records->saveAccount($account);
+        $this->account->setVerified(true);
+        $records->saveAccount($this->account);
 
         // Remove meta record
         $records->deleteAccountMeta($metaEntity);
