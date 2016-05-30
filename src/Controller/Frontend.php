@@ -5,6 +5,8 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Silex\Application;
@@ -216,6 +218,11 @@ class Frontend implements ControllerProviderInterface
         // Check the verification code
         $verification = new AccountVerification();
         $verification->validateCode($app['members.records'], $request->query->get('code'));
+
+        if ($verification->isSuccess()) {
+            $event = new MembersProfileEvent($verification->getAccount());
+            $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_VERIFY, $event);
+        }
 
         $context = [
             'twigparent' => $this->config->getTemplates('profile', 'parent'),

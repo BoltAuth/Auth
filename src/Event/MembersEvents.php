@@ -21,6 +21,7 @@ class MembersEvents
     const MEMBER_PROFILE_PRE_SAVE = 'member.profile.pre_save';
     const MEMBER_PROFILE_POST_SAVE = 'member.profile.post_save';
     const MEMBER_PROFILE_REGISTER = 'member.profile.register';
+    const MEMBER_PROFILE_VERIFY = 'member.profile.verify';
     const MEMBER_ROLE = 'member.role';
     const MEMBER_NOTIFICATION_PRE_SEND = 'member.notification.pre_send';
     const MEMBER_NOTIFICATION_FAILURE = 'member.notification.failure';
