@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Extension as TwigExtension;
 use Twig_Markup as TwigMarkup;
 use Twig_SimpleFunction as TwigSimpleFunction;
@@ -30,6 +31,8 @@ class Functions extends TwigExtension
     private $records;
     /** @var AccessControl\Session */
     private $session;
+    /** @var UrlGeneratorInterface */
+    private $generator;
 
     /**
      * Constructor.
@@ -38,17 +41,20 @@ class Functions extends TwigExtension
      * @param Form\Manager          $formManager
      * @param Storage\Records       $records
      * @param AccessControl\Session $session
+     * @param UrlGeneratorInterface $generator
      */
     public function __construct(
         Config $config,
         Form\Manager $formManager,
         Storage\Records $records,
-        AccessControl\Session $session
+        AccessControl\Session $session,
+        UrlGeneratorInterface $generator
     ) {
         $this->config = $config;
         $this->formManager = $formManager;
         $this->records = $records;
         $this->session = $session;
+        $this->generator = $generator;
     }
 
     /**
@@ -68,17 +74,22 @@ class Functions extends TwigExtension
         $env  = ['needs_environment' => true];
 
         return [
-            new TwigSimpleFunction('is_member',                [$this, 'isMember'],        $safe),
-            new TwigSimpleFunction('member',                   [$this, 'getMember'],       $safe),
-            new TwigSimpleFunction('member_meta',              [$this, 'getMemberMeta'],   $safe),
-            new TwigSimpleFunction('member_has_role',          [$this, 'hasRole'],         $safe),
-            new TwigSimpleFunction('member_providers',         [$this, 'getProviders'],    $safe),
-            new TwigSimpleFunction('members_auth_switcher',    [$this, 'renderSwitcher'],  $safe),
-            new TwigSimpleFunction('members_auth_associate',   [$this, 'renderAssociate'], $safe),
-            new TwigSimpleFunction('members_auth_login',       [$this, 'renderLogin'],     $safe),
-            new TwigSimpleFunction('members_auth_logout',      [$this, 'renderLogout'],    $safe),
-            new TwigSimpleFunction('members_profile_edit',     [$this, 'renderEdit'],      $safe),
-            new TwigSimpleFunction('members_profile_register', [$this, 'renderRegister'],  $safe),
+            new TwigSimpleFunction('is_member',                     [$this, 'isMember'],        $safe),
+            new TwigSimpleFunction('member',                        [$this, 'getMember'],       $safe),
+            new TwigSimpleFunction('member_meta',                   [$this, 'getMemberMeta'],   $safe),
+            new TwigSimpleFunction('member_has_role',               [$this, 'hasRole'],         $safe),
+            new TwigSimpleFunction('member_providers',              [$this, 'getProviders'],    $safe),
+            new TwigSimpleFunction('members_auth_switcher',         [$this, 'renderSwitcher'],  $safe),
+            new TwigSimpleFunction('members_auth_associate',        [$this, 'renderAssociate'], $safe),
+            new TwigSimpleFunction('members_auth_login',            [$this, 'renderLogin'],     $safe),
+            new TwigSimpleFunction('members_auth_logout',           [$this, 'renderLogout'],    $safe),
+            new TwigSimpleFunction('members_link_auth_login',       [$this, 'getLinkLogin'],    $safe),
+            new TwigSimpleFunction('members_link_auth_logout',      [$this, 'getLinkLogout'],   $safe),
+            new TwigSimpleFunction('members_link_auth_reset',       [$this, 'getLinkReset'],    $safe),
+            new TwigSimpleFunction('members_link_profile_edit',     [$this, 'getLinkEdit'],     $safe),
+            new TwigSimpleFunction('members_link_profile_register', [$this, 'getLinkRegister'], $safe),
+            new TwigSimpleFunction('members_profile_edit',          [$this, 'renderEdit'],      $safe),
+            new TwigSimpleFunction('members_profile_register',      [$this, 'renderRegister'],  $safe),
         ];
     }
 
@@ -288,5 +299,65 @@ class Functions extends TwigExtension
         $html = $this->formManager->renderForms($form, $template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
+    }
+
+    /**
+     * Get the URL for login.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkLogin($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('authenticationLogin', [], $format);
+    }
+
+    /**
+     * Get the URL for logout.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkLogout($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('authenticationLogout', [], $format);
+    }
+
+    /**
+     * Get the URL for password reset.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkReset($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('authenticationPasswordReset', [], $format);
+    }
+
+    /**
+     * Get the URL for profile editing.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkEdit($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('membersProfileEdit', [], $format);
+    }
+
+    /**
+     * Get the URL for profile registration.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkRegister($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('membersProfileRegister', [], $format);
     }
 }
