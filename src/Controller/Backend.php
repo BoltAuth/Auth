@@ -387,7 +387,7 @@ class Backend implements ControllerProviderInterface
      *
      * @return array
      */
-    private function getResult($task, \Exception $e = null)
+    protected function getResult($task, \Exception $e = null)
     {
         if ($e === null) {
             return [
