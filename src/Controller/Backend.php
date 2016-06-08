@@ -399,7 +399,7 @@ class Backend implements ControllerProviderInterface
 
         return [
             'job'    => $task,
-            'result' => true,
+            'result' => false,
             'data'   => $e->getMessage(),
         ];
     }
