@@ -4,6 +4,9 @@ namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\Form\LoginPassword;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
+use PasswordLib\Password\Factory as PasswordFactory;
+use PasswordLib\Password\Implementation\Blowfish;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +78,8 @@ class Local extends AbstractHandler
             return new RedirectResponse($urlGeneratorInterface->generate('authenticationLogin'));
         }
 
-        if (password_verify($submittedForm->get('password')->getData(), $oauth->getPassword())) {
+        $requestPassword = $submittedForm->get('password')->getData();
+        if ($this->isValidPassword($oauth, $requestPassword)) {
             $formService->saveForm($this->records, $this->dispatcher);
 
             $accessToken = $this->provider->getAccessToken('password', []);
@@ -89,5 +93,36 @@ class Local extends AbstractHandler
         }
 
         return null;
+    }
+
+    /**
+     * Check to see if a provided password is valid.
+     *
+     * @param Entity\Oauth $oauth
+     * @param string       $requestPassword
+     *
+     * @return bool
+     */
+    protected function isValidPassword(Entity\Oauth $oauth, $requestPassword)
+    {
+        if (!Blowfish::detect($oauth->getPassword())) {
+            // Rehash password if not using Blowfish algorithm
+            $passwordFactory = new PasswordFactory();
+
+            if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
+                $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
+                try {
+                    $this->records->saveOauth($oauth);
+                } catch (NotNullConstraintViolationException $e) {
+                    // Database needs updating
+                }
+
+                return true;
+            }
+        } elseif (password_verify($requestPassword, $oauth->getPassword())) {
+            return true;
+        }
+
+        return false;
     }
 }
