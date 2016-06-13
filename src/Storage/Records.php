@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Storage;
 
 use Carbon\Carbon;
+use Pimple as Container;
 
 /**
  * Membership records.
@@ -29,24 +30,15 @@ class Records
     /**
      * Constructor.
      *
-     * @param Repository\Account     $account
-     * @param Repository\AccountMeta $accountMeta
-     * @param Repository\Oauth       $oauth
-     * @param Repository\Provider    $provider
-     * @param Repository\Token       $token
+     * @param Container $repositories
      */
-    public function __construct(
-        Repository\Account $account,
-        Repository\AccountMeta $accountMeta,
-        Repository\Oauth $oauth,
-        Repository\Provider $provider,
-        Repository\Token $token
-    ) {
-        $this->account = $account;
-        $this->accountMeta = $accountMeta;
-        $this->oauth = $oauth;
-        $this->provider = $provider;
-        $this->token = $token;
+    public function __construct(Container $repositories)
+    {
+        $this->account = $repositories['account'];
+        $this->accountMeta = $repositories['account_meta'];
+        $this->oauth = $repositories['oauth'];
+        $this->provider = $repositories['provider'];
+        $this->token = $repositories['token'];
     }
 
     /**
@@ -233,7 +225,7 @@ class Records
 
         return $oauth;
     }
-    
+
     /**
      * Fetches an OAuth entries by GUID.
      *
@@ -288,10 +280,10 @@ class Records
         $provider->setLastupdate(Carbon::now());
 
         $this->provider->save($provider);
-        
+
         return $provider;
     }
-    
+
     /**
      * Fetches Provider entries by GUID.
      *

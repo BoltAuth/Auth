@@ -194,26 +194,25 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerStorage(Application $app)
     {
+        $app['members.repositories'] = $app->share(
+            function () use ($app) {
+                return new Container(
+                    [
+                        // @codingStandardsIgnoreStart
+                        'account'      => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Account::class); }),
+                        'account_meta' => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\AccountMeta::class); }),
+                        'oauth'        => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Oauth::class); }),
+                        'provider'     => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Provider::class); }),
+                        'token'        => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Token::class); }),
+                        // @codingStandardsIgnoreEnd
+                    ]
+                );
+            }
+        );
+
         $app['members.records'] = $app->share(
             function () use ($app) {
-                /** @var Repository\Account $accountRepo */
-                $accountRepo = $app['storage']->getRepository(Entity\Account::class);
-                /** @var Repository\AccountMeta $accountMetaRepo */
-                $accountMetaRepo = $app['storage']->getRepository(Entity\AccountMeta::class);
-                /** @var Repository\Oauth $oauthRepo */
-                $oauthRepo = $app['storage']->getRepository(Entity\Oauth::class);
-                /** @var Repository\Provider $providerRepo */
-                $providerRepo = $app['storage']->getRepository(Entity\Provider::class);
-                /** @var Repository\Token $tokenRepo */
-                $tokenRepo = $app['storage']->getRepository(Entity\Token::class);
-
-                return new Records(
-                    $accountRepo,
-                    $accountMetaRepo,
-                    $oauthRepo,
-                    $providerRepo,
-                    $tokenRepo
-                );
+                return new Records($app['members.repositories']);
             }
         );
 
