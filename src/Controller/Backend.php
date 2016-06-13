@@ -5,11 +5,14 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
+use Bolt\Extension\Bolt\Members\Admin\Pager as AdminPager;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Pagerfanta\Exception\OutOfRangeCurrentPageException;
+use Pagerfanta\Pagerfanta as Pager;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -158,22 +161,75 @@ class Backend implements ControllerProviderInterface
      */
     public function admin(Application $app, Request $request)
     {
+        /** @var Storage\Repository\Account $repo */
+        $repo = $app['members.repositories']['account'];
+        $repo->setPagerEnabled(true);
+
         try {
+            /** @var Pager $members */
             $members = $app['members.records']->getAccounts();
-            $roles = $app['members.roles']->getRoles();
-        } catch (TableNotFoundException $e) {
-            $msg = sprintf('Members database tables have not been created! Please <a href="%s">update your database</a>.', $app['url_generator']->generate('dbcheck'));
-            $app['logger.flash']->error($msg);
+            $members
+                ->setMaxPerPage(20)
+                ->setCurrentPage($request->query->getInt('page', 1))
+                ->getCurrentPageResults()
+            ;
+        } catch (\Exception $e) {
+            $this->handleException($app, $e);
             $members = [];
+        }
+
+        try {
+            $roles = $app['members.roles']->getRoles();
+        } catch (\Exception $e) {
+            $this->handleException($app, $e);
             $roles = [];
+        }
+
+        $pager = new AdminPager();
+        if (!empty($members)) {
+            $pager
+                ->setFor('Memberships')
+                ->setCurrent($members->getCurrentPage())
+                ->setCount($members->getNbResults())
+                ->setTotalPages($members->getNbPages())
+                ->setShowingFrom($members->getCurrentPageOffsetStart())
+                ->setShowingTo($members->getCurrentPageOffsetEnd())
+            ;
         }
 
         $html = $app['twig']->render('@MembersAdmin/members.twig', [
             'members' => $members,
             'roles'   => $roles,
+            'pager'   => [
+                'pager' => $pager,
+                'surr'  => 4,
+            ],
+            'context' => [
+                'contenttype' => [
+                    'slug' => 'pager',
+                ],
+            ],
         ]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
+    }
+
+    /**
+     * @param Application $app
+     * @param \Exception  $e
+     *
+     * @throws \Exception
+     */
+    protected function handleException(Application $app, \Exception $e)
+    {
+        if ($e instanceof TableNotFoundException) {
+            $msg = sprintf('Members database tables have not been created! Please <a href="%s">update your database</a>.', $app['url_generator']->generate('dbcheck'));
+            $app['logger.flash']->error($msg);
+        } elseif ($e instanceof OutOfRangeCurrentPageException) {
+            $app['logger.flash']->error('Page does not exist');
+        } else {
+            throw $e;
+        }
     }
 
     /**

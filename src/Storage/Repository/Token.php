@@ -18,6 +18,8 @@ use Carbon\Carbon;
  */
 class Token extends AbstractMembersRepository
 {
+    const ALIAS = 't';
+
     /**
      * Fetches Token entries by GUID.
      *

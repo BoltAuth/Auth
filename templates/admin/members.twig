@@ -85,6 +85,8 @@ Manage Site Membership Roles
                 </div>
             </section>
             <hr />
+
+            {% include '@bolt/components/pager.twig' with { 'context': pager } only %}
         </div>
 
         <aside class="col-md-3">

@@ -7,6 +7,7 @@ use Bolt\Events\StorageEvents;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\QuerySet;
 use Bolt\Storage\Repository;
+use Pagerfanta\Pagerfanta as Pager;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -20,6 +21,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Account extends AbstractMembersRepository
 {
+    const ALIAS = 'a';
+
     /**
      * {@inheritdoc}
      */
@@ -95,13 +98,17 @@ class Account extends AbstractMembersRepository
     }
 
     /**
-     * Fetches an account by GUID.
+     * Fetches all accounts.
      *
-     * @return Entity\Account[]
+     * @return Entity\Account[]|Pager
      */
     public function getAccounts()
     {
         $query = $this->getAccountsQuery();
+
+        if ($this->pagerEnabled) {
+            return $this->getPager($query, 'guid');
+        }
 
         return $this->findWith($query);
     }
@@ -194,11 +201,15 @@ class Account extends AbstractMembersRepository
      *
      * @param boolean $status
      *
-     * @return Entity\Account[]
+     * @return Entity\Account[]|Pager
      */
     public function getAccountsByEnableStatus($status)
     {
         $query = $this->getAccountsByEnableStatusQuery($status);
+
+        if ($this->pagerEnabled) {
+            return $this->getPager($query, 'guid');
+        }
 
         return $this->findOneWith($query);
     }

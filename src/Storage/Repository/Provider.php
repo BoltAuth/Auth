@@ -16,6 +16,8 @@ use Bolt\Storage\Repository;
  */
 class Provider extends AbstractMembersRepository
 {
+    const ALIAS = 'p';
+
     /**
      * Fetches Provider entries by GUID & provider name.
      *

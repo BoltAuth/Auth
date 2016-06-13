@@ -16,6 +16,8 @@ use Bolt\Storage\Repository;
  */
 class Oauth extends AbstractMembersRepository
 {
+    const ALIAS = 'o';
+
     /**
      * Fetches an OAuth entries by GUID.
      *

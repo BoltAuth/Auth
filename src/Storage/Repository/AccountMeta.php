@@ -16,6 +16,8 @@ use Bolt\Storage\Repository;
  */
 class AccountMeta extends AbstractMembersRepository
 {
+    const ALIAS = 'm';
+
     /**
      * Fetches all meta data for an account.
      *
@@ -26,6 +28,10 @@ class AccountMeta extends AbstractMembersRepository
     public function getAccountMetaAll($guid)
     {
         $query = $this->getAccountMetaAllQuery($guid);
+
+        if ($this->pagerEnabled) {
+            return $this->getPager($query, 'guid');
+        }
 
         return $this->findWith($query);
     }
