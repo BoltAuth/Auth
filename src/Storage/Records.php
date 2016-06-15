@@ -110,6 +110,20 @@ class Records
     }
 
     /**
+     * Fetches an account by meta key/value.
+     *
+     * @param string $guid
+     * @param string $meta
+     * @param string $value
+     *
+     * @return Entity\Account
+     */
+    public function getAccountByMeta($guid, $meta, $value)
+    {
+        return $this->account->getAccountByMeta($guid, $meta, $value);
+    }
+
+    /**
      * Returns all accounts that are either enabled, or disabled.
      *
      * @param boolean $status

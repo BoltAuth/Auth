@@ -197,6 +197,43 @@ class Account extends AbstractMembersRepository
     }
 
     /**
+     * Fetches an account by meta key/value.
+     *
+     * @param string $guid
+     * @param string $meta
+     * @param string $value
+     *
+     * @return Entity\Account
+     */
+    public function getAccountByMeta($guid, $meta, $value)
+    {
+        $query = $this->getAccountByMetaQuery($guid, $meta, $value);
+
+        return $this->findOneWith($query);
+    }
+
+    public function getAccountByMetaQuery($guid, $meta, $value)
+    {
+        $metaTableName = $this->getEntityManager()
+            ->getRepository(Entity\AccountMeta::class)
+            ->getTableName()
+        ;
+
+        $qb = $this->createQueryBuilder();
+        $qb->select(static::ALIAS . '.*')
+            ->leftJoin('a', $metaTableName, 'm', 'a.guid = m.guid')
+            ->where('a.guid = :guid')
+            ->andWhere('m.meta = :meta')
+            ->andWhere('m.value = :value')
+            ->setParameter('guid', $guid)
+            ->setParameter('meta', $meta)
+            ->setParameter('value', $value)
+        ;
+
+        return $qb;
+    }
+
+    /**
      * Returns all accounts that are either enabled, or disabled.
      *
      * @param boolean $status
