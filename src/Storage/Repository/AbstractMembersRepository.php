@@ -58,6 +58,9 @@ abstract class AbstractMembersRepository extends Repository
     }
 
     /**
+     * @param QueryBuilder $query
+     * @param string       $column
+     *
      * @return Pager
      */
     public function getPager(QueryBuilder $query, $column)
