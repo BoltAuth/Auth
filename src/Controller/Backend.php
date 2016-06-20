@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
-use Bolt\Extension\Bolt\Members\Admin\Pager as AdminPager;
+use Bolt\Extension\Bolt\Members\Admin\PagerEntity;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Storage;
@@ -187,7 +187,7 @@ class Backend implements ControllerProviderInterface
             $roles = [];
         }
 
-        $pager = new AdminPager();
+        $pager = new PagerEntity();
         if (!empty($members)) {
             $pager
                 ->setFor('Memberships')

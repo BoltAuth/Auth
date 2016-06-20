@@ -7,7 +7,7 @@ namespace Bolt\Extension\Bolt\Members\Admin;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Pager
+class PagerEntity
 {
     /** @var string */
     protected $for;
@@ -38,7 +38,7 @@ class Pager
     /**
      * @param string $for
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setFor($for)
     {
@@ -58,7 +58,7 @@ class Pager
     /**
      * @param int $current
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setCurrent($current)
     {
@@ -78,7 +78,7 @@ class Pager
     /**
      * @param int $count
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setCount($count)
     {
@@ -98,7 +98,7 @@ class Pager
     /**
      * @param int $totalPages
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setTotalPages($totalPages)
     {
@@ -126,7 +126,7 @@ class Pager
     /**
      * @param int $showingFrom
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setShowingFrom($showingFrom)
     {
@@ -154,7 +154,7 @@ class Pager
     /**
      * @param int $showingTo
      *
-     * @return Pager
+     * @return PagerEntity
      */
     public function setShowingTo($showingTo)
     {
