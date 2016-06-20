@@ -100,11 +100,14 @@ class Account extends AbstractMembersRepository
     /**
      * Fetches all accounts.
      *
+     * @param string $orderBy
+     * @param string $order
+     *
      * @return Entity\Account[]|Pager
      */
-    public function getAccounts()
+    public function getAccounts($orderBy = 'displayname', $order = null)
     {
-        $query = $this->getAccountsQuery();
+        $query = $this->getAccountsQuery($orderBy, $order);
 
         if ($this->pagerEnabled) {
             return $this->getPager($query, 'guid');
@@ -113,10 +116,12 @@ class Account extends AbstractMembersRepository
         return $this->findWith($query);
     }
 
-    public function getAccountsQuery()
+    public function getAccountsQuery($orderBy, $order)
     {
         $qb = $this->createQueryBuilder();
-        $qb->select('*');
+        $qb->select('*')
+            ->orderBy($orderBy, $order)
+        ;
 
         return $qb;
     }

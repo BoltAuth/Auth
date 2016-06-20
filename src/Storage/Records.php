@@ -64,13 +64,16 @@ class Records
     }
 
     /**
-     * Get all membership accounts
+     * Fetch all membership accounts.
+     *
+     * @param string $orderBy
+     * @param string $order
      *
      * @return Entity\Account
      */
-    public function getAccounts()
+    public function getAccounts($orderBy = 'displayname', $order = null)
     {
-        return $this->account->getAccounts();
+        return $this->account->getAccounts($orderBy, $order);
     }
 
     /**
