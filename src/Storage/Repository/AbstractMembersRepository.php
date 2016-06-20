@@ -2,10 +2,10 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
+use Bolt\Extension\Bolt\Members\Admin\Pager;
 use Bolt\Storage\Repository;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineDbalSingleTableAdapter;
-use Pagerfanta\Pagerfanta as Pager;
 
 /**
  * Base repository for Members.
@@ -65,8 +65,18 @@ abstract class AbstractMembersRepository extends Repository
      */
     public function getPager(QueryBuilder $query, $column)
     {
-        $adapter = new DoctrineDbalSingleTableAdapter($query, static::ALIAS . '.' . $column);
-        $this->pager = new Pager($adapter);
+        if ($this->pager === null) {
+            $adapter = new DoctrineDbalSingleTableAdapter($query, static::ALIAS . '.' . $column);
+            $this->pager = new Pager($adapter);
+        }
+
+        $results = $this->pager->getCurrentPageResults();
+        foreach ($results as $key => $data) {
+            $entity = $this->getEntityBuilder()->getEntity();
+            $this->getEntityBuilder()->createFromDatabaseValues($data, $entity);
+            $results[$key] = $entity;
+        }
+        $this->pager->setCurrentPageResults($results);
 
         return $this->pager;
     }
