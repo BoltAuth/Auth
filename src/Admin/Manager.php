@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\Bolt\Members\Admin;
 
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Admin implements EventSubscriberInterface
+class Manager implements EventSubscriberInterface
 {
     /** @var Records */
     protected $records;
