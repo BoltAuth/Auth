@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Admin;
+namespace Bolt\Extension\Bolt\Members\Pager;
 
 /**
  * Pager class for admin paging.

@@ -2,7 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Admin\Pager;
+use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Storage\Repository;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineDbalSingleTableAdapter;
