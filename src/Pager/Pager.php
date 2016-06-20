@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Pager;
 
+use Bolt\Storage\Entity\Builder;
+use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Pagerfanta;
 
 /**
@@ -15,10 +17,44 @@ use Pagerfanta\Pagerfanta;
  */
 class Pager extends Pagerfanta
 {
+    /** @var Builder */
+    private $builder;
+    /** @var bool */
+    private $built;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(AdapterInterface $adapter, Builder $builder)
+    {
+        parent::__construct($adapter);
+
+        $this->builder = $builder;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCurrentPageResults()
+    {
+        $results = parent::getCurrentPageResults();
+        if ($this->built === null) {
+            foreach ($results as $key => $data) {
+                $entity = $this->builder->getEntity();
+                $this->builder->createFromDatabaseValues($data, $entity);
+                $results[$key] = $entity;
+            }
+            $this->setCurrentPageResults($results);
+            $this->built = true;
+        }
+
+        return $results;
+    }
+
     /**
      * @param array|\Traversable $currentPageResults
      */
-    public function setCurrentPageResults($currentPageResults)
+    private function setCurrentPageResults($currentPageResults)
     {
         $reflection = new \ReflectionClass($this);
         $prop = $reflection->getParentClass()->getProperty('currentPageResults');
