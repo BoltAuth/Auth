@@ -22,3 +22,8 @@ col.members-column-lastseen {
 col.members-column-roles {
     /*width: 10%;*/
 }
+
+tr.strikeout {
+    text-decoration: line-through;
+    color: red;
+}

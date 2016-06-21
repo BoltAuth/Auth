@@ -52,7 +52,6 @@
                         <colgroup>
                             <col class="members-column-check">
                             <col class="members-column-displayname">
-                            <col class="members-column-enabled">
                             <col class="members-column-email">
                             <col class="members-column-roles">
                             <col class="members-column-lastseen">
@@ -62,7 +61,6 @@
                         <tr>
                             <th></th>
                             <th><a href="{{ _self.column_toggle_ref('displayname') }}">{{ __('Display Name') }}</a></th>
-                            <th></th>
                             <th><a href="{{ _self.column_toggle_ref('email') }}">{{ __('Email') }}</a></th>
                             <th>{{ __('Roles') }}</th>
                             <th>{{ __('Last Seen') }}</th>
@@ -71,8 +69,8 @@
                         </thead>
                         <tbody class="members-list-items">
                         {% for member in members %}
-                            {% if member.enabled %}{% set enabled = 'fa fa-check' %}{% else %}{% set enabled = 'fa fa-close' %}{% endif %}
-                            <tr id="members-member[{{ member.guid }}]">
+                            {% if member.enabled %}{% set enabled = '' %}{% else %}{% set enabled = 'strikeout' %}{% endif %}
+                            <tr class="{{ enabled }}" id="members-member[{{ member.guid }}]">
                                 <td class="member-cb">
                                     <label>
                                         <input type="checkbox"
@@ -82,7 +80,6 @@
                                     </label>
                                 </td>
                                 <td class="members-displayname"><a href="members/edit/{{ member.guid }}">{{ member.displayname }}</a></td>
-                                <td class="member-enabled"><i class="{{ enabled }}"></i></td>
                                 <td class="members-email">{{ member.email }}</td>
                                 <td class="members-roles">
                                     {% for role in member.roles|default(['-']) %}
