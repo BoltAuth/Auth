@@ -1,0 +1,70 @@
+<aside class="col-md-3">
+    <div class="panel panel-default">
+        <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Admin Options</div>
+        <div class="panel-body">
+
+            <h4><strong>{{ __('Users') }}</strong></h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" href="members/add">
+                        <i class="fa fa-wrench"></i> {{ __('Add User') }}
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" data-action="members-user-del">
+                        <i class="fa fa-wrench"></i> {{ __('Delete User') }}
+                    </a>
+                </div>
+            </div>
+
+            <br><br>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" data-action="members-user-enable">
+                        <i class="fa fa-wrench"></i> {{ __('Enable') }}
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" data-action="members-user-disable">
+                        <i class="fa fa-wrench"></i> {{ __('Disable') }}
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4><strong>{{ __('Roles') }}</strong></h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" data-action="members-role-add">
+                        <i class="fa fa-check-square-o"></i> {{ __('Add role') }}
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="btn btn-tertiary" data-action="members-role-del">
+                        <i class="fa fa-minus-square-o"></i> {{ __('Remove role') }}
+                    </a>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <select class="form-control members-select-roles" title="Select Roles">
+                        <option value=""></option>
+                        {% for role in roles %}
+                            <option value="{{ role.name }}">{{ role.displayname }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr>
+
+        </div>
+    </div>
+</aside>
