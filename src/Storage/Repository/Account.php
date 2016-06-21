@@ -266,4 +266,38 @@ class Account extends AbstractMembersRepository
 
         return $qb;
     }
+
+    /**
+     * Search for member accounts.
+     *
+     * @param string $term
+     * @param string $orderBy
+     * @param null   $order
+     *
+     * @return array|\Bolt\Extension\Bolt\Members\Pager\Pager
+     */
+    public function search($term, $orderBy = 'displayname', $order = null)
+    {
+        $query = $this->searchQuery($term, $orderBy, $order);
+
+        if ($this->pagerEnabled) {
+            return $this->getPager($query, 'guid');
+        }
+
+
+        return $this->findWith($query);
+    }
+
+    public function searchQuery($term, $orderBy, $order)
+    {
+        $qb = $this->createQueryBuilder();
+        $qb->select('*')
+            ->where($qb->expr()->like('displayname', ':term'))
+            ->orWhere($qb->expr()->like('email', ':term'))
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy($orderBy, $order)
+        ;
+
+        return $qb;
+    }
 }

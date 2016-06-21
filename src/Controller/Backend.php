@@ -166,10 +166,16 @@ class Backend implements ControllerProviderInterface
         $repo->setPagerEnabled(true);
         $orderBy = $request->query->get('orderby', 'displayname');
         $order = $request->query->get('order');
+        $search = $request->query->get('search');
 
         try {
             /** @var Pager $members */
-            $members = $app['members.records']->getAccounts($orderBy, $order);
+            if ($search === null) {
+                $members = $app['members.records']->getAccounts($orderBy, $order);
+            } else {
+                $members = $app['members.records']->searchAccount($search, $orderBy, $order);
+            }
+
             $members
                 ->setMaxPerPage(20)
                 ->setCurrentPage($request->query->getInt('page', 1))

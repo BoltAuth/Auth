@@ -151,6 +151,20 @@ class Records
     }
 
     /**
+     * Search for member accounts.
+     *
+     * @param string $term
+     * @param string $orderBy
+     * @param null   $order
+     *
+     * @return array|\Bolt\Extension\Bolt\Members\Pager\Pager
+     */
+    public function searchAccount($term, $orderBy, $order)
+    {
+        return $this->account->search($term, $orderBy, $order);
+    }
+
+    /**
      * Delete an account entity.
      *
      * @param Entity\Account $account
