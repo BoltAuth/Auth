@@ -86,7 +86,9 @@
                                         {{ role }}<br>
                                     {% endfor %}
                                 </td>
-                                <td class="members-lastseen">{{ member.lastseen }}</td>
+                                <td class="members-lastseen">
+                                    <time class="buic-moment" data-bolt-widget="buicMoment" datetime="{{ member.lastseen }}">{{ member.lastseen }}</time>
+                                </td>
                                 <td class="member-guid">
                                     {% spaceless %}
                                         <span class="info-pop pull-right" style="background-color: inherit !important;"
