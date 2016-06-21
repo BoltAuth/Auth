@@ -179,7 +179,7 @@ class Backend implements ControllerProviderInterface
             }
 
             $members
-                ->setMaxPerPage(20)
+                ->setMaxPerPage(10)
                 ->setCurrentPage($request->query->getInt('page', 1))
                 ->getCurrentPageResults()
             ;
