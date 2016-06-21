@@ -15,9 +15,9 @@
 {# clear default messages, because we use them in a different spot, in this template #}
 {% block messages "" %}
 
-{% macro column_toggle_ref(column) %}
-    {% if app.request.query.all.orderby is defined and app.request.query.all.orderby == column %}
-        {% if app.request.query.all.order is defined and app.request.query.all.order == 'desc' %}
+{% macro column_toggle_ref(queries, column) %}
+    {% if queries.orderBy == column %}
+        {% if queries.order == 'desc' %}
             {% set order = 'asc' %}
         {% else %}
             {% set order = 'desc' %}
@@ -60,8 +60,8 @@
                         <thead>
                         <tr>
                             <th></th>
-                            <th><a href="{{ _self.column_toggle_ref('displayname') }}">{{ __('Display Name') }}</a></th>
-                            <th><a href="{{ _self.column_toggle_ref('email') }}">{{ __('Email') }}</a></th>
+                            <th><a href="{{ _self.column_toggle_ref(queries, 'displayname') }}">{{ __('Display Name') }}</a></th>
+                            <th><a href="{{ _self.column_toggle_ref(queries, 'email') }}">{{ __('Email') }}</a></th>
                             <th>{{ __('Roles') }}</th>
                             <th>{{ __('Last Seen') }}</th>
                             <th></th>

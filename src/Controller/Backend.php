@@ -164,16 +164,18 @@ class Backend implements ControllerProviderInterface
         /** @var Storage\Repository\Account $repo */
         $repo = $app['members.repositories']['account'];
         $repo->setPagerEnabled(true);
-        $orderBy = $request->query->get('orderby', 'displayname');
-        $order = $request->query->get('order');
-        $search = $request->query->get('search');
+        $queries = [
+            'orderBy' => $request->query->get('orderby', 'displayname'),
+            'order'   => $request->query->get('order'),
+            'search'  => $request->query->get('search'),
+        ];
 
         try {
             /** @var Pager $members */
-            if ($search === null) {
-                $members = $app['members.records']->getAccounts($orderBy, $order);
+            if ($queries['search'] === null) {
+                $members = $app['members.records']->getAccounts($queries['orderBy'], $queries['order']);
             } else {
-                $members = $app['members.records']->searchAccount($search, $orderBy, $order);
+                $members = $app['members.records']->searchAccount($queries['search'], $queries['orderBy'], $queries['order']);
             }
 
             $members
@@ -208,6 +210,7 @@ class Backend implements ControllerProviderInterface
         $html = $app['twig']->render('@MembersAdmin/members.twig', [
             'members' => $members,
             'roles'   => $roles,
+            'queries' => $queries,
             'pager'   => [
                 'pager' => $pager,
                 'surr'  => 4,
