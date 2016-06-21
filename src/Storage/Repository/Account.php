@@ -4,10 +4,10 @@ namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
 use Bolt\Events\StorageEvent;
 use Bolt\Events\StorageEvents;
+use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\QuerySet;
 use Bolt\Storage\Repository;
-use Pagerfanta\Pagerfanta as Pager;
 use Ramsey\Uuid\Uuid;
 
 /**
