@@ -8,38 +8,38 @@
 
 {% set feedback = feedback.get|default(null) %}
 {% if feedback %}
-<div class="panel members-feedback">
-    {% if feedback.debug|default(null) and app['members.debug']%}
-    <div class="members-messages-debug">
-        <h5>Debug Messages:</h5>
-        <ul>
-            {% for message in feedback.debug %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+    <div class="panel members-feedback">
+        {% if feedback.debug|default(null) and app['members.debug']%}
+            <div class="members-messages-debug">
+                <h5>Debug Messages:</h5>
+                <ul class="members-feedback-messages">
+                    {% for message in feedback.debug %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
-    {% if feedback.error|default(null) %}
-    <div class="members-messages-error">
-        <h5>Error Messages:</h5>
-        <ul>
-            {% for message in feedback.error %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+        {% if feedback.error|default(null) %}
+            <div class="members-messages-error">
+                <h5>Error Messages:</h5>
+                <ul class="members-feedback-messages">
+                    {% for message in feedback.error %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
-    {% if feedback.info|default(null) %}
-    <div class="members-messages-info">
-        <h5>Informational Messages:</h5>
-        <ul>
-            {% for info in feedback.info %}
-                <li>{{ info }}</li>
-            {% endfor %}
-        </ul>
+        {% if feedback.info|default(null) %}
+            <div class="members-messages-info">
+                <h5>Informational Messages:</h5>
+                <ul class="members-feedback-messages">
+                    {% for info in feedback.info %}
+                        <li>{{ info }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 {% endif %}
