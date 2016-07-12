@@ -39,9 +39,6 @@ class Provider extends BaseTable
         $this->table->addIndex(['resource_owner_id']);
 
         $this->table->addUniqueIndex(['provider', 'resource_owner_id']);
-
-        // Temporary until done upstream
-        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -55,8 +52,8 @@ class Provider extends BaseTable
     /**
      * {@inheritdoc}
      */
-    protected function addForeignKeyConstraint()
+    protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_provider');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
     }
 }
