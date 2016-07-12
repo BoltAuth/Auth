@@ -35,9 +35,6 @@ class Oauth extends BaseTable
         $this->table->addUniqueIndex(['resource_owner_id']);
         $this->table->addIndex(['guid']);
         $this->table->addIndex(['enabled']);
-
-        // Temporary until done upstream
-        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -51,10 +48,10 @@ class Oauth extends BaseTable
     /**
      * {@inheritdoc}
      */
-    protected function addForeignKeyConstraint()
+    protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_oauth');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
         // This breaks on MySQL
-        //$this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], [], 'resource_owner_id_oauth');
+        //$this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], ['onDelete' => 'CASCADE']);
     }
 }

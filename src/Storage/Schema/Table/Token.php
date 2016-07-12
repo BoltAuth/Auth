@@ -40,9 +40,6 @@ class Token extends BaseTable
         $this->table->addIndex(['cookie']);
 
         $this->table->addUniqueIndex(['guid', 'cookie']);
-
-        // Temporary until done upstream
-        $this->addForeignKeyConstraint();
     }
 
     /**
@@ -56,8 +53,8 @@ class Token extends BaseTable
     /**
      * {@inheritdoc}
      */
-    protected function addForeignKeyConstraint()
+    protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], [], 'guid_token');
+        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
     }
 }

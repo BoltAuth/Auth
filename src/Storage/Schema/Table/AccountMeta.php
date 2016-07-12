@@ -50,6 +50,6 @@ class AccountMeta extends BaseTable
      */
     protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint($this->tablePrefix . 'members_account', ['guid'], ['guid'], [], 'guid_account_meta');
+        $this->table->addForeignKeyConstraint($this->tablePrefix . 'members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
     }
 }
