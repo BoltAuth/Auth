@@ -33,7 +33,7 @@ class AccountMeta extends AbstractMembersRepository
             return $this->getPager($query, 'guid');
         }
 
-        $meta = $this->findWith($query);
+        $meta = $this->findWith($query) ?: [];
 
         /** @var Entity\AccountMeta $value */
         foreach ($meta as $key => $value) {
