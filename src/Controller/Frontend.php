@@ -64,6 +64,11 @@ class Frontend implements ControllerProviderInterface
             ->method(Request::METHOD_GET)
         ;
 
+        $ctr->match('/profile/view', [$this, 'viewProfile'])
+            ->bind('membersProfileView')
+            ->method(Request::METHOD_GET)
+        ;
+
         // Own the rest of the base route
         $ctr->match('/', [$this, 'defaultRoute'])
             ->bind('membersDefaultBase')
@@ -233,6 +238,41 @@ class Frontend implements ControllerProviderInterface
 
         $template = $this->config->getTemplates('profile', 'verify');
         $html = $app['twig']->render($template, $context);
+
+        return new Response(new \Twig_Markup($html, 'UTF-8'));
+    }
+
+    /**
+     * View a user's own profile.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return RedirectResponse|Response
+     */
+    public function viewProfile(Application $app, Request $request)
+    {
+        /** @var Session $session */
+        $session = $app['members.session'];
+        /** @var Form\Manager $formsManager */
+        $formsManager = $app['members.forms.manager'];
+        /** @var Form\Type\ProfileEditType $profileFormType */
+        $profileFormType = $app['members.form.components']['type']['profile_view'];
+
+        $memberSession = $session->getAuthorisation();
+
+        if ($memberSession === null) {
+            $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
+            $app['members.feedback']->info('Login required to view your profile');
+
+            return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
+        }
+
+        $profileFormType->setRequirePassword(false);
+        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
+
+        $template = $this->config->getTemplates('profile', 'view');
+        $html = $formsManager->renderForms($resolvedForm, $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
