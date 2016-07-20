@@ -125,11 +125,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerTwigPaths()
     {
         return [
-            'templates/authentication' => ['position' => 'append'],
-            'templates/error'          => ['position' => 'append'],
-            'templates/feedback'       => ['position' => 'append'],
-            'templates/profile'        => ['position' => 'append'],
-            'templates/admin'          => ['position' => 'append', 'namespace' => 'MembersAdmin'],
+            'templates'       => ['position' => 'append', 'namespace' => 'Members'],
+            'templates/admin' => ['position' => 'append', 'namespace' => 'MembersAdmin'],
         ];
     }
 
