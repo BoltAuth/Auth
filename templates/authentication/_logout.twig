@@ -1,7 +1,7 @@
 {% extends twigparent %}
 
 {% block logout %}
-    {% include "feedback.twig" %}
+    {{ include('@Members/feedback/feedback.twig') }}
 
     <div class="logout">
         <div class="row member-logout">
