@@ -14,7 +14,6 @@ use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
-use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Twig;
 use Bolt\Storage\Database\Schema\Comparison\IgnoredChange;
 use Pimple as Container;
@@ -240,6 +239,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         'profile_edit'     => $app->share(function () use ($app) { return new Form\Type\ProfileEditType($app['members.config']); }),
                         'profile_recovery' => $app->share(function () use ($app) { return new Form\Type\ProfileRecoveryType($app['members.config']); }),
                         'profile_register' => $app->share(function () use ($app) { return new Form\Type\ProfileRegisterType($app['members.config'], $app['members.records'], $app['members.session']); }),
+                        'profile_view'     => $app->share(function () use ($app) { return new Form\Type\ProfileEditType($app['members.config']); }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );
