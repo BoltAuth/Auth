@@ -51,17 +51,17 @@ class Frontend implements ControllerProviderInterface
 
         $ctr->match('/profile/edit', [$this, 'editProfile'])
             ->bind('membersProfileEdit')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
 
         $ctr->match('/profile/register', [$this, 'registerProfile'])
             ->bind('membersProfileRegister')
-            ->method('GET|POST')
+            ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
 
         $ctr->match('/profile/verify', [$this, 'verifyProfile'])
             ->bind('membersProfileVerify')
-            ->method('GET')
+            ->method(Request::METHOD_GET)
         ;
 
         // Own the rest of the base route
