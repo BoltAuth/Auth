@@ -149,7 +149,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.session'] = $app->share(
             function ($app) {
-                return new AccessControl\Session($app['members.records'], $app['session']);
+                return new AccessControl\Session($app['members.records'], $app['session'], $app['resources']->getUrl('root'));
             }
         );
 
