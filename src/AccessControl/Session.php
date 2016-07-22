@@ -42,17 +42,21 @@ class Session implements EventSubscriberInterface
     private $records;
     /** @var SessionInterface */
     private $session;
+    /** @var string */
+    private $rootUrl;
 
     /**
      * Constructor.
      *
      * @param Storage\Records  $records
      * @param SessionInterface $session
+     * @param string           $rootUrl
      */
-    public function __construct(Storage\Records $records, SessionInterface $session)
+    public function __construct(Storage\Records $records, SessionInterface $session, $rootUrl)
     {
         $this->records = $records;
         $this->session = $session;
+        $this->rootUrl = $rootUrl;
     }
 
     /**
@@ -392,11 +396,15 @@ class Session implements EventSubscriberInterface
      */
     public function popRedirect()
     {
+        if (empty($this->redirectStack)) {
+            return new Redirect($this->rootUrl);
+        }
+
         $redirect = end($this->redirectStack);
         $key = key($this->redirectStack);
         unset($this->redirectStack[$key]);
         if (empty($this->redirectStack)) {
-            $redirect = new Redirect('/');
+            $redirect = new Redirect($this->rootUrl);
             $this->redirectStack[] = $redirect;
         }
 
