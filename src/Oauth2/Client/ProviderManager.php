@@ -217,7 +217,7 @@ class ProviderManager
 
         $handlerKey = $this->getHandlerKey($providerName);
         $app['members.oauth.handler'] = $app->share(
-            function ($app) use ($app, $handlerKey) {
+            function ($app) use ($handlerKey) {
                 return $app[$handlerKey]([]);
             }
         );

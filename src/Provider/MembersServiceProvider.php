@@ -130,7 +130,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         );
 
         $app['members.debug'] = $app->protect(
-            function ($app) {
+            function () use ($app) {
                 return $app['members.config']->isDebug();
             }
         );
@@ -380,14 +380,14 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         // Handler object for local authentication processing
         $app['members.oauth.handler.local'] = $app->protect(
-            function ($app) use ($app) {
+            function () use ($app) {
                 return new Handler\Local($app['members.config'], $app);
             }
         );
 
         // Handler object for remote authentication processing
         $app['members.oauth.handler.remote'] = $app->protect(
-            function ($app) use ($app) {
+            function () use ($app) {
                 return new Handler\Remote($app['members.config'], $app);
             }
         );
@@ -435,7 +435,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         foreach ($this->config['providers'] as $providerName => $providerConfig) {
             if ($providerConfig['enabled'] === true) {
                 $app['members.oauth.provider.' . strtolower($providerName)] = $app->protect(
-                    function ($app) use ($app, $providerName) {
+                    function () use ($app, $providerName) {
                         return $app['members.oauth.provider.manager']->getProvider($providerName);
                     }
                 );
