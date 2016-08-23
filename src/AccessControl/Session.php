@@ -429,7 +429,9 @@ class Session implements EventSubscriberInterface
      */
     public function saveRedirects()
     {
-        $this->session->set(self::REDIRECT_STACK, $this->redirectStack);
+        if ($this->session->isStarted()) {
+            $this->session->set(self::REDIRECT_STACK, $this->redirectStack);
+        }
     }
 
     /**
@@ -437,7 +439,9 @@ class Session implements EventSubscriberInterface
      */
     public function loadRedirects()
     {
-        $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect('/')]);
+        if ($this->session->isStarted()) {
+            $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect('/')]);
+        }
     }
 
     /**
