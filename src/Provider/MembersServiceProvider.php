@@ -71,7 +71,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                             $app['members.forms.manager'],
                             $app['members.records'],
                             $app['members.session'],
-                            $app['url_generator']
+                            $app['url_generator.lazy']
                         )
                     );
 
@@ -90,7 +90,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                             $app['members.forms.manager'],
                             $app['members.records'],
                             $app['members.session'],
-                            $app['url_generator']
+                            $app['url_generator.lazy']
                         )
                     );
 
