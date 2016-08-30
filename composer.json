@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "bolt/bolt": "^3.0.3",
+        "bolt/bolt": "^3.2",
         "pagerfanta/pagerfanta": "^1.0",
         "ramsey/uuid": "^3.1"
     },
