@@ -16,16 +16,8 @@ use Pimple as Container;
  */
 class Records
 {
-    /** @var Repository\Account */
-    protected $account;
-    /** @var Repository\AccountMeta */
-    protected $accountMeta;
-    /** @var Repository\Oauth */
-    protected $oauth;
-    /** @var Repository\Provider */
-    protected $provider;
-    /** @var Repository\Token */
-    protected $token;
+    /** @var Container */
+    private $repositories;
 
     /**
      * Constructor.
@@ -34,11 +26,7 @@ class Records
      */
     public function __construct(Container $repositories)
     {
-        $this->account = $repositories['account'];
-        $this->accountMeta = $repositories['account_meta'];
-        $this->oauth = $repositories['oauth'];
-        $this->provider = $repositories['provider'];
-        $this->token = $repositories['token'];
+        $this->repositories = $repositories;
     }
 
     /**
@@ -60,7 +48,7 @@ class Records
         $account->setVerified(false);
         $account->setLastseen(Carbon::now());
 
-        return $this->account->save($account) ? $account : false;
+        return $this->getAccountRepository()->save($account) ? $account : false;
     }
 
     /**
@@ -73,7 +61,7 @@ class Records
      */
     public function getAccounts($orderBy = 'displayname', $order = null)
     {
-        return $this->account->getAccounts($orderBy, $order);
+        return $this->getAccountRepository()->getAccounts($orderBy, $order);
     }
 
     /**
@@ -85,7 +73,7 @@ class Records
      */
     public function getAccountByGuid($guid)
     {
-        return $this->account->getAccountByGuid($guid);
+        return $this->getAccountRepository()->getAccountByGuid($guid);
     }
 
     /**
@@ -97,7 +85,7 @@ class Records
      */
     public function getAccountByEmail($email)
     {
-        return $this->account->getAccountByEmail($email);
+        return $this->getAccountRepository()->getAccountByEmail($email);
     }
 
     /**
@@ -109,7 +97,7 @@ class Records
      */
     public function getAccountByUserName($username)
     {
-        return $this->account->getAccountByUserName($username);
+        return $this->getAccountRepository()->getAccountByUserName($username);
     }
 
     /**
@@ -123,7 +111,7 @@ class Records
      */
     public function getAccountByMeta($guid, $meta, $value)
     {
-        return $this->account->getAccountByMeta($guid, $meta, $value);
+        return $this->getAccountRepository()->getAccountByMeta($guid, $meta, $value);
     }
 
     /**
@@ -135,7 +123,7 @@ class Records
      */
     public function getAccountsByEnableStatus($status)
     {
-        return $this->account->getAccountsByEnableStatus($status);
+        return $this->getAccountRepository()->getAccountsByEnableStatus($status);
     }
 
     /**
@@ -147,7 +135,7 @@ class Records
      */
     public function saveAccount(Entity\Account $account)
     {
-        return $this->account->save($account);
+        return $this->getAccountRepository()->save($account);
     }
 
     /**
@@ -161,7 +149,7 @@ class Records
      */
     public function searchAccount($term, $orderBy, $order)
     {
-        return $this->account->search($term, $orderBy, $order);
+        return $this->getAccountRepository()->search($term, $orderBy, $order);
     }
 
     /**
@@ -173,7 +161,7 @@ class Records
      */
     public function deleteAccount(Entity\Account $account)
     {
-        return $this->account->delete($account);
+        return $this->getAccountRepository()->delete($account);
     }
 
     /**
@@ -185,7 +173,7 @@ class Records
      */
     public function getAccountMetaAll($guid)
     {
-        return $this->accountMeta->getAccountMetaAll($guid);
+        return $this->getAccountMetaRepository()->getAccountMetaAll($guid);
     }
 
     /**
@@ -198,7 +186,7 @@ class Records
      */
     public function getAccountMeta($guid, $metaName)
     {
-        return $this->accountMeta->getAccountMeta($guid, $metaName);
+        return $this->getAccountMetaRepository()->getAccountMeta($guid, $metaName);
     }
 
     /**
@@ -211,7 +199,7 @@ class Records
      */
     public function getAccountMetaValues($metaName, $metaValue)
     {
-        return $this->accountMeta->getAccountMetaValues($metaName, $metaValue);
+        return $this->getAccountMetaRepository()->getAccountMetaValues($metaName, $metaValue);
     }
 
     /**
@@ -223,7 +211,7 @@ class Records
      */
     public function saveAccountMeta(Entity\AccountMeta $accountMeta)
     {
-        return $this->accountMeta->save($accountMeta);
+        return $this->getAccountMetaRepository()->save($accountMeta);
     }
 
     /**
@@ -235,7 +223,7 @@ class Records
      */
     public function deleteAccountMeta(Entity\AccountMeta $accountMeta)
     {
-        return $this->accountMeta->delete($accountMeta);
+        return $this->getAccountMetaRepository()->delete($accountMeta);
     }
 
     /**
@@ -252,7 +240,7 @@ class Records
         $oauth->setResourceOwnerId($resourceOwnerId);
         $oauth->setEnabled($enabled);
 
-        $this->oauth->save($oauth);
+        $this->getOauthRepository()->save($oauth);
 
         return $oauth;
     }
@@ -266,7 +254,7 @@ class Records
      */
     public function getOauthByGuid($guid)
     {
-        return $this->oauth->getOauthByGuid($guid);
+        return $this->getOauthRepository()->getOauthByGuid($guid);
     }
 
     /**
@@ -278,7 +266,7 @@ class Records
      */
     public function getOauthByResourceOwnerId($resourceOwnerId)
     {
-        return $this->oauth->getOauthByResourceOwnerId($resourceOwnerId);
+        return $this->getOauthRepository()->getOauthByResourceOwnerId($resourceOwnerId);
     }
 
     /**
@@ -290,7 +278,7 @@ class Records
      */
     public function saveOauth(Entity\Oauth $oauth)
     {
-        return $this->oauth->save($oauth);
+        return $this->getOauthRepository()->save($oauth);
     }
 
     /**
@@ -310,7 +298,7 @@ class Records
         $provider->setResourceOwnerId($resourceOwnerId);
         $provider->setLastupdate(Carbon::now());
 
-        $this->provider->save($provider);
+        $this->getProviderRepository()->save($provider);
 
         return $provider;
     }
@@ -325,7 +313,7 @@ class Records
      */
     public function getProvision($guid, $provider)
     {
-        return $this->provider->getProvision($guid, $provider);
+        return $this->getProviderRepository()->getProvision($guid, $provider);
     }
 
     /**
@@ -337,7 +325,7 @@ class Records
      */
     public function getProvisionsByGuid($guid)
     {
-        return $this->provider->getProvisionsByGuid($guid);
+        return $this->getProviderRepository()->getProvisionsByGuid($guid);
     }
 
     /**
@@ -349,7 +337,7 @@ class Records
      */
     public function getProvisionsByProvider($provider)
     {
-        return $this->provider->getProvisionsByProvider($provider);
+        return $this->getProviderRepository()->getProvisionsByProvider($provider);
     }
 
     /**
@@ -361,7 +349,7 @@ class Records
      */
     public function getProvisionByResourceOwner($resourceOwner)
     {
-        return $this->provider->getProvisionByResourceOwner($resourceOwner);
+        return $this->getProviderRepository()->getProvisionByResourceOwner($resourceOwner);
     }
 
     /**
@@ -374,7 +362,7 @@ class Records
      */
     public function getProvisionByResourceOwnerId($provider, $resourceOwnerId)
     {
-        return $this->provider->getProvisionByResourceOwnerId($provider, $resourceOwnerId);
+        return $this->getProviderRepository()->getProvisionByResourceOwnerId($provider, $resourceOwnerId);
     }
 
     /**
@@ -386,7 +374,7 @@ class Records
      */
     public function saveProvider(Entity\Provider $provider)
     {
-        return $this->provider->save($provider);
+        return $this->getProviderRepository()->save($provider);
     }
 
     /**
@@ -398,7 +386,7 @@ class Records
      */
     public function getTokensByGuid($guid)
     {
-        return $this->token->getTokensByGuid($guid);
+        return $this->getTokenRepository()->getTokensByGuid($guid);
     }
 
     /**
@@ -410,7 +398,7 @@ class Records
      */
     public function getTokensByCookie($cookie)
     {
-        return $this->token->getTokensByCookie($cookie);
+        return $this->getTokenRepository()->getTokensByCookie($cookie);
     }
 
     /**
@@ -420,7 +408,7 @@ class Records
      */
     public function getTokensExpired()
     {
-        return $this->token->getTokensExpired();
+        return $this->getTokenRepository()->getTokensExpired();
     }
 
     /**
@@ -432,7 +420,7 @@ class Records
      */
     public function deleteToken(Entity\Token $token)
     {
-        return $this->token->delete($token);
+        return $this->getTokenRepository()->delete($token);
     }
 
     /**
@@ -444,6 +432,46 @@ class Records
      */
     public function saveToken(Entity\Token $token)
     {
-        return $this->token->save($token);
+        return $this->getTokenRepository()->save($token);
+    }
+
+    /**
+     * @return Repository\Account
+     */
+    protected function getAccountRepository()
+    {
+        return $this->repositories['account'];
+    }
+
+    /**
+     * @return Repository\AccountMeta
+     */
+    protected function getAccountMetaRepository()
+    {
+        return $this->repositories['account_meta'];
+    }
+
+    /**
+     * @return Repository\Oauth
+     */
+    protected function getOauthRepository()
+    {
+        return $this->repositories['oauth'];
+    }
+
+    /**
+     * @return Repository\Provider
+     */
+    protected function getProviderRepository()
+    {
+        return $this->repositories['provider'];
+    }
+
+    /**
+     * @return Repository\Token
+     */
+    protected function getTokenRepository()
+    {
+        return $this->repositories['token'];
     }
 }
