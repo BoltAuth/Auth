@@ -284,7 +284,6 @@ class Account extends AbstractMembersRepository
             return $this->getPager($query, 'guid');
         }
 
-
         return $this->findWith($query);
     }
 
