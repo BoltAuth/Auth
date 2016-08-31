@@ -22,7 +22,7 @@ class ProfileRecovery extends AbstractForm
     /**
      * @param string $guid
      *
-     * @return ProfileEdit
+     * @return ProfileRecovery
      */
     public function setGuid($guid)
     {

@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileEdit extends BaseProfile
+class Profile extends BaseProfile
 {
     /** @var Type\ProfileEditType */
     protected $type;
@@ -38,7 +38,7 @@ class ProfileEdit extends BaseProfile
     /**
      * @param Storage\Entity\Account $account
      *
-     * @return ProfileEdit
+     * @return Profile
      */
     public function setAccount(Storage\Entity\Account $account)
     {
@@ -58,7 +58,7 @@ class ProfileEdit extends BaseProfile
     /**
      * @param string $guid
      *
-     * @return ProfileEdit
+     * @return Profile
      */
     public function setGuid($guid)
     {
