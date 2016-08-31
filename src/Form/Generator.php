@@ -108,7 +108,7 @@ class Generator
      *
      * @return Builder\MembersFormBuilderInterface
      */
-    public function getBuilder($formName)
+    public function getResolvedBuild($formName)
     {
         if (!isset($this->formMap[$formName])) {
             throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));

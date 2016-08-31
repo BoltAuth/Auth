@@ -2,7 +2,9 @@
 
 namespace Bolt\Extension\Bolt\Members\Form;
 
+use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * Resolved form building class.
@@ -19,24 +21,27 @@ class ResolvedFormBuild
     protected $forms;
     /** @var array */
     protected $context;
+    /** @var FormTypeInterface */
+    protected $type;
+    /** @var EntityInterface */
+    protected $entity;
+    /** @var null|FormInterface */
+    private $form;
 
     /**
      * Constructor.
      *
-     * @param FormInterface[] $forms
-     * @param array           $context
+     * @param FormInterface|null $form
+     * @param array|null         $context
+     * @param FormTypeInterface  $type
+     * @param EntityInterface    $entity
      */
-    public function __construct(array $forms, array $context)
+    public function __construct(FormInterface $form = null, array $context = null, FormTypeInterface $type = null, EntityInterface $entity = null)
     {
-        /** @var FormInterface $form */
-        foreach ($forms as $form) {
-            if (!$form instanceof FormInterface) {
-                throw new \BadMethodCallException('Object does not implement %s', FormInterface::class);
-            }
-            $formName = sprintf('form_%s', $form->getName());
-            $this->forms[$formName] = $form;
-        }
+        $this->form = $form;
         $this->context = $context;
+        $this->type = $type;
+        $this->entity = $entity;
     }
 
     /**
@@ -58,6 +63,21 @@ class ResolvedFormBuild
     }
 
     /**
+     * Add a form.
+     *
+     * @param FormInterface $form
+     *
+     * @return ResolvedFormBuild
+     */
+    public function setForm(FormInterface $form)
+    {
+        $formName = sprintf('form_%s', $form->getName());
+        $this->forms[$formName] = $form;
+
+        return $this;
+    }
+
+    /**
      * Return all the Symfony Form objects.
      *
      * @return FormInterface[]
@@ -75,5 +95,59 @@ class ResolvedFormBuild
     public function getContext()
     {
         return $this->context;
+    }
+
+    /**
+     * Set the context variable array.
+     *
+     * @param array $context
+     *
+     * @return ResolvedFormBuild
+     */
+    public function setContext(array $context)
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    /**
+     * @return FormTypeInterface
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param FormTypeInterface $type
+     *
+     * @return ResolvedFormBuild
+     */
+    public function setType(FormTypeInterface $type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return EntityInterface
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * @param EntityInterface $entity
+     *
+     * @return ResolvedFormBuild
+     */
+    public function setEntity(EntityInterface $entity)
+    {
+        $this->entity = $entity;
+
+        return $this;
     }
 }
