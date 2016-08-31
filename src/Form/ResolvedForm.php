@@ -31,6 +31,9 @@ class ResolvedForm
     {
         /** @var FormInterface $form */
         foreach ($forms as $form) {
+            if (!$form instanceof FormInterface) {
+                throw new \BadMethodCallException('Object does not implement %s', FormInterface::class);
+            }
             $formName = sprintf('form_%s', $form->getName());
             $this->forms[$formName] = $form;
         }
