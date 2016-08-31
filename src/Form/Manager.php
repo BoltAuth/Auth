@@ -68,7 +68,7 @@ class Manager
     public function getFormAssociate(Request $request, $includeParent = true)
     {
         /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->build('associate');
+        $baseForm = $this->formGenerator->getBuilder('associate');
         $form = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
@@ -108,7 +108,7 @@ class Manager
     public function getFormLogout(Request $request, $includeParent = true)
     {
         /** @var Builder\Logout $baseForm */
-        $baseForm = $this->formGenerator->build('logout');
+        $baseForm = $this->formGenerator->getBuilder('logout');
         $form = $baseForm
             ->createForm($this->records)
             ->handleRequest($request)
@@ -135,7 +135,7 @@ class Manager
             $guid = $this->session->getAuthorisation()->getGuid();
         }
         /** @var Builder\Profile $baseForm */
-        $baseForm = $this->formGenerator->build('profile_edit');
+        $baseForm = $this->formGenerator->getBuilder('profile_edit');
         $formEdit = $baseForm
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
@@ -143,7 +143,7 @@ class Manager
             ->handleRequest($request)
         ;
         /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->build('associate');
+        $baseForm = $this->formGenerator->getBuilder('associate');
         $formAssociate = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
@@ -168,7 +168,7 @@ class Manager
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
         /** @var Builder\ProfileRecovery $baseForm */
-        $baseForm = $this->formGenerator->build('profile_recovery');
+        $baseForm = $this->formGenerator->getBuilder('profile_recovery');
         $form = $baseForm
             ->createForm($this->records)
             ->handleRequest($request)
@@ -231,21 +231,21 @@ class Manager
     protected function getFormCombinedLogin(Request $request, $twigParent)
     {
         /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->build('associate');
+        $baseForm = $this->formGenerator->getBuilder('associate');
         $associateForm = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
         /** @var Builder\LoginOauth $baseForm */
-        $baseForm = $this->formGenerator->build('login_oauth');
+        $baseForm = $this->formGenerator->getBuilder('login_oauth');
         $formOauth = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
         /** @var Builder\LoginPassword $baseForm */
-        $baseForm = $this->formGenerator->build('login_password');
+        $baseForm = $this->formGenerator->getBuilder('login_password');
         $formPassword = $baseForm
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
@@ -253,7 +253,7 @@ class Manager
             ->handleRequest($request)
         ;
         /** @var Builder\ProfileRegister $baseForm */
-        $baseForm = $this->formGenerator->build('profile_register');
+        $baseForm = $this->formGenerator->getBuilder('profile_register');
         $formRegister = $baseForm
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
