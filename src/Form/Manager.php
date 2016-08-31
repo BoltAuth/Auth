@@ -63,7 +63,7 @@ class Manager
      * @param Request $request
      * @param bool    $includeParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormAssociate(Request $request, $includeParent = true)
     {
@@ -79,7 +79,7 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
         ];
 
-        return new ResolvedForm([$form], $extraContext);
+        return new ResolvedFormBuild([$form], $extraContext);
     }
 
     /**
@@ -88,7 +88,7 @@ class Manager
      * @param Request $request
      * @param bool    $includeParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormLogin(Request $request, $includeParent = true)
     {
@@ -103,7 +103,7 @@ class Manager
      * @param Request $request
      * @param bool    $includeParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormLogout(Request $request, $includeParent = true)
     {
@@ -117,7 +117,7 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
         ];
 
-        return new ResolvedForm([$form], $extraContext);
+        return new ResolvedFormBuild([$form], $extraContext);
     }
 
     /**
@@ -127,7 +127,7 @@ class Manager
      * @param bool    $includeParent
      * @param string  $guid
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormProfileEdit(Request $request, $includeParent = true, $guid = null)
     {
@@ -154,7 +154,7 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig',
         ];
 
-        return new ResolvedForm([$formEdit, $formAssociate], $extraContext);
+        return new ResolvedFormBuild([$formEdit, $formAssociate], $extraContext);
     }
 
     /**
@@ -163,7 +163,7 @@ class Manager
      * @param Request $request
      * @param bool    $includeParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
@@ -177,7 +177,7 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
         ];
 
-        return new ResolvedForm([$form], $extraContext);
+        return new ResolvedFormBuild([$form], $extraContext);
     }
 
     /**
@@ -186,7 +186,7 @@ class Manager
      * @param Request $request
      * @param bool    $includeParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     public function getFormProfileRegister(Request $request, $includeParent = true)
     {
@@ -198,14 +198,14 @@ class Manager
     /**
      * Render given forms in a template.
      *
-     * @param ResolvedForm    $resolvedForm
-     * @param TwigEnvironment $twigEnvironment
-     * @param string          $template
-     * @param array           $context
+     * @param ResolvedFormBuild $resolvedForm
+     * @param TwigEnvironment   $twigEnvironment
+     * @param string            $template
+     * @param array             $context
      *
      * @return TwigMarkup
      */
-    public function renderForms(ResolvedForm $resolvedForm, TwigEnvironment $twigEnvironment, $template, array $context = [])
+    public function renderForms(ResolvedFormBuild $resolvedForm, TwigEnvironment $twigEnvironment, $template, array $context = [])
     {
         $context += $resolvedForm->getContext();
         /** @var FormInterface $form */
@@ -226,7 +226,7 @@ class Manager
      * @param Request $request
      * @param string  $twigParent
      *
-     * @return ResolvedForm
+     * @return ResolvedFormBuild
      */
     protected function getFormCombinedLogin(Request $request, $twigParent)
     {
@@ -263,6 +263,6 @@ class Manager
             ->handleRequest($request)
         ;
 
-        return new ResolvedForm([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent' => $twigParent]);
+        return new ResolvedFormBuild([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent' => $twigParent]);
     }
 }
