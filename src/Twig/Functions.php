@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig_Environment as TwigEnvironment;
 use Twig_Extension as TwigExtension;
 use Twig_Markup as TwigMarkup;
 use Twig_SimpleFunction as TwigSimpleFunction;
@@ -79,8 +80,8 @@ class Functions extends TwigExtension
             new TwigSimpleFunction('member_meta',                   [$this, 'getMemberMeta'],   $safe),
             new TwigSimpleFunction('member_has_role',               [$this, 'hasRole'],         $safe),
             new TwigSimpleFunction('member_providers',              [$this, 'getProviders'],    $safe),
-            new TwigSimpleFunction('members_auth_switcher',         [$this, 'renderSwitcher'],  $safe),
-            new TwigSimpleFunction('members_auth_associate',        [$this, 'renderAssociate'], $safe),
+            new TwigSimpleFunction('members_auth_switcher',         [$this, 'renderSwitcher'],  $safe + $env),
+            new TwigSimpleFunction('members_auth_associate',        [$this, 'renderAssociate'], $safe + $env),
             new TwigSimpleFunction('members_auth_login',            [$this, 'renderLogin'],     $safe),
             new TwigSimpleFunction('members_auth_logout',           [$this, 'renderLogout'],    $safe),
             new TwigSimpleFunction('members_link_auth_login',       [$this, 'getLinkLogin'],    $safe),
@@ -198,35 +199,37 @@ class Functions extends TwigExtension
     /**
      * Display login/logout button(s) depending on status.
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderSwitcher($template = null)
+    public function renderSwitcher(TwigEnvironment $twigEnvironment, $template = null)
     {
         if ($this->session->getAuthorisation()) {
-            return $this->renderLogout($template);
+            return $this->renderLogout($twigEnvironment, $template);
         }
 
-        return $this->renderLogin($template);
+        return $this->renderLogin($twigEnvironment, $template);
     }
 
     /**
      * Display social login buttons to associate with an existing account.
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderAssociate($template = null)
+    public function renderAssociate(TwigEnvironment $twigEnvironment, $template = null)
     {
         if (!$this->session->hasAuthorisation()) {
-            return $this->renderLogin($template);
+            return $this->renderLogin($twigEnvironment, $template);
         }
 
         $template = $template ?: $this->config->getTemplates('authentication', 'associate');
         $form = $this->formManager->getFormAssociate(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template);
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -234,16 +237,17 @@ class Functions extends TwigExtension
     /**
      * Display logout button(s).
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderLogin($template = null)
+    public function renderLogin(TwigEnvironment $twigEnvironment, $template = null)
     {
         $context = ['transitional' => $this->session->isTransitional()];
         $template = $template ?: $this->config->getTemplates('authentication', 'login');
         $form = $this->formManager->getFormLogin(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template, $context);
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -251,15 +255,16 @@ class Functions extends TwigExtension
     /**
      * Display logout button.
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderLogout($template = null)
+    public function renderLogout(TwigEnvironment $twigEnvironment, $template = null)
     {
         $template = $template ?: $this->config->getTemplates('authentication', 'logout');
         $form = $this->formManager->getFormLogout(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template);
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
         return new TwigMarkup($html, 'UTF-8');
     }
@@ -267,19 +272,20 @@ class Functions extends TwigExtension
     /**
      * Display that profile editing form.
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderEdit($template = null)
+    public function renderEdit(TwigEnvironment $twigEnvironment, $template = null)
     {
         if (!$this->session->hasAuthorisation()) {
-            return $this->renderLogin($template);
+            return $this->renderLogin($twigEnvironment, $template);
         }
 
         $template = $template ?: $this->config->getTemplates('profile', 'edit');
         $form = $this->formManager->getFormProfileEdit(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template);
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
         return new TwigMarkup($html, 'UTF-8');
     }

@@ -249,7 +249,7 @@ class Backend implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function userAdd(Application $app, Request $request)
     {
@@ -292,7 +292,7 @@ class Backend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_add.twig');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_add.twig');
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -347,7 +347,7 @@ class Backend implements ControllerProviderInterface
             return $response;
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }

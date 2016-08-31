@@ -198,13 +198,14 @@ class Manager
     /**
      * Render given forms in a template.
      *
-     * @param ResolvedForm $resolvedForm
-     * @param string       $template
-     * @param array        $context
+     * @param ResolvedForm    $resolvedForm
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
+     * @param array           $context
      *
      * @return TwigMarkup
      */
-    public function renderForms(ResolvedForm $resolvedForm, $template, array $context = [])
+    public function renderForms(ResolvedForm $resolvedForm, TwigEnvironment $twigEnvironment, $template, array $context = [])
     {
         $context += $resolvedForm->getContext();
         /** @var FormInterface $form */
@@ -214,9 +215,7 @@ class Manager
         }
         $context['feedback'] = $this->feedback;
         $context['providers'] = $this->config->getEnabledProviders();
-        /** @var TwigEnvironment $twig */
-        $twig = $this->forms['renderer'];
-        $html = $twig->render($template, $context);
+        $html = $twigEnvironment->render($template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
     }

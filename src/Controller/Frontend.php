@@ -165,7 +165,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplates('profile', 'edit');
-        $html = $formsManager->renderForms($resolvedForm, $template);
+        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -205,7 +205,7 @@ class Frontend implements ControllerProviderInterface
 
         $context = ['transitional' => $app['members.session']->isTransitional()];
         $template = $this->config->getTemplates('profile', 'register');
-        $html = $formsManager->renderForms($resolvedForm, $template, $context);
+        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -272,7 +272,7 @@ class Frontend implements ControllerProviderInterface
         $resolvedForm = $formsManager->getFormProfileEdit($request, true);
 
         $template = $this->config->getTemplates('profile', 'view');
-        $html = $formsManager->renderForms($resolvedForm, $template);
+        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
