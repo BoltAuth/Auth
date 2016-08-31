@@ -231,127 +231,83 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 $type = new Container(
                     [
-                        // @codingStandardsIgnoreStart
-                        'associate'        => $app->share(function () use ($app) { return new Form\Type\AssociateType($app['members.config']); }),
-                        'login_oauth'      => $app->share(function () use ($app) { return new Form\Type\LoginOauthType($app['members.config']); }),
-                        'login_password'   => $app->share(function () use ($app) { return new Form\Type\LoginPasswordType($app['members.config']); }),
-                        'logout'           => $app->share(function () use ($app) { return new Form\Type\LogoutType($app['members.config']); }),
-                        'profile_edit'     => $app->share(function () use ($app) { return new Form\Type\ProfileEditType($app['members.config']); }),
-                        'profile_recovery' => $app->share(function () use ($app) { return new Form\Type\ProfileRecoveryType($app['members.config']); }),
-                        'profile_register' => $app->share(function () use ($app) { return new Form\Type\ProfileRegisterType($app['members.config'], $app['members.records'], $app['members.session']); }),
-                        'profile_view'     => $app->share(function () use ($app) { return new Form\Type\ProfileEditType($app['members.config']); }),
-                        // @codingStandardsIgnoreEnd
+                        'associate'                => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\AssociateType($app['members.config']);
+                            }
+                        ),
+                        'login_oauth'              => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\LoginOauthType($app['members.config']);
+                            }
+                        ),
+                        'login_password'           => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\LoginPasswordType($app['members.config']);
+                            }
+                        ),
+                        'logout'                   => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\LogoutType($app['members.config']);
+                            }
+                        ),
+                        'profile_edit'             => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\ProfileEditType($app['members.config']);
+                            }
+                        ),
+                        'profile_recovery_request' => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\ProfileRecoveryRequestType($app['members.config']);
+                            }
+                        ),
+                        'profile_recovery_submit'  => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\ProfileRecoverySubmitType($app['members.config']);
+                            }
+                        ),
+                        'profile_register'         => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\ProfileRegisterType(
+                                    $app['members.config'],
+                                    $app['members.records'],
+                                    $app['members.session']
+                                );
+                        }),
+                        'profile_view'             => $app->share(
+                            function () use ($app) {
+                                return new Form\Type\ProfileViewType($app['members.config']);
+                            }
+                        ),
                     ]
                 );
                 $entity = new Container(
                     [
-                        // @codingStandardsIgnoreStart
-                        'profile' => $app->share(function () use ($app) { return new Form\Entity\Profile(); }),
-                        // @codingStandardsIgnoreEnd
-                    ]
-                );
-                $constraint = new Container(
-                    [
-                        // @codingStandardsIgnoreStart
-                        'email' => $app->share(function () use ($app) { return new Form\Validator\Constraint\UniqueEmail($app['members.records']); }),
-                        // @codingStandardsIgnoreEnd
+                        'profile' => $app->share(
+                            function () use ($app) {
+                                return new Form\Entity\Profile();
+                            }
+                        ),
                     ]
                 );
 
                 return new Container([
                     'type'       => $type,
                     'entity'     => $entity,
-                    'constraint' => $constraint,
                 ]);
             }
         );
 
-        $app['members.form.associate'] = $app->share(
+        $app['members.form.generator'] = $app->share(
             function ($app) {
-                return new Form\Associate(
+                return new Form\Generator(
+                    $app['members.config'],
+                    $app['members.records'],
+                    $app['members.form.components'],
                     $app['form.factory'],
-                    $app['members.form.components']['type']['associate'],
-                    $app['members.form.components']['entity']['profile']
+                    $app['members.session'],
+                    $app['dispatcher']
                 );
-            }
-        );
-
-        $app['members.form.login_oauth'] = $app->share(
-            function ($app) {
-                return new Form\LoginOauth(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['login_oauth'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.form.login_password'] = $app->share(
-            function ($app) {
-                return new Form\LoginPassword(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['login_password'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.form.logout'] = $app->share(
-            function ($app) {
-                return new Form\Logout(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['logout'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.form.profile_edit'] = $app->share(
-            function ($app) {
-                return new Form\ProfileEdit(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['profile_edit'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.form.profile_recovery'] = $app->share(
-            function ($app) {
-                return new Form\ProfileRecovery(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['profile_recovery'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.form.profile_register'] = $app->share(
-            function ($app) {
-                return new Form\ProfileRegister(
-                    $app['form.factory'],
-                    $app['members.form.components']['type']['profile_register'],
-                    $app['members.form.components']['entity']['profile']
-                );
-            }
-        );
-
-        $app['members.forms'] = $app->share(
-            function ($app) {
-                $forms = [
-                    'form' => new Container([
-                        'associate'        => $app->share(function () use ($app) { return $app['members.form.associate']; }),
-                        'login_oauth'      => $app->share(function () use ($app) { return $app['members.form.login_oauth']; }),
-                        'login_password'   => $app->share(function () use ($app) { return $app['members.form.login_password']; }),
-                        'logout'           => $app->share(function () use ($app) { return $app['members.form.logout']; }),
-                        'profile_edit'     => $app->share(function () use ($app) { return $app['members.form.profile_edit']; }),
-                        'profile_recovery' => $app->share(function () use ($app) { return $app['members.form.profile_recovery']; }),
-                        'profile_register' => $app->share(function () use ($app) { return $app['members.form.profile_register']; }),
-                    ]),
-                    'renderer' => $app->share(function () use ($app) { return $app['twig']; }),
-                ];
-
-                return new Container($forms);
             }
         );
 
@@ -362,7 +318,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.session'],
                     $app['members.feedback'],
                     $app['members.records'],
-                    $app['members.forms']
+                    $app['members.form.generator']
                 );
             }
         );
