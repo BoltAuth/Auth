@@ -19,20 +19,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileRecoveryType extends AbstractType
+abstract class AbstractProfileRecoveryType extends AbstractType
 {
     /** @var boolean */
     protected $requirePassword = true;
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $passwordConstraints = [];
         if ($this->requirePassword) {
             $passwordConstraints = [
                 new Assert\NotBlank(),
                 new Assert\Length(['min' => 6]),
             ];
-        } else {
-            $passwordConstraints = [];
         }
 
         $builder
@@ -86,20 +88,11 @@ class ProfileRecoveryType extends AbstractType
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'profile_recovery';
-    }
-
-    /**
-     * @param boolean $requirePassword
-     *
-     * @return ProfileEditType
-     */
-    public function setRequirePassword($requirePassword)
-    {
-        $this->requirePassword = $requirePassword;
-
-        return $this;
     }
 }
