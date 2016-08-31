@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Resolved Form object class.
+ * Resolved form building class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ResolvedForm
+class ResolvedFormBuild
 {
     /** @var FormInterface[] */
     protected $forms;
