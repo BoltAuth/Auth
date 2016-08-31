@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Logout extends AbstractFormBuilderBuilder
+class Logout extends AbstractFormBuilder
 {
     /** @var Type\LogoutType */
     protected $type;

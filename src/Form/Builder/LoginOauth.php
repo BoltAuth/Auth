@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class LoginOauth extends AbstractFormBuilderBuilder
+class LoginOauth extends AbstractFormBuilder
 {
     /** @var Type\LoginOauthType */
     protected $type;

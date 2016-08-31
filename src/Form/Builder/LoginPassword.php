@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class LoginPassword extends AbstractFormBuilderBuilder
+class LoginPassword extends AbstractFormBuilder
 {
     /** @var Type\LoginPasswordType */
     protected $type;
