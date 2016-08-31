@@ -13,7 +13,7 @@ use Bolt\Extension\Bolt\Members\Storage;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class BaseProfile extends AbstractFormBuilder
+abstract class BaseProfile extends AbstractFormBuilderBuilder
 {
     /** @var string */
     protected $guid;

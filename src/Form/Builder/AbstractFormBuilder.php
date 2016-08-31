@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormTypeInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractFormBuilder implements MembersFormInterface
+abstract class AbstractFormBuilderBuilder implements MembersFormBuilderInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -93,7 +93,7 @@ abstract class AbstractFormBuilder implements MembersFormInterface
      *
      * @param string $action
      *
-     * @return AbstractFormBuilder
+     * @return AbstractFormBuilderBuilder
      */
     public function setAction($action)
     {
