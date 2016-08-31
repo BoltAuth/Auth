@@ -99,16 +99,4 @@ class ProfileEditType extends AbstractType
     {
         return 'profile';
     }
-
-    /**
-     * @param boolean $requirePassword
-     *
-     * @return ProfileEditType
-     */
-    public function setRequirePassword($requirePassword)
-    {
-        $this->requirePassword = $requirePassword;
-
-        return $this;
-    }
 }
