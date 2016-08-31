@@ -3,7 +3,8 @@
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Form\SessionAwareInterface;
+use Bolt\Extension\Bolt\Members\Form\StorageAwareInterface;
 use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Translation\Translator as Trans;
@@ -24,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileRegisterType extends AbstractType
+class ProfileRegisterType extends AbstractType implements StorageAwareInterface, SessionAwareInterface
 {
     /** @var Records */
     protected $records;
@@ -32,17 +33,19 @@ class ProfileRegisterType extends AbstractType
     protected $session;
 
     /**
-     * Constructor.
-     *
-     * @param Config  $config
-     * @param Records $records
-     * @param Session $session
+     * @inheritDoc
      */
-    public function __construct(Config $config, Records $records, Session $session)
+    public function setSession(Session $session)
     {
-        parent::__construct($config);
-        $this->records = $records;
         $this->session = $session;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRecords(Records $records)
+    {
+        $this->records = $records;
     }
 
     /**
@@ -50,6 +53,13 @@ class ProfileRegisterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($this->session === null) {
+            throw new \RuntimeException(sprintf('%s implements %s but the session object had not been set when form was built.', __CLASS__, SessionAwareInterface::class));
+        }
+        if ($this->records === null) {
+            throw new \RuntimeException(sprintf('%s implements %s but the records object had not been set when form was built.', __CLASS__, StorageAwareInterface::class));
+        }
+
         if ($this->session->isTransitional() === false) {
             $passwordConstraints = [
                 new Assert\NotBlank(),
