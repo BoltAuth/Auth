@@ -302,8 +302,6 @@ class Authentication implements ControllerProviderInterface
         }
         /** @var Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        /** @var Type\ProfileRecoveryType $profileFormType */
-        $resetFormType = $app['members.form.components']['type']['profile_recovery'];
         $response = new Response();
         $context = ['stage' => null, 'email' => null, 'link' => $app['url_generator']->generate('authenticationLogin')];
 
@@ -311,7 +309,6 @@ class Authentication implements ControllerProviderInterface
             /*
              * Process reset request
              */
-            $resetFormType->setRequirePassword(true);
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
             $form = $resolvedForm->getForm('form_profile_recovery');
 
@@ -348,7 +345,6 @@ class Authentication implements ControllerProviderInterface
             /*
              * Handle new request
              */
-            $resetFormType->setRequirePassword(false);
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
             $form = $resolvedForm->getForm('form_profile_recovery');
             $context['stage'] = 'email';

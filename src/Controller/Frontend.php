@@ -142,11 +142,8 @@ class Frontend implements ControllerProviderInterface
         $session = $app['members.session'];
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        /** @var Form\Type\ProfileEditType $profileFormType */
-        $profileFormType = $app['members.form.components']['type']['profile_edit'];
 
         $memberSession = $session->getAuthorisation();
-
         if ($memberSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
             $app['members.feedback']->info('Login required to edit your profile');
@@ -154,12 +151,10 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        $profileFormType->setRequirePassword(false);
-        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
-
         // Handle the form request data
+        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
         if ($resolvedForm->getForm('form_profile')->isValid()) {
-            /** @var Form\ProfileEdit $profileForm */
+            /** @var Form\Profile $profileForm */
             $profileForm = $app['members.form.profile_edit'];
             $profileForm->saveForm($app['members.records'], $app['dispatcher']);
         }
@@ -256,11 +251,8 @@ class Frontend implements ControllerProviderInterface
         $session = $app['members.session'];
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        /** @var Form\Type\ProfileEditType $profileFormType */
-        $profileFormType = $app['members.form.components']['type']['profile_view'];
 
         $memberSession = $session->getAuthorisation();
-
         if ($memberSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
             $app['members.feedback']->info('Login required to view your profile');
@@ -268,10 +260,8 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        $profileFormType->setRequirePassword(false);
-        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
-
         $template = $this->config->getTemplates('profile', 'view');
+        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
         $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));

@@ -253,7 +253,6 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        $app['members.form.components']['type']['profile_edit']->setRequirePassword(true);
         $app['members.form.profile_edit']->setGuid($guid = Uuid::uuid4()->toString());
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
@@ -332,7 +331,6 @@ class Backend implements ControllerProviderInterface
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $app['members.form.components']['type']['profile_edit']->setRequirePassword(false);
         $app['members.form.profile_edit']->setGuid($guid);
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm('form_profile');
