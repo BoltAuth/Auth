@@ -112,8 +112,8 @@ class Backend implements ControllerProviderInterface
      */
     public function before(Request $request, Application $app)
     {
-        $user    = $app['users']->getCurrentUser();
-        $userid  = $user['id'];
+        $user = $app['users']->getCurrentUser();
+        $userid = $user['id'];
 
         foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
@@ -340,7 +340,7 @@ class Backend implements ControllerProviderInterface
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
-            $response =  new RedirectResponse($app['url_generator']->generate('membersAdmin'));
+            $response = new RedirectResponse($app['url_generator']->generate('membersAdmin'));
 
             return $response;
         }

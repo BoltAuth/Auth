@@ -1,12 +1,14 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
+use Bolt\Extension\Bolt\Members\Form\Entity;
+use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Logout form.
+ * Social media account association form.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -14,9 +16,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Logout extends AbstractForm
+class Associate extends AbstractFormBuilder
 {
-    /** @var Type\LogoutType */
+    /** @var Type\AssociateType */
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
@@ -35,7 +37,7 @@ class Logout extends AbstractForm
     protected function getData(Storage\Records $records)
     {
         return [
-            'csrf_protection' => true,
+            'csrf_protection' => false,
         ];
     }
 }
