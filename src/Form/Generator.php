@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
+use Bolt\Extension\Bolt\Members\Form\Builder;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -37,39 +38,39 @@ class Generator
     /** @var array */
     private $formMap = [
         'associate'                => [
-            'form' => Associate::class,
+            'form' => Builder\Associate::class,
             'type' => Type\AssociateType::class,
         ],
         'login_oauth'              => [
-            'form' => LoginOauth::class,
+            'form' => Builder\LoginOauth::class,
             'type' => Type\LoginOauthType::class,
         ],
         'login_password'           => [
-            'form' => LoginPassword::class,
+            'form' => Builder\LoginPassword::class,
             'type' => Type\LoginPasswordType::class,
         ],
         'logout'                   => [
-            'form' => Logout::class,
+            'form' => Builder\Logout::class,
             'type' => Type\LogoutType::class,
         ],
         'profile_edit'             => [
-            'form' => Profile::class,
+            'form' => Builder\Profile::class,
             'type' => Type\ProfileEditType::class,
         ],
         'profile_recovery_request' => [
-            'form' => ProfileRecovery::class,
+            'form' => Builder\ProfileRecovery::class,
             'type' => Type\ProfileRecoveryRequestType::class,
         ],
         'profile_recovery_submit'  => [
-            'form' => ProfileRecovery::class,
+            'form' => Builder\ProfileRecovery::class,
             'type' => Type\ProfileRecoverySubmitType::class,
         ],
         'profile_register'         => [
-            'form' => ProfileRegister::class,
+            'form' => Builder\ProfileRegister::class,
             'type' => Type\ProfileRegisterType::class,
         ],
         'profile_view'             => [
-            'form' => Profile::class,
+            'form' => Builder\Profile::class,
             'type' => Type\ProfileViewType::class,
         ],
     ];
@@ -105,7 +106,7 @@ class Generator
      *
      * @param string $formName
      *
-     * @return MembersFormInterface
+     * @return Builder\MembersFormInterface
      */
     public function build($formName)
     {
@@ -136,10 +137,10 @@ class Generator
         /** @var FormTypeInterface $class */
         $class = new $typeName($this->config);
 
-        if ($class instanceof SessionAwareInterface) {
+        if ($class instanceof Builder\SessionAwareInterface) {
             $class->setSession($this->session);
         }
-        if ($class instanceof StorageAwareInterface) {
+        if ($class instanceof Builder\StorageAwareInterface) {
             $class->setRecords($this->records);
         }
 

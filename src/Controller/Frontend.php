@@ -193,7 +193,7 @@ class Frontend implements ControllerProviderInterface
                 ->saveForm($app['members.records'], $app['dispatcher'])
             ;
             // Redirect to our profile page.
-            $response =  new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+            $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
             return $response;
         }

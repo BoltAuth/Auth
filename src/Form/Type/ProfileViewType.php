@@ -2,8 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Profile view type.
  *

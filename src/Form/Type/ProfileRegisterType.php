@@ -3,8 +3,8 @@
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Form\SessionAwareInterface;
-use Bolt\Extension\Bolt\Members\Form\StorageAwareInterface;
+use Bolt\Extension\Bolt\Members\Form\Builder\SessionAwareInterface;
+use Bolt\Extension\Bolt\Members\Form\Builder\StorageAwareInterface;
 use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Translation\Translator as Trans;

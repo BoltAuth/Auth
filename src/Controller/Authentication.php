@@ -11,7 +11,6 @@ use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Form\Manager;
-use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Bolt\Extension\Bolt\Members\Storage;
@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormTypeInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractForm implements MembersFormInterface
+abstract class AbstractFormBuilder implements MembersFormInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -93,7 +93,7 @@ abstract class AbstractForm implements MembersFormInterface
      *
      * @param string $action
      *
-     * @return AbstractForm
+     * @return AbstractFormBuilder
      */
     public function setAction($action)
     {

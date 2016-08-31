@@ -5,6 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Feedback;
+use Bolt\Extension\Bolt\Members\Form\Builder;
 use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +54,8 @@ class Manager
         $this->session = $session;
         $this->feedback = $feedback;
         $this->records = $records;
-        $this->formGenerator = $formGenerator;}
+        $this->formGenerator = $formGenerator;
+    }
 
     /**
      * Return the resolved association form.
@@ -65,7 +67,7 @@ class Manager
      */
     public function getFormAssociate(Request $request, $includeParent = true)
     {
-        /** @var Associate $baseForm */
+        /** @var Builder\Associate $baseForm */
         $baseForm = $this->formGenerator->build('associate');
         $form = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
@@ -105,7 +107,7 @@ class Manager
      */
     public function getFormLogout(Request $request, $includeParent = true)
     {
-        /** @var Logout $baseForm */
+        /** @var Builder\Logout $baseForm */
         $baseForm = $this->formGenerator->build('logout');
         $form = $baseForm
             ->createForm($this->records)
@@ -132,7 +134,7 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        /** @var Profile $baseForm */
+        /** @var Builder\Profile $baseForm */
         $baseForm = $this->formGenerator->build('profile_edit');
         $formEdit = $baseForm
             ->setGuid($guid)
@@ -140,7 +142,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Associate $baseForm */
+        /** @var Builder\Associate $baseForm */
         $baseForm = $this->formGenerator->build('associate');
         $formAssociate = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
@@ -165,7 +167,7 @@ class Manager
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
-        /** @var ProfileRecovery $baseForm */
+        /** @var Builder\ProfileRecovery $baseForm */
         $baseForm = $this->formGenerator->build('profile_recovery');
         $form = $baseForm
             ->createForm($this->records)
@@ -228,21 +230,21 @@ class Manager
      */
     protected function getFormCombinedLogin(Request $request, $twigParent)
     {
-        /** @var Associate $baseForm */
+        /** @var Builder\Associate $baseForm */
         $baseForm = $this->formGenerator->build('associate');
         $associateForm = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var LoginOauth $baseForm */
+        /** @var Builder\LoginOauth $baseForm */
         $baseForm = $this->formGenerator->build('login_oauth');
         $formOauth = $baseForm
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var LoginPassword $baseForm */
+        /** @var Builder\LoginPassword $baseForm */
         $baseForm = $this->formGenerator->build('login_password');
         $formPassword = $baseForm
             ->setRequest($request)
@@ -250,7 +252,7 @@ class Manager
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var ProfileRegister $baseForm */
+        /** @var Builder\ProfileRegister $baseForm */
         $baseForm = $this->formGenerator->build('profile_register');
         $formRegister = $baseForm
             ->setClientIp($request->getClientIp())
@@ -261,6 +263,6 @@ class Manager
             ->handleRequest($request)
         ;
 
-        return new ResolvedForm([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent'   => $twigParent]);
+        return new ResolvedForm([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent' => $twigParent]);
     }
 }

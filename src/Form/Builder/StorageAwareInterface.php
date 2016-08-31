@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Storage\Records;
 

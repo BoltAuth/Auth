@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Form;
 
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -47,7 +46,7 @@ class ResolvedForm
      *
      * @throws \BadMethodCallException
      *
-     * @return Form
+     * @return FormInterface
      */
     public function getForm($name)
     {
@@ -61,7 +60,7 @@ class ResolvedForm
     /**
      * Return all the Symfony Form objects.
      *
-     * @return Form
+     * @return FormInterface[]
      */
     public function getForms()
     {
