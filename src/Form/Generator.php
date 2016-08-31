@@ -106,7 +106,7 @@ class Generator
      *
      * @param string $formName
      *
-     * @return Builder\MembersFormInterface
+     * @return Builder\MembersFormBuilderInterface
      */
     public function build($formName)
     {

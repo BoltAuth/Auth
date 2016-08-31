@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
 /**
- * Members form interface.
+ * Members form builder interface.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormTypeInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-interface MembersFormInterface
+interface MembersFormBuilderInterface
 {
     /**
      * Constructor.
@@ -55,7 +55,7 @@ interface MembersFormInterface
      * @param Storage\Records          $records
      * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return MembersFormInterface
+     * @return MembersFormBuilderInterface
      */
     public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher);
 }
