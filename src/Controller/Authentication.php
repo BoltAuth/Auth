@@ -201,7 +201,7 @@ class Authentication implements ControllerProviderInterface
             $app['members.feedback']->info('Login details are incorrect.');
         }
         $template = $this->config->getTemplates('authentication', 'login');
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response($html);
     }
@@ -404,7 +404,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplates('authentication', 'recovery');
-        $html = $formsManager->renderForms($resolvedForm, $template, $context);
+        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
         return $response;
