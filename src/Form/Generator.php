@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
 use Bolt\Extension\Bolt\Members\Form\Builder;
+use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -28,7 +29,7 @@ class Generator
     /** @var Records */
     private $records;
     /** @var Container */
-    private $formComponents;
+    private $formTypes;
     /** @var FormFactoryInterface */
     private $formFactory;
     /** @var Session */
@@ -80,7 +81,7 @@ class Generator
      *
      * @param Config                   $config
      * @param Records                  $records
-     * @param Container                $formComponents
+     * @param Container                $formTypes
      * @param FormFactoryInterface     $formFactory
      * @param Session                  $session
      * @param EventDispatcherInterface $dispatcher
@@ -88,14 +89,14 @@ class Generator
     public function __construct(
         Config $config,
         Records $records,
-        Container $formComponents,
+        Container $formTypes,
         FormFactoryInterface $formFactory,
         Session $session,
         EventDispatcherInterface $dispatcher
     ) {
         $this->config = $config;
         $this->records = $records;
-        $this->formComponents = $formComponents;
+        $this->formTypes = $formTypes;
         $this->formFactory = $formFactory;
         $this->session = $session;
         $this->dispatcher = $dispatcher;
@@ -108,10 +109,10 @@ class Generator
      *
      * @return ResolvedFormBuild
      */
-    public function getResolvedFormBuild($formName)
+    public function getFormBuilder($formName)
     {
         if (!isset($this->formMap[$formName])) {
-            throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));
+            throw new \RuntimeException(sprintf('Invalid builder request for non-existing form name: %s', $formName));
         }
 
         $event = new FormBuilderEvent($formName);
@@ -119,10 +120,11 @@ class Generator
 
         $builderClassName = $this->formMap[$formName]['form'];
         $type = $event->getType() ?: $this->getType($formName);
-        $entity = $event->getEntity() ?: $this->formComponents['entity']['profile'];
+        $entity = $event->getEntity() ?: new Profile();
+
         $builder =  new $builderClassName($this->formFactory, $type, $entity);
 
-        return new ResolvedFormBuild($builder, null, null, $type, $entity);
+        return $builder;
     }
 
     /**
@@ -134,7 +136,7 @@ class Generator
      */
     private function getType($formName)
     {
-        if (!isset($this->formMap[$formName])) {
+        if (!isset($this->formTypes[$formName])) {
             throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));
         }
 
