@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Bolt\Extension\Bolt\Members\Storage;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -45,13 +46,7 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     }
 
     /**
-     * Create the form.
-     *
-     * @param Storage\Records $records
-     *
-     * @throws \RuntimeException
-     *
-     * @return \Symfony\Component\Form\Form
+     * {@inheritdoc}
      */
     public function createForm(Storage\Records $records)
     {
@@ -60,11 +55,7 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
             throw new \RuntimeException('Form data not set.');
         }
 
-        $builder = $this->formFactory->createBuilder(
-            $this->type,
-            $this->entity,
-            $data
-        );
+        $builder = $this->formFactory->createBuilder($this->type, $this->entity, $data);
         if ($this->action !== null) {
             $builder->setAction($this->action);
         }
@@ -73,11 +64,7 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     }
 
     /**
-     * Return the form object.
-     *
-     * @throws \RuntimeException
-     *
-     * @return Form
+     * {@inheritdoc}
      */
     public function getForm()
     {
@@ -99,6 +86,16 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     {
         $this->action = $action;
 
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     *
+     * {@inheritdoc}
+     */
+    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
+    {
         return $this;
     }
 

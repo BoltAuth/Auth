@@ -26,14 +26,6 @@ class Logout extends AbstractFormBuilder
     /**
      * {@inheritdoc}
      */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getData(Storage\Records $records)
     {
         return [
