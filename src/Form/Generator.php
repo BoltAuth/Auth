@@ -107,7 +107,7 @@ class Generator
      *
      * @param string $formName
      *
-     * @return ResolvedFormBuild
+     * @return Builder\AbstractFormBuilder
      */
     public function getFormBuilder($formName)
     {

@@ -67,22 +67,23 @@ class Manager
      */
     public function getFormAssociate(Request $request, $includeParent = true)
     {
-        /** @var ResolvedFormBuild $builder */
+        $resolvedBuild = new ResolvedFormBuild();
+        /** @var Builder\Logout $builder */
         $builder = $this->formGenerator->getFormBuilder('associate');
-        /** @var Builder\Associate $formBuilder */
-        $formBuilder = $builder->getFormBuilder();
-        $formBuilder
+        $formAssociate = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm([])
             ->handleRequest($request)
         ;
+        $resolvedBuild->addBuild('associate', $builder, $formAssociate);
 
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
         ];
-        $builder->setContext($extraContext);
+        $resolvedBuild->setContext($extraContext);
 
-        return new $builder;
+
+        return $resolvedBuild;
     }
 
     /**
@@ -110,22 +111,22 @@ class Manager
      */
     public function getFormLogout(Request $request, $includeParent = true)
     {
-        /** @var ResolvedFormBuild $builder */
+        $resolvedBuild = new ResolvedFormBuild();
+        /** @var Builder\Logout $builder */
         $builder = $this->formGenerator->getFormBuilder('logout');
-        /** @var Builder\Logout $formBuilder */
-        $formBuilder = $builder->getFormBuilder();
-
-        $formBuilder
+        $formLogout = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
+        $resolvedBuild->addBuild('logout', $builder, $formLogout);
+
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/logout.twig',
         ];
 
-        $builder->setContext($extraContext);
+        $resolvedBuild->setContext($extraContext);
 
-        return new $builder;
+        return $resolvedBuild;
     }
 
     /**
@@ -139,6 +140,7 @@ class Manager
      */
     public function getFormProfileEdit(Request $request, $includeParent = true, $guid = null)
     {
+        $resolvedBuild = new ResolvedFormBuild();
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
@@ -151,6 +153,7 @@ class Manager
             ->createForm([])
             ->handleRequest($request)
         ;
+        $resolvedBuild->addBuild('profile_edit', $builder, $formEdit);
 
         /** @var Builder\Associate $builder */
         $builder = $this->formGenerator->getFormBuilder('associate');
@@ -159,12 +162,14 @@ class Manager
             ->createForm([])
             ->handleRequest($request)
         ;
+        $resolvedBuild->addBuild('associate', $builder, $formAssociate);
 
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig',
         ];
+        $resolvedBuild->setContext($extraContext);
 
-        return new ResolvedFormBuild([$formEdit, $formAssociate], $extraContext);
+        return $resolvedBuild;
     }
 
     /**
