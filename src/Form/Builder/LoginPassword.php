@@ -41,14 +41,6 @@ class LoginPassword extends AbstractFormBuilder
     /**
      * {@inheritdoc}
      */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
-    {
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getData(Storage\Records $records)
     {
         if ($this->request === null) {

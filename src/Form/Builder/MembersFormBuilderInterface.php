@@ -52,6 +52,8 @@ interface MembersFormBuilderInterface
     /**
      * Save the form.
      *
+     * @deprecated
+     *
      * @param Storage\Records          $records
      * @param EventDispatcherInterface $eventDispatcher
      *
