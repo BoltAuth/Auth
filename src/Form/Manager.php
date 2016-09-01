@@ -67,22 +67,22 @@ class Manager
      */
     public function getFormAssociate(Request $request, $includeParent = true)
     {
-        /** @var ResolvedFormBuild $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
+        /** @var ResolvedFormBuild $builder */
+        $builder = $this->formGenerator->getFormBuilder('associate');
         /** @var Builder\Associate $formBuilder */
-        $formBuilder = $resolvedBuild->getFormBuilder();
+        $formBuilder = $builder->getFormBuilder();
         $formBuilder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
 
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
         ];
-        $resolvedBuild->setContext($extraContext);
+        $builder->setContext($extraContext);
 
-        return new $resolvedBuild;
+        return new $builder;
     }
 
     /**
@@ -95,7 +95,7 @@ class Manager
      */
     public function getFormLogin(Request $request, $includeParent = true)
     {
-        $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig';
+        $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig';
 
         return $this->getFormCombinedLogin($request, $twigParent);
     }
@@ -110,22 +110,22 @@ class Manager
      */
     public function getFormLogout(Request $request, $includeParent = true)
     {
-        /** @var ResolvedFormBuild $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('logout');
+        /** @var ResolvedFormBuild $builder */
+        $builder = $this->formGenerator->getFormBuilder('logout');
         /** @var Builder\Logout $formBuilder */
-        $formBuilder = $resolvedBuild->getFormBuilder();
+        $formBuilder = $builder->getFormBuilder();
 
         $formBuilder
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/logout.twig',
         ];
 
-        $resolvedBuild->setContext($extraContext);
+        $builder->setContext($extraContext);
 
-        return new $resolvedBuild;
+        return new $builder;
     }
 
     /**
@@ -143,21 +143,20 @@ class Manager
             $guid = $this->session->getAuthorisation()->getGuid();
         }
 
-        /** @var ResolvedFormBuild $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_edit');
-        /** @var Builder\Profile $formBuilder */
-        $formBuilder = $resolvedBuild->getFormBuilder();
-        $formBuilder
+        /** @var Builder\Profile $builder */
+        $builder = $this->formGenerator->getFormBuilder('profile_edit');
+        $formEdit = $builder
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
-        /** @var Builder\Associate $resolvedBuild */
-//$resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
-        $formAssociate = $resolvedBuild
+
+        /** @var Builder\Associate $builder */
+        $builder = $this->formGenerator->getFormBuilder('associate');
+        $formAssociate = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
 
@@ -178,10 +177,10 @@ class Manager
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
-        /** @var Builder\ProfileRecovery $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_recovery');
-        $form = $resolvedBuild
-            ->createForm($this->records)
+        /** @var Builder\ProfileRecovery $builder */
+        $builder = $this->formGenerator->getFormBuilder('profile_recovery');
+        $form = $builder
+            ->createForm([])
             ->handleRequest($request)
         ;
         $extraContext = [
@@ -241,39 +240,48 @@ class Manager
      */
     protected function getFormCombinedLogin(Request $request, $twigParent)
     {
-        /** @var Builder\Associate $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
-        $associateForm = $resolvedBuild
+        $resolvedBuild = new ResolvedFormBuild();
+        $resolvedBuild->setContext(['twigparent' => $twigParent]);
+
+        /** @var Builder\Associate $builder */
+        $builder = $this->formGenerator->getFormBuilder('associate');
+        $associateForm = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
-        /** @var Builder\LoginOauth $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('login_oauth');
-        $formOauth = $resolvedBuild
+        $resolvedBuild->addBuild('associate', $builder, $associateForm);
+
+        /** @var Builder\LoginOauth $builder */
+        $builder = $this->formGenerator->getFormBuilder('login_oauth');
+        $formOauth = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
-        /** @var Builder\LoginPassword $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('login_password');
-        $formPassword = $resolvedBuild
-            ->setRequest($request)
+        $resolvedBuild->addBuild('login_oauth', $builder, $formOauth);
+
+        /** @var Builder\LoginPassword $builder */
+        $builder = $this->formGenerator->getFormBuilder('login_password');
+        $formPassword = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
-        /** @var Builder\ProfileRegister $resolvedBuild */
-        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_register');
-        $formRegister = $resolvedBuild
+        $resolvedBuild->addBuild('login_password', $builder, $formPassword);
+
+        /** @var Builder\ProfileRegister $builder */
+        $builder = $this->formGenerator->getFormBuilder('profile_register');
+        $formRegister = $builder
             ->setClientIp($request->getClientIp())
-            ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
             ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
-            ->createForm($this->records)
+            ->createForm([])
             ->handleRequest($request)
         ;
+        $resolvedBuild->addBuild('profile_register', $builder, $formRegister);
 
-        return new ResolvedFormBuild([$associateForm, $formOauth, $formPassword, $formRegister], ['twigparent' => $twigParent]);
+
+        return $resolvedBuild;
     }
 }

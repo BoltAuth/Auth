@@ -18,62 +18,56 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 class ResolvedFormBuild
 {
-    /** @var MembersFormBuilderInterface */
+    /** @var MembersFormBuilderInterface[] */
     private $formBuilder;
     /** @var FormInterface[] */
-    protected $forms;
+    protected $form;
     /** @var array */
     protected $context;
-    /** @var FormTypeInterface */
-    protected $type;
-    /** @var EntityInterface */
-    protected $entity;
-
 
     /**
-     * Constructor.
+     * Add a builder and form.
      *
+     * @param string                      $formName
      * @param MembersFormBuilderInterface $formBuilder
-     * @param FormInterface|null          $form
-     * @param array|null                  $context
-     * @param FormTypeInterface|null      $type
-     * @param EntityInterface|null        $entity
+     * @param FormInterface               $form
+     *
+     * @return ResolvedFormBuild
      */
-    public function __construct(FormInterface $form = null, array $context = null, FormTypeInterface $type = null, EntityInterface $entity = null)
+    public function addBuild($formName, MembersFormBuilderInterface $formBuilder, FormInterface $form)
     {
-//$this->formBuilder = $formBuilder;
-        if ($form) {
-            $this->setForm($form);
-        }
-        $this->context = $context;
-        $this->type = $type;
-        $this->entity = $entity;
+        $this->formBuilder[$formName] = $formBuilder;
+        $this->form[$formName] = $form;
+
+        return $this;
     }
 
     /**
+     * @param $formName
+     *
      * @return MembersFormBuilderInterface
      */
-    public function getFormBuilder()
+    public function getFormBuilder($formName)
     {
-        return $this->formBuilder;
+        return $this->formBuilder[$formName];
     }
 
     /**
      * Return the Symfony Form object.
      *
-     * @param string $name
+     * @param string $formName
      *
      * @throws \BadMethodCallException
      *
      * @return FormInterface
      */
-    public function getForm($name)
+    public function getForm($formName)
     {
-        if (!isset($this->forms[$name])) {
-            throw new \BadMethodCallException(sprintf('Form %s not found.', $name));
+        if (!isset($this->form[$formName])) {
+            throw new \BadMethodCallException(sprintf('Form %s not found.', $formName));
         }
 
-        return $this->forms[$name];
+        return $this->form[$formName];
     }
 
     /**
@@ -86,7 +80,7 @@ class ResolvedFormBuild
     public function setForm(FormInterface $form)
     {
         $formName = sprintf('form_%s', $form->getName());
-        $this->forms[$formName] = $form;
+        $this->form[$formName] = $form;
 
         return $this;
     }
@@ -98,7 +92,7 @@ class ResolvedFormBuild
      */
     public function getForms()
     {
-        return $this->forms;
+        return $this->form;
     }
 
     /**
@@ -126,42 +120,22 @@ class ResolvedFormBuild
     }
 
     /**
+     * @param string $formName
+     *
      * @return FormTypeInterface
      */
-    public function getType()
+    public function getType($formName)
     {
-        return $this->type;
+        return $this->formBuilder[$formName]->getType();
     }
 
     /**
-     * @param FormTypeInterface $type
+     * @param string $formName
      *
-     * @return ResolvedFormBuild
-     */
-    public function setType(FormTypeInterface $type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
      * @return EntityInterface
      */
-    public function getEntity()
+    public function getEntity($formName)
     {
-        return $this->entity;
-    }
-
-    /**
-     * @param EntityInterface $entity
-     *
-     * @return ResolvedFormBuild
-     */
-    public function setEntity(EntityInterface $entity)
-    {
-        $this->entity = $entity;
-
-        return $this;
+        return $this->formBuilder[$formName]->getEntity();
     }
 }

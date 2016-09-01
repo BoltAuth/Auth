@@ -3,8 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
-use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -32,11 +30,7 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     protected $action;
 
     /**
-     * Constructor.
-     *
-     * @param FormFactoryInterface $formFactory
-     * @param FormTypeInterface    $type
-     * @param EntityInterface      $entity
+     * {@inheritdoc}
      */
     public function __construct(FormFactoryInterface $formFactory, FormTypeInterface $type, EntityInterface $entity)
     {
@@ -48,19 +42,15 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function createForm(Storage\Records $records)
+    public function createForm(array $options)
     {
-        $data = $this->getData($records);
-        if ($data === null) {
-            throw new \RuntimeException('Form data not set.');
-        }
-
-        $builder = $this->formFactory->createBuilder($this->type, $this->entity, $data);
+        $builder = $this->formFactory->createBuilder($this->type, $this->entity, $options);
         if ($this->action !== null) {
             $builder->setAction($this->action);
         }
+        $this->form = $builder->getForm();
 
-        return $this->form = $builder->getForm();
+        return $this->form;
     }
 
     /**
@@ -76,6 +66,22 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
     }
 
     /**
+     * @return FormTypeInterface
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return EntityInterface
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
      * Set the HTML 'action' URL for a form's POST target URL.
      *
      * @param string $action
@@ -87,29 +93,5 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
         $this->action = $action;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * {@inheritdoc}
-     */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
-    {
-        return $this;
-    }
-
-    /**
-     * Return the form data array.
-     *
-     * @param Storage\Records $records
-     *
-     * @return array
-     */
-    protected function getData(Storage\Records $records)
-    {
-        return [
-            'csrf_protection' => true,
-        ];
     }
 }
