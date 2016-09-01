@@ -163,9 +163,9 @@ class Profile extends BaseProfile
             //we use the bolt MagicAttributeTrait for convenience
             $this->entity->$fieldName = $fieldValue;
         }
+        $data = parent::getData($records);
 
-        return [
-            'csrf_protection' => true,
+        return $data + [
             'data'            => $this->entity,
         ];
     }

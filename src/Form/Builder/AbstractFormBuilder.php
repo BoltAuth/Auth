@@ -106,5 +106,10 @@ abstract class AbstractFormBuilder implements MembersFormBuilderInterface
      *
      * @return array
      */
-    abstract protected function getData(Storage\Records $records);
+    protected function getData(Storage\Records $records)
+    {
+        return [
+            'csrf_protection' => true,
+        ];
+    }
 }

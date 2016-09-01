@@ -210,7 +210,9 @@ class ProfileRegister extends BaseProfile
             $this->entity->setEmail($resourceOwner->getEmail());
         }
 
-        return [
+        $data = parent::getData($records);
+
+        return $data + [
             'csrf_protection' => true,
             'data'            => $this->entity,
         ];
