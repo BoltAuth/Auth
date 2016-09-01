@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form;
 
+use Bolt\Extension\Bolt\Members\Form\Builder\MembersFormBuilderInterface;
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 class ResolvedFormBuild
 {
+    /** @var MembersFormBuilderInterface */
+    private $formBuilder;
     /** @var FormInterface[] */
     protected $forms;
     /** @var array */
@@ -25,23 +28,34 @@ class ResolvedFormBuild
     protected $type;
     /** @var EntityInterface */
     protected $entity;
-    /** @var null|FormInterface */
-    private $form;
+
 
     /**
      * Constructor.
      *
-     * @param FormInterface|null $form
-     * @param array|null         $context
-     * @param FormTypeInterface  $type
-     * @param EntityInterface    $entity
+     * @param MembersFormBuilderInterface $formBuilder
+     * @param FormInterface|null          $form
+     * @param array|null                  $context
+     * @param FormTypeInterface|null      $type
+     * @param EntityInterface|null        $entity
      */
     public function __construct(FormInterface $form = null, array $context = null, FormTypeInterface $type = null, EntityInterface $entity = null)
     {
-        $this->form = $form;
+//$this->formBuilder = $formBuilder;
+        if ($form) {
+            $this->setForm($form);
+        }
         $this->context = $context;
         $this->type = $type;
         $this->entity = $entity;
+    }
+
+    /**
+     * @return MembersFormBuilderInterface
+     */
+    public function getFormBuilder()
+    {
+        return $this->formBuilder;
     }
 
     /**

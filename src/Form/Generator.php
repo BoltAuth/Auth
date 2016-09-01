@@ -106,9 +106,9 @@ class Generator
      *
      * @param string $formName
      *
-     * @return Builder\MembersFormBuilderInterface
+     * @return ResolvedFormBuild
      */
-    public function getResolvedBuild($formName)
+    public function getResolvedFormBuild($formName)
     {
         if (!isset($this->formMap[$formName])) {
             throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));
@@ -117,11 +117,12 @@ class Generator
         $event = new FormBuilderEvent($formName);
         $this->dispatcher->dispatch(FormBuilderEvent::BUILD, $event);
 
-        $class = $this->formMap[$formName]['form'];
+        $builderClassName = $this->formMap[$formName]['form'];
         $type = $event->getType() ?: $this->getType($formName);
         $entity = $event->getEntity() ?: $this->formComponents['entity']['profile'];
+        $builder =  new $builderClassName($this->formFactory, $type, $entity);
 
-        return new $class($this->formFactory, $type, $entity);
+        return new ResolvedFormBuild($builder, null, null, $type, $entity);
     }
 
     /**
@@ -133,6 +134,10 @@ class Generator
      */
     private function getType($formName)
     {
+        if (!isset($this->formMap[$formName])) {
+            throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));
+        }
+
         $typeName = $this->formMap[$formName]['type'];
         /** @var FormTypeInterface $class */
         $class = new $typeName($this->config);
