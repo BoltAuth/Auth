@@ -23,20 +23,6 @@ class LoginPassword extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-    /** @var Request */
-    protected $request;
-
-    /**
-     * @param Request $request
-     *
-     * @return LoginPassword
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -48,10 +34,9 @@ class LoginPassword extends AbstractFormBuilder
         }
 
         $this->entity->setEmail($this->request->request->get('email'));
-        $data = parent::getData($records);
 
-        return $data + [
-            'data'            => $this->entity,
+        return [
+            'data' => $this->entity,
         ];
     }
 }
