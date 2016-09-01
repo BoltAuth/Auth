@@ -2,8 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
-use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Bolt\Extension\Bolt\Members\Form\Entity;
+use Bolt\Extension\Bolt\Members\Form\Type;
 
 /**
  * Password reset form.
@@ -16,34 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProfileRecovery extends AbstractFormBuilder
 {
-    /** @var string */
-    protected $guid;
-
-    /**
-     * @param string $guid
-     *
-     * @return ProfileRecovery
-     */
-    public function setGuid($guid)
-    {
-        $this->guid = $guid;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
-    {
-        /** @var Storage\Entity\Oauth $oauth */
-        $oauth = $records->getOauthByGuid($this->guid);
-        if ($oauth !== false) {
-            $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
-            $oauth->setPassword($encryptedPassword);
-            $records->saveOauth($oauth);
-        }
-
-        return $this;
-    }
+    /** @var Type\AbstractProfileRecoveryType */
+    protected $type;
+    /** @var Entity\Profile */
+    protected $entity;
 }

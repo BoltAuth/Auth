@@ -3,8 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
-use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -24,21 +22,21 @@ interface MembersFormBuilderInterface
      * Constructor.
      *
      * @param FormFactoryInterface $formFactory
-     * @param FormTypeInterface    $type
-     * @param EntityInterface      $entity
+     * @param FormTypeInterface    $type        The type of the form
+     * @param EntityInterface      $entity      The initial entity data
      */
     public function __construct(FormFactoryInterface $formFactory, FormTypeInterface $type, EntityInterface $entity);
 
     /**
      * Create the form.
      *
-     * @param Storage\Records $records
+     * @param array $options Form options
      *
      * @throws \RuntimeException
      *
      * @return \Symfony\Component\Form\Form
      */
-    public function createForm(Storage\Records $records);
+    public function createForm(array $options);
 
     /**
      * Return the form object.
@@ -50,14 +48,16 @@ interface MembersFormBuilderInterface
     public function getForm();
 
     /**
-     * Save the form.
+     * Return the type object in use.
      *
-     * @deprecated
-     *
-     * @param Storage\Records          $records
-     * @param EventDispatcherInterface $eventDispatcher
-     *
-     * @return MembersFormBuilderInterface
+     * @return FormTypeInterface
      */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher);
+    public function getType();
+
+    /**
+     * Return the entity object in use.
+     *
+     * @return EntityInterface
+     */
+    public function getEntity();
 }

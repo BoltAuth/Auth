@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Profile extends BaseProfile
+class Profile extends AbstractFormBuilder
 {
     /** @var Type\ProfileEditType */
     protected $type;
@@ -67,68 +67,6 @@ class Profile extends BaseProfile
         $this->guid = $guid;
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function saveForm(Storage\Records $records, EventDispatcherInterface $eventDispatcher)
-    {
-        if ($this->guid === null) {
-            throw new \RuntimeException('GUID not set.');
-        }
-
-        $this->account->setDisplayname($this->form->get('displayname')->getData());
-        $this->account->setEmail($this->form->get('email')->getData());
-
-        // Dispatch the account profile pre-save event
-        $event = new MembersProfileEvent($this->account);
-        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_PRE_SAVE, $event);
-
-        $records->saveAccount($this->account);
-
-        if ($this->form->get('password')->getData() !== null) {
-            $encryptedPassword = password_hash($this->form->get('password')->getData(), PASSWORD_BCRYPT);
-            $oauth = $this->getOauth($records);
-            $oauth->setPassword($encryptedPassword);
-            $records->saveOauth($oauth);
-        }
-
-        // Save any defined meta fields
-        foreach ($event->getMetaFieldNames() as $metaField) {
-            $metaEntity = $records->getAccountMeta($this->guid, $metaField);
-            if ($metaEntity === false) {
-                $metaEntity = new Storage\Entity\AccountMeta();
-            }
-            $metaEntity->setGuid($this->guid);
-            $metaEntity->setMeta($metaField);
-            $metaEntity->setValue($this->form->get($metaField)->getData());
-            $records->saveAccountMeta($metaEntity);
-            $event->addMetaField($metaField, $metaEntity);
-        }
-
-        // Dispatch the account profile post-save event
-        $eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_POST_SAVE, $event);
-
-        return $this;
-    }
-
-    /**
-     * Return an existing OAuth record, or create a new one.
-     *
-     * @param Storage\Records $records
-     *
-     * @return Storage\Entity\Oauth
-     */
-    protected function getOauth(Storage\Records $records)
-    {
-        $oauth = $records->getOauthByResourceOwnerId($this->guid);
-        if ($oauth === false) {
-            $oauth = $this->createLocalOauthAccount($records);
-            $this->createLocalProvider($records);
-        }
-
-        return $oauth;
     }
 
     /**
