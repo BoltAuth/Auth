@@ -53,12 +53,12 @@ class Local extends AbstractHandler
      * Handle password login attempt.
      *
      * @param Form                  $submittedForm
-     * @param LoginPassword         $formService
+     * @param Entity\ProfileManager $profileManager
      * @param UrlGeneratorInterface $urlGeneratorInterface
      *
-     * @return RedirectResponse|null
+     * @return null|RedirectResponse
      */
-    public function getLoginResponse(Form $submittedForm, LoginPassword $formService, UrlGeneratorInterface $urlGeneratorInterface)
+    public function getLoginResponse(Form $submittedForm, Entity\ProfileManager $profileManager, UrlGeneratorInterface $urlGeneratorInterface)
     {
         $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
         if (!$account instanceof Entity\Account) {
@@ -80,7 +80,8 @@ class Local extends AbstractHandler
 
         $requestPassword = $submittedForm->get('password')->getData();
         if ($this->isValidPassword($oauth, $requestPassword)) {
-            $formService->saveForm($this->records, $this->dispatcher);
+// Do we need?
+//$profileManager->saveForm();
 
             $accessToken = $this->provider->getAccessToken('password', []);
             $this->session
