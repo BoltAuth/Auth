@@ -67,9 +67,11 @@ class Manager
      */
     public function getFormAssociate(Request $request, $includeParent = true)
     {
-        /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('associate');
-        $form = $baseForm
+        /** @var ResolvedFormBuild $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
+        /** @var Builder\Associate $formBuilder */
+        $formBuilder = $resolvedBuild->getFormBuilder();
+        $formBuilder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
@@ -78,8 +80,9 @@ class Manager
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/login.twig',
         ];
+        $resolvedBuild->setContext($extraContext);
 
-        return new ResolvedFormBuild([$form], $extraContext);
+        return new $resolvedBuild;
     }
 
     /**
@@ -107,9 +110,12 @@ class Manager
      */
     public function getFormLogout(Request $request, $includeParent = true)
     {
-        /** @var Builder\Logout $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('logout');
-        $form = $baseForm
+        /** @var ResolvedFormBuild $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('logout');
+        /** @var Builder\Logout $formBuilder */
+        $formBuilder = $resolvedBuild->getFormBuilder();
+
+        $formBuilder
             ->createForm($this->records)
             ->handleRequest($request)
         ;
@@ -117,7 +123,9 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '_sub/logout.twig',
         ];
 
-        return new ResolvedFormBuild([$form], $extraContext);
+        $resolvedBuild->setContext($extraContext);
+
+        return new $resolvedBuild;
     }
 
     /**
@@ -134,17 +142,20 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
-        /** @var Builder\Profile $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('profile_edit');
-        $formEdit = $baseForm
+
+        /** @var ResolvedFormBuild $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_edit');
+        /** @var Builder\Profile $formBuilder */
+        $formBuilder = $resolvedBuild->getFormBuilder();
+        $formBuilder
             ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('associate');
-        $formAssociate = $baseForm
+        /** @var Builder\Associate $resolvedBuild */
+//$resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
+        $formAssociate = $resolvedBuild
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
@@ -167,9 +178,9 @@ class Manager
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
-        /** @var Builder\ProfileRecovery $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('profile_recovery');
-        $form = $baseForm
+        /** @var Builder\ProfileRecovery $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_recovery');
+        $form = $resolvedBuild
             ->createForm($this->records)
             ->handleRequest($request)
         ;
@@ -230,31 +241,31 @@ class Manager
      */
     protected function getFormCombinedLogin(Request $request, $twigParent)
     {
-        /** @var Builder\Associate $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('associate');
-        $associateForm = $baseForm
+        /** @var Builder\Associate $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('associate');
+        $associateForm = $resolvedBuild
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Builder\LoginOauth $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('login_oauth');
-        $formOauth = $baseForm
+        /** @var Builder\LoginOauth $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('login_oauth');
+        $formOauth = $resolvedBuild
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Builder\LoginPassword $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('login_password');
-        $formPassword = $baseForm
+        /** @var Builder\LoginPassword $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('login_password');
+        $formPassword = $resolvedBuild
             ->setRequest($request)
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm($this->records)
             ->handleRequest($request)
         ;
-        /** @var Builder\ProfileRegister $baseForm */
-        $baseForm = $this->formGenerator->getResolvedBuild('profile_register');
-        $formRegister = $baseForm
+        /** @var Builder\ProfileRegister $resolvedBuild */
+        $resolvedBuild = $this->formGenerator->getResolvedFormBuild('profile_register');
+        $formRegister = $resolvedBuild
             ->setClientIp($request->getClientIp())
             ->setRoles($this->config->getRolesRegister())
             ->setSession($this->session)
