@@ -48,9 +48,9 @@ class LoginPassword extends AbstractFormBuilder
         }
 
         $this->entity->setEmail($this->request->request->get('email'));
+        $data = parent::getData($records);
 
-        return [
-            'csrf_protection' => true,
+        return $data + [
             'data'            => $this->entity,
         ];
     }

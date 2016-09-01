@@ -22,14 +22,4 @@ class LoginOauth extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData(Storage\Records $records)
-    {
-        return [
-            'csrf_protection' => true,
-        ];
-    }
 }

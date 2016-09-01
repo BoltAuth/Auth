@@ -46,14 +46,4 @@ class ProfileRecovery extends AbstractFormBuilder
 
         return $this;
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getData(Storage\Records $records)
-    {
-        return [
-            'csrf_protection' => true,
-        ];
-    }
 }
