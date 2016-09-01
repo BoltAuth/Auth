@@ -192,7 +192,7 @@ class Authentication implements ControllerProviderInterface
             /** @var Handler\Local $handler */
             $handler = $app['members.oauth.handler'];
             $handler->login($request);
-            $response = $handler->getLoginResponse($passwordForm, $app['members.form.login_password'], $app['url_generator']);
+            $response = $handler->getLoginResponse($passwordForm, $app['members.profile.manager'], $app['url_generator']);
             if ($response instanceof Response) {
                 return $response;
             }

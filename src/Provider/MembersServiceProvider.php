@@ -223,13 +223,19 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return $comparator;
             }
         );
+
+        $app['members.profile.manager'] = $app->share(
+            function ($app) {
+                return new Entity\ProfileManager($app['members.config'], $app['members.records'], $app['dispatcher'], $app['members.session']);
+            }
+        );
     }
 
     private function registerForms(Application $app)
     {
-        $app['members.form.components'] = $app->share(
+        $app['members.form.types'] = $app->share(
             function ($app) {
-                $type = new Container(
+                return new Container(
                     [
                         'associate'                => $app->share(
                             function () use ($app) {
@@ -281,20 +287,6 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                         ),
                     ]
                 );
-                $entity = new Container(
-                    [
-                        'profile' => $app->share(
-                            function () use ($app) {
-                                return new Form\Entity\Profile();
-                            }
-                        ),
-                    ]
-                );
-
-                return new Container([
-                    'type'       => $type,
-                    'entity'     => $entity,
-                ]);
             }
         );
 
@@ -303,7 +295,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Form\Generator(
                     $app['members.config'],
                     $app['members.records'],
-                    $app['members.form.components'],
+                    $app['members.form.types'],
                     $app['form.factory'],
                     $app['members.session'],
                     $app['dispatcher']
