@@ -170,7 +170,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
-        $oauthForm = $resolvedForm->getForm('form_login_oauth');
+        $oauthForm = $resolvedForm->getForm('login_oauth');
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -178,7 +178,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $associateForm = $resolvedForm->getForm('form_associate');
+        $associateForm = $resolvedForm->getForm('associate');
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -186,7 +186,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $passwordForm = $resolvedForm->getForm('form_login_password');
+        $passwordForm = $resolvedForm->getForm('login_password');
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             /** @var Handler\Local $handler */
@@ -326,7 +326,7 @@ class Authentication implements ControllerProviderInterface
                         $oauth = $app['members.records']->createOauth($guid, $guid, true);
                     }
                     if ($provider === false) {
-                        $app['members.records']->createProvision($guid, 'local', $guid);
+                        $app['members.records']->createProviderEntity($guid, 'local', $guid);
                     }
 
                     // Reset password
