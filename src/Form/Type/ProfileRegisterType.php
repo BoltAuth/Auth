@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,31 +29,7 @@ class ProfileRegisterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->session->isTransitional() === false) {
-            $passwordConstraints = [
-                new Assert\NotBlank(),
-                new Assert\Length(['min' => 6]),
-            ];
-        } else {
-            $passwordConstraints = [];
-        }
-
         $builder
-            ->add(
-                'displayname',
-                TextType::class,
-                [
-                    'label'       => Trans::__($this->config->getLabel('displayname')),
-                    'data'        => $this->getData($options, 'displayname'),
-                    'attr'        => [
-                        'placeholder' => $this->config->getPlaceholder('displayname'),
-                    ],
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new Assert\Length(['min' => 2]),
-                    ],
-                ]
-            )
             ->add(
                 'email',
                 EmailType::class,
@@ -63,7 +40,7 @@ class ProfileRegisterType extends AbstractType
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
                     'constraints' => [
-                        new UniqueEmail($this->records),
+//new UniqueEmail($this->records),
                         new Assert\Email([
                             'message' => 'The address "{{ value }}" is not a valid email.',
                             'checkMX' => true,
@@ -71,29 +48,9 @@ class ProfileRegisterType extends AbstractType
                     ],
                 ]
             )
-            ->add(
-                'password',
-                RepeatedType::class,
-                [
-                    'type'           => PasswordType::class,
-                    'first_options'  => [
-                        'label' => Trans::__($this->config->getLabel('password_first')),
-                        'attr'  => [
-                            'placeholder' => $this->config->getPlaceholder('password_first'),
-                        ],
-                        'constraints' => $passwordConstraints,
-                    ],
-                    'second_options'  => [
-                        'label' => Trans::__($this->config->getLabel('password_second')),
-                        'attr'  => [
-                            'placeholder' => $this->config->getPlaceholder('password_second'),
-                        ],
-                        'constraints' => $passwordConstraints,
-                    ],
-                    'empty_data'      => null,
-                    'required'        => !$this->session->isTransitional(),
-                ]
-            )
+        ;
+
+        $builder
             ->add(
                 'submit',
                 SubmitType::class,
