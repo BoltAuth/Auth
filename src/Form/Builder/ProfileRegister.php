@@ -24,63 +24,6 @@ class ProfileRegister extends AbstractFormBuilder
     /** @var Entity\Profile */
     protected $entity;
 
-    /** @var string */
-    protected $clientIp;
-    /** @var AbstractProvider */
-    protected $provider;
-    /** @var Session */
-    protected $session;
-    /** @var array */
-    protected $roles;
-
-    /**
-     * @param string $clientIp
-     *
-     * @return ProfileRegister
-     */
-    public function setClientIp($clientIp)
-    {
-        $this->clientIp = $clientIp;
-
-        return $this;
-    }
-
-    /**
-     * @param AbstractProvider $provider
-     *
-     * @return ProfileRegister
-     */
-    public function setProvider(AbstractProvider $provider)
-    {
-        $this->provider = $provider;
-
-        return $this;
-    }
-
-    /**
-     * @param array $roles
-     *
-     * @return ProfileRegister
-     */
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @param Session $session
-     *
-     * @return ProfileRegister
-     */
-    public function setSession(Session $session)
-    {
-        $this->session = $session;
-
-        return $this;
-    }
-
     /**
      * {@inheritdoc}
      */
