@@ -294,10 +294,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Form\Generator(
                     $app['members.config'],
-                    $app['members.records'],
                     $app['members.form.types'],
                     $app['form.factory'],
-                    $app['members.session'],
                     $app['dispatcher']
                 );
             }

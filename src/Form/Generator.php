@@ -2,12 +2,11 @@
 
 namespace Bolt\Extension\Bolt\Members\Form;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
 use Bolt\Extension\Bolt\Members\Form\Builder;
+use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
-use Bolt\Extension\Bolt\Members\Storage\Records;
 use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,14 +25,10 @@ class Generator
 {
     /** @var Config */
     private $config;
-    /** @var Records */
-    private $records;
     /** @var Container */
     private $formTypes;
     /** @var FormFactoryInterface */
     private $formFactory;
-    /** @var Session */
-    private $session;
     /** @var EventDispatcherInterface $dispatcher */
     private $dispatcher;
     /** @var array */
@@ -80,47 +75,42 @@ class Generator
      * Constructor.
      *
      * @param Config                   $config
-     * @param Records                  $records
      * @param Container                $formTypes
      * @param FormFactoryInterface     $formFactory
-     * @param Session                  $session
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         Config $config,
-        Records $records,
         Container $formTypes,
         FormFactoryInterface $formFactory,
-        Session $session,
         EventDispatcherInterface $dispatcher
     ) {
         $this->config = $config;
-        $this->records = $records;
         $this->formTypes = $formTypes;
         $this->formFactory = $formFactory;
-        $this->session = $session;
         $this->dispatcher = $dispatcher;
     }
 
     /**
      * Build a form object.
      *
-     * @param string $formName
+     * @param string            $formName
+     * @param FormTypeInterface $type
+     * @param EntityInterface   $entity
      *
      * @return Builder\AbstractFormBuilder
      */
-    public function getFormBuilder($formName)
+    public function getFormBuilder($formName, FormTypeInterface $type = null, EntityInterface $entity = null)
     {
         if (!isset($this->formMap[$formName])) {
             throw new \RuntimeException(sprintf('Invalid builder request for non-existing form name: %s', $formName));
         }
 
-        $event = new FormBuilderEvent($formName);
-        $this->dispatcher->dispatch(FormBuilderEvent::BUILD, $event);
-
+        $event = $this->getEvent($formName);
         $builderClassName = $this->formMap[$formName]['form'];
-        $type = $event->getType() ?: $this->getType($formName);
-        $entity = $event->getEntity() ?: new Profile();
+
+        $type = $this->getType($event, $type);
+        $entity = $this->getEntity($event, $entity);
 
         $builder =  new $builderClassName($this->formFactory, $type, $entity);
 
@@ -128,29 +118,64 @@ class Generator
     }
 
     /**
-     * Return the registered type object for the form.
+     * Return a dispatched event object for type and data collection.
      *
      * @param string $formName
      *
+     * @return FormBuilderEvent
+     */
+    private function getEvent($formName)
+    {
+        $event = new FormBuilderEvent($formName);
+        $this->dispatcher->dispatch(FormBuilderEvent::BUILD, $event);
+
+        return $event;
+    }
+
+    /**
+     * Return the registered type object for the form.
+     *
+     * @param FormBuilderEvent       $event
+     * @param FormTypeInterface|null $type
+     *
      * @return FormTypeInterface
      */
-    private function getType($formName)
+    private function getType(FormBuilderEvent $event, $type)
     {
-        if (!isset($this->formTypes[$formName])) {
-            throw new \RuntimeException(sprintf('Invalid type request for non-existing form: %s', $formName));
+        // A 'type' object added in the event is considered an override
+        if ($event->getType() !== null) {
+            return $event->getType();
+        }
+        // If no event override, but we've been passed a Type object, return it
+        if ($type !== null) {
+            return $type;
         }
 
+        $formName = $event->getName();
         $typeName = $this->formMap[$formName]['type'];
         /** @var FormTypeInterface $class */
         $class = new $typeName($this->config);
 
-        if ($class instanceof Builder\SessionAwareInterface) {
-            $class->setSession($this->session);
+        return $class;
+    }
+
+    /**
+     * @param FormBuilderEvent     $event
+     * @param EntityInterface|null $entity
+     *
+     * @return EntityInterface
+     */
+    private function getEntity(FormBuilderEvent $event, $entity)
+    {
+        // An 'entity' object added in the event is considered an override
+        if ($event->getEntity() !== null) {
+            return $event->getEntity();
         }
-        if ($class instanceof Builder\StorageAwareInterface) {
-            $class->setRecords($this->records);
+        // If no event override, but we've been passed an Entity object, return it
+        if ($entity !== null) {
+            return $entity;
         }
 
-        return $class;
+        return new Profile();
     }
 }

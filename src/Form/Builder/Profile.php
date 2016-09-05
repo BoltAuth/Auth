@@ -2,12 +2,9 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form\Entity;
 use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Profile form.
@@ -24,50 +21,6 @@ class Profile extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-    /** @var Storage\Entity\Account */
-    protected $account;
-    /** @var Storage\Entity\AccountMeta */
-    protected $accountMeta;
-
-    /**
-     * @return Storage\Entity\Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Storage\Entity\Account $account
-     *
-     * @return Profile
-     */
-    public function setAccount(Storage\Entity\Account $account)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return Storage\Entity\AccountMeta
-     */
-    public function getAccountMeta()
-    {
-        return $this->accountMeta;
-    }
-
-    /**
-     * @param string $guid
-     *
-     * @return Profile
-     */
-    public function setGuid($guid)
-    {
-        $this->guid = $guid;
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
@@ -101,7 +54,6 @@ class Profile extends AbstractFormBuilder
             //we use the bolt MagicAttributeTrait for convenience
             $this->entity->$fieldName = $fieldValue;
         }
-        $data = parent::getData($records);
 
         return $data + [
             'data'            => $this->entity,
