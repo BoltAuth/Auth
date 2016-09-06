@@ -9,6 +9,8 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+use Bolt\Extension\Bolt\Members\Storage\Entity\ProfileManager;
+use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -152,15 +154,19 @@ class Frontend implements ControllerProviderInterface
         }
 
         // Handle the form request data
-        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
-        if ($resolvedForm->getForm('form_profile')->isValid()) {
-            /** @var Form\Profile $profileForm */
-            $profileForm = $app['members.form.profile_edit'];
-            $profileForm->saveForm($app['members.records'], $app['dispatcher']);
+        $resolvedBuild = $formsManager->getFormProfileEdit($request, true);
+        if ($resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT)->isValid()) {
+            /** @var ProfileManager $profileManager */
+            $profileManager = $app['members.profile.manager'];
+            /** @var Form\Entity\Profile $entity */
+            $entity = $resolvedBuild->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+            $form = $resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+
+            $profileManager->saveProfileForm($entity, $form);
         }
 
         $template = $this->config->getTemplates('profile', 'edit');
-        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
+        $html = $formsManager->renderForms($resolvedBuild, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -184,14 +190,17 @@ class Frontend implements ControllerProviderInterface
         $resolvedForm = $formsManager->getFormProfileRegister($request, true);
 
         // Handle the form request data
-        if ($resolvedForm->getForm('form_register')->isValid()) {
+        if ($resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_REGISTER)->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            /** @var Form\ProfileRegister $registerForm */
-            $registerForm = $app['members.form.profile_register'];
-            $registerForm
-                ->setProvider($app['members.oauth.provider'])
-                ->saveForm($app['members.records'], $app['dispatcher'])
-            ;
+
+            $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
+            /** @var Form\Entity\Profile $entity */
+            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
+
+            /** @var ProfileManager $profileManager */
+            $profileManager = $app['members.profile.manager'];
+            $profileManager->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
+
             // Redirect to our profile page.
             $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
