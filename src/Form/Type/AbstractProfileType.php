@@ -31,6 +31,14 @@ abstract class AbstractProfileType extends AbstractType
     protected $emailUniqueConstraint;
 
     /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'profile';
+    }
+
+    /**
      * @param UniqueEmail $constraint
      *
      * @return AbstractProfileType
@@ -155,13 +163,5 @@ abstract class AbstractProfileType extends AbstractType
                 ]
             )
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'profile';
     }
 }
