@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -26,6 +27,20 @@ abstract class AbstractProfileType extends AbstractType
     protected $requireEmail = true;
     /** @var boolean */
     protected $requirePassword = true;
+    /** @var UniqueEmail */
+    protected $emailUniqueConstraint;
+
+    /**
+     * @param UniqueEmail $constraint
+     *
+     * @return AbstractProfileType
+     */
+    public function setEmailUniqueConstraint(UniqueEmail $constraint)
+    {
+        $this->emailUniqueConstraint = $constraint;
+
+        return $this;
+    }
 
     /**
      * Enable or disable requiring email address field and constraints.
@@ -75,6 +90,9 @@ abstract class AbstractProfileType extends AbstractType
                     'checkMX' => true,
                 ])
             ];
+            if ($this->emailUniqueConstraint !== null) {
+                $emailConstraints[] = $this->emailUniqueConstraint;
+            }
         }
 
         $builder
@@ -103,6 +121,7 @@ abstract class AbstractProfileType extends AbstractType
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
                     'constraints' => $emailConstraints,
+                    'required'    => $this->requireEmail,
                 ]
             )
             ->add(
@@ -136,5 +155,13 @@ abstract class AbstractProfileType extends AbstractType
                 ]
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'profile';
     }
 }
