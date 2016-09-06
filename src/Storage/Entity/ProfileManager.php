@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
+use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -128,22 +129,23 @@ class ProfileManager
     /**
      * Save a profile registration form.
      *
-     * @param string           $guid
+     * @param Profile          $entity
      * @param Form             $form
      * @param AbstractProvider $provider
      * @param string           $providerName
      *
      * @return ProfileManager
      */
-    public function saveProfileRegisterForm($guid, Form $form, AbstractProvider $provider, $providerName)
+    public function saveProfileRegisterForm(Profile $entity, Form $form, AbstractProvider $provider, $providerName)
     {
         // Create and store the account record
-        $account = $this->createAccount($form);
+        $account = $this->createAccount($entity);
+        $guid = $account->getGuid();
+
         // Create the event
         $event = new MembersProfileEvent($account);
         // Create verification meta
         $this->createAccountVerificationKey($event, $guid);
-
         // Create a local OAuth account record
         $password = $form->get('password')->getData();
         if ($password) {
@@ -219,15 +221,17 @@ class ProfileManager
     /**
      * Create and store the account record.
      *
-     * @param Form $form
+     * @param Profile $entity
      *
      * @return Account
      */
-    protected function createAccount(Form $form)
+    protected function createAccount(Profile $entity)
     {
-        $displayName = $form->get('displayname')->getData();
-        $emailAddress = $form->get('email')->getData();
+        $displayName = $entity->getDisplayname();
+        $emailAddress = $entity->getEmail();
         $account = $this->records->createAccount($displayName, $emailAddress, $this->config->getRolesRegister());
+
+        $this->records->saveAccount($account);
 
         return $account;
     }
