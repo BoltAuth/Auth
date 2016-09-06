@@ -6,9 +6,13 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form\Builder;
+use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
+use Bolt\Extension\Bolt\Members\Form\Type\ProfileEditType;
 use Bolt\Extension\Bolt\Members\Storage;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 use Twig_Environment as TwigEnvironment;
 use Twig_Markup as TwigMarkup;
 
@@ -60,8 +64,8 @@ class Manager
     /**
      * Return the resolved association form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
      *
      * @return ResolvedFormBuild
      */
@@ -69,13 +73,14 @@ class Manager
     {
         $resolvedBuild = new ResolvedFormBuild();
         /** @var Builder\Logout $builder */
-        $builder = $this->formGenerator->getFormBuilder('associate');
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_ASSOCIATE, $this->session->getAuthorisation()->getGuid());
+
         $formAssociate = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('associate', $builder, $formAssociate);
+        $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $formAssociate);
 
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
@@ -89,8 +94,8 @@ class Manager
     /**
      * Return the resolved login form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
      *
      * @return ResolvedFormBuild
      */
@@ -104,8 +109,8 @@ class Manager
     /**
      * Return the resolved logout form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
      *
      * @return ResolvedFormBuild
      */
@@ -113,12 +118,12 @@ class Manager
     {
         $resolvedBuild = new ResolvedFormBuild();
         /** @var Builder\Logout $builder */
-        $builder = $this->formGenerator->getFormBuilder('logout');
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_LOGOUT);
         $formLogout = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('logout', $builder, $formLogout);
+        $resolvedBuild->addBuild(MembersForms::FORM_LOGOUT, $builder, $formLogout);
 
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/logout.twig',
@@ -132,9 +137,9 @@ class Manager
     /**
      * Return the resolved profile editing form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
-     * @param string  $guid
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
+     * @param string  $guid          Member GUID.
      *
      * @return ResolvedFormBuild
      */
@@ -144,25 +149,30 @@ class Manager
         if ($guid === null) {
             $guid = $this->session->getAuthorisation()->getGuid();
         }
+        $profile = $this->getEntityProfileEdit($guid);
 
         /** @var Builder\Profile $builder */
-        $builder = $this->formGenerator->getFormBuilder('profile_edit');
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_EDIT, null, $profile);
+
+        /** @var ProfileEditType $type */
+        $type = $builder->getType();
+        $type->setRequirePassword(false);
+
         $formEdit = $builder
-            ->setGuid($guid)
             ->setAction(sprintf('/%s/profile/edit', $this->config->getUrlMembers()))
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('profile_edit', $builder, $formEdit);
+        $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_EDIT, $builder, $formEdit);
 
         /** @var Builder\Associate $builder */
-        $builder = $this->formGenerator->getFormBuilder('associate');
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_ASSOCIATE);
         $formAssociate = $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('associate', $builder, $formAssociate);
+        $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $formAssociate);
 
         $extraContext = [
             'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig',
@@ -173,17 +183,49 @@ class Manager
     }
 
     /**
+     * @param string $guid Member GUID.
+     *
+     * @return Profile
+     */
+    private function getEntityProfileEdit($guid = null)
+    {
+        if ($guid !== null && !Uuid::isValid($guid)) {
+            throw new \RuntimeException(sprintf('Invalid GUID value "%s" given.', $guid));
+        }
+
+        $account = $this->records->getAccountByGuid($guid);
+        $profile = $account ? new Profile($account->toArray()) : new Profile([]);
+
+        $accountMeta = $this->records->getAccountMetaAll($guid);
+        if ($accountMeta === false) {
+            return $profile;
+        }
+
+        /** @var Storage\Entity\AccountMeta $metaEntity */
+        foreach ((array) $accountMeta as $metaEntity) {
+            if ($profile->has($metaEntity->getMeta())) {
+                // Meta shouldn't override
+                continue;
+            }
+            $profile[$metaEntity->getMeta()] = $metaEntity->getValue();
+        }
+
+
+        return $profile;
+    }
+
+    /**
      * Return the resolved profile account recovery form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
      *
      * @return ResolvedFormBuild
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
         /** @var Builder\ProfileRecovery $builder */
-        $builder = $this->formGenerator->getFormBuilder('profile_recovery');
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_RECOVER_REQUEST, null);
         $form = $builder
             ->createForm([])
             ->handleRequest($request)
@@ -198,8 +240,8 @@ class Manager
     /**
      * Return the resolved registration form.
      *
-     * @param Request $request
-     * @param bool    $includeParent
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
      *
      * @return ResolvedFormBuild
      */
@@ -207,6 +249,7 @@ class Manager
     {
         $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig';
 
+// need unique constraint on email
         return $this->getFormCombinedLogin($request, $twigParent);
     }
 
@@ -230,6 +273,7 @@ class Manager
         }
         $context['feedback'] = $this->feedback;
         $context['providers'] = $this->config->getEnabledProviders();
+
         $html = $twigEnvironment->render($template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
@@ -238,8 +282,8 @@ class Manager
     /**
      * Return the combined login & registration resolved form object.
      *
-     * @param Request $request
-     * @param string  $twigParent
+     * @param Request $request    The client Request object being processed.
+     * @param string  $twigParent Parent Twig template to be used.
      *
      * @return ResolvedFormBuild
      */
@@ -249,42 +293,52 @@ class Manager
         $resolvedBuild->setContext(['twigparent' => $twigParent]);
 
         /** @var Builder\Associate $builder */
-        $builder = $this->formGenerator->getFormBuilder('associate');
-        $associateForm = $builder
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_ASSOCIATE);
+        $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+        ;
+        $associateForm = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('associate', $builder, $associateForm);
+        $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $associateForm);
 
         /** @var Builder\LoginOauth $builder */
-        $builder = $this->formGenerator->getFormBuilder('login_oauth');
-        $formOauth = $builder
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_LOGIN_OAUTH);
+        $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+        ;
+        $formOauth = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('login_oauth', $builder, $formOauth);
+        $resolvedBuild->addBuild(MembersForms::FORM_LOGIN_OAUTH, $builder, $formOauth);
 
         /** @var Builder\LoginPassword $builder */
-        $builder = $this->formGenerator->getFormBuilder('login_password');
-        $formPassword = $builder
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_LOGIN_PASSWORD);
+        $builder
             ->setAction(sprintf('/%s/login', $this->config->getUrlAuthenticate()))
+        ;
+        $formPassword = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('login_password', $builder, $formPassword);
+        $resolvedBuild->addBuild(MembersForms::FORM_LOGIN_PASSWORD, $builder, $formPassword);
 
         /** @var Builder\ProfileRegister $builder */
-        $builder = $this->formGenerator->getFormBuilder('profile_register');
-        $formRegister = $builder
-            ->setClientIp($request->getClientIp())
-            ->setSession($this->session)
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_REGISTER);
+        $builder
             ->setAction(sprintf('/%s/profile/register', $this->config->getUrlMembers()))
+        ;
+        $formRegister = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $resolvedBuild->addBuild('profile_register', $builder, $formRegister);
+
+        if ($this->session->isTransitional()) {
+        }
+
+        $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_REGISTER, $builder, $formRegister);
 
 
         return $resolvedBuild;
