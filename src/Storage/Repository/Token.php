@@ -25,7 +25,7 @@ class Token extends AbstractMembersRepository
      *
      * @param string $token
      *
-     * @return Entity\Token[]
+     * @return Entity\Token
      */
     public function getToken($token)
     {
@@ -98,7 +98,7 @@ class Token extends AbstractMembersRepository
     /**
      * Fetches expired tokens.
      *
-     * @return Entity\Account
+     * @return Entity\Token
      */
     public function getTokensExpired()
     {

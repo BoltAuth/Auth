@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class AssociateType extends AbstractType
 {
+    use ProviderButtonsTrait;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addProviderButtons($builder, false);

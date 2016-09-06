@@ -1,9 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
-use Bolt\Extension\Bolt\Members\Storage;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormTypeInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractForm implements MembersFormInterface
+abstract class AbstractFormBuilder implements MembersFormBuilderInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -31,11 +30,7 @@ abstract class AbstractForm implements MembersFormInterface
     protected $action;
 
     /**
-     * Constructor.
-     *
-     * @param FormFactoryInterface $formFactory
-     * @param FormTypeInterface    $type
-     * @param EntityInterface      $entity
+     * {@inheritdoc}
      */
     public function __construct(FormFactoryInterface $formFactory, FormTypeInterface $type, EntityInterface $entity)
     {
@@ -45,39 +40,21 @@ abstract class AbstractForm implements MembersFormInterface
     }
 
     /**
-     * Create the form.
-     *
-     * @param Storage\Records $records
-     *
-     * @throws \RuntimeException
-     *
-     * @return \Symfony\Component\Form\Form
+     * {@inheritdoc}
      */
-    public function createForm(Storage\Records $records)
+    public function createForm(array $options)
     {
-        $data = $this->getData($records);
-        if ($data === null) {
-            throw new \RuntimeException('Form data not set.');
-        }
-
-        $builder = $this->formFactory->createBuilder(
-            $this->type,
-            $this->entity,
-            $data
-        );
+        $builder = $this->formFactory->createBuilder($this->type, $this->entity, $options);
         if ($this->action !== null) {
             $builder->setAction($this->action);
         }
+        $this->form = $builder->getForm();
 
-        return $this->form = $builder->getForm();
+        return $this->form;
     }
 
     /**
-     * Return the form object.
-     *
-     * @throws \RuntimeException
-     *
-     * @return Form
+     * {@inheritdoc}
      */
     public function getForm()
     {
@@ -89,11 +66,27 @@ abstract class AbstractForm implements MembersFormInterface
     }
 
     /**
+     * @return FormTypeInterface
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return EntityInterface
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
      * Set the HTML 'action' URL for a form's POST target URL.
      *
      * @param string $action
      *
-     * @return AbstractForm
+     * @return AbstractFormBuilder
      */
     public function setAction($action)
     {
@@ -101,13 +94,4 @@ abstract class AbstractForm implements MembersFormInterface
 
         return $this;
     }
-
-    /**
-     * Return the form data array.
-     *
-     * @param Storage\Records $records
-     *
-     * @return array
-     */
-    abstract protected function getData(Storage\Records $records);
 }
