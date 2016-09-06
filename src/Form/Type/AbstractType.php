@@ -32,6 +32,16 @@ class AbstractType extends BaseAbstractType
     }
 
     /**
+     * @internal For use by traits.
+     *
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Return a valid data option.
      *
      * @param array  $options
@@ -46,43 +56,5 @@ class AbstractType extends BaseAbstractType
         }
 
         return isset($options['data'][$field]) ? $options['data'][$field] : null;
-    }
-
-    /**
-     * Add any configured provider buttons to the form.
-     *
-     * @param FormBuilderInterface $builder
-     * @param bool                 $isLogin
-     */
-    protected function addProviderButtons(FormBuilderInterface $builder, $isLogin)
-    {
-        foreach ($this->config->getEnabledProviders() as $provider) {
-            $name = strtolower($provider->getName());
-            if ($name === 'local') {
-                continue;
-            }
-            $builder->add(
-                $name,
-                SubmitType::class,
-                [
-                    'label' => $isLogin ? $provider->getLabelSignIn() : $provider->getLabelAssociate(),
-                    'attr'  => [
-                        'class' => $this->getCssClass($name),
-                    ],
-                ]
-            );
-        }
-    }
-
-    /**
-     * Determine a button's CSS class
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function getCssClass($name)
-    {
-        return $this->config->getAddOn('zocial') ? "members-oauth-provider zocial $name" : "members-oauth-provider $name";
     }
 }

@@ -57,7 +57,7 @@ class Records
      * @param string $orderBy
      * @param string $order
      *
-     * @return Entity\Account
+     * @return Entity\Account[]
      */
     public function getAccounts($orderBy = 'displayname', $order = null)
     {
@@ -290,7 +290,7 @@ class Records
      *
      * @return Entity\Provider
      */
-    public function createProvision($guid, $providerName, $resourceOwnerId)
+    public function createProviderEntity($guid, $providerName, $resourceOwnerId)
     {
         $provider = new Entity\Provider();
         $provider->setGuid($guid);

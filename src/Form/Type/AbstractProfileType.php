@@ -2,16 +2,18 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Password reset type.
+ * Base profile type.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -19,23 +21,96 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileRecoveryType extends AbstractType
+abstract class AbstractProfileType extends AbstractType
 {
     /** @var boolean */
+    protected $requireEmail = true;
+    /** @var boolean */
     protected $requirePassword = true;
+    /** @var UniqueEmail */
+    protected $emailUniqueConstraint;
 
+    /**
+     * @param UniqueEmail $constraint
+     *
+     * @return AbstractProfileType
+     */
+    public function setEmailUniqueConstraint(UniqueEmail $constraint)
+    {
+        $this->emailUniqueConstraint = $constraint;
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable requiring email address field and constraints.
+     *
+     * @param boolean $requireEmail
+     *
+     * @return AbstractProfileType
+     */
+    public function setRequireEmail($requireEmail)
+    {
+        $this->requireEmail = $requireEmail;
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable requiring password fields and constraints.
+     *
+     * @param boolean $requirePassword
+     *
+     * @return AbstractProfileType
+     */
+    public function setRequirePassword($requirePassword)
+    {
+        $this->requirePassword = $requirePassword;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $passwordConstraints = [];
         if ($this->requirePassword) {
             $passwordConstraints = [
                 new Assert\NotBlank(),
                 new Assert\Length(['min' => 6]),
             ];
-        } else {
-            $passwordConstraints = [];
+        }
+        $emailConstraints = [];
+        if ($this->requireEmail) {
+            $emailConstraints = [
+                new Assert\Email([
+                    'message' => 'The address "{{ value }}" is not a valid email.',
+                    'checkMX' => true,
+                ])
+            ];
+            if ($this->emailUniqueConstraint !== null) {
+                $emailConstraints[] = $this->emailUniqueConstraint;
+            }
         }
 
         $builder
+            ->add(
+                'displayname',
+                TextType::class,
+                [
+                    'label'       => Trans::__($this->config->getLabel('displayname')),
+                    'data'        => $this->getData($options, 'displayname'),
+                    'attr'        => [
+                        'placeholder' => $this->config->getPlaceholder('displayname'),
+                    ],
+                    'constraints' => [
+                        new Assert\NotBlank(),
+                        new Assert\Length(['min' => 2]),
+                    ],
+                ]
+            )
             ->add(
                 'email',
                 EmailType::class,
@@ -45,12 +120,8 @@ class ProfileRecoveryType extends AbstractType
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
-                    'constraints' => [
-                        new Assert\Email([
-                            'message' => 'The address "{{ value }}" is not a valid email.',
-                            'checkMX' => true,
-                        ]),
-                    ],
+                    'constraints' => $emailConstraints,
+                    'required'    => $this->requireEmail,
                 ]
             )
             ->add(
@@ -86,20 +157,11 @@ class ProfileRecoveryType extends AbstractType
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
-        return 'profile_recovery';
-    }
-
-    /**
-     * @param boolean $requirePassword
-     *
-     * @return ProfileEditType
-     */
-    public function setRequirePassword($requirePassword)
-    {
-        $this->requirePassword = $requirePassword;
-
-        return $this;
+        return 'profile';
     }
 }

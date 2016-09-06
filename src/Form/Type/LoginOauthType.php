@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class LoginOauthType extends AbstractType
 {
+    use ProviderButtonsTrait;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addProviderButtons($builder, true);

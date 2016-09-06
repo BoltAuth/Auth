@@ -30,7 +30,7 @@ class MembersRolesEvent extends GenericEvent
     /**
      * @param Role $role
      *
-     * @return MembersLoginEvent
+     * @return MembersRolesEvent
      */
     public function addRole(Role $role)
     {
@@ -42,7 +42,7 @@ class MembersRolesEvent extends GenericEvent
     /**
      * @param Role[] $roles
      *
-     * @return MembersLoginEvent
+     * @return MembersRolesEvent
      */
     public function setRoles(array $roles)
     {

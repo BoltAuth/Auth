@@ -2,19 +2,16 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\Validator\Constraint\UniqueEmail;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * User registration type.
+ * Password reset type.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -22,14 +19,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileRegisterType extends AbstractProfileType
+abstract class AbstractProfileRecoveryType extends AbstractType
 {
+    /** @var boolean */
+    protected $requirePassword = true;
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        parent::buildForm($builder, $options);
+        $passwordConstraints = [];
+        if ($this->requirePassword) {
+            $passwordConstraints = [
+                new Assert\NotBlank(),
+                new Assert\Length(['min' => 6]),
+            ];
+        }
 
         $builder
             ->add(
@@ -42,7 +48,6 @@ class ProfileRegisterType extends AbstractProfileType
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
                     'constraints' => [
-//new UniqueEmail($this->records),
                         new Assert\Email([
                             'message' => 'The address "{{ value }}" is not a valid email.',
                             'checkMX' => true,
@@ -50,14 +55,34 @@ class ProfileRegisterType extends AbstractProfileType
                     ],
                 ]
             )
-        ;
-
-        $builder
+            ->add(
+                'password',
+                RepeatedType::class,
+                [
+                    'type'           => PasswordType::class,
+                    'first_options'  => [
+                        'label' => Trans::__($this->config->getLabel('password_first')),
+                        'attr'  => [
+                            'placeholder' => $this->config->getPlaceholder('password_first'),
+                        ],
+                        'constraints' => $passwordConstraints,
+                    ],
+                    'second_options'  => [
+                        'label' => Trans::__($this->config->getLabel('password_second')),
+                        'attr'  => [
+                            'placeholder' => $this->config->getPlaceholder('password_second'),
+                        ],
+                        'constraints' => $passwordConstraints,
+                    ],
+                    'empty_data'      => null,
+                    'required'        => $this->requirePassword,
+                ]
+            )
             ->add(
                 'submit',
                 SubmitType::class,
                 [
-                'label'   => Trans::__($this->config->getLabel('profile_save')),
+                    'label'   => Trans::__($this->config->getLabel('profile_save')),
                 ]
             )
         ;
@@ -68,6 +93,6 @@ class ProfileRegisterType extends AbstractProfileType
      */
     public function getName()
     {
-        return 'register';
+        return 'profile_recovery';
     }
 }

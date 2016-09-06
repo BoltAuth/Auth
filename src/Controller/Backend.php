@@ -6,6 +6,7 @@ use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Extension\Bolt\Members\Pager\PagerEntity;
@@ -112,8 +113,8 @@ class Backend implements ControllerProviderInterface
      */
     public function before(Request $request, Application $app)
     {
-        $user    = $app['users']->getCurrentUser();
-        $userid  = $user['id'];
+        $user = $app['users']->getCurrentUser();
+        $userid = $user['id'];
 
         foreach ($this->config->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
@@ -249,14 +250,12 @@ class Backend implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function userAdd(Application $app, Request $request)
     {
-        $app['members.form.components']['type']['profile_edit']->setRequirePassword(true);
-        $app['members.form.profile_edit']->setGuid($guid = Uuid::uuid4()->toString());
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
-        $form = $resolvedForm->getForm('form_profile');
+        $form = $resolvedForm->getForm('profile');
 
         // Handle the form request data
         if ($form->isValid()) {
@@ -283,16 +282,17 @@ class Backend implements ControllerProviderInterface
             $provider->setLastupdate(Carbon::now());
             $app['members.records']->saveProvider($provider);
 
-            $app['members.form.profile_edit']
-                ->setAccount($account)
-                ->setGuid($account->getGuid())
-                ->saveForm($app['members.records'], $app['dispatcher'])
-            ;
+            /** @var Form\Entity\Profile $entity */
+            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+
+            /** @var Storage\Entity\ProfileManager $profileManager */
+            $profileManager = $app['members.profile.manager'];
+            $profileManager->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
 
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_add.twig');
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_add.twig');
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -318,6 +318,15 @@ class Backend implements ControllerProviderInterface
         return new JsonResponse($this->getResult('userDelete'));
     }
 
+    /**
+     * Edit a member.
+     *
+     * @param Application $app
+     * @param Request     $request
+     * @param string      $guid
+     *
+     * @return RedirectResponse|Response
+     */
     public function userEdit(Application $app, Request $request, $guid)
     {
         if (!Uuid::isValid($guid)) {
@@ -332,22 +341,21 @@ class Backend implements ControllerProviderInterface
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $app['members.form.components']['type']['profile_edit']->setRequirePassword(false);
-        $app['members.form.profile_edit']->setGuid($guid);
+$app['members.form.profile_edit']->setGuid($guid);
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
-        $form = $resolvedForm->getForm('form_profile');
+        $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            $app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
+$app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
             // Redirect to our profile page.
-            $response =  new RedirectResponse($app['url_generator']->generate('membersAdmin'));
+            $response = new RedirectResponse($app['url_generator']->generate('membersAdmin'));
 
             return $response;
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }

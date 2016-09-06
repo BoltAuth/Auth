@@ -11,7 +11,6 @@ use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Form\Manager;
-use Bolt\Extension\Bolt\Members\Form\Type;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
@@ -171,7 +170,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
-        $oauthForm = $resolvedForm->getForm('form_login_oauth');
+        $oauthForm = $resolvedForm->getForm('login_oauth');
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -179,7 +178,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $associateForm = $resolvedForm->getForm('form_associate');
+        $associateForm = $resolvedForm->getForm('associate');
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -187,13 +186,13 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $passwordForm = $resolvedForm->getForm('form_login_password');
+        $passwordForm = $resolvedForm->getForm('login_password');
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             /** @var Handler\Local $handler */
             $handler = $app['members.oauth.handler'];
             $handler->login($request);
-            $response = $handler->getLoginResponse($passwordForm, $app['members.form.login_password'], $app['url_generator']);
+            $response = $handler->getLoginResponse($passwordForm, $app['members.profile.manager'], $app['url_generator']);
             if ($response instanceof Response) {
                 return $response;
             }
@@ -201,7 +200,7 @@ class Authentication implements ControllerProviderInterface
             $app['members.feedback']->info('Login details are incorrect.');
         }
         $template = $this->config->getTemplates('authentication', 'login');
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $template);
+        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response($html);
     }
@@ -302,8 +301,6 @@ class Authentication implements ControllerProviderInterface
         }
         /** @var Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        /** @var Type\ProfileRecoveryType $profileFormType */
-        $resetFormType = $app['members.form.components']['type']['profile_recovery'];
         $response = new Response();
         $context = ['stage' => null, 'email' => null, 'link' => $app['url_generator']->generate('authenticationLogin')];
 
@@ -311,7 +308,6 @@ class Authentication implements ControllerProviderInterface
             /*
              * Process reset request
              */
-            $resetFormType->setRequirePassword(true);
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
             $form = $resolvedForm->getForm('form_profile_recovery');
 
@@ -330,7 +326,7 @@ class Authentication implements ControllerProviderInterface
                         $oauth = $app['members.records']->createOauth($guid, $guid, true);
                     }
                     if ($provider === false) {
-                        $app['members.records']->createProvision($guid, 'local', $guid);
+                        $app['members.records']->createProviderEntity($guid, 'local', $guid);
                     }
 
                     // Reset password
@@ -348,7 +344,6 @@ class Authentication implements ControllerProviderInterface
             /*
              * Handle new request
              */
-            $resetFormType->setRequirePassword(false);
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
             $form = $resolvedForm->getForm('form_profile_recovery');
             $context['stage'] = 'email';
@@ -404,7 +399,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplates('authentication', 'recovery');
-        $html = $formsManager->renderForms($resolvedForm, $template, $context);
+        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
         return $response;
