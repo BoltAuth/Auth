@@ -26,6 +26,8 @@ class ProfileEditType extends AbstractProfileType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add(
                 'submit',
@@ -35,13 +37,5 @@ class ProfileEditType extends AbstractProfileType
                 ]
             )
         ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'profile';
     }
 }
