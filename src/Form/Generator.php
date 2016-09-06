@@ -32,44 +32,7 @@ class Generator
     /** @var EventDispatcherInterface $dispatcher */
     private $dispatcher;
     /** @var array */
-    private $formMap = [
-        'associate'                => [
-            'form' => Builder\Associate::class,
-            'type' => Type\AssociateType::class,
-        ],
-        'login_oauth'              => [
-            'form' => Builder\LoginOauth::class,
-            'type' => Type\LoginOauthType::class,
-        ],
-        'login_password'           => [
-            'form' => Builder\LoginPassword::class,
-            'type' => Type\LoginPasswordType::class,
-        ],
-        'logout'                   => [
-            'form' => Builder\Logout::class,
-            'type' => Type\LogoutType::class,
-        ],
-        'profile_edit'             => [
-            'form' => Builder\Profile::class,
-            'type' => Type\ProfileEditType::class,
-        ],
-        'profile_recovery_request' => [
-            'form' => Builder\ProfileRecovery::class,
-            'type' => Type\ProfileRecoveryRequestType::class,
-        ],
-        'profile_recovery_submit'  => [
-            'form' => Builder\ProfileRecovery::class,
-            'type' => Type\ProfileRecoverySubmitType::class,
-        ],
-        'profile_register'         => [
-            'form' => Builder\ProfileRegister::class,
-            'type' => Type\ProfileRegisterType::class,
-        ],
-        'profile_view'             => [
-            'form' => Builder\Profile::class,
-            'type' => Type\ProfileViewType::class,
-        ],
-    ];
+    private $formMap;
 
     /**
      * Constructor.
@@ -102,12 +65,9 @@ class Generator
      */
     public function getFormBuilder($formName, FormTypeInterface $type = null, EntityInterface $entity = null)
     {
-        if (!isset($this->formMap[$formName])) {
-            throw new \RuntimeException(sprintf('Invalid builder request for non-existing form name: %s', $formName));
-        }
-
         $event = $this->getEvent($formName);
-        $builderClassName = $this->formMap[$formName]['form'];
+        $formMap = $this->getFormMap($formName);
+        $builderClassName = $formMap['form'];
 
         $type = $this->getType($event, $type);
         $entity = $this->getEntity($event, $entity);
@@ -152,14 +112,18 @@ class Generator
         }
 
         $formName = $event->getName();
-        $typeName = $this->formMap[$formName]['type'];
-        /** @var FormTypeInterface $class */
-        $class = new $typeName($this->config);
+        $formMap = $this->getFormMap($formName);
+        $typeName = $formMap['type'];
 
-        return $class;
+        /** @var FormTypeInterface $typeClass */
+        $typeClass = new $typeName($this->config);
+
+        return $typeClass;
     }
 
     /**
+     * Return the registered entity object for the form.
+     *
      * @param FormBuilderEvent     $event
      * @param EntityInterface|null $entity
      *
@@ -177,5 +141,62 @@ class Generator
         }
 
         return new Profile();
+    }
+
+    /**
+     * Return the form definition hash map.
+     *
+     * @param string $formName
+     *
+     * @return array
+     */
+    private function getFormMap($formName)
+    {
+        if ($this->formMap === null) {
+            $this->formMap = [
+                MembersForms::FORM_ASSOCIATE                => [
+                    'form' => Builder\Associate::class,
+                    'type' => Type\AssociateType::class,
+                ],
+                MembersForms::FORM_LOGIN_OAUTH              => [
+                    'form' => Builder\LoginOauth::class,
+                    'type' => Type\LoginOauthType::class,
+                ],
+                MembersForms::FORM_LOGIN_PASSWORD           => [
+                    'form' => Builder\LoginPassword::class,
+                    'type' => Type\LoginPasswordType::class,
+                ],
+                MembersForms::FORM_LOGOUT                   => [
+                    'form' => Builder\Logout::class,
+                    'type' => Type\LogoutType::class,
+                ],
+                MembersForms::FORM_PROFILE_EDIT             => [
+                    'form' => Builder\Profile::class,
+                    'type' => Type\ProfileEditType::class,
+                ],
+                MembersForms::FORM_PROFILE_RECOVER_REQUEST => [
+                    'form' => Builder\ProfileRecovery::class,
+                    'type' => Type\ProfileRecoveryRequestType::class,
+                ],
+                MembersForms::FORM_PROFILE_RECOVER_SUBMIT  => [
+                    'form' => Builder\ProfileRecovery::class,
+                    'type' => Type\ProfileRecoverySubmitType::class,
+                ],
+                MembersForms::FORM_PROFILE_REGISTER         => [
+                    'form' => Builder\ProfileRegister::class,
+                    'type' => Type\ProfileRegisterType::class,
+                ],
+                MembersForms::FORM_PROFILE_VIEW             => [
+                    'form' => Builder\Profile::class,
+                    'type' => Type\ProfileViewType::class,
+                ],
+            ];
+        }
+
+        if (!isset($this->formMap[$formName])) {
+            throw new \RuntimeException(sprintf('Invalid builder request for non-existing form name: %s', $formName));
+        }
+
+        return $this->formMap[$formName];
     }
 }
