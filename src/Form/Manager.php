@@ -146,9 +146,6 @@ class Manager
     public function getFormProfileEdit(Request $request, $includeParent = true, $guid = null)
     {
         $resolvedBuild = new ResolvedFormBuild();
-        if ($guid === null) {
-            $guid = $this->session->getAuthorisation()->getGuid();
-        }
         $profile = $this->getEntityProfileEdit($guid);
 
         /** @var Builder\Profile $builder */
