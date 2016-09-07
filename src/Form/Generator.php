@@ -135,6 +135,12 @@ class Generator
         if ($event->getEntity() !== null) {
             return $event->getEntity();
         }
+        if ($event->getEntityClass() !== null) {
+            $data = $entity ? $entity->toArray() : [];
+            $className = $event->getEntityClass();
+
+            return new $className((array) $data);
+        }
         // If no event override, but we've been passed an Entity object, return it
         if ($entity !== null) {
             return $entity;
