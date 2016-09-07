@@ -254,15 +254,19 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
-        $form = $resolvedForm->getForm('profile');
+        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, null);
+        $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
+            /** @var Form\Entity\Profile $entity */
+            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+
             // Create and store the account entity
             $account = new Storage\Entity\Account();
-            $account->setDisplayname($form->get('displayname')->getData());
-            $account->setEmail($form->get('email')->getData());
+            $account->setGuid($entity->getGuid());
+            $account->setDisplayname($entity->getDisplayname());
+            $account->setEmail($entity->getEmail());
             $account->setRoles([]);
             $account->setEnabled(true);
             $app['members.records']->saveAccount($account);
@@ -281,13 +285,6 @@ class Backend implements ControllerProviderInterface
             $provider->setResourceOwnerId($account->getGuid());
             $provider->setLastupdate(Carbon::now());
             $app['members.records']->saveProvider($provider);
-
-            /** @var Form\Entity\Profile $entity */
-            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
-
-            /** @var Storage\Entity\ProfileManager $profileManager */
-            $profileManager = $app['members.profile.manager'];
-            $profileManager->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
 
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
@@ -341,18 +338,16 @@ class Backend implements ControllerProviderInterface
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-$app['members.form.profile_edit']->setGuid($guid);
         $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
         $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-$app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
-            // Redirect to our profile page.
-            $response = new RedirectResponse($app['url_generator']->generate('membersAdmin'));
+            $app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
+            $profileUrl = $app['url_generator']->generate('membersAdmin');
 
-            return $response;
+            return new RedirectResponse($profileUrl);
         }
 
         $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
