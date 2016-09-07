@@ -283,8 +283,9 @@ class Functions extends TwigExtension
             return $this->renderLogin($twigEnvironment, $template);
         }
 
+        $guid = $this->session->getAuthorisation()->getGuid();
         $template = $template ?: $this->config->getTemplates('profile', 'edit');
-        $form = $this->formManager->getFormProfileEdit(new Request(), false);
+        $form = $this->formManager->getFormProfileEdit(new Request(), false, $guid);
         $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
         return new TwigMarkup($html, 'UTF-8');
