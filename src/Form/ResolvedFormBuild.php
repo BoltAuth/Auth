@@ -64,7 +64,12 @@ class ResolvedFormBuild
     public function getForm($formName)
     {
         if (!isset($this->form[$formName])) {
-            throw new \BadMethodCallException(sprintf('Form %s not found.', $formName));
+            $message = sprintf(
+                'Requested form "%s" not part of this build. Available forms: %s',
+                $formName,
+                implode(', ', array_keys($this->form))
+            );
+            throw new \BadMethodCallException($message);
         }
 
         return $this->form[$formName];
