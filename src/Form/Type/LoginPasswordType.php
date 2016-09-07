@@ -18,6 +18,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class LoginPasswordType extends AbstractType
 {
+    public function getName()
+    {
+        return 'login_password';
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -56,10 +61,5 @@ class LoginPasswordType extends AbstractType
                 ]
             )
         ;
-    }
-
-    public function getName()
-    {
-        return 'login_password';
     }
 }

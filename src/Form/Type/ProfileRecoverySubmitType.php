@@ -15,4 +15,12 @@ class ProfileRecoverySubmitType extends AbstractProfileRecoveryType
 {
     /** @var boolean */
     protected $requirePassword = true;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'profile_recovery';
+    }
 }

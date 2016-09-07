@@ -21,6 +21,8 @@ class FormBuilderEvent extends Event
     protected $type;
     /** @var  EntityInterface */
     protected $entity;
+    /** @var  string */
+    protected $entityClass;
 
     /**
      * Constructor.
@@ -80,6 +82,26 @@ class FormBuilderEvent extends Event
     public function setEntity($entity)
     {
         $this->entity = $entity;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntityClass()
+    {
+        return $this->entityClass;
+    }
+
+    /**
+     * @param string $entityClass
+     *
+     * @return FormBuilderEvent
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
 
         return $this;
     }
