@@ -17,13 +17,13 @@ class LoginOauthType extends AbstractType
 {
     use ProviderButtonsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $this->addProviderButtons($builder, true);
-    }
-
     public function getName()
     {
         return 'login_oauth';
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $this->addProviderButtons($builder, true);
     }
 }

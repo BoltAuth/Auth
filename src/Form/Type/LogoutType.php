@@ -17,6 +17,11 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class LogoutType extends AbstractType
 {
+    public function getName()
+    {
+        return 'logout';
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -32,10 +37,5 @@ class LogoutType extends AbstractType
                 ]
             )
         ;
-    }
-
-    public function getName()
-    {
-        return 'logout';
     }
 }

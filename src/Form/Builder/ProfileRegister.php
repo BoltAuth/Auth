@@ -2,11 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\Form\Entity;
 use Bolt\Extension\Bolt\Members\Form\Type;
-use Bolt\Extension\Bolt\Members\Storage;
-use League\OAuth2\Client\Provider\AbstractProvider;
 
 /**
  * Register form.
@@ -23,26 +20,4 @@ class ProfileRegister extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData(Storage\Records $records)
-    {
-        if ($this->session === null) {
-            throw new \RuntimeException('Members session not set.');
-        }
-
-        if ($this->session->isTransitional()) {
-            $resourceOwner = $this->session->getTransitionalProvider()->getResourceOwner();
-            $this->entity->setDisplayname($resourceOwner->getName());
-            $this->entity->setEmail($resourceOwner->getEmail());
-        }
-
-$data = parent::getData($records);
-
-        return $data + [
-            'data'            => $this->entity,
-        ];
-    }
 }
