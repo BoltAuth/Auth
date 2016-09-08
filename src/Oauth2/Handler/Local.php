@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\Form\LoginPassword;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use PasswordLib\Password\Factory as PasswordFactory;
@@ -106,21 +105,21 @@ class Local extends AbstractHandler
      */
     protected function isValidPassword(Entity\Oauth $oauth, $requestPassword)
     {
-        if (!Blowfish::detect($oauth->getPassword())) {
-            // Rehash password if not using Blowfish algorithm
-            $passwordFactory = new PasswordFactory();
+        if (Blowfish::detect($oauth->getPassword())) {
+            // We have a Blowfish hash, verify
+            return password_verify($requestPassword, $oauth->getPassword());
+        }
 
-            if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
-                $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
-                try {
-                    $this->records->saveOauth($oauth);
-                } catch (NotNullConstraintViolationException $e) {
-                    // Database needs updating
-                }
-
-                return true;
+        // Rehash password if not using Blowfish algorithm
+        $passwordFactory = new PasswordFactory();
+        if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
+            $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
+            try {
+                $this->records->saveOauth($oauth);
+            } catch (NotNullConstraintViolationException $e) {
+                // Database needs updating
             }
-        } elseif (password_verify($requestPassword, $oauth->getPassword())) {
+
             return true;
         }
 
