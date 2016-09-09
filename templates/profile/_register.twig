@@ -9,6 +9,8 @@
         <h4>New Member</h4>
     </div>
 
+    {{ include(templates.feedback) }}
+
     <div class="row register">
 
         <div class="small-12 columns">
@@ -35,6 +37,4 @@
         </div>
 
     </div>
-
-    {{ include('@Members/feedback/feedback.twig') }}
 {% endblock %}

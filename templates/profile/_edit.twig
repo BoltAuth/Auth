@@ -10,6 +10,8 @@
         <h4>Edit Profile</h4>
     </div>
 
+    {{ include(templates.feedback) }}
+
     <div class="row profile">
 
         <div class="small-12 columns">
@@ -50,6 +52,4 @@
         </div>
 
     </div>
-
-    {{ include('@Members/feedback/feedback.twig') }}
 {% endblock %}
