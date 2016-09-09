@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Authorisation control class.
@@ -58,6 +59,10 @@ abstract class AbstractHandler
     protected $dispatcher;
     /** @var ResourceOwnerInterface */
     protected $resourceOwner;
+    /** @var Entity\ProfileManager */
+    protected $profileManager;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
     /** @var Application */
     private $app;
@@ -79,6 +84,8 @@ abstract class AbstractHandler
         $this->feedback = $app['members.feedback'];
         $this->logger = $app['logger.system'];
         $this->dispatcher = $app['dispatcher'];
+        $this->profileManager = $app['members.profile.manager'];
+        $this->urlGenerator = $app['url_generator'];
 
         $this->app = $app;
     }
@@ -137,6 +144,11 @@ abstract class AbstractHandler
 
         // Send the event
         $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
+    }
+
+    protected function recordLogin(Request $request)
+    {
+
     }
 
     /**
