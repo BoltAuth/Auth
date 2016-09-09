@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\Form\LoginPassword;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use PasswordLib\Password\Factory as PasswordFactory;
@@ -10,7 +9,6 @@ use PasswordLib\Password\Implementation\Blowfish;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * OAuth local login provider.
@@ -24,13 +22,48 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Local extends AbstractHandler
 {
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     * @param Form    $submittedForm
+     *
+     * @return RedirectResponse|null
      */
-    public function login(Request $request)
+    public function login(Request $request, Form $submittedForm)
     {
         if (parent::login($request)) {
-            return;
+            return null;
         }
+
+        $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
+        if (!$account instanceof Entity\Account) {
+            return null;
+        }
+
+        $oauth = $this->records->getOauthByGuid($account->getGuid());
+        if (!$oauth instanceof Entity\Oauth) {
+            $this->feedback->info('Registration is required.');
+
+            return new RedirectResponse($this->urlGenerator->generate('membersProfileRegister'));
+        }
+
+        if (!$oauth->getEnabled()) {
+            $this->feedback->info('Account disabled.');
+
+            return new RedirectResponse($this->urlGenerator->generate('authenticationLogin'));
+        }
+
+        $requestPassword = $submittedForm->get('password')->getData();
+        if ($this->isValidPassword($oauth, $requestPassword)) {
+            $accessToken = $this->provider->getAccessToken('password', []);
+            $this->session
+                ->addAccessToken('local', $accessToken)
+                ->createAuthorisation($account->getGuid())
+            ;
+            $this->feedback->info('Login successful.');
+
+            return $this->session->popRedirect()->getResponse();
+        }
+
+        return null;
     }
 
     /**
@@ -50,53 +83,6 @@ class Local extends AbstractHandler
     }
 
     /**
-     * Handle password login attempt.
-     *
-     * @param Form                  $submittedForm
-     * @param Entity\ProfileManager $profileManager
-     * @param UrlGeneratorInterface $urlGeneratorInterface
-     *
-     * @return null|RedirectResponse
-     */
-    public function getLoginResponse(Form $submittedForm, Entity\ProfileManager $profileManager, UrlGeneratorInterface $urlGeneratorInterface)
-    {
-        $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
-        if (!$account instanceof Entity\Account) {
-            return null;
-        }
-
-        $oauth = $this->records->getOauthByGuid($account->getGuid());
-        if (!$oauth instanceof Entity\Oauth) {
-            $this->feedback->info('Registration is required.');
-
-            return new RedirectResponse($urlGeneratorInterface->generate('membersProfileRegister'));
-        }
-
-        if (!$oauth->getEnabled()) {
-            $this->feedback->info('Account disabled.');
-
-            return new RedirectResponse($urlGeneratorInterface->generate('authenticationLogin'));
-        }
-
-        $requestPassword = $submittedForm->get('password')->getData();
-        if ($this->isValidPassword($oauth, $requestPassword)) {
-// Do we need?
-//$profileManager->saveForm();
-
-            $accessToken = $this->provider->getAccessToken('password', []);
-            $this->session
-                ->addAccessToken('local', $accessToken)
-                ->createAuthorisation($account->getGuid())
-            ;
-            $this->feedback->info('Login successful.');
-
-            return $this->session->popRedirect()->getResponse();
-        }
-
-        return null;
-    }
-
-    /**
      * Check to see if a provided password is valid.
      *
      * @param Entity\Oauth $oauth
@@ -106,21 +92,21 @@ class Local extends AbstractHandler
      */
     protected function isValidPassword(Entity\Oauth $oauth, $requestPassword)
     {
-        if (!Blowfish::detect($oauth->getPassword())) {
-            // Rehash password if not using Blowfish algorithm
-            $passwordFactory = new PasswordFactory();
+        if (Blowfish::detect($oauth->getPassword())) {
+            // We have a Blowfish hash, verify
+            return password_verify($requestPassword, $oauth->getPassword());
+        }
 
-            if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
-                $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
-                try {
-                    $this->records->saveOauth($oauth);
-                } catch (NotNullConstraintViolationException $e) {
-                    // Database needs updating
-                }
-
-                return true;
+        // Rehash password if not using Blowfish algorithm
+        $passwordFactory = new PasswordFactory();
+        if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
+            $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
+            try {
+                $this->records->saveOauth($oauth);
+            } catch (NotNullConstraintViolationException $e) {
+                // Database needs updating
             }
-        } elseif (password_verify($requestPassword, $oauth->getPassword())) {
+
             return true;
         }
 

@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Authorisation control class.
@@ -58,6 +59,10 @@ abstract class AbstractHandler
     protected $dispatcher;
     /** @var ResourceOwnerInterface */
     protected $resourceOwner;
+    /** @var Entity\ProfileManager */
+    protected $profileManager;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
     /** @var Application */
     private $app;
@@ -79,6 +84,8 @@ abstract class AbstractHandler
         $this->feedback = $app['members.feedback'];
         $this->logger = $app['logger.system'];
         $this->dispatcher = $app['dispatcher'];
+        $this->profileManager = $app['members.profile.manager'];
+        $this->urlGenerator = $app['url_generator'];
 
         $this->app = $app;
     }
@@ -100,7 +107,9 @@ abstract class AbstractHandler
         }
 
         // Set user feedback messages
-        $this->setDebugMessage('Login was route complete, redirecting for authentication.');
+        $this->setDebugMessage(sprintf('Login was route complete for %s, redirecting for authentication.', $request->getRequestUri()));
+
+        return false;
     }
 
     /**
@@ -111,7 +120,9 @@ abstract class AbstractHandler
         if ($this->session->hasAuthorisation()) {
             $this->session->removeAuthorisation();
             $this->feedback->info('Logout was successful.');
+            $this->setDebugMessage(sprintf('Logout was route complete for %s', $request->getRequestUri()));
         }
+        $this->setDebugMessage('Logout was no required. Members session not found.');
     }
 
     /**
@@ -135,6 +146,11 @@ abstract class AbstractHandler
         $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
     }
 
+    protected function recordLogin(Request $request)
+    {
+
+    }
+
     /**
      * Handle a successful account authentication.
      *
@@ -142,8 +158,6 @@ abstract class AbstractHandler
      *
      * @throws Ex\MissingAccountException
      * @throws Ex\InvalidAuthorisationRequestException
-     *
-     * @return string
      */
     protected function handleAccountTransition(AccessToken $accessToken)
     {
@@ -387,7 +401,7 @@ abstract class AbstractHandler
         try {
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {
-            if ($this->config->debugEnabled()) {
+            if ($this->config->isDebug()) {
                 dump($e);
             }
 
