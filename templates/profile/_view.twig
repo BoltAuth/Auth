@@ -9,6 +9,8 @@
         <h4>Member Profile — {{ displayname }}</h4>
     </div>
 
+    {{ include(templates.feedback) }}
+
     <div class="row profile">
 
         <div class="small-3 columns">
@@ -21,6 +23,4 @@
         </div>
 
     </div>
-
-    {{ include('@Members/feedback/feedback.twig') }}
 {% endblock %}
