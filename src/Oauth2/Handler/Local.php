@@ -9,7 +9,6 @@ use PasswordLib\Password\Implementation\Blowfish;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * OAuth local login provider.
@@ -23,13 +22,48 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Local extends AbstractHandler
 {
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     * @param Form    $submittedForm
+     *
+     * @return RedirectResponse|null
      */
-    public function login(Request $request)
+    public function login(Request $request, Form $submittedForm)
     {
         if (parent::login($request)) {
-            return;
+            return null;
         }
+
+        $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
+        if (!$account instanceof Entity\Account) {
+            return null;
+        }
+
+        $oauth = $this->records->getOauthByGuid($account->getGuid());
+        if (!$oauth instanceof Entity\Oauth) {
+            $this->feedback->info('Registration is required.');
+
+            return new RedirectResponse($this->urlGenerator->generate('membersProfileRegister'));
+        }
+
+        if (!$oauth->getEnabled()) {
+            $this->feedback->info('Account disabled.');
+
+            return new RedirectResponse($this->urlGenerator->generate('authenticationLogin'));
+        }
+
+        $requestPassword = $submittedForm->get('password')->getData();
+        if ($this->isValidPassword($oauth, $requestPassword)) {
+            $accessToken = $this->provider->getAccessToken('password', []);
+            $this->session
+                ->addAccessToken('local', $accessToken)
+                ->createAuthorisation($account->getGuid())
+            ;
+            $this->feedback->info('Login successful.');
+
+            return $this->session->popRedirect()->getResponse();
+        }
+
+        return null;
     }
 
     /**
@@ -46,53 +80,6 @@ class Local extends AbstractHandler
     public function logout(Request $request)
     {
         parent::logout($request);
-    }
-
-    /**
-     * Handle password login attempt.
-     *
-     * @param Form                  $submittedForm
-     * @param Entity\ProfileManager $profileManager
-     * @param UrlGeneratorInterface $urlGeneratorInterface
-     *
-     * @return null|RedirectResponse
-     */
-    public function getLoginResponse(Form $submittedForm, Entity\ProfileManager $profileManager, UrlGeneratorInterface $urlGeneratorInterface)
-    {
-        $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
-        if (!$account instanceof Entity\Account) {
-            return null;
-        }
-
-        $oauth = $this->records->getOauthByGuid($account->getGuid());
-        if (!$oauth instanceof Entity\Oauth) {
-            $this->feedback->info('Registration is required.');
-
-            return new RedirectResponse($urlGeneratorInterface->generate('membersProfileRegister'));
-        }
-
-        if (!$oauth->getEnabled()) {
-            $this->feedback->info('Account disabled.');
-
-            return new RedirectResponse($urlGeneratorInterface->generate('authenticationLogin'));
-        }
-
-        $requestPassword = $submittedForm->get('password')->getData();
-        if ($this->isValidPassword($oauth, $requestPassword)) {
-// Do we need?
-//$profileManager->saveForm();
-
-            $accessToken = $this->provider->getAccessToken('password', []);
-            $this->session
-                ->addAccessToken('local', $accessToken)
-                ->createAuthorisation($account->getGuid())
-            ;
-            $this->feedback->info('Login successful.');
-
-            return $this->session->popRedirect()->getResponse();
-        }
-
-        return null;
     }
 
     /**
