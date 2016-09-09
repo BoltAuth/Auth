@@ -270,6 +270,7 @@ class Manager
         }
         $context['feedback'] = $this->feedback;
         $context['providers'] = $this->config->getEnabledProviders();
+        $context['templates']['feedback'] = $this->config->getTemplate('feedback', 'feedback');
 
         $html = $twigEnvironment->render($template, $context);
 
