@@ -83,7 +83,7 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $formAssociate);
 
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
         ];
         $resolvedBuild->setContext($extraContext);
 
@@ -101,7 +101,7 @@ class Manager
      */
     public function getFormLogin(Request $request, $includeParent = true)
     {
-        $twigParent = $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/login.twig';
+        $twigParent = $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/authentication/_sub/login.twig';
 
         return $this->getFormCombinedLogin($request, $twigParent);
     }
@@ -126,7 +126,7 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_LOGOUT, $builder, $formLogout);
 
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/authentication/_sub/logout.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/authentication/_sub/logout.twig',
         ];
 
         $resolvedBuild->setContext($extraContext);
@@ -172,7 +172,7 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $formAssociate);
 
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplate('profile', 'parent') : '@Members/profile/_sub/profile.twig',
         ];
         $resolvedBuild->setContext($extraContext);
 
@@ -228,7 +228,7 @@ class Manager
             ->handleRequest($request)
         ;
         $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplates('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
+            'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
         ];
 
         return new ResolvedFormBuild([$form], $extraContext);
@@ -244,7 +244,7 @@ class Manager
      */
     public function getFormProfileRegister(Request $request, $includeParent = true)
     {
-        $twigParent = $includeParent ? $this->config->getTemplates('profile', 'parent') : '@Members/profile/_sub/profile.twig';
+        $twigParent = $includeParent ? $this->config->getTemplate('profile', 'parent') : '@Members/profile/_sub/profile.twig';
 
 // need unique constraint on email
         return $this->getFormCombinedLogin($request, $twigParent);

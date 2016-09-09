@@ -198,7 +198,7 @@ class Authentication implements ControllerProviderInterface
 
             $app['members.feedback']->info('Login details are incorrect.');
         }
-        $template = $this->config->getTemplates('authentication', 'login');
+        $template = $this->config->getTemplate('authentication', 'login');
         $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response($html);
@@ -370,7 +370,7 @@ class Authentication implements ControllerProviderInterface
                     $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
 
                     $message = $mailer->createMessage('message')
-                        ->setSubject($app['twig']->render($this->config->getTemplates('recovery', 'subject')))
+                        ->setSubject($app['twig']->render($this->config->getTemplate('recovery', 'subject')))
                         ->setBody(strip_tags($mailHtml))
                         ->addPart($mailHtml, 'text/html')
                     ;
@@ -397,7 +397,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $template = $this->config->getTemplates('authentication', 'recovery');
+        $template = $this->config->getTemplate('authentication', 'recovery');
         $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
@@ -420,7 +420,7 @@ class Authentication implements ControllerProviderInterface
             'email' => $account->getEmail(),
             'link'  => sprintf('%s%s/reset?%s', $siteUrl, $this->config->getUrlAuthenticate(), $query),
         ];
-        $mailHtml = $twig->render($this->config->getTemplates('recovery', 'body'), $context);
+        $mailHtml = $twig->render($this->config->getTemplate('recovery', 'body'), $context);
 
         return $mailHtml;
     }
@@ -508,11 +508,11 @@ class Authentication implements ControllerProviderInterface
         $ext = $app['extensions']->get('Bolt/Members');
         $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
         $context = [
-            'parent'    => $app['members.config']->getTemplates('error', 'parent'),
+            'parent'    => $app['members.config']->getTemplate('error', 'parent'),
             'feedback'  => $app['members.feedback']->get(),
             'exception' => $e,
         ];
-        $html = $app['twig']->render($this->config->getTemplates('error', 'error'), $context);
+        $html = $app['twig']->render($this->config->getTemplate('error', 'error'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
