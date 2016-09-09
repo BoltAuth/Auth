@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity\Token;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -28,7 +29,7 @@ class Remote extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function login(Request $request)
+    public function login(Request $request, Form $submittedForm = null)
     {
         parent::login($request);
 

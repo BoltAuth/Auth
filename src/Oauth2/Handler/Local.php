@@ -22,12 +22,9 @@ use Symfony\Component\HttpFoundation\Request;
 class Local extends AbstractHandler
 {
     /**
-     * @param Request $request
-     * @param Form    $submittedForm
-     *
-     * @return RedirectResponse|null
+     * {@inheritdoc}
      */
-    public function login(Request $request, Form $submittedForm)
+    public function login(Request $request, Form $submittedForm = null)
     {
         if (parent::login($request)) {
             return null;
