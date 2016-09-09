@@ -528,7 +528,6 @@ class Config
                 ],
                 'authentication' => [
                     'parent'    => '@Members/authentication/authentication.twig',
-                    'feedback'  => '@Members/authentication/feedback.twig',
                     'associate' => '@Members/authentication/_associate.twig',
                     'login'     => '@Members/authentication/_login.twig',
                     'logout'    => '@Members/authentication/_logout.twig',
@@ -537,6 +536,9 @@ class Config
                 'error'          => [
                     'parent' => '@Members/error/members_error.twig',
                     'error'  => '@Members/error/_members_error.twig',
+                ],
+                'feedback'          => [
+                    'feedback'  => '@Members/feedback/feedback.twig',
                 ],
                 'recovery'   => [
                     'subject' => '@Members/authentication/recovery/subject.twig',
