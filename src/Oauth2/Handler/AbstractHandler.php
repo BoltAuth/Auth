@@ -21,6 +21,8 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -91,9 +93,14 @@ abstract class AbstractHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     * @param Form    $submittedForm
+     *
+     * @throws Ex\DisabledProviderException
+     *
+     * @return bool|null|RedirectResponse
      */
-    protected function login(Request $request)
+    protected function login(Request $request, Form $submittedForm = null)
     {
         $providerName = $this->providerManager->getProviderName();
         $provider = $this->config->getProvider($providerName);
