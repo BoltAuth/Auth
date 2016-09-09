@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Storage\Entity\Token;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;

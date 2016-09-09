@@ -100,7 +100,9 @@ abstract class AbstractHandler
         }
 
         // Set user feedback messages
-        $this->setDebugMessage('Login was route complete, redirecting for authentication.');
+        $this->setDebugMessage(sprintf('Login was route complete for %s, redirecting for authentication.', $request->getRequestUri()));
+
+        return false;
     }
 
     /**
@@ -111,7 +113,9 @@ abstract class AbstractHandler
         if ($this->session->hasAuthorisation()) {
             $this->session->removeAuthorisation();
             $this->feedback->info('Logout was successful.');
+            $this->setDebugMessage(sprintf('Logout was route complete for %s', $request->getRequestUri()));
         }
+        $this->setDebugMessage('Logout was no required. Members session not found.');
     }
 
     /**
@@ -142,8 +146,6 @@ abstract class AbstractHandler
      *
      * @throws Ex\MissingAccountException
      * @throws Ex\InvalidAuthorisationRequestException
-     *
-     * @return string
      */
     protected function handleAccountTransition(AccessToken $accessToken)
     {
@@ -387,7 +389,7 @@ abstract class AbstractHandler
         try {
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {
-            if ($this->config->debugEnabled()) {
+            if ($this->config->isDebug()) {
                 dump($e);
             }
 
