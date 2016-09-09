@@ -67,7 +67,7 @@ class ResolvedFormBuild
             $message = sprintf(
                 'Requested form "%s" not part of this build. Available forms: %s',
                 $formName,
-                implode(', ', array_keys($this->form))
+                implode(', ', array_keys((array) $this->form))
             );
             throw new \BadMethodCallException($message);
         }
