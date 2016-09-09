@@ -221,17 +221,30 @@ class Manager
      */
     public function getFormProfileRecovery(Request $request, $includeParent = true)
     {
+        $resolvedBuild = new ResolvedFormBuild();
+
         /** @var Builder\ProfileRecovery $builder */
         $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_RECOVER_REQUEST, null);
-        $form = $builder
+        $requestForm = $builder
             ->createForm([])
             ->handleRequest($request)
         ;
-        $extraContext = [
-            'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
-        ];
+        $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_RECOVER_REQUEST, $builder, $requestForm);
 
-        return new ResolvedFormBuild([$form], $extraContext);
+        /** @var Builder\ProfileRecovery $builder */
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_RECOVER_SUBMIT, null);
+        $submitForm = $builder
+            ->createForm([])
+            ->handleRequest($request)
+        ;
+        $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_RECOVER_SUBMIT, $builder, $submitForm);
+
+
+        $resolvedBuild->setContext([
+            'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
+        ]);
+
+        return $resolvedBuild;
     }
 
     /**
