@@ -154,14 +154,13 @@ class Frontend implements ControllerProviderInterface
         }
 
         // Handle the form request data
-        $resolvedBuild = $formsManager->getFormProfileEdit($request, true);
+        $resolvedBuild = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
         if ($resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT)->isValid()) {
             /** @var ProfileManager $profileManager */
             $profileManager = $app['members.profile.manager'];
             /** @var Form\Entity\Profile $entity */
             $entity = $resolvedBuild->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
             $form = $resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
-
             $profileManager->saveProfileForm($entity, $form);
         }
 
@@ -270,7 +269,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplates('profile', 'view');
-        $resolvedForm = $formsManager->getFormProfileEdit($request, true);
+        $resolvedForm = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
         $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
