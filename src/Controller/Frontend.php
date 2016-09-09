@@ -164,7 +164,7 @@ class Frontend implements ControllerProviderInterface
             $profileManager->saveProfileForm($entity, $form);
         }
 
-        $template = $this->config->getTemplates('profile', 'edit');
+        $template = $this->config->getTemplate('profile', 'edit');
         $html = $formsManager->renderForms($resolvedBuild, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -207,7 +207,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $context = ['transitional' => $app['members.session']->isTransitional()];
-        $template = $this->config->getTemplates('profile', 'register');
+        $template = $this->config->getTemplate('profile', 'register');
         $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -233,13 +233,13 @@ class Frontend implements ControllerProviderInterface
         }
 
         $context = [
-            'twigparent' => $this->config->getTemplates('profile', 'parent'),
+            'twigparent' => $this->config->getTemplate('profile', 'parent'),
             'code'       => $verification->getCode(),
             'success'    => $verification->isSuccess(),
             'message'    => $verification->getMessage(),
         ];
 
-        $template = $this->config->getTemplates('profile', 'verify');
+        $template = $this->config->getTemplate('profile', 'verify');
         $html = $app['twig']->render($template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -268,7 +268,7 @@ class Frontend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
-        $template = $this->config->getTemplates('profile', 'view');
+        $template = $this->config->getTemplate('profile', 'view');
         $resolvedForm = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
         $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
 

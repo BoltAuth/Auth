@@ -227,7 +227,7 @@ class Functions extends TwigExtension
             return $this->renderLogin($twigEnvironment, $template);
         }
 
-        $template = $template ?: $this->config->getTemplates('authentication', 'associate');
+        $template = $template ?: $this->config->getTemplate('authentication', 'associate');
         $form = $this->formManager->getFormAssociate(new Request(), false);
         $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
@@ -245,7 +245,7 @@ class Functions extends TwigExtension
     public function renderLogin(TwigEnvironment $twigEnvironment, $template = null)
     {
         $context = ['transitional' => $this->session->isTransitional()];
-        $template = $template ?: $this->config->getTemplates('authentication', 'login');
+        $template = $template ?: $this->config->getTemplate('authentication', 'login');
         $form = $this->formManager->getFormLogin(new Request(), false);
         $html = $this->formManager->renderForms($form, $twigEnvironment, $template, $context);
 
@@ -262,7 +262,7 @@ class Functions extends TwigExtension
      */
     public function renderLogout(TwigEnvironment $twigEnvironment, $template = null)
     {
-        $template = $template ?: $this->config->getTemplates('authentication', 'logout');
+        $template = $template ?: $this->config->getTemplate('authentication', 'logout');
         $form = $this->formManager->getFormLogout(new Request(), false);
         $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
@@ -284,7 +284,7 @@ class Functions extends TwigExtension
         }
 
         $guid = $this->session->getAuthorisation()->getGuid();
-        $template = $template ?: $this->config->getTemplates('profile', 'edit');
+        $template = $template ?: $this->config->getTemplate('profile', 'edit');
         $form = $this->formManager->getFormProfileEdit(new Request(), false, $guid);
         $html = $this->formManager->renderForms($form, $twigEnvironment, $template);
 
@@ -301,7 +301,7 @@ class Functions extends TwigExtension
     public function renderRegister($template = null)
     {
         $context = ['transitional' => $this->session->isTransitional()];
-        $template = $template ?: $this->config->getTemplates('profile', 'register');
+        $template = $template ?: $this->config->getTemplate('profile', 'register');
         $form = $this->formManager->getFormProfileRegister(new Request(), false);
         $html = $this->formManager->renderForms($form, $template, $context);
 

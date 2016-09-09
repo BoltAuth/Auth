@@ -62,7 +62,7 @@ class ProfileListener implements EventSubscriberInterface
     {
         $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
         $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
-        $subject = $this->twig->render($this->config->getTemplates('verification', 'subject'));
+        $subject = $this->twig->render($this->config->getTemplate('verification', 'subject'));
         $mailHtml = $this->getRegisterHtml($event);
 
         $message = $this->mailer
@@ -108,7 +108,7 @@ class ProfileListener implements EventSubscriberInterface
             'email' => $event->getAccount()->getEmail(),
             'link'  => sprintf('%s/%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
         ];
-        $mailHtml = $this->twig->render($this->config->getTemplates('verification', 'body'), $context);
+        $mailHtml = $this->twig->render($this->config->getTemplate('verification', 'body'), $context);
 
         return $mailHtml;
     }

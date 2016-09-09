@@ -276,12 +276,12 @@ class Config
     }
 
     /**
-     * @param $parent
-     * @param $key
+     * @param string $parent
+     * @param string $key
      *
      * @return array
      */
-    public function getTemplates($parent, $key)
+    public function getTemplate($parent, $key)
     {
         if (!isset($this->templates[$parent][$key])) {
             throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
@@ -291,13 +291,14 @@ class Config
     }
 
     /**
-     * @param array $templates
+     * @param string $parent
+     * @param string $key
      *
      * @return Config
      */
-    public function setTemplates($templates)
+    public function setTemplate($parent, $key)
     {
-        $this->templates = $templates;
+        $this->templates[$parent] = $key;
 
         return $this;
     }
