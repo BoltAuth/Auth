@@ -11,6 +11,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Exception;
 use Bolt\Extension\Bolt\Members\Form\Manager;
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
 use Bolt\Extension\Bolt\Members\Storage;
 use Carbon\Carbon;
@@ -170,7 +171,7 @@ class Authentication implements ControllerProviderInterface
         }
 
         $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
-        $oauthForm = $resolvedForm->getForm('login_oauth');
+        $oauthForm = $resolvedForm->getForm(MembersForms::FORM_LOGIN_OAUTH);
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -178,7 +179,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $associateForm = $resolvedForm->getForm('associate');
+        $associateForm = $resolvedForm->getForm(MembersForms::FORM_ASSOCIATE);
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -186,7 +187,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $passwordForm = $resolvedForm->getForm('login_password');
+        $passwordForm = $resolvedForm->getForm(MembersForms::FORM_LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             /** @var Handler\Local $handler */
@@ -308,7 +309,7 @@ class Authentication implements ControllerProviderInterface
              * Process reset request
              */
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
-            $form = $resolvedForm->getForm('form_profile_recovery');
+            $form = $resolvedForm->getForm(MembersForms::FORM_PROFILE_RECOVER_SUBMIT);
 
             /** @var PasswordReset $passwordReset */
             $passwordReset = $app['session']->get(PasswordReset::COOKIE_NAME);
@@ -344,7 +345,7 @@ class Authentication implements ControllerProviderInterface
              * Handle new request
              */
             $resolvedForm = $app['members.forms.manager']->getFormProfileRecovery($request);
-            $form = $resolvedForm->getForm('form_profile_recovery');
+            $form = $resolvedForm->getForm(MembersForms::FORM_PROFILE_RECOVER_REQUEST);
             $context['stage'] = 'email';
 
             if ($form->isValid()) {
