@@ -23,15 +23,19 @@ class Feedback implements EventSubscriberInterface
     protected $session;
     /** @var array */
     protected $feedback = [];
+    /** @var bool */
+    private $isDebug;
 
     /**
      * Constructor.
      *
      * @param SessionInterface $session
+     * @param bool             $isDebug
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, $isDebug)
     {
         $this->session = $session;
+        $this->isDebug = $isDebug;
 
         if ($this->session->isStarted() && $stored = $this->session->get(self::SESSION_KEY)) {
             $this->feedback = $stored;
@@ -75,6 +79,12 @@ class Feedback implements EventSubscriberInterface
         if (empty($state) || !in_array($state, ['debug', 'error', 'info'])) {
             throw new \InvalidArgumentException("Feedback state can only be 'error', 'message', or 'debug'.");
         }
+
+        // Don't log debug messages when not debugging
+        if ($state === 'debug' && $this->isDebug === false) {
+            return;
+        }
+
         $this->feedback[$state][] = $message;
     }
 

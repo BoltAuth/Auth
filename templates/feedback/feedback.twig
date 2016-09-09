@@ -11,7 +11,7 @@
         <div class="small-12 columns">
 
             <div class="panel members-feedback">
-                {% if feedback.debug|default(null) and app['members.debug']%}
+                {% if feedback.debug|default(null) %}
                     <div class="members-messages-debug">
                         <h5>Debug Messages:</h5>
                         <ul class="members-feedback-messages">
@@ -43,8 +43,8 @@
                         </ul>
                     </div>
                 {% endif %}
-            </div>
 
+            </div>
         </div>
     </div>
 {% endif %}
