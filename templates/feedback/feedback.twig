@@ -4,7 +4,6 @@
  #
  # If you wish to get them without flush, call .peek() instead of .get()
  #}
-{#% set feedback = clientlogin.feedback.get() %#}
 
 {% set feedback = feedback.get|default(null) %}
 {% if feedback %}
