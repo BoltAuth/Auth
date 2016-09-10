@@ -158,6 +158,8 @@ class Authentication implements ControllerProviderInterface
      */
     public function login(Application $app, Request $request)
     {
+        $this->assertSecure($app, $request);
+
         // Set the return redirect.
         if ($app['members.config']->getRedirectLogin()) {
             $app['members.session']
@@ -216,11 +218,7 @@ class Authentication implements ControllerProviderInterface
      */
     public function processLogin(Application $app, Request $request)
     {
-        // Log a warning if this route is not HTTPS
-        if (!$request->isSecure()) {
-            $msg = sprintf("[Members][Controller]: Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
-            $app['logger.system']->critical($msg, ['event' => 'extensions']);
-        }
+        $this->assertSecure($app, $request);
 
         /** @var Handler\HandlerInterface $handler */
         $handler = $app['members.oauth.handler'];
@@ -551,5 +549,26 @@ class Authentication implements ControllerProviderInterface
         $html = $app['twig']->render($this->config->getTemplate('error', 'error'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
+    }
+
+    /**
+     * Log a warning and debug notice if this route is not HTTPS.
+     *
+     * @param Application $app
+     * @param Request     $request
+     *
+     * @return bool
+     */
+    private function assertSecure(Application $app, Request $request)
+    {
+        if ($request->isSecure()) {
+            return true;
+        }
+
+        $msg = sprintf("Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
+        $app['logger.system']->critical(sprintf('[Members][Controller]: %s', $msg), ['event' => 'extensions']);
+        $app['members.feedback']->debug($msg);
+
+        return false;
     }
 }
