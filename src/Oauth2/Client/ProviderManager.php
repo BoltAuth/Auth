@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provider object management class.

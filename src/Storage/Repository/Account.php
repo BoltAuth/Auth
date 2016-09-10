@@ -7,7 +7,6 @@ use Bolt\Events\StorageEvents;
 use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\QuerySet;
-use Bolt\Storage\Repository;
 use Ramsey\Uuid\Uuid;
 
 /**

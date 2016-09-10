@@ -4,8 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity;
 use Bolt\Extension\Bolt\Members\Form\Type;
-use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Social media account association form.
@@ -22,14 +20,4 @@ class Associate extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData(Storage\Records $records)
-    {
-        return [
-            'csrf_protection' => false,
-        ];
-    }
 }

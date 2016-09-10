@@ -16,7 +16,7 @@ class MembersEvents
     const MEMBER_LOGIN = 'member.login';
     const MEMBER_LOGOUT = 'member.logout';
     const MEMBER_ENABLE = 'member.enable';
-    const MEMBER_DISBALE = 'member.disable';
+    const MEMBER_DISABLE = 'member.disable';
     const MEMBER_PROFILE_EDIT = 'member.profile.edit';
     const MEMBER_PROFILE_PRE_SAVE = 'member.profile.pre_save';
     const MEMBER_PROFILE_POST_SAVE = 'member.profile.post_save';

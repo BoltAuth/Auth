@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form;
 
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
-use Bolt\Extension\Bolt\Members\Form\Builder;
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
 use Pimple as Container;

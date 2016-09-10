@@ -5,14 +5,12 @@ namespace Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Feedback;
-use Bolt\Extension\Bolt\Members\Form\Builder;
 use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
 use Bolt\Extension\Bolt\Members\Form\Type\ProfileEditType;
 use Bolt\Extension\Bolt\Members\Storage;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert;
 use Twig_Environment as TwigEnvironment;
 use Twig_Markup as TwigMarkup;
 
@@ -86,7 +84,6 @@ class Manager
             'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/authentication/_sub/login.twig',
         ];
         $resolvedBuild->setContext($extraContext);
-
 
         return $resolvedBuild;
     }
@@ -207,7 +204,6 @@ class Manager
             $profile[$metaEntity->getMeta()] = $metaEntity->getValue();
         }
 
-
         return $profile;
     }
 
@@ -238,7 +234,6 @@ class Manager
             ->handleRequest($request)
         ;
         $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_RECOVER_SUBMIT, $builder, $submitForm);
-
 
         $resolvedBuild->setContext([
             'twigparent' => $includeParent ? $this->config->getTemplate('authentication', 'parent') : '@Members/profile/_sub/profile.twig',
@@ -350,7 +345,6 @@ class Manager
         }
 
         $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_REGISTER, $builder, $formRegister);
-
 
         return $resolvedBuild;
     }
