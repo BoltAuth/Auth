@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Entity;
 
+use PasswordLib\Password\Implementation\Blowfish;
+
 /**
  * Local Oauth entity class.
  *
@@ -43,7 +45,7 @@ class Oauth extends AbstractGuidEntity
      */
     public function getPassword()
     {
-        return $this->password;
+        return $this->getHashedPassword($this->password);
     }
 
     /**
@@ -51,7 +53,26 @@ class Oauth extends AbstractGuidEntity
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = $this->getHashedPassword($password);
+    }
+
+    /**
+     * @param string $password
+     *
+     * @return string|null
+     */
+    protected function getHashedPassword($password)
+    {
+        if ($password === null || Blowfish::detect($password)) {
+            return $password;
+        }
+
+        $password = password_hash($password, PASSWORD_BCRYPT);
+        if ($password === false) {
+            throw new \RuntimeException('Unable to hash password.');
+        }
+
+        return $password;
     }
 
     /**
