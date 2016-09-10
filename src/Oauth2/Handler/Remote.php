@@ -131,7 +131,7 @@ class Remote extends AbstractHandler
         $this->setDebugMessage('Storing state token: ' . $provider->getState());
 
         if ($authorizationUrl == null) {
-            throw new \RuntimeException('An error occured with the provider redirect handling.');
+            throw new \RuntimeException('An error occurred with the provider redirect handling.');
         }
         $this->session->addRedirect($authorizationUrl);
     }

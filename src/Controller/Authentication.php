@@ -136,11 +136,10 @@ class Authentication implements ControllerProviderInterface
      * Default catch-all route.
      *
      * @param Application $app
-     * @param Request     $request
      *
      * @return RedirectResponse
      */
-    public function defaultRoute(Application $app, Request $request)
+    public function defaultRoute(Application $app)
     {
         if ($app['members.session']->hasAuthorisation()) {
             return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
@@ -313,14 +312,12 @@ class Authentication implements ControllerProviderInterface
             $builder = $this->resetPasswordRequest($app, $request, $context, $response);
         }
 
-
         $template = $this->config->getTemplate('authentication', 'recovery');
         $html = $formsManager->renderForms($builder, $app['twig'], $template, $context->all());
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
         return $response;
     }
-
 
     /**
      * Process reset request.
@@ -414,6 +411,7 @@ class Authentication implements ControllerProviderInterface
         $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
         $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
 
+        /** @var \Swift_Message $message */
         $message = $mailer->createMessage('message')
             ->setSubject($app['twig']->render($this->config->getTemplate('recovery', 'subject')))
             ->setBody(strip_tags($mailHtml))

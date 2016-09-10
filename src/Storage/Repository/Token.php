@@ -4,7 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Storage\Mapping\Type\CarbonDateTimeType;
-use Bolt\Storage\Repository;
+
 use Carbon\Carbon;
 
 /**

@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
 use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Storage\Repository;
 
 /**
  * Account meta repository.

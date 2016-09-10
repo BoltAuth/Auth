@@ -4,9 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Form\Builder;
 
 use Bolt\Extension\Bolt\Members\Form\Entity;
 use Bolt\Extension\Bolt\Members\Form\Type;
-use Bolt\Extension\Bolt\Members\Storage;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Login form.
@@ -23,20 +20,4 @@ class LoginPassword extends AbstractFormBuilder
     protected $type;
     /** @var Entity\Profile */
     protected $entity;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData(Storage\Records $records)
-    {
-        if ($this->request === null) {
-            throw new \RuntimeException('Request has not been set.');
-        }
-
-        $this->entity->setEmail($this->request->request->get('email'));
-
-        return [
-            'data' => $this->entity,
-        ];
-    }
 }

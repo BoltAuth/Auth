@@ -155,7 +155,6 @@ abstract class AbstractHandler
 
     protected function recordLogin(Request $request)
     {
-
     }
 
     /**
@@ -358,7 +357,7 @@ abstract class AbstractHandler
         $code = $request->query->get('code');
 
         if ($code === null) {
-            $this->setDebugMessage('Attempt to get an OAuth2 acess token with an empty code in the request.');
+            $this->setDebugMessage('Attempt to get an OAuth2 access token with an empty code in the request.');
 
             throw new Ex\InvalidAuthorisationRequestException('No provider access code.');
         }

@@ -123,7 +123,7 @@ class Authorisation implements \JsonSerializable
     }
 
     /**
-     * @return AccessToken
+     * @return AccessToken[]
      */
     public function getAccessTokens()
     {

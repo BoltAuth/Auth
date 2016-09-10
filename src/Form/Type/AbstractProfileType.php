@@ -96,7 +96,7 @@ abstract class AbstractProfileType extends AbstractType
                 new Assert\Email([
                     'message' => 'The address "{{ value }}" is not a valid email.',
                     'checkMX' => true,
-                ])
+                ]),
             ];
             if ($this->emailUniqueConstraint !== null) {
                 $emailConstraints[] = $this->emailUniqueConstraint;

@@ -62,7 +62,8 @@ class AccountVerification
     /**
      * Validate a validation code's validity, validly.
      *
-     * @param string $code
+     * @param Records $records
+     * @param string  $code
      */
     public function validateCode(Records $records, $code)
     {
