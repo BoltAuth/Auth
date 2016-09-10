@@ -349,15 +349,11 @@ class Backend implements ControllerProviderInterface
 
             /** @var Form\Entity\Profile $entity */
             $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
-
-            // Create and store the account entity
-            $account = new Storage\Entity\Account($entity->toArray());
-            $records->saveAccount($account);
-
-            // Save the password to a oauth record
-            $oauth = $records->getOauthByGuid($entity->getGuid());
-            $oauth->setPassword($entity->getPassword());
-            $records->saveOauth($oauth);
+            $account = $records->getAccountByGuid($entity->getGuid());
+            if ($account === false) {
+                throw new \RuntimeException(sprintf('Unable to find account for %s', $entity->getGuid()));
+            }
+            $app['members.profile.manager']->saveProfileForm($account, $form);
 
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $profileUrl = $app['url_generator']->generate('membersAdmin');

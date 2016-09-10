@@ -89,24 +89,11 @@ class Local extends AbstractHandler
      */
     protected function isValidPassword(Entity\Oauth $oauth, $requestPassword)
     {
-        if (Blowfish::detect($oauth->getPassword())) {
-            // We have a Blowfish hash, verify
-            return password_verify($requestPassword, $oauth->getPassword());
+        if (!Blowfish::detect($oauth->getPassword())) {
+            return false;
         }
 
-        // Rehash password if not using Blowfish algorithm
-        $passwordFactory = new PasswordFactory();
-        if ($passwordFactory->verifyHash($requestPassword, $oauth->getPassword())) {
-            $oauth->setPassword($passwordFactory->createHash($requestPassword, '$2y$'));
-            try {
-                $this->records->saveOauth($oauth);
-            } catch (NotNullConstraintViolationException $e) {
-                // Database needs updating
-            }
-
-            return true;
-        }
-
-        return false;
+        // We have a Blowfish hash, verify
+        return password_verify($requestPassword, $oauth->getPassword());
     }
 }

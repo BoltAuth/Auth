@@ -355,8 +355,7 @@ class Authentication implements ControllerProviderInterface
             }
 
             // Reset password
-            $encryptedPassword = password_hash($form->get('password')->getData(), PASSWORD_BCRYPT);
-            $oauth->setPassword($encryptedPassword);
+            $oauth->setPassword($form->get('password')->getData());
 
             $app['members.records']->saveOauth($oauth);
             $app['session']->remove(PasswordReset::COOKIE_NAME);

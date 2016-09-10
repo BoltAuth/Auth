@@ -77,14 +77,13 @@ class ProfileManager
 
         $password = $form->get('password')->getData();
         if ($password !== null) {
-            $encryptedPassword = password_hash($password, PASSWORD_BCRYPT);
-            $oauth = $this->getOauth($this->records);
+            $oauth = $this->getOauth($guid);
             if ($oauth === false) {
                 $oauth = $this->createLocalOauthAccount($guid, $password);
                 $this->createLocalProviderEntity($guid);
             }
+            $oauth->setPassword($password);
 
-            $oauth->setPassword($encryptedPassword);
             $this->records->saveOauth($oauth);
         }
 
@@ -118,8 +117,8 @@ class ProfileManager
         /** @var Oauth $oauth */
         $oauth = $this->records->getOauthByGuid($guid);
         if ($oauth !== false) {
-            $encryptedPassword = password_hash($form->get('password')->getData(), PASSWORD_BCRYPT);
-            $oauth->setPassword($encryptedPassword);
+            $password = $form->get('password')->getData();
+            $oauth->setPassword($password);
             $this->records->saveOauth($oauth);
         }
 
@@ -195,9 +194,8 @@ class ProfileManager
      */
     protected function createLocalOauthAccount($guid, $password)
     {
-        $encryptedPassword = password_hash($password, PASSWORD_BCRYPT);
         $oauth = $this->records->createOauth($guid, $guid, true);
-        $oauth->setPassword($encryptedPassword);
+        $oauth->setPassword($password);
 
         $this->records->saveOauth($oauth);
 
