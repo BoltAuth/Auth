@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Frontend controller.
@@ -180,6 +181,11 @@ class Frontend implements ControllerProviderInterface
     {
         if ($app['members.session']->hasAuthorisation()) {
             return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        }
+
+        // If registration is closed, just return a 404
+        if ($app['members.config']->isRegistrationOpen() === false) {
+            throw new HttpException(Response::HTTP_NOT_FOUND);
         }
 
         /** @var Form\Manager $formsManager */
