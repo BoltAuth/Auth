@@ -184,15 +184,15 @@ class Frontend implements ControllerProviderInterface
 
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
-        $resolvedForm = $formsManager->getFormProfileRegister($request, true);
+        $builder = $formsManager->getFormProfileRegister($request, true);
 
         // Handle the form request data
-        if ($resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_REGISTER)->isValid()) {
+        if ($builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER)->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
 
-            $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
+            $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
             /** @var Form\Entity\Profile $entity */
-            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
+            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
 
             /** @var FormEntityHandler $profileRecords */
             $profileRecords = $app['members.records.profile'];
@@ -206,7 +206,7 @@ class Frontend implements ControllerProviderInterface
 
         $context = ['transitional' => $app['members.session']->isTransitional()];
         $template = $this->config->getTemplate('profile', 'register');
-        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template, $context);
+        $html = $formsManager->renderForms($builder, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -267,8 +267,8 @@ class Frontend implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplate('profile', 'view');
-        $resolvedForm = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
-        $html = $formsManager->renderForms($resolvedForm, $app['twig'], $template);
+        $builder = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
+        $html = $formsManager->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }

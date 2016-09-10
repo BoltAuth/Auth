@@ -261,18 +261,18 @@ class Manager
     /**
      * Render given forms in a template.
      *
-     * @param ResolvedFormBuild $resolvedForm
+     * @param ResolvedFormBuild $builder
      * @param TwigEnvironment   $twigEnvironment
      * @param string            $template
      * @param array             $context
      *
      * @return TwigMarkup
      */
-    public function renderForms(ResolvedFormBuild $resolvedForm, TwigEnvironment $twigEnvironment, $template, array $context = [])
+    public function renderForms(ResolvedFormBuild $builder, TwigEnvironment $twigEnvironment, $template, array $context = [])
     {
-        $context += $resolvedForm->getContext();
+        $context += $builder->getContext();
         /** @var FormInterface $form */
-        foreach ($resolvedForm->getForms() as $form) {
+        foreach ($builder->getForms() as $form) {
             $formName = sprintf('form_%s', $form->getName());
             $context[$formName] = $form->createView();
         }

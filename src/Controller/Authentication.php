@@ -173,8 +173,8 @@ class Authentication implements ControllerProviderInterface
             ;
         }
 
-        $resolvedForm = $app['members.forms.manager']->getFormLogin($request);
-        $oauthForm = $resolvedForm->getForm(MembersForms::FORM_LOGIN_OAUTH);
+        $builder = $app['members.forms.manager']->getFormLogin($request);
+        $oauthForm = $builder->getForm(MembersForms::FORM_LOGIN_OAUTH);
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -182,7 +182,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $associateForm = $resolvedForm->getForm(MembersForms::FORM_ASSOCIATE);
+        $associateForm = $builder->getForm(MembersForms::FORM_ASSOCIATE);
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -190,7 +190,7 @@ class Authentication implements ControllerProviderInterface
             }
         }
 
-        $passwordForm = $resolvedForm->getForm(MembersForms::FORM_LOGIN_PASSWORD);
+        $passwordForm = $builder->getForm(MembersForms::FORM_LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             /** @var Handler\Local $handler */
@@ -203,7 +203,7 @@ class Authentication implements ControllerProviderInterface
             $app['members.feedback']->info('Login details are incorrect.');
         }
         $template = $this->config->getTemplate('authentication', 'login');
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], $template);
+        $html = $app['members.forms.manager']->renderForms($builder, $app['twig'], $template);
 
         return new Response($html);
     }
