@@ -61,8 +61,6 @@ abstract class AbstractHandler
     protected $dispatcher;
     /** @var ResourceOwnerInterface */
     protected $resourceOwner;
-    /** @var Entity\ProfileManager */
-    protected $profileManager;
     /** @var UrlGeneratorInterface */
     protected $urlGenerator;
 
@@ -86,7 +84,6 @@ abstract class AbstractHandler
         $this->feedback = $app['members.feedback'];
         $this->logger = $app['logger.system'];
         $this->dispatcher = $app['dispatcher'];
-        $this->profileManager = $app['members.profile.manager'];
         $this->urlGenerator = $app['url_generator'];
 
         $this->app = $app;

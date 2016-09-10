@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Entity;
+namespace Bolt\Extension\Bolt\Members\Storage;
 
 use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
@@ -20,7 +20,7 @@ use Symfony\Component\Form\Form;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class ProfileManager
+class FormEntityHandler
 {
     /** @var Storage\Records */
     private $records;
@@ -54,12 +54,12 @@ class ProfileManager
     /**
      * Save a user view/edit form data.
      *
-     * @param Account $account
+     * @param Storage\Entity\Account $account
      * @param Form    $form
      *
-     * @return ProfileManager
+     * @return FormEntityHandler
      */
-    public function saveProfileForm(Account $account, Form $form)
+    public function saveProfileForm(Storage\Entity\Account $account, Form $form)
     {
         $guid = $account->getId();
         if ($guid === null) {
@@ -110,11 +110,11 @@ class ProfileManager
      * @param string $guid
      * @param Form   $form
      *
-     * @return ProfileManager
+     * @return FormEntityHandler
      */
     public function saveProfileRecoveryForm($guid, Form $form)
     {
-        /** @var Oauth $oauth */
+        /** @var Storage\Entity\Oauth $oauth */
         $oauth = $this->records->getOauthByGuid($guid);
         if ($oauth !== false) {
             $password = $form->get('password')->getData();
@@ -133,7 +133,7 @@ class ProfileManager
      * @param AbstractProvider $provider
      * @param string           $providerName
      *
-     * @return ProfileManager
+     * @return FormEntityHandler
      */
     public function saveProfileRegisterForm(Profile $entity, Form $form, AbstractProvider $provider, $providerName)
     {
@@ -177,7 +177,7 @@ class ProfileManager
      *
      * @param string $guid
      *
-     * @return Oauth
+     * @return Storage\Entity\Oauth
      */
     protected function getOauth($guid)
     {
@@ -190,7 +190,7 @@ class ProfileManager
      * @param string $guid
      * @param string $password
      *
-     * @return Oauth
+     * @return Storage\Entity\Oauth
      */
     protected function createLocalOauthAccount($guid, $password)
     {
@@ -207,7 +207,7 @@ class ProfileManager
      *
      * @param string $guid
      *
-     * @return Provider
+     * @return Storage\Entity\Provider
      */
     protected function createLocalProviderEntity($guid)
     {
@@ -221,7 +221,7 @@ class ProfileManager
      *
      * @param Profile $entity
      *
-     * @return Account
+     * @return Storage\Entity\Account
      */
     protected function createAccount(Profile $entity)
     {
@@ -260,7 +260,7 @@ class ProfileManager
      *
      * @param string $guid
      *
-     * @return Provider
+     * @return Storage\Entity\Provider
      */
     protected function convertTransitionalProviderToEntity($guid)
     {

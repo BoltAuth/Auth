@@ -12,6 +12,7 @@ use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
+use Bolt\Extension\Bolt\Members\Storage;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Twig;
@@ -218,9 +219,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.profile.manager'] = $app->share(
+        $app['members.records.profile'] = $app->share(
             function ($app) {
-                return new Entity\ProfileManager($app['members.config'], $app['members.records'], $app['dispatcher'], $app['members.session']);
+                return new Storage\FormEntityHandler($app['members.config'], $app['members.records'], $app['dispatcher'], $app['members.session']);
             }
         );
     }

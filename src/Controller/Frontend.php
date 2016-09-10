@@ -8,7 +8,7 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Storage\Entity\ProfileManager;
+use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -154,12 +154,12 @@ class Frontend implements ControllerProviderInterface
         // Handle the form request data
         $resolvedBuild = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
         if ($resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT)->isValid()) {
-            /** @var ProfileManager $profileManager */
-            $profileManager = $app['members.profile.manager'];
+            /** @var FormEntityHandler $profileRecords */
+            $profileRecords = $app['members.records.profile'];
             /** @var Form\Entity\Profile $entity */
             $entity = $resolvedBuild->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
             $form = $resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
-            $profileManager->saveProfileForm($entity, $form);
+            $profileRecords->saveProfileForm($entity, $form);
         }
 
         $template = $this->config->getTemplate('profile', 'edit');
@@ -194,9 +194,9 @@ class Frontend implements ControllerProviderInterface
             /** @var Form\Entity\Profile $entity */
             $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
 
-            /** @var ProfileManager $profileManager */
-            $profileManager = $app['members.profile.manager'];
-            $profileManager->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
+            /** @var FormEntityHandler $profileRecords */
+            $profileRecords = $app['members.records.profile'];
+            $profileRecords->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
 
             // Redirect to our profile page.
             $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
