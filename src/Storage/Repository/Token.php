@@ -98,13 +98,13 @@ class Token extends AbstractMembersRepository
     /**
      * Fetches expired tokens.
      *
-     * @return Entity\Token
+     * @return Entity\Token[]
      */
     public function getTokensExpired()
     {
         $query = $this->getTokensExpiredQuery();
 
-        return $this->findOneWith($query);
+        return $this->findWith($query);
     }
 
     public function getTokensExpiredQuery()
