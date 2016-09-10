@@ -254,13 +254,13 @@ class Backend implements ControllerProviderInterface
      */
     public function userAdd(Application $app, Request $request)
     {
-        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, null);
-        $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+        $builder = $app['members.forms.manager']->getFormProfileEdit($request, true, null);
+        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
             /** @var Form\Entity\Profile $entity */
-            $entity = $resolvedForm->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
 
             // Create and store the account entity
             $account = new Storage\Entity\Account();
@@ -289,7 +289,7 @@ class Backend implements ControllerProviderInterface
             return new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_add.twig');
+        $html = $app['members.forms.manager']->renderForms($builder, $app['twig'], '@MembersAdmin/profile_add.twig');
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -326,31 +326,46 @@ class Backend implements ControllerProviderInterface
      */
     public function userEdit(Application $app, Request $request, $guid)
     {
+        /** @var Storage\Records $records */
+        $records = $app['members.records'];
+
         if (!Uuid::isValid($guid)) {
             $app['logger.flash']->error(sprintf('Member GUID %s is not valid', $guid));
 
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        if ($app['members.records']->getAccountByGuid($guid) === false) {
+        if ($records->getAccountByGuid($guid) === false) {
             $app['logger.flash']->error(sprintf('Member GUID %s does not exist', $guid));
 
             new RedirectResponse($app['url_generator']->generate('membersAdmin'));
         }
 
-        $resolvedForm = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
-        $form = $resolvedForm->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+        $builder = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
+        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
+
+            /** @var Form\Entity\Profile $entity */
+            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+
+            // Create and store the account entity
+            $account = new Storage\Entity\Account($entity->toArray());
+            $records->saveAccount($account);
+
+            // Save the password to a oauth record
+            $oauth = $records->getOauthByGuid($entity->getGuid());
+            $oauth->setPassword($entity->getPassword());
+            $records->saveOauth($oauth);
+
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
-            $app['members.form.profile_edit']->saveForm($app['members.records'], $app['dispatcher']);
             $profileUrl = $app['url_generator']->generate('membersAdmin');
 
             return new RedirectResponse($profileUrl);
         }
 
-        $html = $app['members.forms.manager']->renderForms($resolvedForm, $app['twig'], '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
+        $html = $app['members.forms.manager']->renderForms($builder, $app['twig'], '@MembersAdmin/profile_edit.twig', ['guid' => $guid]);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
