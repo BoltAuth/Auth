@@ -286,6 +286,9 @@ class Config
         if (!isset($this->templates[$parent][$key])) {
             throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
         }
+        if ($key === 'default') {
+            return  sprintf('@Members/%s/_sub/%s.twig', $key, $key);
+        }
 
         return $this->templates[$parent][$key];
     }
