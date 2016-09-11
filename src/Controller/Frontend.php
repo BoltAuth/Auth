@@ -9,10 +9,12 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -192,23 +194,28 @@ class Frontend implements ControllerProviderInterface
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
         $builder = $formsManager->getFormProfileRegister($request, true);
+        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
 
         // Handle the form request data
-        if ($builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER)->isValid()) {
+        if ($form->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
 
-            $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
             /** @var Form\Entity\Profile $entity */
             $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
 
             /** @var FormEntityHandler $profileRecords */
             $profileRecords = $app['members.records.profile'];
-            $profileRecords->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
+            try {
+                $profileRecords->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
 
-            // Redirect to our profile page.
-            $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+                // Redirect to our profile page.
+                $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
 
-            return $response;
+                return $response;
+            } catch (UniqueConstraintViolationException $e) {
+                // New profile request has an existing email address
+                $form->get('email')->addError(new FormError('Email address is already registered.'));
+            }
         }
 
         $context = ['transitional' => $app['members.session']->isTransitional()];

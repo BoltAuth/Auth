@@ -292,7 +292,6 @@ class Manager
     {
         $twigParent = $this->config->getTemplate('profile', $includeParent ? 'parent': 'default');
 
-// need unique constraint on email
         return $this->getFormCombinedLogin($request, $twigParent);
     }
 
