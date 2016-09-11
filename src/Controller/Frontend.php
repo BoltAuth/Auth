@@ -273,7 +273,7 @@ class Frontend implements ControllerProviderInterface
         }
 
         $template = $this->config->getTemplate('profile', 'view');
-        $builder = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
+        $builder = $formsManager->getFormProfileView($request, true, $session->getAuthorisation()->getGuid());
         $html = $formsManager->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
