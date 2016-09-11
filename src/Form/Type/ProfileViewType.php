@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 /**
  * Profile view type.
  *
@@ -15,4 +17,12 @@ class ProfileViewType extends AbstractProfileType
 {
     /** @var boolean */
     protected $requirePassword = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('read_only', true);
+    }
 }
