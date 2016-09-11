@@ -95,7 +95,7 @@ abstract class AbstractHandler
      *
      * @throws Ex\DisabledProviderException
      *
-     * @return bool|null|RedirectResponse
+     * @return bool
      */
     protected function login(Request $request, Form $submittedForm = null)
     {
@@ -107,6 +107,8 @@ abstract class AbstractHandler
         }
 
         if ($this->session->hasAuthorisation()) {
+            $this->setDebugMessage('Session has existing authorisation.');
+
             return true;
         }
 
