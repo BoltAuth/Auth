@@ -27,7 +27,7 @@ class Local extends AbstractHandler
     public function login(Request $request, Form $submittedForm = null)
     {
         if (parent::login($request)) {
-            return null;
+            return $this->session->popRedirect()->getResponse();
         }
 
         $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
