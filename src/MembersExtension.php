@@ -6,7 +6,7 @@ use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
-use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
+use Bolt\Extension\Bolt\Members\Provider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
@@ -149,7 +149,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new MembersServiceProvider($this->getConfig()),
+            new Provider\MembersServiceProvider($this->getConfig()),
+            new Provider\SecurityServiceProvider(),
         ];
     }
 
