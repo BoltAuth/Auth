@@ -38,21 +38,4 @@ class AbstractType extends BaseAbstractType
     {
         return $this->config;
     }
-
-    /**
-     * Return a valid data option.
-     *
-     * @param array  $options
-     * @param string $field
-     *
-     * @return mixed|null
-     */
-    protected function getData(array $options, $field)
-    {
-        if (!isset($options['data'])) {
-            return null;
-        }
-
-        return isset($options['data'][$field]) ? $options['data'][$field] : null;
-    }
 }
