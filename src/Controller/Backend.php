@@ -353,7 +353,7 @@ class Backend implements ControllerProviderInterface
             if ($account === false) {
                 throw new \RuntimeException(sprintf('Unable to find account for %s', $entity->getGuid()));
             }
-            $app['members.profile.manager']->saveProfileForm($account, $form);
+            $app['members.records.profile']->saveProfileForm($account, $form);
 
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
             $profileUrl = $app['url_generator']->generate('membersAdmin');
