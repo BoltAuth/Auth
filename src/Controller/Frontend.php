@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
+use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -259,21 +260,31 @@ class Frontend implements ControllerProviderInterface
      */
     public function viewProfile(Application $app, Request $request)
     {
-        /** @var Session $session */
-        $session = $app['members.session'];
+        $guid = $request->query->get('id');
+        if ($guid !== null && !Uuid::isValid($guid)) {
+            throw new HttpException(Response::HTTP_NOT_FOUND);
+        }
+
+        if ($guid === null) {
+            /** @var Session $session */
+            $session = $app['members.session'];
+
+            $memberSession = $session->getAuthorisation();
+            if ($memberSession === null) {
+                $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
+                $app['members.feedback']->info('Login required to view your profile');
+
+                return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
+            }
+
+            $guid = $session->getAuthorisation()->getGuid();
+        }
+
         /** @var Form\Manager $formsManager */
         $formsManager = $app['members.forms.manager'];
 
-        $memberSession = $session->getAuthorisation();
-        if ($memberSession === null) {
-            $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-            $app['members.feedback']->info('Login required to view your profile');
-
-            return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
-        }
-
         $template = $this->config->getTemplate('profile', 'view');
-        $builder = $formsManager->getFormProfileView($request, true, $session->getAuthorisation()->getGuid());
+        $builder = $formsManager->getFormProfileView($request, true, $guid);
         $html = $formsManager->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
