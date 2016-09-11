@@ -17,7 +17,7 @@ debug: true
 #        edit: _edit.twig
 #        register: _register.twig
 #        verify: _verify.twig
-#        view: _view.twig
+#        view: view.twig
 #    authentication:
 #        parent: authentication.twig
 #        associate: _associate.twig

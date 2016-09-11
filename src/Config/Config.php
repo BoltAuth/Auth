@@ -523,18 +523,18 @@ class Config
             ],
             'templates' => [
                 'profile'        => [
-                    'parent'   => '@Members/profile/profile.twig',
-                    'edit'     => '@Members/profile/_edit.twig',
-                    'register' => '@Members/profile/_register.twig',
-                    'verify'   => '@Members/profile/_verify.twig',
-                    'view'     => '@Members/profile/_view.twig',
+                    'parent'   => '@Members/profile/_profile.twig',
+                    'edit'     => '@Members/profile/edit.twig',
+                    'register' => '@Members/profile/register.twig',
+                    'verify'   => '@Members/profile/verify.twig',
+                    'view'     => '@Members/profile/view.twig',
                 ],
                 'authentication' => [
-                    'parent'    => '@Members/authentication/authentication.twig',
-                    'associate' => '@Members/authentication/_associate.twig',
-                    'login'     => '@Members/authentication/_login.twig',
-                    'logout'    => '@Members/authentication/_logout.twig',
-                    'recovery'  => '@Members/authentication/_recovery.twig',
+                    'parent'    => '@Members/authentication/_authentication.twig',
+                    'associate' => '@Members/authentication/associate.twig',
+                    'login'     => '@Members/authentication/login.twig',
+                    'logout'    => '@Members/authentication/logout.twig',
+                    'recovery'  => '@Members/authentication/recovery.twig',
                 ],
                 'error'          => [
                     'parent' => '@Members/error/members_error.twig',
