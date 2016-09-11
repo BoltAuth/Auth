@@ -24,12 +24,12 @@ directory, e.g.:
 ```yaml
 templates:
     profile:
-        parent: profile.twig
+        parent: your/theme/_base_profile.twig
     authentication:
-        parent: authentication.twig
+        parent: your/theme/_base_authentication.twig
 ```
 
-For profile registration, editing, and viewing, the parent template (shown as `profile.twig` above) just needs the 
+For profile registration, editing, and viewing, the parent template (shown as `_base_profile.twig` above) just needs the 
 following block where you would like to render content: 
 
 ```twig
