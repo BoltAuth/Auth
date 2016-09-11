@@ -32,6 +32,8 @@ class Local extends AbstractHandler
 
         $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
         if (!$account instanceof Entity\Account) {
+            $this->setDebugMessage('Login details do not match a stored record.');
+
             return null;
         }
 
