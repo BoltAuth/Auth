@@ -6,7 +6,7 @@
 
 {% block members %}
     <div class="row">
-        <h4>Member Profile — {{ displayname }}</h4>
+        <h4>Member Profile — {{ member.displayname }}</h4>
     </div>
 
     {{ include(templates.feedback) }}
@@ -14,12 +14,20 @@
     <div class="row profile">
 
         <div class="small-3 columns">
-            <img alt="{{ displayname }}" src="{{ avatar }}">
+            <img alt="{{ member.displayname }}" src="{{ member.avatar }}">
         </div>
 
         <div class="small-9 columns">
-            <p>{{ displayname }}</p>
-            <p>{{ email }}</p>
+            {{ form_start(form_profile) }}
+
+            {{ form_row(form_profile.displayname) }}
+            {{ form_row(form_profile.email) }}
+
+            {% do form_profile.password.setRendered %}
+            {% do form_profile.submit.setRendered %}
+
+
+            {{ form_end(form_profile) }}
         </div>
 
     </div>

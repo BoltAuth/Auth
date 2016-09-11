@@ -207,6 +207,7 @@ class Manager
 
         $extraContext = [
             'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent': 'default'),
+            'member'     => $builder->getEntity()
         ];
         $resolvedBuild->setContext($extraContext);
 
