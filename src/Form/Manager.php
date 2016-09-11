@@ -143,7 +143,7 @@ class Manager
     public function getFormProfileEdit(Request $request, $includeParent = true, $guid = null)
     {
         $resolvedBuild = new ResolvedFormBuild();
-        $profile = $this->getEntityProfileEdit($guid);
+        $profile = $this->getEntityProfile($guid);
 
         /** @var Builder\Profile $builder */
         $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_EDIT, null, $profile);
@@ -176,12 +176,49 @@ class Manager
         return $resolvedBuild;
     }
 
+
+
+    /**
+     * Return the resolved profile viewing form.
+     *
+     * @param Request $request       The client Request object being processed.
+     * @param bool    $includeParent Should the template be rendered in a parent, or empty container.
+     * @param string  $guid          Member GUID.
+     *
+     * @return ResolvedFormBuild
+     */
+    public function getFormProfileView(Request $request, $includeParent = true, $guid = null)
+    {
+        $resolvedBuild = new ResolvedFormBuild();
+        $profile = $this->getEntityProfile($guid);
+
+        /** @var Builder\Profile $builder */
+        $builder = $this->formGenerator->getFormBuilder(MembersForms::FORM_PROFILE_VIEW, null, $profile);
+
+        /** @var ProfileEditType $type */
+        $type = $builder->getType();
+        $type->setRequirePassword(false);
+
+        $formEdit = $builder
+            ->createForm([])
+            ->handleRequest($request)
+        ;
+        $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_VIEW, $builder, $formEdit);
+
+        $extraContext = [
+            'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent': 'default'),
+        ];
+        $resolvedBuild->setContext($extraContext);
+
+        return $resolvedBuild;
+    }
+
     /**
      * @param string $guid Member GUID.
      *
      * @return Profile
      */
-    private function getEntityProfileEdit($guid = null)
+    private function getEntityProfile($guid = null)
     {
         if ($guid !== null && !Uuid::isValid($guid)) {
             throw new \RuntimeException(sprintf('Invalid GUID value "%s" given.', $guid));
