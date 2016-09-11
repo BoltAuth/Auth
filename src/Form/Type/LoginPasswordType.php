@@ -30,7 +30,6 @@ class LoginPasswordType extends AbstractType
                 Type\EmailType::class,
                 [
                     'label'       => Trans::__($this->config->getLabel('email')),
-                    'data'        => $this->getData($options, 'email'),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],

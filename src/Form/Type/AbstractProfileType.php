@@ -91,7 +91,6 @@ abstract class AbstractProfileType extends AbstractType
                 TextType::class,
                 [
                     'label'       => Trans::__($this->config->getLabel('displayname')),
-                    'data'        => $this->getData($options, 'displayname'),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('displayname'),
                     ],
@@ -106,7 +105,6 @@ abstract class AbstractProfileType extends AbstractType
                 EmailType::class,
                 [
                     'label'       => Trans::__($this->config->getLabel('email')),
-                    'data'        => $this->getData($options, 'email'),
                     'attr'        => [
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
