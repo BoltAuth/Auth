@@ -45,7 +45,6 @@ class ProfileRegisterType extends AbstractProfileType
                         'placeholder' => $this->config->getPlaceholder('email'),
                     ],
                     'constraints' => [
-//new UniqueEmail($this->records),
                         new Assert\Email([
                             'message' => 'The address "{{ value }}" is not a valid email.',
                             'checkMX' => true,
