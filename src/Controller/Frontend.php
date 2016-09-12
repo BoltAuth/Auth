@@ -15,7 +15,6 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,8 +107,6 @@ class Frontend implements ControllerProviderInterface
         $cookie = $session->getAuthorisation()->getCookie();
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
-        } else {
-            $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, 86400));
         }
 
         $request->attributes->set('members-cookies', 'set');
