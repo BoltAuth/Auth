@@ -504,36 +504,40 @@ class Authentication implements ControllerProviderInterface
      */
     private function getExceptionResponse(Application $app, \Exception $e)
     {
+        $feedback = $app['members.feedback'];
+        $dispatcher = $app['dispatcher'];
+
         if ($e instanceof IdentityProviderException) {
             // Thrown by the OAuth2 library
-            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
+            $feedback->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof Exception\InvalidAuthorisationRequestException) {
             // Thrown deliberately internally
-            $app['members.feedback']->error('An exception occurred authenticating with the provider.');
+            $feedback->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof Exception\MissingAccountException) {
             // Thrown deliberately internally
-            $app['members.feedback']->error('No registered account.');
+            $feedback->error('No registered account.');
             $response = new RedirectResponse($app['url_generator']->generate('membersProfileRegister'));
         } else {
             // Yeah, this can't be good…
-            $app['members.feedback']->error('A server error occurred, we are very sorry and someone has been notified!');
+            $feedback->error('A server error occurred, we are very sorry and someone has been notified!');
             $response = new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Dispatch an event so that subscribers can extend exception handling
-        if ($app['dispatcher']->hasListeners(ExceptionEvent::ERROR)) {
+        if ($dispatcher->hasListeners(ExceptionEvent::ERROR)) {
             try {
-                $app['dispatcher']->dispatch(ExceptionEvent::ERROR, new ExceptionEvent($e));
+                $dispatcher->dispatch(ExceptionEvent::ERROR, new ExceptionEvent($e));
             } catch (\Exception $e) {
+                $feedback->debug(sprintf('Event dispatcher "%s" error: %s', ExceptionEvent::ERROR, $e->getMessage()));
                 $app['logger.system']->critical('[Members][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
             }
         }
 
-        $app['members.feedback']->debug($e->getMessage());
+        $feedback->debug($e->getMessage());
         $response->setContent($this->displayExceptionPage($app, $e));
 
         return $response;
