@@ -3,11 +3,10 @@
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Storage\Entity\Token;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -37,7 +36,7 @@ class Remote extends AbstractHandler
         $cookie = $request->cookies->get(Session::COOKIE_AUTHORISATION);
         $tokenEntities = $this->records->getTokensByCookie($cookie);
 
-        /** @var Token $tokenEntity */
+        /** @var Entity\Token $tokenEntity */
         foreach ((array) $tokenEntities as $tokenEntity) {
             if ($tokenEntity === false) {
                 continue;
@@ -68,6 +67,28 @@ class Remote extends AbstractHandler
         $this->session->checkStateToken($request);
 
         parent::process($request, $grantType);
+
+        $this->finish($request);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function finish(Request $request)
+    {
+        parent::finish($request);
+
+        $guid = $this->session->getAuthorisation()->getGuid();
+        $avatar = $this->resourceOwner->getAvatar();
+        if ($avatar === null) {
+            return;
+        }
+
+        $metaEntity = $this->records->getAccountMeta($guid, 'avatar') ?: new Entity\AccountMeta(['guid' => $guid, 'meta' => 'avatar']);
+        if ($metaEntity->getValue() === null) {
+            $metaEntity->setValue($avatar);
+            $this->records->saveAccountMeta($metaEntity);
+        }
     }
 
     /**
@@ -109,8 +130,7 @@ class Remote extends AbstractHandler
 
     /**
      * Create a redirect response to fetch an authorisation code.
-     *
-     *
+
      * @param string $approvalPrompt
      *
      * @throws \RuntimeException

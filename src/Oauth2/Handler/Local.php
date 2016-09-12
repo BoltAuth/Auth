@@ -82,6 +82,8 @@ class Local extends AbstractHandler
 
         parent::process($request, $grantType);
 
+        $this->finish($request);
+
         return $this->session->popRedirect()->getResponse();
     }
 

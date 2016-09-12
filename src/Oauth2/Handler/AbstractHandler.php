@@ -162,20 +162,26 @@ abstract class AbstractHandler
         if ($this->session->isTransitional()) {
             $this->handleAccountTransition($accessToken);
         }
+    }
 
+    /**
+     * Finish the authentication.
+     *
+     * @param Request $request
+     */
+    protected function finish(Request $request)
+    {
+        $now = Carbon::now();
         $provision = $this->getProviderEntity();
-        $provision->setLastseen(Carbon::now());
+
+        $provision->setLastseen($now);
         $provision->setLastip($request->getClientIp());
-        $provision->setLastupdate(Carbon::now());
+        $provision->setLastupdate($now);
 
         $this->records->saveProvider($provision);
 
         // Send the event
         $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
-    }
-
-    protected function recordLogin(Request $request)
-    {
     }
 
     /**
