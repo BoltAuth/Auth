@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Config;
 
 use Bolt\Helpers\Arr;
+use Symfony\Component\HttpFoundation\RequestMatcher;
 
 /**
  * Base configuration class.
@@ -45,6 +46,8 @@ class Config
     protected $redirectLogin;
     /** @var string */
     protected $redirectLogout;
+    /** @var array */
+    protected $firewalls;
 
     /**
      * Constructor.
@@ -475,6 +478,58 @@ class Config
     }
 
     /**
+     * @return array
+     */
+    public function getFirewalls()
+    {
+        if ($this->firewalls === null) {
+            return $this->firewalls;
+        }
+
+        $firewalls = [];
+        foreach ($this->firewalls as $firewall) {
+            $pattern = $firewall['pattern'];
+            if (is_string($pattern)) {
+                $pattern = ['path' => $pattern];
+            }
+            $firewalls[] = $this->getFirewallRequestMatcher($pattern);
+        }
+
+        return $this->firewalls = $firewalls;
+    }
+
+    /**
+     * @param array $pattern
+     *
+     * @return RequestMatcher
+     */
+    private function getFirewallRequestMatcher(array $pattern)
+    {
+        $pattern += [
+            'path'       => null,
+            'host'       => null,
+            'methods'    => null,
+            'ips'        => null,
+            'attributes' => [],
+            'schemes'    => null,
+        ];
+
+        return new RequestMatcher($pattern['path'], $pattern['host'], $pattern['methods'], $pattern['ips'], $pattern['attributes'], $pattern['schemes']);
+    }
+
+    /**
+     * @param array $firewalls
+     *
+     * @return Config
+     */
+    public function setFirewalls(array $firewalls)
+    {
+        $this->firewalls = $firewalls;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getDefaultConfig()
@@ -556,6 +611,7 @@ class Config
                 'authenticate' => 'authentication',
                 'members'      => 'membership',
             ],
+            'firewalls'    => null,
         ];
     }
 }
