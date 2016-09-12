@@ -592,8 +592,8 @@ class Config
                     'recovery'  => '@Members/authentication/recovery.twig',
                 ],
                 'error'          => [
-                    'parent' => '@Members/error/members_error.twig',
-                    'error'  => '@Members/error/_members_error.twig',
+                    'parent' => '@Members/error/_error.twig',
+                    'error'  => '@Members/error/error.twig',
                 ],
                 'feedback'          => [
                     'feedback'  => '@Members/feedback/feedback.twig',
