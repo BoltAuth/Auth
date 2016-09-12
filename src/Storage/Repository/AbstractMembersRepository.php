@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 use Bolt\Extension\Bolt\Members\Pager;
 use Bolt\Storage\Repository;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Pagerfanta\Adapter\DoctrineDbalSingleTableAdapter;
+use Pagerfanta\Adapter\DoctrineDbalAdapter;
 
 /**
  * Base repository for Members.
@@ -66,10 +66,22 @@ abstract class AbstractMembersRepository extends Repository
     public function getPager(QueryBuilder $query, $column)
     {
         if ($this->pager === null) {
-            $adapter = new DoctrineDbalSingleTableAdapter($query, static::ALIAS . '.' . $column);
+            $select = $this->createSelectForCountField(static::ALIAS . '.' . $column);
+            $callback = function (QueryBuilder $queryBuilder) use ($select) {
+                $queryBuilder
+                    ->select($select)
+                    ->setMaxResults(1)
+                ;
+            };
+            $adapter = new DoctrineDbalAdapter($query, $callback);
             $this->pager = new Pager\Pager($adapter, $this->getEntityBuilder());
         }
 
         return $this->pager;
+    }
+
+    private function createSelectForCountField($countField)
+    {
+        return sprintf('COUNT(DISTINCT %s) AS total_results', $countField);
     }
 }
