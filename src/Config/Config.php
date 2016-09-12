@@ -570,7 +570,8 @@ class Config
                     'root',
                 ],
                 'member' => [
-                    'admin' => 'Administrator',
+                    'admin'       => 'Administrator',
+                    'participant' => 'Participant',
                 ],
                 'register' => [
                     'participant',
