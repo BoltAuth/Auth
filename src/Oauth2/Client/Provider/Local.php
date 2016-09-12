@@ -43,6 +43,6 @@ class Local extends LeagueGenericProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new GenericResourceOwner($response, $token->getResourceOwnerId());
+        return new LocalResourceOwner($response, $token->getResourceOwnerId());
     }
 }
