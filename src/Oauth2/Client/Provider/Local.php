@@ -27,10 +27,14 @@ class Local extends LeagueGenericProvider
      */
     public function getAccessToken($grant, array $options = [])
     {
+        if (!isset($options['guid']) || !Uuid::isValid($options['guid'])) {
+            throw new \RuntimeException(sprintf('%s requires a "guid" option with a valid v4 UUID.', __METHOD__));
+        }
+
         // Temporarily fake an access token for Local provider.
         $defaultOptions = [
             'access_token'      => Uuid::uuid4()->toString(),
-            'resource_owner_id' => Uuid::uuid4()->toString(),
+            'resource_owner_id' => $options['guid'],
             'refresh_token'     => Uuid::uuid4()->toString(),
             'expires'           => 86400,
         ];
@@ -44,5 +48,23 @@ class Local extends LeagueGenericProvider
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new LocalResourceOwner($response, $token->getResourceOwnerId());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResourceOwner(AccessToken $token)
+    {
+        $response = $this->fetchResourceOwnerDetails($token);
+
+        return $this->createResourceOwner($response, $token);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function fetchResourceOwnerDetails(AccessToken $token)
+    {
+        return [$token->getResourceOwnerId() => $token->getResourceOwnerId()];
     }
 }

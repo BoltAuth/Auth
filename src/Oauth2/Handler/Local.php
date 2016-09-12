@@ -33,7 +33,7 @@ class Local extends AbstractHandler
         }
 
         if ($this->submittedForm === null) {
-            throw new \RuntimeException(sprintf('%s::%s requires a %s object to be set.', __CLASS__, __METHOD__, Form::class));
+            throw new \RuntimeException(sprintf('%s requires a %s object to be set.', __METHOD__, Form::class));
         }
 
         $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
@@ -72,7 +72,7 @@ class Local extends AbstractHandler
             return null;
         }
 
-        $accessToken = $this->provider->getAccessToken('password', []);
+        $accessToken = $this->provider->getAccessToken('password', ['guid' => $account->getGuid()]);
         $this->session
             ->addAccessToken('local', $accessToken)
             ->createAuthorisation($account->getGuid())
