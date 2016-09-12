@@ -90,14 +90,15 @@ abstract class AbstractHandler
     }
 
     /**
+     * Handle login.
+     *
      * @param Request $request
-     * @param Form    $submittedForm
      *
      * @throws Ex\DisabledProviderException
      *
      * @return bool
      */
-    protected function login(Request $request, Form $submittedForm = null)
+    protected function login(Request $request)
     {
         $providerName = $this->providerManager->getProviderName();
         $provider = $this->config->getProvider($providerName);
@@ -119,7 +120,9 @@ abstract class AbstractHandler
     }
 
     /**
-     * {@inheritdoc}
+     * Handle logout.
+     *
+     * @param Request $request
      */
     protected function logout(Request $request)
     {
@@ -132,13 +135,23 @@ abstract class AbstractHandler
     }
 
     /**
-     * {@inheritdoc}
+     * Process the login request.
+     *
+     * @param Request $request
+     * @param string  $grantType
+     *
+     * @throws Ex\InvalidAuthorisationRequestException
      */
     protected function process(Request $request, $grantType)
     {
-        // Check that state token matches the stored one
-        $this->session->checkStateToken($request);
-        $accessToken = $this->getAccessToken($request, $grantType);
+        $code = $request->query->get('code');
+        if ($code === null) {
+            $this->setDebugMessage('Attempt to get an OAuth2 access token with an empty code in the request.');
+
+            throw new Ex\InvalidAuthorisationRequestException('No provider access code.');
+        }
+
+        $accessToken = $this->getAccessToken($grantType, $code);
         $this->setSession($accessToken);
 
         if ($this->session->isTransitional()) {
@@ -340,26 +353,19 @@ abstract class AbstractHandler
     /**
      * Get an access token from the OAuth provider.
      *
-     * @param Request $request
-     * @param string  $grantType One of the following:
-     *                           - 'authorization_code'
-     *                           - 'password'
-     *                           - 'refresh_token'
+     * @param string $grantType One of the following:
+     *                            - 'authorization_code'
+     *                            - 'password'
+     *                            - 'refresh_token'
+     * @param string $code
      *
      * @throws IdentityProviderException
      * @throws Ex\InvalidAuthorisationRequestException
      *
      * @return AccessToken
      */
-    protected function getAccessToken(Request $request, $grantType)
+    protected function getAccessToken($grantType, $code)
     {
-        $code = $request->query->get('code');
-
-        if ($code === null) {
-            $this->setDebugMessage('Attempt to get an OAuth2 access token with an empty code in the request.');
-
-            throw new Ex\InvalidAuthorisationRequestException('No provider access code.');
-        }
         $options = ['code' => $code];
 
         // Try to get an access token using the authorization code grant.
