@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Storage\Repository;
 
+use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 
 /**
@@ -22,7 +23,7 @@ class AccountMeta extends AbstractMembersRepository
      *
      * @param string $guid
      *
-     * @return Entity\AccountMeta[]
+     * @return Entity\AccountMeta[]|false|Pager
      */
     public function getAccountMetaAll($guid)
     {
@@ -60,7 +61,7 @@ class AccountMeta extends AbstractMembersRepository
      * @param string $guid
      * @param string $metaName
      *
-     * @return Entity\AccountMeta
+     * @return Entity\AccountMeta|false
      */
     public function getAccountMeta($guid, $metaName)
     {
