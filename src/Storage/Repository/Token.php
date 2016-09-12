@@ -25,7 +25,7 @@ class Token extends AbstractMembersRepository
      *
      * @param string $token
      *
-     * @return Entity\Token
+     * @return Entity\Token|false
      */
     public function getToken($token)
     {

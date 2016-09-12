@@ -23,7 +23,7 @@ class Provider extends AbstractMembersRepository
      * @param string $guid
      * @param string $provider
      *
-     * @return Entity\Provider
+     * @return Entity\Provider|false
      */
     public function getProvision($guid, $provider)
     {
@@ -100,7 +100,7 @@ class Provider extends AbstractMembersRepository
      *
      * @param string $resourceOwner
      *
-     * @return Entity\Provider
+     * @return Entity\Provider[]
      */
     public function getProvisionByResourceOwner($resourceOwner)
     {
@@ -126,7 +126,7 @@ class Provider extends AbstractMembersRepository
      * @param string $provider
      * @param string $resourceOwnerId
      *
-     * @return Entity\Provider
+     * @return Entity\Provider|false
      */
     public function getProvisionByResourceOwnerId($provider, $resourceOwnerId)
     {
