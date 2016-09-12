@@ -193,9 +193,19 @@ class Authentication implements ControllerProviderInterface
         $passwordForm = $builder->getForm(MembersForms::FORM_LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
             $app['members.oauth.provider.manager']->setProvider($app, 'local');
+
             /** @var Handler\Local $handler */
             $handler = $app['members.oauth.handler'];
-            $response = $handler->login($request, $passwordForm);
+            $handler->setSubmittedForm($passwordForm);
+
+            // Initial login checks
+            $response = $handler->login($request);
+            if ($response instanceof Response) {
+                return $response;
+            }
+
+            // Process and check password, initiate the session is successful
+            $response = $handler->process($request);
             if ($response instanceof Response) {
                 return $response;
             }

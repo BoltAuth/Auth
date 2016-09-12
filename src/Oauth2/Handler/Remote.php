@@ -29,7 +29,7 @@ class Remote extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function login(Request $request, Form $submittedForm = null)
+    public function login(Request $request)
     {
         parent::login($request);
 
@@ -64,6 +64,9 @@ class Remote extends AbstractHandler
      */
     public function process(Request $request, $grantType = 'authorization_code')
     {
+        // Check that state token matches the stored one
+        $this->session->checkStateToken($request);
+
         parent::process($request, $grantType);
     }
 

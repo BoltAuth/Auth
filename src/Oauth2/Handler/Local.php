@@ -3,9 +3,8 @@
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
-use PasswordLib\Password\Factory as PasswordFactory;
 use PasswordLib\Password\Implementation\Blowfish;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,18 +20,25 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Local extends AbstractHandler
 {
+    /** @var Form */
+    private $submittedForm;
+
     /**
      * {@inheritdoc}
      */
-    public function login(Request $request, Form $submittedForm = null)
+    public function login(Request $request)
     {
         if (parent::login($request)) {
             return $this->session->popRedirect()->getResponse();
         }
 
-        $account = $this->records->getAccountByEmail($submittedForm->get('email')->getData());
+        if ($this->submittedForm === null) {
+            throw new \RuntimeException(sprintf('%s::%s requires a %s object to be set.', __CLASS__, __METHOD__, Form::class));
+        }
+
+        $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
         if (!$account instanceof Entity\Account) {
-            $this->setDebugMessage('Login details do not match a stored record.');
+            $this->setDebugMessage('Login email address does not match a stored member record.');
 
             return null;
         }
@@ -50,27 +56,33 @@ class Local extends AbstractHandler
             return new RedirectResponse($this->urlGenerator->generate('authenticationLogin'));
         }
 
-        $requestPassword = $submittedForm->get('password')->getData();
-        if ($this->isValidPassword($oauth, $requestPassword)) {
-            $accessToken = $this->provider->getAccessToken('password', []);
-            $this->session
-                ->addAccessToken('local', $accessToken)
-                ->createAuthorisation($account->getGuid())
-            ;
-            $this->feedback->info('Login successful.');
-
-            return $this->session->popRedirect()->getResponse();
-        }
-
         return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function process(Request $request, $grantType = 'authorization_code')
+    public function process(Request $request, $grantType = 'password')
     {
+        $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
+        $oauth = $this->records->getOauthByGuid($account->getGuid());
+        $requestPassword = $this->submittedForm->get('password')->getData();
+
+        if ($this->isValidPassword($oauth, $requestPassword) === false) {
+            return null;
+        }
+
+        $accessToken = $this->provider->getAccessToken('password', []);
+        $this->session
+            ->addAccessToken('local', $accessToken)
+            ->createAuthorisation($account->getGuid())
+        ;
+        $this->feedback->info('Login successful.');
+        $request->query->set('code', Uuid::uuid4()->toString());
+
         parent::process($request, $grantType);
+
+        return $this->session->popRedirect()->getResponse();
     }
 
     /**
@@ -79,6 +91,14 @@ class Local extends AbstractHandler
     public function logout(Request $request)
     {
         parent::logout($request);
+    }
+
+    /**
+     * @param Form $submittedForm
+     */
+    public function setSubmittedForm(Form $submittedForm)
+    {
+        $this->submittedForm = $submittedForm;
     }
 
     /**
