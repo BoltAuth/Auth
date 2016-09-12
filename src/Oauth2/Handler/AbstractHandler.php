@@ -45,8 +45,6 @@ abstract class AbstractHandler
     protected $providerManager;
     /** @var string */
     protected $providerName;
-    /** @var Entity\Provider */
-    protected $providerEntity;
     /** @var Request */
     protected $request;
     /** @var Records */
@@ -66,6 +64,8 @@ abstract class AbstractHandler
 
     /** @var Application */
     private $app;
+    /** @var Entity\Provider */
+    private $providerEntity;
 
     /**
      * Constructor.
@@ -151,14 +151,19 @@ abstract class AbstractHandler
             throw new Ex\InvalidAuthorisationRequestException('No provider access code.');
         }
 
-        $accessToken = $this->getAccessToken($grantType, $code);
+        $options['code'] = $code;
+        if ($this->session->hasAuthorisation()) {
+            $options['guid'] = $this->session->getAuthorisation()->getGuid();
+        }
+
+        $accessToken = $this->getAccessToken($grantType, $options);
         $this->setSession($accessToken);
 
         if ($this->session->isTransitional()) {
             $this->handleAccountTransition($accessToken);
         }
 
-        $provision = $this->providerEntity;
+        $provision = $this->getProviderEntity();
         $provision->setLastseen(Carbon::now());
         $provision->setLastip($request->getClientIp());
         $provision->setLastupdate(Carbon::now());
@@ -257,19 +262,21 @@ abstract class AbstractHandler
             );
         }
 
-        $this->providerEntity = new Entity\Provider();
-        $this->providerEntity->setGuid($account->getGuid());
-        $this->providerEntity->setProvider($providerName);
-        $this->providerEntity->setResourceOwner($resourceOwner);
-        $this->providerEntity->setResourceOwnerId($resourceOwner->getId());
-        $this->providerEntity->setLastupdate(Carbon::now());
+        $providerEntity = new Entity\Provider();
+        $providerEntity->setGuid($account->getGuid());
+        $providerEntity->setProvider($providerName);
+        $providerEntity->setResourceOwner($resourceOwner);
+        $providerEntity->setResourceOwnerId($resourceOwner->getId());
+        $providerEntity->setLastupdate(Carbon::now());
 
-        $this->records->saveProvider($this->providerEntity);
+        $this->records->saveProvider($providerEntity);
 
         $this->session
             ->addAccessToken($providerName, $accessToken)
-            ->createAuthorisation($this->providerEntity->getGuid())
+            ->createAuthorisation($providerEntity->getGuid())
         ;
+
+        $this->providerEntity = $providerEntity;
     }
 
     /**
@@ -295,11 +302,11 @@ abstract class AbstractHandler
         // Existing user with a new login, and the provider exists
         $this->session
             ->addAccessToken($providerName, $accessToken)
-            ->createAuthorisation($this->providerEntity->getGuid())
+            ->createAuthorisation($this->getProviderEntity()->getGuid())
         ;
         $this->setDebugMessage(sprintf(
             'Creating authorisation  for GUID %s, and %s provider access token %s for ID %s',
-            $this->providerEntity->getGuid(),
+            $this->getProviderEntity()->getGuid(),
             $providerName,
             $accessToken,
             $resourceOwner->getId()
@@ -358,20 +365,16 @@ abstract class AbstractHandler
      * Get an access token from the OAuth provider.
      *
      * @param string $grantType One of the following:
-     *                            - 'authorization_code'
-     *                            - 'password'
-     *                            - 'refresh_token'
+     *                          - 'authorization_code'
+     *                          - 'password'
+     *                          - 'refresh_token'
+     * @param array  $options
      * @param string $code
-     *
-     * @throws IdentityProviderException
-     * @throws Ex\InvalidAuthorisationRequestException
      *
      * @return AccessToken
      */
-    protected function getAccessToken($grantType, $code)
+    protected function getAccessToken($grantType, array $options)
     {
-        $options = ['code' => $code];
-
         // Try to get an access token using the authorization code grant.
         $accessToken = $this->provider->getAccessToken($grantType, $options);
         $this->setDebugMessage('OAuth token received: ' . json_encode($accessToken));
@@ -422,5 +425,21 @@ abstract class AbstractHandler
 
             $this->logger->critical('Members event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
         }
+    }
+
+    /**
+     * Return the provider entity in use
+     *
+     * @throws \RuntimeException
+     *
+     * @return Entity\Provider
+     */
+    protected function getProviderEntity()
+    {
+        if ($this->providerEntity === null) {
+            throw new \RuntimeException('Provider entity not set in handler.');
+        }
+
+        return $this->providerEntity;
     }
 }

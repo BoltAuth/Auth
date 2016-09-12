@@ -157,7 +157,7 @@ class FormEntityHandler
             $accessToken = $this->session->getTransitionalProvider()->getAccessToken();
             $this->convertTransitionalProviderToEntity($guid);
         } else {
-            $accessToken = $provider->getAccessToken('password', []);
+            $accessToken = $provider->getAccessToken('password', ['guid' => $account->getGuid()]);
         }
 
         // Set up the initial session.
