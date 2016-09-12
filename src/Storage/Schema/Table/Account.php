@@ -26,8 +26,6 @@ class Account extends BaseTable
         $this->table->addColumn('enabled',     'boolean',    ['default' => 0]);
         $this->table->addColumn('verified',    'boolean',    ['default' => 0]);
         $this->table->addColumn('roles',       'json_array', []);
-        $this->table->addColumn('lastseen',    'datetime',   ['notnull' => false, 'default' => null]);
-        $this->table->addColumn('lastip',      'string',     ['length'  => 45, 'notnull' => false]);
     }
 
     /**

@@ -15,10 +15,6 @@ class Account extends AbstractGuidEntity
 {
     /** @var string */
     protected $email;
-    /** @var \DateTime */
-    protected $lastseen;
-    /** @var string */
-    protected $lastip;
     /** @var string */
     protected $displayname;
     /** @var boolean */
@@ -58,38 +54,6 @@ class Account extends AbstractGuidEntity
     public function setEmail($email)
     {
         $this->email = $email;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getLastseen()
-    {
-        return $this->lastseen;
-    }
-
-    /**
-     * @param \DateTime $lastseen
-     */
-    public function setLastseen($lastseen)
-    {
-        $this->lastseen = $lastseen;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastip()
-    {
-        return $this->lastip;
-    }
-
-    /**
-     * @param string $lastip
-     */
-    public function setLastip($lastip)
-    {
-        $this->lastip = $lastip;
     }
 
     /**
