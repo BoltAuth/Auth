@@ -72,6 +72,7 @@ class Account extends AbstractMembersRepository
             ->where('guid = :guid')
             ->setParameter('guid', $entity->getGuid());
         $querySet->append($qb);
+        /** @var \Bolt\Storage\Entity\Entity $entity */
         $this->persist($querySet, $entity, ['id'] + $exclusions);
 
         return $querySet->execute();
@@ -130,7 +131,7 @@ class Account extends AbstractMembersRepository
      *
      * @param string $guid
      *
-     * @return Entity\Account
+     * @return Entity\Account|false
      */
     public function getAccountByGuid($guid)
     {
@@ -155,7 +156,7 @@ class Account extends AbstractMembersRepository
      *
      * @param string $email
      *
-     * @return Entity\Account
+     * @return Entity\Account|false
      */
     public function getAccountByEmail($email)
     {
@@ -180,7 +181,7 @@ class Account extends AbstractMembersRepository
      *
      * @param string $username
      *
-     * @return Entity\Account
+     * @return Entity\Account|false
      */
     public function getAccountByUserName($username)
     {
@@ -207,7 +208,7 @@ class Account extends AbstractMembersRepository
      * @param string $meta
      * @param string $value
      *
-     * @return Entity\Account
+     * @return Entity\Account|false
      */
     public function getAccountByMeta($guid, $meta, $value)
     {
@@ -242,7 +243,7 @@ class Account extends AbstractMembersRepository
      *
      * @param boolean $status
      *
-     * @return Entity\Account[]|Pager
+     * @return Entity\Account[]|Pager|false
      */
     public function getAccountsByEnableStatus($status)
     {

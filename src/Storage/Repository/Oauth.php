@@ -22,7 +22,7 @@ class Oauth extends AbstractMembersRepository
      *
      * @param string $guid
      *
-     * @return Entity\Oauth
+     * @return Entity\Oauth|false
      */
     public function getOauthByGuid($guid)
     {
@@ -47,7 +47,7 @@ class Oauth extends AbstractMembersRepository
      *
      * @param string $resourceOwnerId
      *
-     * @return Entity\Oauth
+     * @return Entity\Oauth|false
      */
     public function getOauthByResourceOwnerId($resourceOwnerId)
     {
