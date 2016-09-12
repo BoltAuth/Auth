@@ -88,7 +88,7 @@ class FormEntityHandler
         }
 
         // Save any defined meta fields
-        foreach ($event->getMetaFieldNames() as $metaField) {
+        foreach ($event->getMetaEntityNames() as $metaField) {
             $metaEntity = $this->records->getAccountMeta($guid, $metaField);
             if ($metaEntity === false) {
                 $metaEntity = new Storage\Entity\AccountMeta();
@@ -97,7 +97,7 @@ class FormEntityHandler
             $metaEntity->setMeta($metaField);
             $metaEntity->setValue($form->get($metaField)->getData());
             $this->records->saveAccountMeta($metaEntity);
-            $event->addMetaField($metaField, $metaEntity);
+            $event->addMetaEntity($metaEntity);
         }
 
         // Dispatch the account profile post-save event
@@ -252,7 +252,7 @@ class FormEntityHandler
 
         $this->records->saveAccountMeta($meta);
 
-        $event->addMetaFieldNames([AccountVerification::KEY_NAME => $metaValue]);
+        $event->addMetaEntryNames([AccountVerification::KEY_NAME => $metaValue]);
     }
 
     /**

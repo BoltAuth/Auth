@@ -18,10 +18,10 @@ class MembersProfileEvent extends Event
 {
     /** @var Entity\Account */
     protected $account;
-    /** @var Entity\AccountMeta */
-    protected $metaFields;
-    /** @var array */
-    protected $metaFieldNames;
+    /** @var Entity\AccountMeta[] */
+    protected $metaEntities;
+    /** @var string[] */
+    protected $metaEntityNames;
 
     /**
      * Constructor.
@@ -46,11 +46,11 @@ class MembersProfileEvent extends Event
     /**
      * Return the saved meta field entities. Only available on post-save.
      *
-     * @return Entity\AccountMeta
+     * @return Entity\AccountMeta[]
      */
-    public function getMetaFields()
+    public function getMetaEntities()
     {
-        return $this->metaFields;
+        return $this->metaEntities;
     }
 
     /**
@@ -58,14 +58,14 @@ class MembersProfileEvent extends Event
      *
      * @internal
      *
-     * @param string             $fieldName
-     * @param Entity\AccountMeta $metaField
+     * @param Entity\AccountMeta $metaEntity
      *
      * @return MembersProfileEvent
      */
-    public function addMetaField($fieldName, Entity\AccountMeta $metaField)
+    public function addMetaEntity(Entity\AccountMeta $metaEntity)
     {
-        $this->metaFields[$fieldName] = $metaField;
+        $fieldName = $metaEntity->getMeta();
+        $this->metaEntities[$fieldName] = $metaEntity;
 
         return $this;
     }
@@ -77,9 +77,9 @@ class MembersProfileEvent extends Event
      *
      * @return array
      */
-    public function getMetaFieldNames()
+    public function getMetaEntityNames()
     {
-        return (array) $this->metaFieldNames;
+        return (array) $this->metaEntityNames;
     }
 
     /**
@@ -89,12 +89,12 @@ class MembersProfileEvent extends Event
      *
      * @return MembersProfileEvent
      */
-    public function addMetaFieldNames(array $metaFieldNames)
+    public function addMetaEntryNames(array $metaFieldNames)
     {
-        if ($this->metaFieldNames === null) {
-            $this->metaFieldNames = $metaFieldNames;
+        if ($this->metaEntityNames === null) {
+            $this->metaEntityNames = $metaFieldNames;
         } else {
-            $this->metaFieldNames = array_merge($this->metaFieldNames, $metaFieldNames);
+            $this->metaEntityNames = array_merge($this->metaEntityNames, $metaFieldNames);
         }
 
         return $this;
