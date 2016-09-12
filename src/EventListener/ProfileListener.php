@@ -101,7 +101,7 @@ class ProfileListener implements EventSubscriberInterface
      */
     private function getRegisterHtml(MembersProfileEvent $event)
     {
-        $meta = $event->getMetaFieldNames();
+        $meta = $event->getMetaEntityNames();
         $query = http_build_query(['code' => $meta[AccountVerification::KEY_NAME]]);
         $context = [
             'name'  => $event->getAccount()->getDisplayname(),
