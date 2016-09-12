@@ -27,6 +27,8 @@ class Provider extends BaseTable
         $this->table->addColumn('refresh_token',     'json_array', ['notnull' => false]);
         $this->table->addColumn('resource_owner',    'json_array', ['notnull' => false]);
         $this->table->addColumn('lastupdate',        'datetime',   ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('lastseen',          'datetime',   ['notnull' => false, 'default' => null]);
+        $this->table->addColumn('lastip',            'string',     ['length'  => 45, 'notnull' => false]);
     }
 
     /**

@@ -27,6 +27,10 @@ class Provider extends AbstractGuidEntity
     protected $resource_owner;
     /** @var \DateTime */
     protected $lastupdate;
+    /** @var \DateTime */
+    protected $lastseen;
+    /** @var string */
+    protected $lastip;
 
     /**
      * @return string
@@ -109,5 +113,37 @@ class Provider extends AbstractGuidEntity
     public function setLastupdate($lastUpdate)
     {
         $this->lastupdate = $lastUpdate;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastseen()
+    {
+        return $this->lastseen;
+    }
+
+    /**
+     * @param \DateTime $lastseen
+     */
+    public function setLastseen($lastseen)
+    {
+        $this->lastseen = $lastseen;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastip()
+    {
+        return $this->lastip;
+    }
+
+    /**
+     * @param string $lastip
+     */
+    public function setLastip($lastip)
+    {
+        $this->lastip = $lastip;
     }
 }
