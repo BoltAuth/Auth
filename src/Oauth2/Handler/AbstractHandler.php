@@ -158,8 +158,12 @@ abstract class AbstractHandler
             $this->handleAccountTransition($accessToken);
         }
 
-        $this->providerEntity->setLastupdate(Carbon::now());
-        $this->records->saveProvider($this->providerEntity);
+        $provision = $this->providerEntity;
+        $provision->setLastseen(Carbon::now());
+        $provision->setLastip($request->getClientIp());
+        $provision->setLastupdate(Carbon::now());
+
+        $this->records->saveProvider($provision);
 
         // Send the event
         $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
