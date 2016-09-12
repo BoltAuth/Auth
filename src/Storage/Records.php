@@ -46,7 +46,6 @@ class Records
         $account->setRoles($roles);
         $account->setEnabled(true);
         $account->setVerified(false);
-        $account->setLastseen(Carbon::now());
 
         return $this->getAccountRepository()->save($account) ? $account : false;
     }
