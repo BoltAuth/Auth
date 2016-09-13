@@ -14,6 +14,7 @@
     "require": {
         "php": ">=5.5.9",
         "bolt/bolt": "^3.2",
+        "bolt/email-spooler": "^3.0",
         "pagerfanta/pagerfanta": "^1.0",
         "ramsey/uuid": "^3.1"
     },
