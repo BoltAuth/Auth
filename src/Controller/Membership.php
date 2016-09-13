@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * Frontend controller.
+ * Membership controller.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Frontend implements ControllerProviderInterface
+class Membership implements ControllerProviderInterface
 {
     /** @var Config */
     private $config;

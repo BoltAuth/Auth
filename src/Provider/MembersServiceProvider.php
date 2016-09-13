@@ -175,9 +175,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.controller.frontend'] = $app->share(
+        $app['members.controller.membership'] = $app->share(
             function ($app) {
-                return new Controller\Frontend($app['members.config']);
+                return new Controller\Membership($app['members.config']);
             }
         );
     }
