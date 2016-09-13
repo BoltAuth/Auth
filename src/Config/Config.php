@@ -3,6 +3,7 @@
 namespace Bolt\Extension\Bolt\Members\Config;
 
 use Bolt\Helpers\Arr;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
 /**
@@ -16,12 +17,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  */
 class Config
 {
-    /** @var array */
-    protected $addOns;
-    /** @var array */
-    protected $labels;
-    /** @var array */
-    protected $placeholders;
+
     /** @var Provider[] */
     protected $providers;
     /** @var  array */
@@ -32,8 +28,6 @@ class Config
     protected $rolesMember;
     /** @var array */
     protected $rolesRegister;
-    /** @var array */
-    protected $templates;
     /** @var string */
     protected $urlAuthenticate;
     /** @var string */
@@ -46,6 +40,8 @@ class Config
     protected $redirectLogin;
     /** @var string */
     protected $redirectLogout;
+    /** @var  Forms */
+    protected $forms;
     /** @var array */
     protected $firewalls;
 
@@ -59,15 +55,11 @@ class Config
         $defaultConfig = $this->getDefaultConfig();
         $config = Arr::mergeRecursiveDistinct($defaultConfig, $extensionConfig);
 
-        $this->addOns =  $config['addons'];
         $this->debug = (boolean) $config['debug'];
-        $this->labels =  $config['labels'];
-        $this->placeholders =  $config['placeholders'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
         $this->rolesMember = $config['roles']['member'];
         $this->rolesRegister = $config['roles']['register'];
-        $this->templates = $config['templates'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
         $this->urlMembers = $config['urls']['members'];
         $this->notificationName = $config['notification']['name'];
@@ -75,28 +67,12 @@ class Config
         $this->redirectLogin = $config['redirects']['login'];
         $this->redirectLogout = $config['redirects']['logout'];
 
+        $this->forms = new Forms($config['form']);
+
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[strtolower($name)] = new Provider($name, $provider);
         }
         $this->providers['generic'] = new Provider('Generic', []);
-    }
-
-    /**
-     * @param $addOn
-     *
-     * @return array
-     */
-    public function getAddOn($addOn)
-    {
-        return $this->addOns[$addOn];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAddOns()
-    {
-        return $this->addOns;
     }
 
     /**
@@ -115,78 +91,6 @@ class Config
     public function setDebug($debug)
     {
         $this->debug = (boolean) $debug;
-
-        return $this;
-    }
-
-    /**
-     * @param array $addOns
-     *
-     * @return Config
-     */
-    public function setAddOns(array $addOns)
-    {
-        $this->addOns = $addOns;
-
-        return $this;
-    }
-
-    /**
-     * @param $label
-     *
-     * @return array
-     */
-    public function getLabel($label)
-    {
-        return $this->labels[$label];
-    }
-
-    /**
-     * @return array
-     */
-    public function getLabels()
-    {
-        return $this->labels;
-    }
-
-    /**
-     * @param array $labels
-     *
-     * @return Config
-     */
-    public function setLabels($labels)
-    {
-        $this->labels = $labels;
-
-        return $this;
-    }
-
-    /**
-     * @param $placeholder
-     *
-     * @return array
-     */
-    public function getPlaceholder($placeholder)
-    {
-        return $this->placeholders[$placeholder];
-    }
-
-    /**
-     * @return array
-     */
-    public function getPlaceholders()
-    {
-        return $this->placeholders;
-    }
-
-    /**
-     * @param array $placeholders
-     *
-     * @return Config
-     */
-    public function setPlaceholders($placeholders)
-    {
-        $this->placeholders = $placeholders;
 
         return $this;
     }
@@ -279,32 +183,34 @@ class Config
     }
 
     /**
-     * @param string $parent
+     * @param string $type
      * @param string $key
      *
      * @return array
      */
-    public function getTemplate($parent, $key)
+    public function getTemplate($type, $key)
     {
-        if (!isset($this->templates[$parent][$key])) {
-            throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $parent, $key));
+        if (!$this->forms->get('templates')->has($type) || !$this->forms->get('templates')->get($type)->has($key)) {
+            throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $type, $key));
         }
+
         if ($key === 'default') {
             return  sprintf('@Members/%s/_sub/%s.twig', $key, $key);
         }
 
-        return $this->templates[$parent][$key];
+        return $this->forms->get('templates')->get($type)->get($key);
     }
 
     /**
-     * @param string $parent
+     * @param string $type
      * @param string $key
+     * @param string $value
      *
      * @return Config
      */
-    public function setTemplate($parent, $key)
+    public function setTemplate($type, $key, $value)
     {
-        $this->templates[$parent] = $key;
+        $this->forms->get('templates')->get($type)->set($key, $value);
 
         return $this;
     }
@@ -499,6 +405,108 @@ class Config
     }
 
     /**
+     * @param array $firewalls
+     *
+     * @return Config
+     */
+    public function setFirewalls(array $firewalls)
+    {
+        $this->firewalls = $firewalls;
+
+        return $this;
+    }
+
+    /**
+     * @param $addOn
+     *
+     * @return array
+     */
+    public function getAddOn($addOn)
+    {
+        return $this->forms->getAddOns()->get($addOn);
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getAddOns()
+    {
+        return $this->forms->getAddOns();
+    }
+
+    /**
+     * @param ParameterBag $addOns
+     *
+     * @return Config
+     */
+    public function setAddOns(ParameterBag $addOns)
+    {
+        $this->forms->set('addons', $addOns);
+
+        return $this;
+    }
+
+    /**
+     * @param $label
+     *
+     * @return array
+     */
+    public function getLabel($label)
+    {
+        return $this->forms->getLabels()->get($label);
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getLabels()
+    {
+        return $this->forms->getLabels();
+    }
+
+    /**
+     * @param ParameterBag $labels
+     *
+     * @return Config
+     */
+    public function setLabels(ParameterBag $labels)
+    {
+        $this->forms->set('labels', $labels);
+
+        return $this;
+    }
+
+    /**
+     * @param $placeholder
+     *
+     * @return array
+     */
+    public function getPlaceholder($placeholder)
+    {
+        return $this->forms->get('placeholders')->get($placeholder);
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getPlaceholders()
+    {
+        return $this->forms->get('placeholders');
+    }
+
+    /**
+     * @param ParameterBag $placeholders
+     *
+     * @return Config
+     */
+    public function setPlaceholders(ParameterBag $placeholders)
+    {
+        $this->forms->set('placeholders', $placeholders);
+
+        return $this;
+    }
+
+    /**
      * @param array $pattern
      *
      * @return RequestMatcher
@@ -518,42 +526,12 @@ class Config
     }
 
     /**
-     * @param array $firewalls
-     *
-     * @return Config
-     */
-    public function setFirewalls(array $firewalls)
-    {
-        $this->firewalls = $firewalls;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getDefaultConfig()
     {
         return [
-            'addons'       => [
-                'zocial' => false,
-            ],
             'debug'        => false,
-            'labels'       => [
-                'login'           => 'Login',
-                'logout'          => 'Logout',
-                'displayname'     => 'Public Name',
-                'email'           => 'Email Address',
-                'password_first'  => 'Password',
-                'password_second' => 'Repeat Password',
-                'profile_save'    => 'Save & Continue',
-            ],
-            'placeholders' => [
-                'displayname'     => 'The name you would like to display publicly…',
-                'email'           => 'Your email address…',
-                'password_first'  => 'Enter your password…',
-                'password_second' => 'Repeat the above password…',
-            ],
             'registration' => [
                 'enabled'      => true,
             ],
@@ -577,40 +555,61 @@ class Config
                     'participant',
                 ],
             ],
-            'templates' => [
-                'profile'        => [
-                    'parent'   => '@Members/profile/_profile.twig',
-                    'edit'     => '@Members/profile/edit.twig',
-                    'register' => '@Members/profile/register.twig',
-                    'verify'   => '@Members/profile/verify.twig',
-                    'view'     => '@Members/profile/view.twig',
-                ],
-                'authentication' => [
-                    'parent'    => '@Members/authentication/_authentication.twig',
-                    'associate' => '@Members/authentication/associate.twig',
-                    'login'     => '@Members/authentication/login.twig',
-                    'logout'    => '@Members/authentication/logout.twig',
-                    'recovery'  => '@Members/authentication/recovery.twig',
-                ],
-                'error'          => [
-                    'parent' => '@Members/error/_error.twig',
-                    'error'  => '@Members/error/error.twig',
-                ],
-                'feedback'          => [
-                    'feedback'  => '@Members/feedback/feedback.twig',
-                ],
-                'recovery'   => [
-                    'subject' => '@Members/authentication/recovery/subject.twig',
-                    'body'    => '@Members/authentication/recovery/body.twig',
-                ],
-                'verification'   => [
-                    'subject' => '@Members/profile/registration/subject.twig',
-                    'body'    => '@Members/profile/registration/body.twig',
-                ],
-            ],
             'urls'         => [
                 'authenticate' => 'authentication',
                 'members'      => 'membership',
+            ],
+            'form'         => [
+
+                'templates' => [
+                    'profile'        => [
+                        'parent'   => '@Members/profile/_profile.twig',
+                        'edit'     => '@Members/profile/edit.twig',
+                        'register' => '@Members/profile/register.twig',
+                        'verify'   => '@Members/profile/verify.twig',
+                        'view'     => '@Members/profile/view.twig',
+                    ],
+                    'authentication' => [
+                        'parent'    => '@Members/authentication/_authentication.twig',
+                        'associate' => '@Members/authentication/associate.twig',
+                        'login'     => '@Members/authentication/login.twig',
+                        'logout'    => '@Members/authentication/logout.twig',
+                        'recovery'  => '@Members/authentication/recovery.twig',
+                    ],
+                    'error'          => [
+                        'parent' => '@Members/error/_error.twig',
+                        'error'  => '@Members/error/error.twig',
+                    ],
+                    'feedback'          => [
+                        'feedback'  => '@Members/feedback/feedback.twig',
+                    ],
+                    'recovery'   => [
+                        'subject' => '@Members/authentication/recovery/subject.twig',
+                        'body'    => '@Members/authentication/recovery/body.twig',
+                    ],
+                    'verification'   => [
+                        'subject' => '@Members/profile/registration/subject.twig',
+                        'body'    => '@Members/profile/registration/body.twig',
+                    ],
+                ],
+                'labels'       => [
+                    'login'           => 'Login',
+                    'logout'          => 'Logout',
+                    'displayname'     => 'Public Name',
+                    'email'           => 'Email Address',
+                    'password_first'  => 'Password',
+                    'password_second' => 'Repeat Password',
+                    'profile_save'    => 'Save & Continue',
+                ],
+                'placeholders' => [
+                    'displayname'     => 'The name you would like to display publicly…',
+                    'email'           => 'Your email address…',
+                    'password_first'  => 'Enter your password…',
+                    'password_second' => 'Repeat the above password…',
+                ],
+                'addons'       => [
+                    'zocial' => false,
+                ],
             ],
             'firewalls'    => null,
         ];
