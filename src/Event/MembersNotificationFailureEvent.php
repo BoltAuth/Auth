@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Event;
 
 use Swift_Mime_Message as SwiftMimeMessage;
 use Swift_RfcComplianceException as SwiftRfcComplianceException;
+use Swift_SwiftException as SwiftException;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -25,10 +26,10 @@ class MembersNotificationFailureEvent extends Event
     /**
      * Constructor.
      *
-     * @param SwiftMimeMessage            $message
-     * @param SwiftRfcComplianceException $exception
+     * @param SwiftMimeMessage $message
+     * @param SwiftException   $exception
      */
-    public function __construct(SwiftMimeMessage $message, SwiftRfcComplianceException $exception)
+    public function __construct(SwiftMimeMessage $message, SwiftException $exception)
     {
         $this->message = $message;
         $this->exception = $exception;
