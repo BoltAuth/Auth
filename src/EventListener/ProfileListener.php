@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Swift_Mailer as SwiftMailer;
+use Swift_Mime_Message as SwiftMimeMessage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Twig_Environment as TwigEnvironment;
@@ -65,6 +66,7 @@ class ProfileListener implements EventSubscriberInterface
         $subject = $this->twig->render($this->config->getTemplate('verification', 'subject'));
         $mailHtml = $this->getRegisterHtml($event);
 
+        /** @var SwiftMimeMessage $message */
         $message = $this->mailer
             ->createMessage('message')
             ->setSubject($subject)
@@ -77,19 +79,55 @@ class ProfileListener implements EventSubscriberInterface
                 ->setFrom($from)
                 ->setReplyTo($from)
                 ->setTo($email)
-                ;
-            $failedRecipients = [];
-
-            // Dispatch an event
-            $event = new MembersNotificationEvent($message);
-            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
-
-            $this->mailer->send($message, $failedRecipients);
+            ;
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
             $event = new MembersNotificationFailureEvent($message, $e);
             $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+
+            return;
         }
+
+        $event = new MembersNotificationEvent($message);
+        $this->queueMessage($message, $event);
+    }
+
+    /**
+     * Password reset notification event.
+     *
+     * @param MembersNotificationEvent $event
+     */
+    public function onProfileReset(MembersNotificationEvent $event)
+    {
+        if ($event->isPropagationStopped()) {
+            return;
+        }
+
+        $message = $event->getMessage();
+        $this->queueMessage($message, $event);
+    }
+
+    /**
+     * @param SwiftMimeMessage         $message
+     * @param MembersNotificationEvent $event
+     *
+     * @return array
+     */
+    private function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event)
+    {
+        $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
+
+        $failedRecipients = [];
+
+        try {
+            $this->mailer->send($message, $failedRecipients);
+        } catch (\Swift_SwiftException $e) {
+            // Dispatch an event
+            $event = new MembersNotificationFailureEvent($message, $e);
+            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+        }
+
+        return $failedRecipients;
     }
 
     /**
@@ -120,6 +158,7 @@ class ProfileListener implements EventSubscriberInterface
     {
         return [
             MembersEvents::MEMBER_PROFILE_REGISTER => 'onProfileRegister',
+            MembersEvents::MEMBER_PROFILE_RESET    => 'onProfileReset',
         ];
     }
 }

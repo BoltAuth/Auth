@@ -430,13 +430,11 @@ class Authentication implements ControllerProviderInterface
                 ->setReplyTo($from)
                 ->setTo($email)
             ;
-            $failedRecipients = [];
 
             // Dispatch an event
             $event = new MembersNotificationEvent($message);
-            $app['dispatcher']->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
+            $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_RESET, $event);
 
-            $mailer->send($message, $failedRecipients);
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
             $event = new MembersNotificationFailureEvent($message, $e);
