@@ -6,137 +6,40 @@
 #
 debug: true
 
+## Registration ###############################################################
+#
+#registration:
+#    enabled: true
+
+## Notification email addresses ###############################################
+#
+#notification:
+#    name: Site Admin              # Display name used as the sender name
+#    email: no-reply@example.com   # Email address as the sender address
+
+## Access Control #############################################################
+#
+roles:
+    member:
+        admin: Administrator
+        moderator: Moderator
+        participant: Participant
+
+## Authentication & OAuth2 Providers ##########################################
+#
+providers:
+    local:
+        label:
+            sign_in: Sign in with an email address
+            associate: --not applicable--
+        enabled: true
+        keys:
+            client_id: localdefault
+            client_secret: localdefault
+        scopes: [ user ]
+
 ## Template overrides #########################################################
 #
 # The template names that you wish to use in your theme to override the default
 #
 #templates:
-#    profile:
-#        parent: profile.twig
-#        associate: _register.twig
-#        edit: _edit.twig
-#        register: _register.twig
-#        verify: _verify.twig
-#        view: view.twig
-#    authentication:
-#        parent: authentication.twig
-#        associate: _associate.twig
-#        login: _login.twig
-#        logout: _logout.twig
-#        recovery: _recovery.twig
-#    error:
-#        parent: members_error.twig
-#        error: _members_error.twig
-#    feedback:
-#        feedback: _feedback.twig
-#    verification:
-#        subject: subject.twig
-#        body: body.twig
-#    recovery:
-#        subject: subject.twig
-#        body: body.twig
-
-## Labels #####################################################################
-#
-#labels:
-#    login: Login
-#    logout: Logout
-#    displayname: Public Name
-#    email: Email Address
-#    password_first: Password
-#    password_second: Repeat Password
-#    profile_save: Save & Continue
-
-## Placeholders ###############################################################
-#
-#placeholders:
-#    displayname: The name you would like to display publicly…
-#    email: Your email address…
-#    password_first: Enter your password…
-#    password_second: Repeat the above password…
-
-## Add-ons ####################################################################
-#
-#addons:
-#    zocial: false # Requires the bolt/zocial-icons extension to be installed.
-
-## Registration ###############################################################
-#
-registration:
-    enabled: true  # If registration should be allowed [true|false]
-
-## Notification email addresses ###############################################
-#
-notification:
-    name: Site Admin              # Display name used as the sender name
-    email: no-reply@example.com   # Email address as the sender address
-
-# URLs ########################################################################
-#
-# URLs that the controllers will be mounted on
-#
-urls:
-    authenticate: authentication
-    members: membership
-
-# URLs that a member will be redirected to after login/logout
-#
-# If commented out, members will be redirected to the referring page after login,
-# and the homepage after logout.
-#
-#redirects:
-#    login:  /membership/profile
-#    logout: /authentication/login
-
-## Access Control #############################################################
-#
-roles:
-    admin:
-        - root
-        - admin
-        - developer
-    member:
-        admin: Administrator
-        participant: Participant
-    associate:
-        - participant
-
-## OAuth2 Providers ##########################################################
-#
-providers:
-    local:
-        label:
-            sign_in: Sign in with a local account
-            associate: --not applicable--
-        enabled: false
-        keys:
-            client_id: localdefault
-            client_secret: localdefault
-        scopes: [ user ]
-    google:
-        label:
-            sign_in: Sign in with Google
-            associate: Add your Google account
-        enabled: false
-        keys:
-            client_id:
-            client_secret:
-        scopes: [ openid, profile, email ]
-    facebook:
-        label:
-            sign_in: Sign in with Facebook
-            associate: Add your Facebook account
-        enabled: false
-        keys:
-            client_id:
-            client_secret:
-        scopes: [ email ]
-    github:
-        label:
-            sign_in: Sign in with GitHub
-            associate: Add your GitHub account
-        enabled: false
-        keys:
-            client_id:
-            client_secret:
-        scopes: [ user ]
