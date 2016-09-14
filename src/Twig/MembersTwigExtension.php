@@ -22,7 +22,7 @@ use Twig_SimpleFunction as TwigSimpleFunction;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Functions extends TwigExtension
+class MembersTwigExtension extends TwigExtension
 {
     /** @var Config */
     private $config;

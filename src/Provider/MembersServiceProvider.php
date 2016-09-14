@@ -68,7 +68,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 'twig',
                 function (\Twig_Environment $twig, $app) {
                     $twig->addExtension(
-                        new Twig\Functions(
+                        new Twig\MembersTwigExtension(
                             $app['members.config'],
                             $app['members.forms.manager'],
                             $app['members.records'],
@@ -87,7 +87,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 'safe_twig',
                 function (\Twig_Environment $twig, $app) {
                     $twig->addExtension(
-                        new Twig\Functions(
+                        new Twig\MembersTwigExtension(
                             $app['members.config'],
                             $app['members.forms.manager'],
                             $app['members.records'],
