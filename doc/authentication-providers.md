@@ -61,32 +61,25 @@ Each provider under the `providers:` key should have the following
 configuration block, with `provider_name:` being one of the supported provider
 config keys.
 
+| Key        | Sub key          | Type    | Description |
+|------------|------------------|---------|-------------|
+| `enabled:` |                  | boolean | Setting to true enables provider
+| `label:`   | `sign_in:`       | string  | Default value for this provider's login button
+|            | `associate:`     | string  | Default value for this provider's account association button
+| `keys:`    | `client_id:`     | string  | Public key from OAuth2 provider
+|            | `client_secret:` | string  | Private key from OAuth2 provider
+| `scopes:`  |                  | array   | OAUth2 scopes to request
 
-```yaml
-providers:
-    provider_name:             # [Required] Change to match provider name key 
-        label:
-            sign_in:           # string  — Default value for this provider's login button 
-            associate:         # string  — Default value for this provider's account association button
-        enabled:               # boolean — [Required] Setting to true enables provider 
-        keys:
-            client_id:         # string  — [Required] Public key from OAuth2 provider
-            client_secret:     # string  — [Required] Private key from OAuth2 provider
-        scopes: [ ]            # array   — [Required] OAUth2 copes that this site will require access to
-```
 
 ##### Local (valid email address & password)
 
 ```yaml
 providers:
     local:
-        label:
-            sign_in: Sign in with a local account
-            associate: --not applicable--
-        enabled: false
+        enabled:
         keys:
-            client_id: localdefault
-            client_secret: localdefault
+            client_id: --- set to random string ---
+            client_secret: --- set to random string ---
         scopes: [ user ]
 ```
 
@@ -95,10 +88,7 @@ providers:
 ```yaml
 providers:
     google:
-        label:
-            sign_in: Sign in with Google
-            associate: Add your Google account
-        enabled: false
+        enabled: true
         keys:
             client_id:
             client_secret:
@@ -110,10 +100,7 @@ providers:
 ```yaml
 providers:
     facebook:
-        label:
-            sign_in: Sign in with Facebook
-            associate: Add your Facebook account
-        enabled: false
+        enabled: true
         keys:
             client_id:
             client_secret:
@@ -124,11 +111,7 @@ providers:
 
 ```yaml
 providers:
-    github:
-        label:
-            sign_in: Sign in with GitHub
-            associate: Add your GitHub account
-        enabled: false
+        enabled: true
         keys:
             client_id:
             client_secret:
