@@ -166,7 +166,7 @@ class FormEntityHandler
             ->createAuthorisation($guid)
         ;
 
-        // Dispatch the account profile pre-save event
+        // Dispatch the account profile post-save event
         $this->eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_REGISTER, $event);
 
         return $this;
