@@ -152,6 +152,8 @@ registered. Meaning `@example.com` won't work
 
 The following links might be good next places to look: 
 
-* [Twig Functions](twig-functions.md)
-* [Routes & URLs](routes-urls.md)
-* [Example: Menu Entries](examples/menu.md)
+* [Form Display](form-display.md) gives details on customising Twig template rendering 
+* [Twig Functions](twig-functions.md) provides a list of available Twig template functions
+* [Authentication Providers](authentication-providers.md) for details on adding OAuth2 providers like Facebook & Google
+* [Routes & URLs](routes-urls.md) if you'd like to understand, or customise, some of the routes used by Members
+* [Example: Menu Entries](examples/menu.md) gives a small example of a menu for Members specific entries 
