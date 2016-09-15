@@ -65,6 +65,11 @@ class Local extends AbstractHandler
     public function process(Request $request, $grantType = 'password')
     {
         $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
+
+        if (!$account) {
+            return null;
+        }
+
         $oauth = $this->records->getOauthByGuid($account->getGuid());
         $requestPassword = $this->submittedForm->get('password')->getData();
 
