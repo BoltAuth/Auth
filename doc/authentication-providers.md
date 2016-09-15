@@ -12,11 +12,6 @@ Authentication Providers
 
 ## Guide
 
-All required providers must be both configured, **and enabled**, under the `providers:`
-configuration key.
-
-OAuth2 providers will also fail to work if valid `client_id` and 
-`client_secret` keys are not set.
 
 ### Supported Providers
 
@@ -27,6 +22,38 @@ OAuth2 providers will also fail to work if valid `client_id` and
 | `facebook` | Facebook                               |
 | `github`   | GitHub                                 |
 
+
+### Set up
+
+#### Obtain Callback URL
+
+The URL for each provider will depend on:
+  * Your web site is running HTTP or HTTPS (HTTPS is highly recommended)
+  * Authentication URI configured in Members
+  * OAuth provider's name 
+
+e.g. using default routes for the domain `example.com`, and configuring
+GitHub as the OAuth provider:
+
+```
+https://example.com/authentication?provider=GitHub
+```
+
+#### Obtain Provider Keys
+
+All required providers must be both configured, **and enabled**, under the `providers:`
+configuration key.
+
+OAuth2 providers will also fail to work if valid `client_id` and 
+`client_secret` keys are not set.
+
+This will vary from provider to provider, and the details and steps change too
+often to reliably document here.
+
+For more information see:
+  * Google — https://console.developers.google.com/
+  * Facebook — https://developers.facebook.com/apps/
+  * GitHub — https://github.com/settings/developers
 
 #### Configuration
 
