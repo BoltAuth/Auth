@@ -9,4 +9,5 @@ Getting Started
 
 Refer to our [quick start guide](doc/quick-start.md) for a good place to start. 
 
-Full documentation is [available on GitHub](https://github.com/bolt/Members/tree/master/doc).
+Full documentation is available [locally](doc/README.md), or on 
+[GitHub](https://github.com/bolt/Members/tree/master/doc).
