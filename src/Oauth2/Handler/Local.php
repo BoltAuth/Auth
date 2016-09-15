@@ -67,7 +67,7 @@ class Local extends AbstractHandler
         $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
 
         if (!$account) {
-            return false;
+            return null;
         }
 
         $oauth = $this->records->getOauthByGuid($account->getGuid());
