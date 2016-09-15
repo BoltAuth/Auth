@@ -210,7 +210,6 @@ class Authentication implements ControllerProviderInterface
                 return $response;
             }
 
-
             $app['members.feedback']->info('Login details are incorrect.');
         }
         $template = $this->config->getTemplate('authentication', 'login');
