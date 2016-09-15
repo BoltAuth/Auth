@@ -24,8 +24,6 @@ class Generator
 {
     /** @var Config */
     private $config;
-    /** @var Container */
-    private $formTypes;
     /** @var FormFactoryInterface */
     private $formFactory;
     /** @var EventDispatcherInterface $dispatcher */
@@ -43,12 +41,10 @@ class Generator
      */
     public function __construct(
         Config $config,
-        Container $formTypes,
         FormFactoryInterface $formFactory,
         EventDispatcherInterface $dispatcher
     ) {
         $this->config = $config;
-        $this->formTypes = $formTypes;
         $this->formFactory = $formFactory;
         $this->dispatcher = $dispatcher;
     }
