@@ -38,8 +38,8 @@ providers:
             client_secret: localdefault
         scopes: [ user ]
 
-## Template overrides #########################################################
+## Form Configuration #########################################################
 #
-# The template names that you wish to use in your theme to override the default
-#
-#templates:
+#forms:
+#    templates:
+

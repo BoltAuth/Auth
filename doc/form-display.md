@@ -70,6 +70,11 @@ theme directory.
             body: path/to/recovery/body.twig
 ```
 
+You can find the installed defaults in the Members source directory:
+
+```
+{site root directory}/extensions/vendor/bolt/members/
+```
 
 ### Labels
 
