@@ -67,7 +67,7 @@ class Config
         $this->redirectLogin = $config['redirects']['login'];
         $this->redirectLogout = $config['redirects']['logout'];
 
-        $this->forms = new Forms($config['form']);
+        $this->forms = new Forms($config['forms']);
 
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[strtolower($name)] = new Provider($name, $provider);
@@ -559,7 +559,7 @@ class Config
                 'authenticate' => 'authentication',
                 'members'      => 'membership',
             ],
-            'form'         => [
+            'forms'         => [
 
                 'templates' => [
                     'profile'        => [
