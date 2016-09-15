@@ -25,13 +25,13 @@ when you're happy with how it is working.
  
 See the [installation page](installation.md), and ensure you've updated the site's database 
 
-![Database update success](img/install-post-database-2.png)
+Enable [debug mode](debugging.md) to get additional feedback from Members during
+set up.
 
 
 #### Update database
 
-Enable [debug mode](debugging.md) to get additional feedback from Members during
-set up
+![Database update success](img/install-post-database-2.png)
 
 
 #### Enable a provider
