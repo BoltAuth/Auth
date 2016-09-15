@@ -40,7 +40,7 @@ class Local extends AbstractHandler
         if (!$account instanceof Entity\Account) {
             $this->setDebugMessage('Login email address does not match a stored member record.');
 
-            return null;
+            return false;
         }
 
         $oauth = $this->records->getOauthByGuid($account->getGuid());
@@ -56,7 +56,7 @@ class Local extends AbstractHandler
             return new RedirectResponse($this->urlGenerator->generate('authenticationLogin'));
         }
 
-        return null;
+        return true;
     }
 
     /**
@@ -65,11 +65,16 @@ class Local extends AbstractHandler
     public function process(Request $request, $grantType = 'password')
     {
         $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
+
+        if (!$account) {
+            return false;
+        }
+
         $oauth = $this->records->getOauthByGuid($account->getGuid());
         $requestPassword = $this->submittedForm->get('password')->getData();
 
         if ($this->isValidPassword($oauth, $requestPassword) === false) {
-            return null;
+            return false;
         }
 
         $accessToken = $this->provider->getAccessToken('password', ['guid' => $account->getGuid()]);
