@@ -200,18 +200,14 @@ class Authentication implements ControllerProviderInterface
 
             // Initial login checks
             $response = $handler->login($request);
-            if ($response) {
-                if ($response instanceof Response) {
-                    return $response;
-                }
+            if ($response instanceof Response) {
+                return $response;
+            }
 
-                // Process and check password, initiate the session is successful
-                $response = $handler->process($request);
-                if ($response) {
-                    if ($response instanceof Response) {
-                        return $response;
-                    }
-                }
+            // Process and check password, initiate the session is successful
+            $response = $handler->process($request);
+            if ($response instanceof Response) {
+                return $response;
             }
 
 
