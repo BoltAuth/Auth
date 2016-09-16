@@ -19,6 +19,7 @@ Table of Contents
 * [Extending Members](extending/extending.md#extending-members)
   * [Adding Meta Fields](extending/adding-meta-fields.md#extending-adding-meta-fields)
   * [Adding Roles](extending/adding-roles.md#extending-adding-roles)
+  * [Events](extending/events.md#extending-events)
 * [Form Display](form-display.md#form-display)
   * [Template Overrides](form-display.md#template-overrides)
   * [Labels](form-display.md#labels)
