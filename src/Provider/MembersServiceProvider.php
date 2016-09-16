@@ -275,7 +275,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                                     $app['members.records'],
                                     $app['members.session']
                                 );
-                        }),
+                            }
+                        ),
                         'profile_view'             => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileViewType($app['members.config']);

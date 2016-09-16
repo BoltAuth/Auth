@@ -55,7 +55,7 @@ class FormEntityHandler
      * Save a user view/edit form data.
      *
      * @param Storage\Entity\Account $account
-     * @param Form    $form
+     * @param Form                   $form
      *
      * @return FormEntityHandler
      */

@@ -21,8 +21,6 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
