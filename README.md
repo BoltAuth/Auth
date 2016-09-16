@@ -4,6 +4,13 @@ Membership Extension for Bolt
 Members provides functionality to enable restricted access to parts of Bolt's 
 front end.
 
+Requirements
+------------
+
+* Bolt 3.2+ (3.2.x-dev)
+* PHP 5.5.9+
+
+
 Getting Started
 ---------------
 
