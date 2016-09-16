@@ -11,3 +11,4 @@ that shows some of the available behaviour.
 See:
   * [Adding meta fields](adding-meta-fields.md)
   * [Adding roles](adding-roles.md)
+  * [Events](events.md)
