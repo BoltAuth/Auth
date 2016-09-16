@@ -5,7 +5,7 @@ namespace Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Roles manager.
@@ -16,22 +16,36 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Roles implements EventSubscriberInterface
+class Roles
 {
     /** @var Role[] */
     protected $roles;
 
     /** @var Config */
     private $config;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
     /**
      * Constructor.
      *
-     * @param Config $config
+     * @param Config                   $config
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, EventDispatcherInterface $dispatcher)
     {
         $this->config = $config;
+        $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * Add a role.
+     *
+     * @param Role $role
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles[$role->getName()] = $role;
     }
 
     /**
@@ -41,13 +55,18 @@ class Roles implements EventSubscriberInterface
      */
     public function getRoles()
     {
+        if ($this->roles === null) {
+            $this->buildEventRoles();
+            $this->buildPriorityRoles();
+        }
+
         return $this->roles;
     }
 
     /**
      * Add the extension's configured roles.
      */
-    public function addBaseRoles()
+    protected function buildPriorityRoles()
     {
         foreach ($this->config->getRolesMember() as $name => $displayName) {
             $this->roles[$name] = new Role($name, $displayName);
@@ -55,29 +74,17 @@ class Roles implements EventSubscriberInterface
     }
 
     /**
-     * Event callback to add additional roles dynamically.
-     *
-     * @param MembersRolesEvent $event
+     * Add additional roles dynamically via event.
      */
-    public function addCustomRoles(MembersRolesEvent $event)
+    protected function buildEventRoles()
     {
+        $event = new MembersRolesEvent();
+        $this->dispatcher->dispatch(MembersEvents::MEMBER_ROLE, $event);
+
         foreach ((array) $event->getRoles() as $role) {
             if ($role instanceof Role) {
                 $this->roles[$role->getName()] = $role;
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            MembersEvents::MEMBER_ROLE => [
-                ['addBaseRoles', -512],
-                ['addCustomRoles', -512],
-            ],
-        ];
     }
 }
