@@ -9,5 +9,5 @@ There is an example repository called [Members Addon Example](https://github.com
 that shows some of the available behaviour.
 
 See:
-  * [Adding meta fields](extending-adding-meta-fields.md)
-  * [Adding roles](extending-adding-roles.md)
+  * [Adding meta fields](adding-meta-fields.md)
+  * [Adding roles](adding-roles.md)
