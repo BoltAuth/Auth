@@ -3,7 +3,6 @@
 namespace Bolt\Extension\Bolt\Members\Event;
 
 use Swift_Mime_Message as SwiftMimeMessage;
-use Swift_RfcComplianceException as SwiftRfcComplianceException;
 use Swift_SwiftException as SwiftException;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -20,7 +19,7 @@ class MembersNotificationFailureEvent extends Event
 {
     /** @var SwiftMimeMessage */
     protected $message;
-    /** @var SwiftRfcComplianceException */
+    /** @var SwiftException */
     protected $exception;
 
     /**
@@ -44,7 +43,7 @@ class MembersNotificationFailureEvent extends Event
     }
 
     /**
-     * @return SwiftRfcComplianceException
+     * @return SwiftException
      */
     public function getException()
     {

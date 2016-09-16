@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class MembersRolesEvent extends GenericEvent
 {
-    /** @var array */
+    /** @var Role[] */
     protected $roles;
 
     /**
