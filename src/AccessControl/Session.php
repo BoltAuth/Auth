@@ -202,7 +202,7 @@ class Session implements EventSubscriberInterface
     /**
      * Check if the current logged-in session has a member role.
      *
-     * @param string $role
+     * @param string|array $role
      *
      * @return bool
      */
@@ -218,7 +218,11 @@ class Session implements EventSubscriberInterface
         }
         $roles = (array) $account->getRoles();
 
-        return in_array($role, $roles);
+        if (is_string($role)) {
+            return in_array($role, $roles);
+        }
+
+        return array_intersect($role, $roles) !== false;
     }
 
     /**
