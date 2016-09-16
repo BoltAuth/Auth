@@ -91,11 +91,7 @@ class MembersProfileEvent extends Event
      */
     public function addMetaEntryNames(array $metaFieldNames)
     {
-        if ($this->metaEntityNames === null) {
-            $this->metaEntityNames = $metaFieldNames;
-        } else {
-            $this->metaEntityNames = array_merge($this->metaEntityNames, $metaFieldNames);
-        }
+        $this->metaEntityNames = array_merge((array) $this->metaEntityNames, $metaFieldNames);
 
         return $this;
     }
