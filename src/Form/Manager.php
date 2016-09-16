@@ -169,14 +169,12 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_ASSOCIATE, $builder, $formAssociate);
 
         $extraContext = [
-            'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent': 'default'),
+            'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent' : 'default'),
         ];
         $resolvedBuild->setContext($extraContext);
 
         return $resolvedBuild;
     }
-
-
 
     /**
      * Return the resolved profile viewing form.
@@ -206,8 +204,8 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_VIEW, $builder, $formEdit);
 
         $extraContext = [
-            'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent': 'default'),
-            'member'     => $builder->getEntity()
+            'twigparent' => $this->config->getTemplate('profile', $includeParent ? 'parent' : 'default'),
+            'member'     => $builder->getEntity(),
         ];
         $resolvedBuild->setContext($extraContext);
 
@@ -274,7 +272,7 @@ class Manager
         $resolvedBuild->addBuild(MembersForms::FORM_PROFILE_RECOVER_SUBMIT, $builder, $submitForm);
 
         $resolvedBuild->setContext([
-            'twigparent' => $this->config->getTemplate('authentication', $includeParent ? 'parent': 'default'),
+            'twigparent' => $this->config->getTemplate('authentication', $includeParent ? 'parent' : 'default'),
         ]);
 
         return $resolvedBuild;
@@ -290,7 +288,7 @@ class Manager
      */
     public function getFormProfileRegister(Request $request, $includeParent = true)
     {
-        $twigParent = $this->config->getTemplate('profile', $includeParent ? 'parent': 'default');
+        $twigParent = $this->config->getTemplate('profile', $includeParent ? 'parent' : 'default');
 
         return $this->getFormCombinedLogin($request, $twigParent);
     }

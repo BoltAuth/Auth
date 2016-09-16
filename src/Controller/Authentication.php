@@ -434,7 +434,6 @@ class Authentication implements ControllerProviderInterface
             // Dispatch an event
             $event = new MembersNotificationEvent($message);
             $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_RESET, $event);
-
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
             $event = new MembersNotificationFailureEvent($message, $e);

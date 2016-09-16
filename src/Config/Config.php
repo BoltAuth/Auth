@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  */
 class Config
 {
-
     /** @var Provider[] */
     protected $providers;
     /** @var  array */

@@ -23,7 +23,7 @@ class Forms extends ParameterBag
         $this->set('labels', new ParameterBag($parameters['labels']));
         $this->set('placeholders', new ParameterBag($parameters['placeholders']));
 
-        $templates = new ParameterBag;
+        $templates = new ParameterBag();
         foreach ($parameters['templates'] as $type => $values) {
             $templates->set($type, new ParameterBag($parameters['templates'][$type]));
         }
