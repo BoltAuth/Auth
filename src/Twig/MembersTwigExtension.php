@@ -155,7 +155,7 @@ class MembersTwigExtension extends TwigExtension
     /**
      * Check if the current logged-in session has a member role.
      *
-     * @param string $role
+     * @param string|array $role
      *
      * @return bool
      */
