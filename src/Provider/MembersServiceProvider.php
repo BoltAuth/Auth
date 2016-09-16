@@ -139,7 +139,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.roles'] = $app->share(
             function ($app) {
-                return new AccessControl\Roles($app['members.config']);
+                return new AccessControl\Roles($app['members.config'], $app['dispatcher']);
             }
         );
 
