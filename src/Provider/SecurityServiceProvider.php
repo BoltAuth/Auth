@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Provider;
 
+use Bolt\Extension\Bolt\Members\Security\CookieAuthenticator;
 use Bolt\Extension\Bolt\Members\Security\TokenAuthenticator;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -19,15 +20,16 @@ class SecurityServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['security.token_authenticator'] = $app->share(
+        $app['security.cookie_authenticator'] = $app->share(
             function ($app) {
-                return new TokenAuthenticator($app['members.records']);
+                return new CookieAuthenticator($app['members.session'], $app['members.records'], $app['url_generator.lazy']);
             }
         );
 
         $app['security.firewalls'] = [
             'membership' => [
-                'pattern'   => '^/membership/.+',
+                //'pattern'   => '^/membership/.+',
+                'pattern'   => '^/membership/profile/edit',
                 'anonymous' => true,
                 'form'      => [
                     'login_path' => '/authentication/login',
@@ -37,7 +39,7 @@ class SecurityServiceProvider implements ServiceProviderInterface
                 ],
                 'guard' => [
                     'authenticators' => [
-                        'security.token_authenticator',
+                        'security.cookie_authenticator',
                     ],
                 ],
             ],
