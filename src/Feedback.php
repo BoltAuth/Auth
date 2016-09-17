@@ -17,12 +17,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class Feedback implements EventSubscriberInterface
 {
-    const SESSION_KEY = 'members-feedback';
+    const SESSION_KEY = 'members-feedback.cache';
 
     /** @var SessionInterface */
     protected $session;
     /** @var array */
-    protected $feedback = [];
+    protected $feedback;
     /** @var bool */
     private $isDebug;
 
@@ -59,8 +59,8 @@ class Feedback implements EventSubscriberInterface
      */
     public function get()
     {
-        $feedback = $this->feedback;
-        $this->feedback = [];
+        $feedback = (array) $this->feedback;
+        $this->feedback = null;
 
         return $feedback;
     }
