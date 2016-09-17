@@ -3,6 +3,11 @@
  #          you want most of the time, but if you're doing something tricky…
  #
  # If you wish to get them without flush, call .peek() instead of .get()
+ #
+ # Passed in variables:
+ #   * feedback             — Feedback  Members feedback service (Bolt\Extension\Bolt\Members\Feedback)
+ #     * get                — array     Return, and remove from queue, messages pending display
+ #     * poke               — array     Return, and preserve queing of, messages pending display
  #}
 
 {% set feedback = feedback.get|default(null) %}
