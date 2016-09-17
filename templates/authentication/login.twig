@@ -1,3 +1,14 @@
+{#
+ # Passed in variables:
+ #
+ #   * twigparent           — string    Template name to inherit from
+ #   * form_login_oauth     — FormView  OAuth login form (Symfony\Component\Form\FormView)
+ #   * form_login_password  — FormView  Password login form (Symfony\Component\Form\FormView)
+ #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
+ #   * templates            — array
+ #     * feedback           — string    Feedback messages template name
+ #   * providers            — array     Authentication providers enabled in Members configuration
+ #}
 {% extends twigparent %}
 
 {% block login %}

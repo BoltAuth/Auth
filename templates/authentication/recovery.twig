@@ -1,12 +1,18 @@
 {#
  # Passed in variables:
  #
- #   * stage — The stage of the workflow, either:
- #       email     — Form to enter the account email address
- #       submitted — After the email address has been submitted
- #       password  — Form to enter *new* password
- #       reset     — After the new password has been saved to the database
- #   * link  — Relative URL to the login page
+ #   * stage                    — string    The stage of the workflow, either:
+ #                                              email     — Form to enter the account email address
+ #                                              submitted — After the email address has been submitted
+ #                                              password  — Form to enter *new* password
+ #                                              reset     — After the new password has been saved to the database
+ #   * link                     — string    Relative URL to the login page
+ #   * twigparent               — string    Template name to inherit from
+ #   * form_profile_recovery    — FormView  Profile recovery form (Symfony\Component\Form\FormView)
+ #   * feedback                 — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
+ #   * templates                — array
+ #     * feedback               — string    Feedback messages template name
+ #   * providers                — array     Authentication providers enabled in Members configuration
  #}
 {% extends twigparent %}
 
