@@ -9,7 +9,6 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
 use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
@@ -32,6 +31,10 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class Membership implements ControllerProviderInterface
 {
+    use MembersServicesTrait;
+
+    /** @var Application */
+    private $app;
     /** @var Config */
     private $config;
 
@@ -50,6 +53,8 @@ class Membership implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
+        $this->app = $app;
+
         /** @var $ctr ControllerCollection */
         $ctr = $app['controllers_factory'];
 
@@ -98,7 +103,7 @@ class Membership implements ControllerProviderInterface
     public function after(Request $request, Response $response, Application $app)
     {
         /** @var Session $session */
-        $session = $app['members.session'];
+        $session = $this->getMembersSession();
         if ($session->getAuthorisation() === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
 
@@ -123,7 +128,7 @@ class Membership implements ControllerProviderInterface
      */
     public function defaultRoute(Application $app, Request $request)
     {
-        if ($app['members.session']->hasAuthorisation()) {
+        if ($this->getMembersSession()->hasAuthorisation()) {
             return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
         }
 
@@ -140,32 +145,25 @@ class Membership implements ControllerProviderInterface
      */
     public function editProfile(Application $app, Request $request)
     {
-        /** @var Session $session */
-        $session = $app['members.session'];
-        /** @var Form\Manager $formsManager */
-        $formsManager = $app['members.forms.manager'];
-
-        $memberSession = $session->getAuthorisation();
+        $memberSession = $this->getMembersSession()->getAuthorisation();
         if ($memberSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-            $app['members.feedback']->info('Login required to edit your profile');
+            $this->getMembersFeedback()->info('Login required to edit your profile');
 
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
 
         // Handle the form request data
-        $resolvedBuild = $formsManager->getFormProfileEdit($request, true, $session->getAuthorisation()->getGuid());
+        $resolvedBuild = $this->getMembersFormsManager()->getFormProfileEdit($request, true, $memberSession->getGuid());
         if ($resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT)->isValid()) {
-            /** @var FormEntityHandler $profileRecords */
-            $profileRecords = $app['members.records.profile'];
             /** @var Form\Entity\Profile $entity */
             $entity = $resolvedBuild->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
             $form = $resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
-            $profileRecords->saveProfileForm($entity, $form);
+            $this->getMembersRecordsProfile()->saveProfileForm($entity, $form);
         }
 
         $template = $this->config->getTemplate('profile', 'edit');
-        $html = $formsManager->renderForms($resolvedBuild, $app['twig'], $template);
+        $html = $this->getMembersFormsManager()->renderForms($resolvedBuild, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -180,31 +178,27 @@ class Membership implements ControllerProviderInterface
      */
     public function registerProfile(Application $app, Request $request)
     {
-        if ($app['members.session']->hasAuthorisation()) {
+        if ($this->getMembersSession()->hasAuthorisation()) {
             return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
         }
 
         // If registration is closed, just return a 404
-        if ($app['members.config']->isRegistrationOpen() === false) {
+        if ($this->getMembersConfig()->isRegistrationOpen() === false) {
             throw new HttpException(Response::HTTP_NOT_FOUND);
         }
 
-        /** @var Form\Manager $formsManager */
-        $formsManager = $app['members.forms.manager'];
-        $builder = $formsManager->getFormProfileRegister($request, true);
+        $builder = $this->getMembersFormsManager()->getFormProfileRegister($request, true);
         $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
 
         // Handle the form request data
         if ($form->isValid()) {
-            $app['members.oauth.provider.manager']->setProvider($app, 'local');
+            $this->getMembersOauthProviderManager()->setProvider($app, 'local');
 
             /** @var Form\Entity\Profile $entity */
             $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
 
-            /** @var FormEntityHandler $profileRecords */
-            $profileRecords = $app['members.records.profile'];
             try {
-                $profileRecords->saveProfileRegisterForm($entity, $form, $app['members.oauth.provider'], 'local');
+                $this->getMembersRecordsProfile()->saveProfileRegisterForm($entity, $form, $this->getMembersOauthProvider(), 'local');
 
                 // Redirect to our profile page.
                 $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
@@ -216,9 +210,9 @@ class Membership implements ControllerProviderInterface
             }
         }
 
-        $context = ['transitional' => $app['members.session']->isTransitional()];
+        $context = ['transitional' => $this->getMembersSession()->isTransitional()];
         $template = $this->config->getTemplate('profile', 'register');
-        $html = $formsManager->renderForms($builder, $app['twig'], $template, $context);
+        $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
     }
@@ -234,7 +228,6 @@ class Membership implements ControllerProviderInterface
     public function verifyProfile(Application $app, Request $request)
     {
         $session = $app['session'];
-        $feedback = $app['members.feedback'];
 
         $code = $request->query->get('code');
         $sessionKey = 'members.account.verify';
@@ -253,10 +246,10 @@ class Membership implements ControllerProviderInterface
         $verification = new AccountVerification();
 
         try {
-            $verification->validateCode($app['members.records'], $code);
-            $feedback->debug(sprintf('Verification completed with result: %s', $verification->isSuccess()));
+            $verification->validateCode($this->getMembersRecords(), $code);
+            $this->getMembersFeedback()->debug(sprintf('Verification completed with result: %s', $verification->isSuccess()));
         } catch (AccountVerificationException $e) {
-            $feedback->debug(sprintf('Verification failed with result: %s', $e->getMessage()));
+            $this->getMembersFeedback()->debug(sprintf('Verification failed with result: %s', $e->getMessage()));
         }
 
         if ($verification->isSuccess()) {
@@ -283,7 +276,7 @@ class Membership implements ControllerProviderInterface
             'code'       => $verification->getCode(),
             'success'    => $verification->isSuccess(),
             'message'    => $verification->getMessage(),
-            'feedback'   => $app['members.feedback'],
+            'feedback'   => $this->getMembersFeedback(),
             'providers'  => $this->config->getEnabledProviders(),
             'templates'  => [
                 'feedback' => $this->config->getTemplate('feedback', 'feedback')
@@ -314,27 +307,29 @@ class Membership implements ControllerProviderInterface
         }
 
         if ($guid === null) {
-            /** @var Session $session */
-            $session = $app['members.session'];
-
-            $memberSession = $session->getAuthorisation();
+            $memberSession = $this->getMembersSession()->getAuthorisation();
             if ($memberSession === null) {
                 $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-                $app['members.feedback']->info('Login required to view your profile');
+                $this->getMembersFeedback()->info('Login required to view your profile');
 
                 return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
             }
 
-            $guid = $session->getAuthorisation()->getGuid();
+            $guid = $this->getMembersSession()->getAuthorisation()->getGuid();
         }
 
-        /** @var Form\Manager $formsManager */
-        $formsManager = $app['members.forms.manager'];
-
         $template = $this->config->getTemplate('profile', 'view');
-        $builder = $formsManager->getFormProfileView($request, true, $guid);
-        $html = $formsManager->renderForms($builder, $app['twig'], $template);
+        $builder = $this->getMembersFormsManager()->getFormProfileView($request, true, $guid);
+        $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContainer()
+    {
+        return $this->app;
     }
 }
