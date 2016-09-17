@@ -86,7 +86,6 @@ class AccountVerification
             $this->throwException(new AccountVerificationException('Stored meta code previously removed.', AccountVerificationException::REMOVED_META));
         }
 
-
         $guid = $metaEntity->getGuid();
 
         // Get the account and set it as verified
