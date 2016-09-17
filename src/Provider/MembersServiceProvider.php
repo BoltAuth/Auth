@@ -204,11 +204,21 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Container(
                     [
                         // @codingStandardsIgnoreStart
-                        'account'      => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Account::class); }),
-                        'account_meta' => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\AccountMeta::class); }),
-                        'oauth'        => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Oauth::class); }),
-                        'provider'     => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Provider::class); }),
-                        'token'        => $app->share(function () use ($app) { return $app['storage']->getRepository(Entity\Token::class); }),
+                        'account'      => $app->share(function () use ($app) {
+                            return $app['storage']->getRepository(Entity\Account::class);
+                        }),
+                        'account_meta' => $app->share(function () use ($app) {
+                            return $app['storage']->getRepository(Entity\AccountMeta::class);
+                        }),
+                        'oauth'        => $app->share(function () use ($app) {
+                            return $app['storage']->getRepository(Entity\Oauth::class);
+                        }),
+                        'provider'     => $app->share(function () use ($app) {
+                            return $app['storage']->getRepository(Entity\Provider::class);
+                        }),
+                        'token'        => $app->share(function () use ($app) {
+                            return $app['storage']->getRepository(Entity\Token::class);
+                        }),
                         // @codingStandardsIgnoreEnd
                     ]
                 );

@@ -282,7 +282,7 @@ class Membership implements ControllerProviderInterface
             'feedback'   => $this->getMembersFeedback(),
             'providers'  => $this->config->getEnabledProviders(),
             'templates'  => [
-                'feedback' => $this->config->getTemplate('feedback', 'feedback')
+                'feedback' => $this->config->getTemplate('feedback', 'feedback'),
             ],
         ];
 

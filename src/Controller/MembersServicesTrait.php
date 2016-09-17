@@ -25,8 +25,8 @@ use Silex\Application;
 trait MembersServicesTrait
 {
     /**
-     * @return Config
-     */
+      * @return Config
+      */
      protected function getMembersConfig()
      {
          return $this->getContainer()['members.config'];
