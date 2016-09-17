@@ -21,6 +21,7 @@ use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Members service provider.
@@ -61,6 +62,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         /** @deprecated. Do not use */
         $app['members.meta_fields'] = [];
+
+        $app['session'] = $app->extend(
+            'session',
+            function (SessionInterface $session) use ($app) {
+                $session->registerBag($app['members.feedback']);
+
+                return $session;
+            }
+        );
 
         // Add the Twig Extension.
         $app['twig'] = $app->share(
@@ -133,7 +143,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
         $app['members.feedback'] = $app->share(
             function ($app) {
-                return new Feedback($app['session'], $app['members.config']->isDebug());
+                return new Feedback('_members', $app['members.config']->isDebug());
             }
         );
 
