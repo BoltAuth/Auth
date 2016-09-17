@@ -37,9 +37,8 @@ class Feedback implements EventSubscriberInterface
         $this->session = $session;
         $this->isDebug = $isDebug;
 
-        if ($this->session->isStarted() && $stored = $this->session->get(self::SESSION_KEY)) {
-            $this->feedback = $stored;
-            $this->session->remove(self::SESSION_KEY);
+        if ($this->session->isStarted() && $this->session->has(self::SESSION_KEY)) {
+            $this->feedback = $this->session->remove(self::SESSION_KEY);
         }
     }
 
