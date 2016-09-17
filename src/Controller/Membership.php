@@ -9,6 +9,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
 use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
@@ -152,6 +153,7 @@ class Membership implements ControllerProviderInterface
 
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
+        $this->getMembersFeedback()->debug(sprintf('Editing profile for account %s (%s)', $memberSession->getAccount()->getEmail(), $memberSession->getGuid()));
 
         // Handle the form request data
         $resolvedBuild = $this->getMembersFormsManager()->getFormProfileEdit($request, true, $memberSession->getGuid());
@@ -199,6 +201,7 @@ class Membership implements ControllerProviderInterface
 
             try {
                 $this->getMembersRecordsProfile()->saveProfileRegisterForm($entity, $form, $this->getMembersOauthProvider(), 'local');
+                $this->getMembersFeedback()->debug(sprintf('Registered account %s (%s)', $entity->getEmail(), $entity->getGuid()));
 
                 // Redirect to our profile page.
                 $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
@@ -320,6 +323,11 @@ class Membership implements ControllerProviderInterface
 
         $template = $this->config->getTemplate('profile', 'view');
         $builder = $this->getMembersFormsManager()->getFormProfileView($request, true, $guid);
+
+        /** @var Entity\Account $account */
+        $account = $builder->getEntity(Form\MembersForms::FORM_PROFILE_VIEW);
+        $this->getMembersFeedback()->debug(sprintf('Viewing profile account %s (%s)', $account->getEmail(), $account->getGuid()));
+
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
