@@ -1,8 +1,15 @@
 {#
- # Passed in fields:
- #   * name  — Display name of the newly registered user
- #   * email — Email address of the newly registered user
- #   * link  — Account verification URL
+ # Passed in variables:
+ #   * name                 — string    Display name of the newly registered user
+ #   * email                — string    Email address of the newly registered user
+ #   * link                 — string    Account verification URL
+ #   * member               — array     Member data:
+ #     * guid               — string    GUID (unique ID)
+ #     * email              — string    Email address
+ #     * displayname        — string    Public display name
+ #     * enabled            — boolean   True if member account is enabled
+ #     * verified           — boolean   True if member account is verified
+ #     * roles              — array     Roles assigned to member
  #}
 <p>Dear {{ name }},</p>
 

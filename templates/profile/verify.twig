@@ -1,8 +1,14 @@
 {#
  # Passed in variables:
- #   * success — True or false
- #   * message — Message from validator
- #   * code    — The request code
+ #
+ #   * twigparent           — string    Template name to inherit from
+ #   * success              — boolean   If the validation succeeded
+ #   * message              — string    Message from validator
+ #   * code                 — string    The request code
+ #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
+ #   * templates            — array
+ #     * feedback           — string    Feedback messages template name
+ #   * providers            — array     Authentication providers enabled in Members configuration
  #}
 {% extends twigparent %}
 
