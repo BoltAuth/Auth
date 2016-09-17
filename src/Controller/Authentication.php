@@ -420,7 +420,7 @@ class Authentication implements ControllerProviderInterface
 
         /** @var \Swift_Message $message */
         $message = $mailer->createMessage('message')
-            ->setSubject($app['twig']->render($this->config->getTemplate('recovery', 'subject')))
+            ->setSubject($app['twig']->render($this->config->getTemplate('recovery', 'subject'), ['member' => $account]))
             ->setBody(strip_tags($mailHtml))
             ->addPart($mailHtml, 'text/html')
         ;
@@ -457,9 +457,10 @@ class Authentication implements ControllerProviderInterface
     {
         $query = http_build_query(['code' => $passwordReset->getQueryCode()]);
         $context = [
-            'name'  => $account->getDisplayname(),
-            'email' => $account->getEmail(),
-            'link'  => sprintf('%s%s/reset?%s', $siteUrl, $this->config->getUrlAuthenticate(), $query),
+            'name'   => $account->getDisplayname(),
+            'email'  => $account->getEmail(),
+            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $this->config->getUrlAuthenticate(), $query),
+            'member' => $account,
         ];
         $mailHtml = $twig->render($this->config->getTemplate('recovery', 'body'), $context);
 
