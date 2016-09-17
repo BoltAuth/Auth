@@ -60,8 +60,6 @@ abstract class AbstractHandler
     /** @var UrlGeneratorInterface */
     protected $urlGenerator;
 
-    /** @var Application */
-    private $app;
     /** @var Entity\Provider */
     private $providerEntity;
 
@@ -83,8 +81,6 @@ abstract class AbstractHandler
         $this->logger = $app['logger.system'];
         $this->dispatcher = $app['dispatcher'];
         $this->urlGenerator = $app['url_generator'];
-
-        $this->app = $app;
     }
 
     /**
