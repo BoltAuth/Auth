@@ -4,8 +4,6 @@ namespace Bolt\Extension\Bolt\Members;
 
 use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
 use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Repository;
