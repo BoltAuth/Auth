@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
+use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -232,21 +233,64 @@ class Membership implements ControllerProviderInterface
      */
     public function verifyProfile(Application $app, Request $request)
     {
+        $session = $app['session'];
+        $feedback = $app['members.feedback'];
+
+        $code = $request->query->get('code');
+        $sessionKey = 'members.account.verify';
+
+        $verification = $session->remove($sessionKey);
+        if ($verification instanceof AccountVerification) {
+            // We have a successful verification
+            return $this->getVerifyResponse($app, $verification);
+        }
+
+        if ($code === null) {
+            throw new HttpException(Response::HTTP_NOT_FOUND);
+        }
+
         // Check the verification code
         $verification = new AccountVerification();
-        $verification->validateCode($app['members.records'], $request->query->get('code'));
+
+        try {
+            $verification->validateCode($app['members.records'], $code);
+            $feedback->debug(sprintf('Verification completed with result: %s', $verification->isSuccess()));
+        } catch (AccountVerificationException $e) {
+            $feedback->debug(sprintf('Verification failed with result: %s', $e->getMessage()));
+        }
 
         if ($verification->isSuccess()) {
             $event = new MembersProfileEvent($verification->getAccount());
             $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_VERIFY, $event);
+            $session->set($sessionKey, $verification);
+
+            return new RedirectResponse($app['url_generator']->generate('membersProfileVerify'));
         }
 
+        return $this->getVerifyResponse($app, $verification);
+    }
+
+    /**
+     * @param Application         $app
+     * @param AccountVerification $verification
+     *
+     * @return Response
+     */
+    private function getVerifyResponse(Application $app, AccountVerification $verification)
+    {
         $context = [
             'twigparent' => $this->config->getTemplate('profile', 'parent'),
             'code'       => $verification->getCode(),
             'success'    => $verification->isSuccess(),
             'message'    => $verification->getMessage(),
+            'feedback'   => $app['members.feedback'],
+            'providers'  => $this->config->getEnabledProviders(),
+            'templates'  => [
+                'feedback' => $this->config->getTemplate('feedback', 'feedback')
+            ],
         ];
+
+        $context['templates']['feedback'] = $this->config->getTemplate('feedback', 'feedback');
 
         $template = $this->config->getTemplate('profile', 'verify');
         $html = $app['twig']->render($template, $context);
