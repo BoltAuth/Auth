@@ -1,3 +1,13 @@
+{#
+ # Passed in variables:
+ #
+ #   * twigparent           — string    Template name to inherit from
+ #   * form_logout          — FormView  Logout form (Symfony\Component\Form\FormView)
+ #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
+ #   * templates            — array
+ #     * feedback           — string    Feedback messages template name
+ #   * providers            — array     Authentication providers enabled in Members configuration
+ #}
 {% extends twigparent %}
 
 {% block logout %}
