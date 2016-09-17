@@ -418,7 +418,6 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.config'],
                     $app['twig'],
                     $app['mailer'],
-                    $app['dispatcher'],
                     $app['resources']->getUrl('hosturl')
                 );
             }
