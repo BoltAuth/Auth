@@ -33,8 +33,6 @@ class ProfileListener implements EventSubscriberInterface
     private $mailer;
     /** @var string */
     private $siteUrl;
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
 
     /**
      * Constructor.
@@ -42,28 +40,28 @@ class ProfileListener implements EventSubscriberInterface
      * @param Config                   $config
      * @param TwigEnvironment          $twig
      * @param SwiftMailer              $mailer
-     * @param EventDispatcherInterface $dispatcher
-     * @param                          $siteUrl
+     * @param string                   $siteUrl
      */
-    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, EventDispatcherInterface $dispatcher, $siteUrl)
+    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, $siteUrl)
     {
         $this->config = $config;
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->dispatcher = $dispatcher;
         $this->siteUrl = $siteUrl;
     }
 
     /**
      * Profile registration event.
      *
-     * @param MembersProfileEvent $event
+     * @param MembersProfileEvent      $event
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function onProfileRegister(MembersProfileEvent $event)
+    public function onProfileRegister(MembersProfileEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
         $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
-        $subject = $this->twig->render($this->config->getTemplate('verification', 'subject'));
+        $subject = $this->twig->render($this->config->getTemplate('verification', 'subject'), ['member' => $event->getAccount()]);
         $mailHtml = $this->getRegisterHtml($event);
 
         /** @var SwiftMimeMessage $message */
@@ -83,39 +81,43 @@ class ProfileListener implements EventSubscriberInterface
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
             $event = new MembersNotificationFailureEvent($message, $e);
-            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+            $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
 
             return;
         }
 
         $event = new MembersNotificationEvent($message);
-        $this->queueMessage($message, $event);
+        $this->queueMessage($message, $event, $dispatcher);
     }
 
     /**
      * Password reset notification event.
      *
      * @param MembersNotificationEvent $event
+     * @param string                   $eventName
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function onProfileReset(MembersNotificationEvent $event)
+    public function onProfileReset(MembersNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         if ($event->isPropagationStopped()) {
             return;
         }
 
         $message = $event->getMessage();
-        $this->queueMessage($message, $event);
+        $this->queueMessage($message, $event, $dispatcher);
     }
 
     /**
      * @param SwiftMimeMessage         $message
      * @param MembersNotificationEvent $event
      *
+     * @param EventDispatcherInterface $dispatcher
+     *
      * @return array
      */
-    private function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event)
+    private function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event, EventDispatcherInterface $dispatcher)
     {
-        $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
+        $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
 
         $failedRecipients = [];
 
@@ -124,7 +126,7 @@ class ProfileListener implements EventSubscriberInterface
         } catch (\Swift_SwiftException $e) {
             // Dispatch an event
             $event = new MembersNotificationFailureEvent($message, $e);
-            $this->dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+            $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
         }
 
         return $failedRecipients;
@@ -142,9 +144,10 @@ class ProfileListener implements EventSubscriberInterface
         $meta = $event->getMetaEntityNames();
         $query = http_build_query(['code' => $meta[AccountVerification::KEY_NAME]]);
         $context = [
-            'name'  => $event->getAccount()->getDisplayname(),
-            'email' => $event->getAccount()->getEmail(),
-            'link'  => sprintf('%s/%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
+            'name'   => $event->getAccount()->getDisplayname(),
+            'email'  => $event->getAccount()->getEmail(),
+            'link'   => sprintf('%s/%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
+            'member' => $event->getAccount(),
         ];
         $mailHtml = $this->twig->render($this->config->getTemplate('verification', 'body'), $context);
 
