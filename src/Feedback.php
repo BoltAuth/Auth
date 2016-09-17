@@ -2,9 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 /**
  * Feedback message class.
@@ -15,31 +13,62 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Feedback implements EventSubscriberInterface
+class Feedback implements SessionBagInterface
 {
     const SESSION_KEY = 'members-feedback.cache';
 
-    /** @var SessionInterface */
-    protected $session;
     /** @var array */
     protected $feedback;
+
+    /** @var string */
+    private $name = 'members.feedback';
+    /** @var string */
+    private $storageKey;
     /** @var bool */
     private $isDebug;
 
     /**
      * Constructor.
      *
-     * @param SessionInterface $session
-     * @param bool             $isDebug
+     * @param string $storageKey The key used to store flashes in the session
+     * @param bool   $isDebug
      */
-    public function __construct(SessionInterface $session, $isDebug)
+    public function __construct($storageKey, $isDebug)
     {
-        $this->session = $session;
+        $this->storageKey = $storageKey;
         $this->isDebug = $isDebug;
+    }
 
-        if ($this->session->isStarted() && $this->session->has(self::SESSION_KEY)) {
-            $this->feedback = $this->session->remove(self::SESSION_KEY);
-        }
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize(array &$feedback)
+    {
+        $this->feedback = &$feedback;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStorageKey()
+    {
+        return $this->storageKey;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clear()
+    {
+        return $this->get();
     }
 
     /**
@@ -115,25 +144,5 @@ class Feedback implements EventSubscriberInterface
     public function info($message)
     {
         $this->set('info', $message);
-    }
-
-    /**
-     * Post-request middleware callback, added in service provider.
-     */
-    public function onResponse()
-    {
-        if ($this->session->isStarted()) {
-            $this->session->set(self::SESSION_KEY, $this->feedback);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::RESPONSE => ['onResponse'],
-        ];
     }
 }
