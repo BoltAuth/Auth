@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\AccessControl\Validator;
 
+use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
 use Bolt\Extension\Bolt\Members\Storage;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 
@@ -77,20 +78,21 @@ class AccountVerification
         // Get the verification key meta entity
         $metaEntities = $records->getAccountMetaValues(self::KEY_NAME, $code);
         if ($metaEntities === false) {
-            $this->message = 'Expired meta code';
-
-            return;
+            $this->throwException(new AccountVerificationException('Stored meta code not found', AccountVerificationException::MISSING_META));
         }
         /** @var Storage\Entity\AccountMeta $metaEntity */
         $metaEntity = reset($metaEntities);
+        if ($metaEntity === false) {
+            $this->throwException(new AccountVerificationException('Stored meta code previously removed.', AccountVerificationException::REMOVED_META));
+        }
+
+
         $guid = $metaEntity->getGuid();
 
         // Get the account and set it as verified
         $this->account = $records->getAccountByGuid($guid);
         if ($this->account === false) {
-            $this->message = 'Expired meta code';
-
-            return;
+            $this->throwException(new AccountVerificationException('Missing account record.', AccountVerificationException::MISSING_ACCOUNT));
         }
         $this->account->setVerified(true);
         $records->saveAccount($this->account);
@@ -100,5 +102,19 @@ class AccountVerification
 
         $this->success = true;
         $this->message = 'Account validated!';
+    }
+
+    /**
+     * Store the message for feedback, and throw the exception.
+     *
+     * @param \Exception $e
+     *
+     * @throws \Exception
+     */
+    private function throwException(\Exception $e)
+    {
+        $this->message = 'Expired meta code';
+
+        throw $e;
     }
 }
