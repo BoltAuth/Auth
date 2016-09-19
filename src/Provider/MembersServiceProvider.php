@@ -174,20 +174,20 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     private function registerControllers(Application $app)
     {
         $app['members.controller.authentication'] = $app->share(
-            function ($app) {
-                return new Controller\Authentication($app['members.config']);
+            function () {
+                return new Controller\Authentication();
             }
         );
 
         $app['members.controller.backend'] = $app->share(
-            function ($app) {
-                return new Controller\Backend($app['members.config']);
+            function () {
+                return new Controller\Backend();
             }
         );
 
         $app['members.controller.membership'] = $app->share(
-            function ($app) {
-                return new Controller\Membership($app['members.config']);
+            function () {
+                return new Controller\Membership();
             }
         );
     }

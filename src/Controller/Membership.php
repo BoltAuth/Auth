@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
-use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
@@ -14,7 +13,6 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,34 +28,15 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Membership implements ControllerProviderInterface
+class Membership extends AbstractController
 {
-    use MembersServicesTrait;
-
-    /** @var Application */
-    private $app;
-    /** @var Config */
-    private $config;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function connect(Application $app)
     {
-        $this->app = $app;
-
         /** @var $ctr ControllerCollection */
-        $ctr = $app['controllers_factory'];
+        $ctr = parent::connect($app);
 
         $ctr->match('/profile/edit', [$this, 'editProfile'])
             ->bind('membersProfileEdit')
@@ -164,7 +143,7 @@ class Membership implements ControllerProviderInterface
             $this->getMembersRecordsProfile()->saveProfileForm($entity, $form);
         }
 
-        $template = $this->config->getTemplate('profile', 'edit');
+        $template = $this->getConfig()->getTemplate('profile', 'edit');
         $html = $this->getMembersFormsManager()->renderForms($resolvedBuild, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -214,7 +193,7 @@ class Membership implements ControllerProviderInterface
         }
 
         $context = ['transitional' => $this->getMembersSession()->isTransitional()];
-        $template = $this->config->getTemplate('profile', 'register');
+        $template = $this->getConfig()->getTemplate('profile', 'register');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -275,20 +254,20 @@ class Membership implements ControllerProviderInterface
     private function getVerifyResponse(Application $app, AccountVerification $verification)
     {
         $context = [
-            'twigparent' => $this->config->getTemplate('profile', 'parent'),
+            'twigparent' => $this->getConfig()->getTemplate('profile', 'parent'),
             'code'       => $verification->getCode(),
             'success'    => $verification->isSuccess(),
             'message'    => $verification->getMessage(),
             'feedback'   => $this->getMembersFeedback(),
-            'providers'  => $this->config->getEnabledProviders(),
+            'providers'  => $this->getConfig()->getEnabledProviders(),
             'templates'  => [
-                'feedback' => $this->config->getTemplate('feedback', 'feedback'),
+                'feedback' => $this->getConfig()->getTemplate('feedback', 'feedback'),
             ],
         ];
 
-        $context['templates']['feedback'] = $this->config->getTemplate('feedback', 'feedback');
+        $context['templates']['feedback'] = $this->getConfig()->getTemplate('feedback', 'feedback');
 
-        $template = $this->config->getTemplate('profile', 'verify');
+        $template = $this->getConfig()->getTemplate('profile', 'verify');
         $html = $app['twig']->render($template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -321,7 +300,7 @@ class Membership implements ControllerProviderInterface
             $guid = $this->getMembersSession()->getAuthorisation()->getGuid();
         }
 
-        $template = $this->config->getTemplate('profile', 'view');
+        $template = $this->getConfig()->getTemplate('profile', 'view');
         $builder = $this->getMembersFormsManager()->getFormProfileView($request, true, $guid);
 
         /** @var Entity\Account $account */
@@ -331,21 +310,5 @@ class Membership implements ControllerProviderInterface
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
-    {
-        return $this->app;
-    }
-
-    /**
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->config;
     }
 }

@@ -5,7 +5,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
-use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Pager\Pager;
@@ -17,7 +16,6 @@ use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Ramsey\Uuid\Uuid;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,28 +31,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Backend implements ControllerProviderInterface
+class Backend extends AbstractController
 {
-    /** @var Config */
-    private $config;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function connect(Application $app)
     {
         /** @var $ctr ControllerCollection */
-        $ctr = $app['controllers_factory'];
+        $ctr = parent::connect($app);
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
         $memberBaseUrl = '/extend/members';
@@ -116,7 +101,7 @@ class Backend implements ControllerProviderInterface
         $user = $app['users']->getCurrentUser();
         $userid = $user['id'];
 
-        foreach ($this->config->getRolesAdmin() as $role) {
+        foreach ($this->getConfig()->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
                 $this->addWebAssets($app);
 

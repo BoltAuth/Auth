@@ -4,7 +4,6 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
-use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
@@ -18,7 +17,6 @@ use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Silex\ControllerProviderInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -35,36 +33,17 @@ use Symfony\Component\HttpFoundation\Response;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Authentication implements ControllerProviderInterface
+class Authentication extends AbstractController
 {
-    use MembersServicesTrait;
-
     const FINAL_REDIRECT_KEY = 'members.auth.redirect';
-
-    /** @var Application */
-    private $app;
-    /** @var Config */
-    private $config;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function connect(Application $app)
     {
-        $this->app = $app;
-
         /** @var $ctr ControllerCollection */
-        $ctr = $app['controllers_factory'];
+        $ctr = parent::connect($app);
 
         // Member login
         $ctr->match('/login', [$this, 'login'])
@@ -105,9 +84,7 @@ class Authentication implements ControllerProviderInterface
             ->assert('url', '.+')
         ;
 
-        $ctr
-            ->after([$this, 'after'])
-        ;
+        $ctr->after([$this, 'after']);
 
         return $ctr;
     }
@@ -216,7 +193,7 @@ class Authentication implements ControllerProviderInterface
 
             $this->getMembersFeedback()->info('Login details are incorrect.');
         }
-        $template = $this->config->getTemplate('authentication', 'login');
+        $template = $this->getConfig()->getTemplate('authentication', 'login');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response($html);
@@ -320,7 +297,7 @@ class Authentication implements ControllerProviderInterface
             $builder = $this->resetPasswordRequest($app, $request, $context, $response);
         }
 
-        $template = $this->config->getTemplate('authentication', 'recovery');
+        $template = $this->getConfig()->getTemplate('authentication', 'recovery');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context->all());
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
@@ -415,12 +392,12 @@ class Authentication implements ControllerProviderInterface
 
         /** @var \Swift_Mailer $mailer */
         $mailer = $app['mailer'];
-        $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
+        $from = [$this->getConfig()->getNotificationEmail() => $this->getConfig()->getNotificationName()];
         $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
 
         /** @var \Swift_Message $message */
         $message = $mailer->createMessage('message')
-            ->setSubject($app['twig']->render($this->config->getTemplate('recovery', 'subject'), ['member' => $account]))
+            ->setSubject($app['twig']->render($this->getConfig()->getTemplate('recovery', 'subject'), ['member' => $account]))
             ->setBody(strip_tags($mailHtml))
             ->addPart($mailHtml, 'text/html')
         ;
@@ -459,10 +436,10 @@ class Authentication implements ControllerProviderInterface
         $context = [
             'name'   => $account->getDisplayname(),
             'email'  => $account->getEmail(),
-            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $this->config->getUrlAuthenticate(), $query),
+            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $this->getConfig()->getUrlAuthenticate(), $query),
             'member' => $account,
         ];
-        $mailHtml = $twig->render($this->config->getTemplate('recovery', 'body'), $context);
+        $mailHtml = $twig->render($this->getConfig()->getTemplate('recovery', 'body'), $context);
 
         return $mailHtml;
     }
@@ -557,7 +534,7 @@ class Authentication implements ControllerProviderInterface
             'feedback'  => $this->getMembersFeedback()->get(),
             'exception' => $e,
         ];
-        $html = $app['twig']->render($this->config->getTemplate('error', 'error'), $context);
+        $html = $app['twig']->render($this->getConfig()->getTemplate('error', 'error'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }
@@ -581,13 +558,5 @@ class Authentication implements ControllerProviderInterface
         $this->getMembersFeedback()->debug($msg);
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
-    {
-        return $this->app;
     }
 }
