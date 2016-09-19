@@ -101,7 +101,7 @@ class Backend extends AbstractController
         $user = $app['users']->getCurrentUser();
         $userid = $user['id'];
 
-        foreach ($this->getConfig()->getRolesAdmin() as $role) {
+        foreach ($this->getMembersConfig()->getRolesAdmin() as $role) {
             if ($app['users']->hasRole($userid, $role)) {
                 $this->addWebAssets($app);
 

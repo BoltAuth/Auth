@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Controller;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\ControllerProviderInterface;
@@ -23,8 +22,6 @@ abstract class AbstractController implements ControllerProviderInterface
 
     /** @var Application */
     private $app;
-    /** @var Config */
-    private $config;
 
     /**
      * @param Request     $request
@@ -33,7 +30,6 @@ abstract class AbstractController implements ControllerProviderInterface
     public function boot(Request $request, Application $app)
     {
         $this->app = $app;
-        $this->config = $app['members.config'];
     }
 
     /**
@@ -56,15 +52,5 @@ abstract class AbstractController implements ControllerProviderInterface
     protected function getContainer()
     {
         return $this->app;
-    }
-
-    /**
-     * @internal Should only be used by traits.
-     *
-     * @return Config
-     */
-    protected function getConfig()
-    {
-        return $this->config;
     }
 }

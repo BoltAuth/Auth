@@ -141,11 +141,13 @@ class Authentication extends AbstractController
     {
         $this->assertSecure($app, $request);
 
+        $config = $this->getMembersConfig();
+
         // Set the return redirect.
-        if ($this->getMembersConfig()->getRedirectLogin()) {
+        if ($config->getRedirectLogin()) {
             $this->getMembersSession()
                 ->clearRedirects()
-                ->addRedirect($this->getMembersConfig()->getRedirectLogin())
+                ->addRedirect($config->getRedirectLogin())
             ;
         } elseif ($request->headers->get('referer') !== $request->getUri()) {
             $this->getMembersSession()
@@ -193,7 +195,7 @@ class Authentication extends AbstractController
 
             $this->getMembersFeedback()->info('Login details are incorrect.');
         }
-        $template = $this->getConfig()->getTemplate('authentication', 'login');
+        $template = $config->getTemplate('authentication', 'login');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response($html);
@@ -240,8 +242,9 @@ class Authentication extends AbstractController
             return $this->getExceptionResponse($app, $e);
         }
 
-        if ($this->getMembersConfig()->getRedirectLogout()) {
-            return new RedirectResponse($this->getMembersConfig()->getRedirectLogout());
+        $config = $this->getMembersConfig();
+        if ($config->getRedirectLogout()) {
+            return new RedirectResponse($config->getRedirectLogout());
         }
 
         return $this->getMembersSession()->popRedirect()->getResponse();
@@ -297,7 +300,7 @@ class Authentication extends AbstractController
             $builder = $this->resetPasswordRequest($app, $request, $context, $response);
         }
 
-        $template = $this->getConfig()->getTemplate('authentication', 'recovery');
+        $template = $this->getMembersConfig()->getTemplate('authentication', 'recovery');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context->all());
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
@@ -392,12 +395,13 @@ class Authentication extends AbstractController
 
         /** @var \Swift_Mailer $mailer */
         $mailer = $app['mailer'];
-        $from = [$this->getConfig()->getNotificationEmail() => $this->getConfig()->getNotificationName()];
+        $config = $this->getMembersConfig();
+        $from = [$config->getNotificationEmail() => $config->getNotificationName()];
         $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
 
         /** @var \Swift_Message $message */
         $message = $mailer->createMessage('message')
-            ->setSubject($app['twig']->render($this->getConfig()->getTemplate('recovery', 'subject'), ['member' => $account]))
+            ->setSubject($app['twig']->render($config->getTemplate('recovery', 'subject'), ['member' => $account]))
             ->setBody(strip_tags($mailHtml))
             ->addPart($mailHtml, 'text/html')
         ;
@@ -432,14 +436,15 @@ class Authentication extends AbstractController
      */
     private function getResetHtml(Storage\Entity\Account $account, PasswordReset $passwordReset, \Twig_Environment $twig, $siteUrl)
     {
+        $config = $this->getMembersConfig();
         $query = http_build_query(['code' => $passwordReset->getQueryCode()]);
         $context = [
             'name'   => $account->getDisplayname(),
             'email'  => $account->getEmail(),
-            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $this->getConfig()->getUrlAuthenticate(), $query),
+            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $config->getUrlAuthenticate(), $query),
             'member' => $account,
         ];
-        $mailHtml = $twig->render($this->getConfig()->getTemplate('recovery', 'body'), $context);
+        $mailHtml = $twig->render($config->getTemplate('recovery', 'body'), $context);
 
         return $mailHtml;
     }
@@ -527,14 +532,15 @@ class Authentication extends AbstractController
      */
     private function displayExceptionPage(Application $app, \Exception $e)
     {
+        $config = $this->getMembersConfig();
         $ext = $app['extensions']->get('Bolt/Members');
         $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
         $context = [
-            'parent'    => $this->getMembersConfig()->getTemplate('error', 'parent'),
+            'parent'    => $config->getTemplate('error', 'parent'),
             'feedback'  => $this->getMembersFeedback()->get(),
             'exception' => $e,
         ];
-        $html = $app['twig']->render($this->getConfig()->getTemplate('error', 'error'), $context);
+        $html = $app['twig']->render($config->getTemplate('error', 'error'), $context);
 
         return new \Twig_Markup($html, 'UTF-8');
     }

@@ -143,7 +143,7 @@ class Membership extends AbstractController
             $this->getMembersRecordsProfile()->saveProfileForm($entity, $form);
         }
 
-        $template = $this->getConfig()->getTemplate('profile', 'edit');
+        $template = $this->getMembersConfig()->getTemplate('profile', 'edit');
         $html = $this->getMembersFormsManager()->renderForms($resolvedBuild, $app['twig'], $template);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -193,7 +193,7 @@ class Membership extends AbstractController
         }
 
         $context = ['transitional' => $this->getMembersSession()->isTransitional()];
-        $template = $this->getConfig()->getTemplate('profile', 'register');
+        $template = $this->getMembersConfig()->getTemplate('profile', 'register');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -253,21 +253,22 @@ class Membership extends AbstractController
      */
     private function getVerifyResponse(Application $app, AccountVerification $verification)
     {
+        $config = $this->getMembersConfig();
         $context = [
-            'twigparent' => $this->getConfig()->getTemplate('profile', 'parent'),
+            'twigparent' => $config->getTemplate('profile', 'parent'),
             'code'       => $verification->getCode(),
             'success'    => $verification->isSuccess(),
             'message'    => $verification->getMessage(),
             'feedback'   => $this->getMembersFeedback(),
-            'providers'  => $this->getConfig()->getEnabledProviders(),
+            'providers'  => $config->getEnabledProviders(),
             'templates'  => [
-                'feedback' => $this->getConfig()->getTemplate('feedback', 'feedback'),
+                'feedback' => $config->getTemplate('feedback', 'feedback'),
             ],
         ];
 
-        $context['templates']['feedback'] = $this->getConfig()->getTemplate('feedback', 'feedback');
+        $context['templates']['feedback'] = $config->getTemplate('feedback', 'feedback');
 
-        $template = $this->getConfig()->getTemplate('profile', 'verify');
+        $template = $config->getTemplate('profile', 'verify');
         $html = $app['twig']->render($template, $context);
 
         return new Response(new \Twig_Markup($html, 'UTF-8'));
@@ -300,7 +301,7 @@ class Membership extends AbstractController
             $guid = $this->getMembersSession()->getAuthorisation()->getGuid();
         }
 
-        $template = $this->getConfig()->getTemplate('profile', 'view');
+        $template = $this->getMembersConfig()->getTemplate('profile', 'view');
         $builder = $this->getMembersFormsManager()->getFormProfileView($request, true, $guid);
 
         /** @var Entity\Account $account */
