@@ -340,4 +340,12 @@ class Membership implements ControllerProviderInterface
     {
         return $this->app;
     }
+
+    /**
+     * @return Config
+     */
+    protected function getConfig()
+    {
+        return $this->config;
+    }
 }
