@@ -96,6 +96,8 @@ trait MembersServicesTrait
     }
 
     /**
+     * @internal Should only be used by traits.
+     *
      * @return Application
      */
     abstract protected function getContainer();
