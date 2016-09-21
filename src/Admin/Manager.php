@@ -4,9 +4,12 @@ namespace Bolt\Extension\Bolt\Members\Admin;
 
 use Bolt\Controller\Zone;
 use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Users;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -28,19 +31,23 @@ class Manager implements EventSubscriberInterface
     protected $config;
     /** @var Users */
     private $users;
+    /** @var EventDispatcherInterface  */
+    protected $dispatcher;
 
     /**
      * Constructor.
      *
      * @param Records $records
-     * @param Config  $config
-     * @param Users   $users
+     * @param Config $config
+     * @param Users $users
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(Records $records, Config $config, Users $users)
+    public function __construct(Records $records, Config $config, Users $users, EventDispatcherInterface $dispatcher)
     {
         $this->records = $records;
         $this->config = $config;
         $this->users = $users;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -78,6 +85,8 @@ class Manager implements EventSubscriberInterface
     {
         $account = $this->records->getAccountByGuid($guid);
         $account->setEnabled(true);
+        $event = new MembersProfileEvent($account);
+        $this->dispatcher->dispatch(MembersEvents::MEMBER_ENABLE, $event);
 
         return $this->records->saveAccount($account);
     }
@@ -93,6 +102,8 @@ class Manager implements EventSubscriberInterface
     {
         $account = $this->records->getAccountByGuid($guid);
         $account->setEnabled(false);
+        $event = new MembersProfileEvent($account);
+        $this->dispatcher->dispatch(MembersEvents::MEMBER_DISABLE, $event);
 
         return $this->records->saveAccount($account);
     }
