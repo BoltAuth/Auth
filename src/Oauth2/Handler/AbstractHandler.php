@@ -124,8 +124,9 @@ abstract class AbstractHandler
             $this->session->removeAuthorisation();
             $this->feedback->info('Logout was successful.');
             $this->setDebugMessage(sprintf('Logout was route complete for %s', $request->getRequestUri()));
+        }else{
+            $this->setDebugMessage('Logout was no required. Members session not found.');
         }
-        $this->setDebugMessage('Logout was no required. Members session not found.');
     }
 
     /**
