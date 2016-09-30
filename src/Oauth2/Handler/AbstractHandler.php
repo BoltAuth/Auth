@@ -416,7 +416,9 @@ abstract class AbstractHandler
             return;
         }
 
-        $event = new MembersLoginEvent($authorisation);
+        $event = new MembersLoginEvent();
+        $event->setAccount($authorisation->getAccount());
+        
         try {
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {
