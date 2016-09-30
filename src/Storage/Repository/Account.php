@@ -253,15 +253,15 @@ class Account extends AbstractMembersRepository
             return $this->getPager($query, 'guid');
         }
 
-        return $this->findOneWith($query);
+        return $this->findWith($query);
     }
 
     public function getAccountsByEnableStatusQuery($status)
     {
         $qb = $this->createQueryBuilder();
         $qb->select('*')
-            ->where('status = :status')
-            ->setParameter('status', $status)
+            ->where('enabled = :status')
+            ->setParameter('status', $status, \PDO::PARAM_INT)
         ;
 
         return $qb;
