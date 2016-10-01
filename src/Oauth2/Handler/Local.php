@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Exception\DisabledAccountException;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use PasswordLib\Password\Implementation\Blowfish;
 use Ramsey\Uuid\Uuid;
@@ -82,12 +84,19 @@ class Local extends AbstractHandler
             ->addAccessToken('local', $accessToken)
             ->createAuthorisation($account->getGuid())
         ;
-        $this->feedback->info('Login successful.');
+
         $request->query->set('code', Uuid::uuid4()->toString());
 
-        parent::process($request, $grantType);
-
-        $this->finish($request);
+        try {
+            parent::process($request, $grantType);
+            $this->finish($request);
+            $this->feedback->info('Login successful.');
+        } catch(DisabledAccountException $ex) {
+            $this->session->addRedirect($this->urlGenerator->generate('authenticationLogin'));
+            if($this->session->getAuthorisation()) {
+                $this->dispatchEvent(MembersEvents::MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
+            }
+        }
 
         return $this->session->popRedirect()->getResponse();
     }

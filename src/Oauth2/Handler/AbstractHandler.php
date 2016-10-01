@@ -133,9 +133,11 @@ abstract class AbstractHandler
      * Process the login request.
      *
      * @param Request $request
-     * @param string  $grantType
+     * @param string $grantType
      *
+     * @throws Ex\DisabledAccountException
      * @throws Ex\InvalidAuthorisationRequestException
+     * @throws Ex\MissingAccountException
      */
     protected function process(Request $request, $grantType)
     {
@@ -149,13 +151,18 @@ abstract class AbstractHandler
         $options['code'] = $code;
         if ($this->session->hasAuthorisation()) {
             $options['guid'] = $this->session->getAuthorisation()->getGuid();
-        }
+            $accessToken = $this->getAccessToken($grantType, $options);
+            $this->setSession($accessToken);
 
-        $accessToken = $this->getAccessToken($grantType, $options);
-        $this->setSession($accessToken);
-
-        if ($this->session->isTransitional()) {
-            $this->handleAccountTransition($accessToken);
+            if ($this->session->isTransitional()) {
+                $this->handleAccountTransition($accessToken);
+            }
+        } else {
+            //either no Auth or more probably a disabled account... anyway we cant continue
+            $exceptionMsg = 'No valid authorisation, the account may be disabled';
+            $this->setDebugMessage($exceptionMsg);
+            $this->feedback->error($exceptionMsg);
+            throw new Ex\DisabledAccountException($exceptionMsg);
         }
     }
 
