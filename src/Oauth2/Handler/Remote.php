@@ -3,6 +3,8 @@
 namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
+use Bolt\Extension\Bolt\Members\Event\MembersEvents;
+use Bolt\Extension\Bolt\Members\Exception\DisabledAccountException;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -66,9 +68,15 @@ class Remote extends AbstractHandler
         // Check that state token matches the stored one
         $this->session->checkStateToken($request);
 
-        parent::process($request, $grantType);
-
-        $this->finish($request);
+        try {
+            parent::process($request, $grantType);
+            $this->finish($request);
+        } catch(DisabledAccountException $ex) {
+            $this->session->addRedirect($this->urlGenerator->generate('authenticationLogin'));
+            if($this->session->getAuthorisation()) {
+                $this->dispatchEvent(MembersEvents::MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
+            }
+        }
     }
 
     /**

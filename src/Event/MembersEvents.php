@@ -14,6 +14,7 @@ namespace Bolt\Extension\Bolt\Members\Event;
 class MembersEvents
 {
     const MEMBER_LOGIN = 'member.login';
+    const MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED = 'member.login.failed.account_disabled';
     const MEMBER_LOGOUT = 'member.logout';
     const MEMBER_ENABLE = 'member.enable';
     const MEMBER_DISABLE = 'member.disable';
