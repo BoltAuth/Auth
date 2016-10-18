@@ -82,15 +82,15 @@ class MembersTwigExtension extends TwigExtension
             new TwigSimpleFunction('member_providers',              [$this, 'getProviders'],    $safe),
             new TwigSimpleFunction('members_auth_switcher',         [$this, 'renderSwitcher'],  $safe + $env),
             new TwigSimpleFunction('members_auth_associate',        [$this, 'renderAssociate'], $safe + $env),
-            new TwigSimpleFunction('members_auth_login',            [$this, 'renderLogin'],     $safe),
-            new TwigSimpleFunction('members_auth_logout',           [$this, 'renderLogout'],    $safe),
+            new TwigSimpleFunction('members_auth_login',            [$this, 'renderLogin'],     $safe + $env),
+            new TwigSimpleFunction('members_auth_logout',           [$this, 'renderLogout'],    $safe + $env),
             new TwigSimpleFunction('members_link_auth_login',       [$this, 'getLinkLogin'],    $safe),
             new TwigSimpleFunction('members_link_auth_logout',      [$this, 'getLinkLogout'],   $safe),
             new TwigSimpleFunction('members_link_auth_reset',       [$this, 'getLinkReset'],    $safe),
             new TwigSimpleFunction('members_link_profile_edit',     [$this, 'getLinkEdit'],     $safe),
             new TwigSimpleFunction('members_link_profile_register', [$this, 'getLinkRegister'], $safe),
-            new TwigSimpleFunction('members_profile_edit',          [$this, 'renderEdit'],      $safe),
-            new TwigSimpleFunction('members_profile_register',      [$this, 'renderRegister'],  $safe),
+            new TwigSimpleFunction('members_profile_edit',          [$this, 'renderEdit'],      $safe + $env),
+            new TwigSimpleFunction('members_profile_register',      [$this, 'renderRegister'],  $safe + $env),
         ];
     }
 
@@ -294,16 +294,17 @@ class MembersTwigExtension extends TwigExtension
     /**
      * Display the registration form.
      *
-     * @param string $template
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
      *
      * @return TwigMarkup
      */
-    public function renderRegister($template = null)
+    public function renderRegister(TwigEnvironment $twigEnvironment, $template = null)
     {
         $context = ['transitional' => $this->session->isTransitional()];
         $template = $template ?: $this->config->getTemplate('profile', 'register');
         $form = $this->formManager->getFormProfileRegister(new Request(), false);
-        $html = $this->formManager->renderForms($form, $template, $context);
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template, $context);
 
         return new TwigMarkup($html, 'UTF-8');
     }
