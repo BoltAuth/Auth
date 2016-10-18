@@ -124,7 +124,7 @@ abstract class AbstractHandler
             $this->session->removeAuthorisation();
             $this->feedback->info('Logout was successful.');
             $this->setDebugMessage(sprintf('Logout was route complete for %s', $request->getRequestUri()));
-        }else{
+        } else {
             $this->setDebugMessage('Logout was no required. Members session not found.');
         }
     }
@@ -133,7 +133,7 @@ abstract class AbstractHandler
      * Process the login request.
      *
      * @param Request $request
-     * @param string $grantType
+     * @param string  $grantType
      *
      * @throws Ex\DisabledAccountException
      * @throws Ex\InvalidAuthorisationRequestException

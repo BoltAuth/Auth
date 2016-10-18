@@ -559,7 +559,6 @@ class Config
                 'members'      => 'membership',
             ],
             'forms'         => [
-
                 'templates' => [
                     'profile'        => [
                         'parent'   => '@Members/profile/_profile.twig',

@@ -37,9 +37,9 @@ class Manager implements EventSubscriberInterface
     /**
      * Constructor.
      *
-     * @param Records $records
-     * @param Config $config
-     * @param Users $users
+     * @param Records                  $records
+     * @param Config                   $config
+     * @param Users                    $users
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(Records $records, Config $config, Users $users, EventDispatcherInterface $dispatcher)
