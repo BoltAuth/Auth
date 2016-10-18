@@ -2,7 +2,6 @@
 
 namespace Bolt\Extension\Bolt\Members\Config;
 
-use Bolt\Helpers\Arr;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
@@ -52,7 +51,7 @@ class Config
     public function __construct(array $extensionConfig)
     {
         $defaultConfig = $this->getDefaultConfig();
-        $config = Arr::mergeRecursiveDistinct($defaultConfig, $extensionConfig);
+        $config = array_replace_recursive($defaultConfig, $extensionConfig);
 
         $this->debug = (boolean) $config['debug'];
         $this->registration = $config['registration'];
