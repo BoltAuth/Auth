@@ -188,12 +188,12 @@ class Config
      */
     public function getTemplate($type, $key)
     {
-        if (!$this->forms->get('templates')->has($type) || !$this->forms->get('templates')->get($type)->has($key)) {
-            throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $type, $key));
-        }
-
         if ($key === 'default') {
             return  sprintf('@Members/%s/_sub/%s.twig', $key, $key);
+        }
+
+        if (!$this->forms->get('templates')->has($type) || !$this->forms->get('templates')->get($type)->has($key)) {
+            throw new \BadMethodCallException(sprintf('Template of type "%s" and name of "%s" does not exist in configuration!', $type, $key));
         }
 
         return $this->forms->get('templates')->get($type)->get($key);
