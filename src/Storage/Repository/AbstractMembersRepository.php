@@ -66,10 +66,12 @@ abstract class AbstractMembersRepository extends Repository
     public function getPager(QueryBuilder $query, $column)
     {
         if ($this->pager === null) {
-            $select = $this->createSelectForCountField(static::ALIAS . '.' . $column);
-            $callback = function (QueryBuilder $queryBuilder) use ($select) {
+            $countField = static::ALIAS . '.' . $column;
+            $select = $this->createSelectForCountField($countField);
+            $callback = function (QueryBuilder $queryBuilder) use ($select, $countField) {
                 $queryBuilder
                     ->select($select)
+                    ->addGroupBy($countField)
                     ->setMaxResults(1)
                 ;
             };
