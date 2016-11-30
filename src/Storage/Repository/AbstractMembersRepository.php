@@ -71,10 +71,11 @@ abstract class AbstractMembersRepository extends Repository
             $callback = function (QueryBuilder $queryBuilder) use ($select, $countField) {
                 $queryBuilder
                     ->select($select)
-                    ->addGroupBy($countField)
+                    ->orderBy(1)
                     ->setMaxResults(1)
                 ;
             };
+
             $adapter = new DoctrineDbalAdapter($query, $callback);
             $this->pager = new Pager\Pager($adapter, $this->getEntityBuilder());
         }
