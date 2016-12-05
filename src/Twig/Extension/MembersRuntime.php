@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Twig;
+namespace Bolt\Extension\Bolt\Members\Twig\Extension;
 
 use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
@@ -14,7 +14,7 @@ use Twig_Markup as TwigMarkup;
 use Twig_SimpleFunction as TwigSimpleFunction;
 
 /**
- * Twig functions.
+ * Twig runtime functions.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -22,7 +22,7 @@ use Twig_SimpleFunction as TwigSimpleFunction;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersTwigExtension extends TwigExtension
+class MembersRuntime extends TwigExtension
 {
     /** @var Config */
     private $config;
@@ -56,42 +56,6 @@ class MembersTwigExtension extends TwigExtension
         $this->records = $records;
         $this->session = $session;
         $this->generator = $generator;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'Members';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFunctions()
-    {
-        $safe = ['is_safe' => ['html'], 'is_safe_callback' => true];
-        $env  = ['needs_environment' => true];
-
-        return [
-            new TwigSimpleFunction('is_member',                     [$this, 'isMember'],        $safe),
-            new TwigSimpleFunction('member',                        [$this, 'getMember'],       $safe),
-            new TwigSimpleFunction('member_meta',                   [$this, 'getMemberMeta'],   $safe),
-            new TwigSimpleFunction('member_has_role',               [$this, 'hasRole'],         $safe),
-            new TwigSimpleFunction('member_providers',              [$this, 'getProviders'],    $safe),
-            new TwigSimpleFunction('members_auth_switcher',         [$this, 'renderSwitcher'],  $safe + $env),
-            new TwigSimpleFunction('members_auth_associate',        [$this, 'renderAssociate'], $safe + $env),
-            new TwigSimpleFunction('members_auth_login',            [$this, 'renderLogin'],     $safe + $env),
-            new TwigSimpleFunction('members_auth_logout',           [$this, 'renderLogout'],    $safe + $env),
-            new TwigSimpleFunction('members_link_auth_login',       [$this, 'getLinkLogin'],    $safe),
-            new TwigSimpleFunction('members_link_auth_logout',      [$this, 'getLinkLogout'],   $safe),
-            new TwigSimpleFunction('members_link_auth_reset',       [$this, 'getLinkReset'],    $safe),
-            new TwigSimpleFunction('members_link_profile_edit',     [$this, 'getLinkEdit'],     $safe),
-            new TwigSimpleFunction('members_link_profile_register', [$this, 'getLinkRegister'], $safe),
-            new TwigSimpleFunction('members_profile_edit',          [$this, 'renderEdit'],      $safe + $env),
-            new TwigSimpleFunction('members_profile_register',      [$this, 'renderRegister'],  $safe + $env),
-        ];
     }
 
     /**
