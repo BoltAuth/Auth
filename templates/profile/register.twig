@@ -35,8 +35,8 @@
             {% if transitional %}
                 {% do form_register.password.setRendered %}
             {% else %}
-                {{ form_row(form_register.password.first) }}
-                {{ form_row(form_register.password.second) }}
+                {{ form_widget(form_profile.password.first, { 'attr': {'autocomplete': 'new-password'}}) }}
+                {{ form_widget(form_profile.password.second, { 'attr': {'autocomplete': 'new-password'}}) }}
             {% endif %}
 
                 <br>

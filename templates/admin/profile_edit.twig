@@ -37,11 +37,11 @@
 
                 {{ form_label(form_profile.password.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
                 {{ form_errors(form_profile.password.first) }}
-                {{ form_widget(form_profile.password.first, { 'attr': {'class': 'form-control large'}, 'required': false }) }}
+                {{ form_widget(form_profile.password.first, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
 
                 {{ form_label(form_profile.password.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
                 {{ form_errors(form_profile.password.second) }}
-                {{ form_widget(form_profile.password.second, { 'attr': {'class': 'form-control large'}, 'required': false }) }}
+                {{ form_widget(form_profile.password.second, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
 
                 {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
 
