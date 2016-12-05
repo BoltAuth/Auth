@@ -72,20 +72,31 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
+        $app['twig.runtime.members'] = function ($app) {
+            return new Twig\Extension\MembersRuntime(
+                $app['members.config'],
+                $app['members.forms.manager'],
+                $app['members.records'],
+                $app['members.session'],
+                $app['url_generator.lazy']
+            );
+        };
+
+        $app['twig.runtimes'] = $app->extend(
+            'twig.runtimes',
+            function (array $runtimes) {
+                return $runtimes + [
+                        Twig\Extension\MembersRuntime::class => 'twig.runtime.members',
+                    ];
+            }
+        );
+
         // Add the Twig Extension.
         $app['twig'] = $app->share(
             $app->extend(
                 'twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(
-                        new Twig\MembersTwigExtension(
-                            $app['members.config'],
-                            $app['members.forms.manager'],
-                            $app['members.records'],
-                            $app['members.session'],
-                            $app['url_generator.lazy']
-                        )
-                    );
+                    $twig->addExtension(new Twig\Extension\MembersExtension());
 
                     return $twig;
                 }
@@ -96,15 +107,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app->extend(
                 'safe_twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(
-                        new Twig\MembersTwigExtension(
-                            $app['members.config'],
-                            $app['members.forms.manager'],
-                            $app['members.records'],
-                            $app['members.session'],
-                            $app['url_generator.lazy']
-                        )
-                    );
+                    $twig->addExtension(new Twig\Extension\MembersExtension());
 
                     return $twig;
                 }
