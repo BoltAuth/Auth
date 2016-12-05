@@ -27,7 +27,7 @@
             {% elseif stage == 'password' %}
                 {{ _self.recovery_finish(form_profile_recovery) }}
             {% elseif stage == 'submitted' %}
-                <p>An email has been send to {{ email }}. Please follow the instructions to complete the process.</p>
+                <p>An email has been sent to {{ email }}. Please follow the instructions to complete the process.</p>
             {% elseif stage == 'reset' %}
                 <p>Password reset was successful!</p>
                 <p><a href="{{ link }}">Click here to go to the login page…</a></p>
