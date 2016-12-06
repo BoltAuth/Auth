@@ -17,6 +17,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Bolt\Extension\Bolt\Members\Storage\Records;
 use Bolt\Extension\Bolt\Members\Twig;
 use Bolt\Storage\Database\Schema\Comparison\IgnoredChange;
+use Bolt\Version as BoltVersion;
 use Pimple as Container;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -72,6 +73,19 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
+        if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
+            if (!isset($app['twig.runtimes'])) {
+                $app['twig.runtimes'] = function () {
+                    return [];
+                };
+            }
+            if (!isset($app['twig.runtime_loader'])) {
+                $app['twig.runtime_loader'] = function ($app) {
+                    return new Twig\RuntimeLoader($app, $app['twig.runtimes']);
+                };
+            }
+        }
+
         $app['twig.runtime.members'] = function ($app) {
             return new Twig\Extension\MembersRuntime(
                 $app['members.config'],
@@ -97,6 +111,10 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 'twig',
                 function (\Twig_Environment $twig, $app) {
                     $twig->addExtension(new Twig\Extension\MembersExtension());
+
+                    if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
+                        $twig->addRuntimeLoader($app['twig.runtime_loader']);
+                    }
 
                     return $twig;
                 }
