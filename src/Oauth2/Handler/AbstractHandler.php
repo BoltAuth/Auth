@@ -157,6 +157,13 @@ abstract class AbstractHandler
             if ($this->session->isTransitional()) {
                 $this->handleAccountTransition($accessToken);
             }
+        } elseif ($this->config->isRegistrationAutomatic()) {
+            $accessToken = $this->getAccessToken($grantType, $options);
+            $this->setSession($accessToken);
+
+            if ($this->session->isTransitional()) {
+                $this->handleAccountTransition($accessToken);
+            }
         } else {
             //either no Auth or more probably a disabled account... anyway we cant continue
             $exceptionMsg = 'No valid authorisation, the account may be disabled';
@@ -425,7 +432,7 @@ abstract class AbstractHandler
 
         $event = new MembersLoginEvent();
         $event->setAccount($authorisation->getAccount());
-        
+
         try {
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {

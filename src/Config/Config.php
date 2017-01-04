@@ -242,6 +242,14 @@ class Config
     }
 
     /**
+     * @return boolean
+     */
+    public function isRegistrationAutomatic()
+    {
+        return $this->registration['auto'];
+    }
+
+    /**
      * @return array
      */
     public function getRegistration()
@@ -532,6 +540,7 @@ class Config
             'debug'        => false,
             'registration' => [
                 'enabled'      => true,
+                'auto'         => false,
             ],
             'notification' => [
                 'name'  => null,
