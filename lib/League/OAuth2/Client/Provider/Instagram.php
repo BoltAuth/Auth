@@ -2,7 +2,7 @@
 
 namespace League\OAuth2\Client\Provider;
 
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\Exception\InstagramIdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,6 +21,23 @@ class Instagram extends AbstractProvider
     public $defaultScopes = ['basic'];
 
     /**
+     * Default host
+     *
+     * @var string
+     */
+    protected $host = 'https://api.instagram.com';
+
+    /**
+     * Gets host.
+     *
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
      * Get the string used to separate scopes.
      *
      * @return string
@@ -37,7 +54,7 @@ class Instagram extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        return 'https://api.instagram.com/oauth/authorize';
+        return $this->host.'/oauth/authorize';
     }
 
     /**
@@ -49,7 +66,7 @@ class Instagram extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        return 'https://api.instagram.com/oauth/access_token';
+        return $this->host.'/oauth/access_token';
     }
 
     /**
@@ -61,7 +78,7 @@ class Instagram extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return 'https://api.instagram.com/v1/users/self?access_token='.$token;
+        return $this->host.'/v1/users/self?access_token='.$token;
     }
 
     /**
@@ -76,7 +93,7 @@ class Instagram extends AbstractProvider
      */
     public function getAuthenticatedRequest($method, $url, $token, array $options = [])
     {
-        $parsedUrl = \parse_url($url);
+        $parsedUrl = parse_url($url);
         $queryString = array();
 
         if (isset($parsedUrl['query'])) {
@@ -87,8 +104,8 @@ class Instagram extends AbstractProvider
             $queryString['access_token'] = (string) $token;
         }
 
-        $url = \http_build_url($url, [
-            'query' => \http_build_query($queryString),
+        $url = http_build_url($url, [
+            'query' => http_build_query($queryString),
         ]);
 
         return $this->createRequest($method, $url, null, $options);
@@ -111,29 +128,22 @@ class Instagram extends AbstractProvider
      * Check a provider response for errors.
      *
      * @link   https://instagram.com/developer/endpoints/
-     * @throws IdentityProviderException
+     *
      * @param  ResponseInterface $response
-     * @param  string $data Parsed response data
-     * @return void
+     * @param  string            $data Parsed response data
+     *
+     * @throws Exception\IdentityProviderException
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
         // Standard error response format
         if (!empty($data['meta']['error_type'])) {
-            throw new IdentityProviderException(
-                $data['meta']['error_message'] ?: $response->getReasonPhrase(),
-                $data['meta']['code'] ?: $response->getStatusCode(),
-                $response
-            );
+            throw InstagramIdentityProviderException::clientException($response, $data);
         }
 
         // OAuthException error response format
         if (!empty($data['error_type'])) {
-            throw new IdentityProviderException(
-                $data['error_message'] ?: $response->getReasonPhrase(),
-                $data['code'] ?: $response->getStatusCode(),
-                $response
-            );
+            throw InstagramIdentityProviderException::oauthException($response, $data);
         }
     }
 
@@ -147,5 +157,19 @@ class Instagram extends AbstractProvider
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new InstagramResourceOwner($response);
+    }
+
+    /**
+     * Sets host.
+     *
+     * @param string $host
+     *
+     * @return string
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+
+        return $this;
     }
 }

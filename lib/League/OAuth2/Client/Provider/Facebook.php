@@ -93,7 +93,7 @@ class Facebook extends AbstractProvider
         $fields = implode(',', [
             'id', 'name', 'first_name', 'last_name',
             'email', 'hometown', 'bio', 'picture.type(large){url}',
-            'cover{source}', 'gender', 'locale', 'link',
+            'gender', 'locale', 'link',
         ]);
 
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.$fields.'&access_token='.$token;

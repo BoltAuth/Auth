@@ -71,7 +71,9 @@ class MicrosoftResourceOwner implements ResourceOwnerInterface
     /**
      * Set user imageurl
      *
-     * @return string|null
+     * @param string $imageurl
+     *
+     * @return MicrosoftResourceOwner
      */
     public function setImageurl($imageurl)
     {

@@ -46,11 +46,6 @@ class AccessToken implements JsonSerializable
     protected $resourceOwnerId;
 
     /**
-     * @var array
-     */
-    protected $values = [];
-
-    /**
      * Constructs an access token.
      *
      * @param array $options An array of options returned by the service provider
@@ -89,24 +84,12 @@ class AccessToken implements JsonSerializable
 
             $this->expires = $expires;
         }
-
-        // Capure any additional values that might exist in the token but are
-        // not part of the standard response. Vendors will sometimes pass
-        // additional user data this way.
-        $this->values = array_diff_key($options, array_flip([
-            'access_token',
-            'resource_owner_id',
-            'refresh_token',
-            'expires_in',
-            'expires',
-        ]));
     }
 
     /**
      * Check if a value is an expiration timestamp or second value.
      *
-     * @param integer $value
-     * @return bool
+     * @return boolean
      */
     protected function isExpirationTimestamp($value)
     {
@@ -174,16 +157,6 @@ class AccessToken implements JsonSerializable
     }
 
     /**
-     * Returns additional vendor values stored in the token.
-     *
-     * @return array
-     */
-    public function getValues()
-    {
-        return $this->values;
-    }
-
-    /**
      * Returns the token key.
      *
      * @return string
@@ -201,7 +174,7 @@ class AccessToken implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        $parameters = $this->values;
+        $parameters = [];
 
         if ($this->accessToken) {
             $parameters['access_token'] = $this->accessToken;
@@ -212,11 +185,7 @@ class AccessToken implements JsonSerializable
         }
 
         if ($this->expires) {
-            $parameters['expires'] = $this->expires;
-        }
-
-        if ($this->resourceOwnerId) {
-            $parameters['resource_owner_id'] = $this->resourceOwnerId;
+            $parameters['expires_in'] = $this->expires - time();
         }
 
         return $parameters;

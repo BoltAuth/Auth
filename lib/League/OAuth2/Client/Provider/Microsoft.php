@@ -27,6 +27,8 @@ class Microsoft extends AbstractProvider
     /**
      * Get access token url to retrieve token
      *
+     * @param array $params
+     *
      * @return string
      */
     public function getBaseAccessTokenUrl(array $params)
@@ -47,9 +49,11 @@ class Microsoft extends AbstractProvider
     /**
      * Check a provider response for errors.
      *
-     * @throws IdentityProviderException
+     *
      * @param  ResponseInterface $response
-     * @return void
+     * @param array|string       $data
+     *
+     * @throws IdentityProviderException
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
@@ -67,7 +71,8 @@ class Microsoft extends AbstractProvider
      *
      * @param array $response
      * @param AccessToken $token
-     * @return \League\OAuth2\Client\Provider\UserInterface
+     *
+     * @return MicrosoftResourceOwner
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {

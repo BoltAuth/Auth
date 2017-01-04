@@ -19,10 +19,6 @@ class FacebookUser implements ResourceOwnerInterface
         if (!empty($response['picture']['data']['url'])) {
             $this->data['picture_url'] = $response['picture']['data']['url'];
         }
-
-        if (!empty($response['cover']['source'])) {
-            $this->data['cover_photo_url'] = $response['cover']['source'];
-        }
     }
 
     /**
@@ -96,23 +92,13 @@ class FacebookUser implements ResourceOwnerInterface
     }
 
     /**
-     * Returns the profile picture of the user as a string if present.
+     * Returns the picture of the user as a GraphPicture
      *
-     * @return string|null
+     * @return array|null
      */
     public function getPictureUrl()
     {
         return $this->getField('picture_url');
-    }
-
-    /**
-     * Returns the cover photo URL of the user as a string if present.
-     *
-     * @return string|null
-     */
-    public function getCoverPhotoUrl()
-    {
-        return $this->getField('cover_photo_url');
     }
 
     /**
