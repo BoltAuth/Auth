@@ -145,14 +145,16 @@ class Authentication extends AbstractController
 
         // Set the return redirect.
         if ($config->getRedirectLogin()) {
+            $redirect = $request->get('redirect') ?: $config->getRedirectLogin();
             $this->getMembersSession()
                 ->clearRedirects()
-                ->addRedirect($config->getRedirectLogin())
+                ->addRedirect($redirect)
             ;
         } elseif ($request->headers->get('referer') !== $request->getUri()) {
+            $redirect = $request->get('redirect') ?: $request->headers->get('referer', $app['resources']->getUrl('hosturl'));
             $this->getMembersSession()
                 ->clearRedirects()
-                ->addRedirect($request->headers->get('referer', $app['resources']->getUrl('hosturl')))
+                ->addRedirect($redirect)
             ;
         }
 
