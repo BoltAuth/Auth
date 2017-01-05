@@ -381,9 +381,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         // Provider manager
         $app['members.oauth.provider.manager'] = $app->share(
             function ($app) {
-                $rootUrl = $app['resources']->getUrl('hosturl');
-
-                return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $rootUrl);
+                return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $app['url_generator.lazy']);
             }
         );
 
