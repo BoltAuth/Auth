@@ -7,10 +7,8 @@ use Bolt\Extension\Bolt\Members\Storage;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Session state class.
@@ -21,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Session implements EventSubscriberInterface
+class Session
 {
     const COOKIE_AUTHORISATION = 'members';
     const SESSION_AUTHORISATION = 'members-authorisation';
@@ -277,22 +275,6 @@ class Session implements EventSubscriberInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::RESPONSE => [
-                ['persistData'],
-                ['saveRedirects'],
-            ],
-            KernelEvents::REQUEST => [
-                ['loadRedirects'],
-            ],
-        ];
-    }
-
-    /**
      * Persist session data to storage.
      */
     public function persistData()
@@ -422,8 +404,7 @@ class Session implements EventSubscriberInterface
      */
     public function clearRedirects()
     {
-        $this->redirectStack = null;
-        $this->redirectStack[] = new Redirect($this->homepageUrl);
+        $this->redirectStack = [new Redirect($this->homepageUrl)];
 
         return $this;
     }
