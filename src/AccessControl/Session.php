@@ -43,20 +43,20 @@ class Session implements EventSubscriberInterface
     /** @var SessionInterface */
     private $session;
     /** @var string */
-    private $rootUrl;
+    private $homepageUrl;
 
     /**
      * Constructor.
      *
      * @param Storage\Records  $records
      * @param SessionInterface $session
-     * @param string           $rootUrl
+     * @param string           $homepageUrl
      */
-    public function __construct(Storage\Records $records, SessionInterface $session, $rootUrl)
+    public function __construct(Storage\Records $records, SessionInterface $session, $homepageUrl)
     {
         $this->records = $records;
         $this->session = $session;
-        $this->rootUrl = $rootUrl;
+        $this->homepageUrl = $homepageUrl;
     }
 
     /**
@@ -401,14 +401,14 @@ class Session implements EventSubscriberInterface
     public function popRedirect()
     {
         if (empty($this->redirectStack)) {
-            return new Redirect($this->rootUrl);
+            return new Redirect($this->homepageUrl);
         }
 
         $redirect = end($this->redirectStack);
         $key = key($this->redirectStack);
         unset($this->redirectStack[$key]);
         if (empty($this->redirectStack)) {
-            $redirect = new Redirect($this->rootUrl);
+            $redirect = new Redirect($this->homepageUrl);
             $this->redirectStack[] = $redirect;
         }
 
@@ -423,7 +423,7 @@ class Session implements EventSubscriberInterface
     public function clearRedirects()
     {
         $this->redirectStack = null;
-        $this->redirectStack[] = new Redirect('/');
+        $this->redirectStack[] = new Redirect($this->homepageUrl);
 
         return $this;
     }
@@ -444,7 +444,7 @@ class Session implements EventSubscriberInterface
     public function loadRedirects()
     {
         if ($this->session->isStarted()) {
-            $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect('/')]);
+            $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect($this->homepageUrl)]);
         }
     }
 
