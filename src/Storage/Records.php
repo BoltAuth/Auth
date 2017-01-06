@@ -344,7 +344,7 @@ class Records
      *
      * @param string $resourceOwner
      *
-     * @return Entity\Provider
+     * @return Entity\Provider[]
      */
     public function getProvisionByResourceOwner($resourceOwner)
     {
