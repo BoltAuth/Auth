@@ -299,7 +299,6 @@ class Authentication extends AbstractController
         }
 
         $response = new Response();
-        //$context = ['stage' => null, 'email' => null, 'link' => $app['url_generator']->generate('authenticationLogin')];
         $context = new ParameterBag(['stage' => null, 'email' => null, 'link' => $app['url_generator']->generate('authenticationLogin')]);
 
         if ($request->query->has('code')) {
