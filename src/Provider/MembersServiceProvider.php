@@ -225,19 +225,19 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                 return new Container(
                     [
                         // @codingStandardsIgnoreStart
-                        'account'      => $app->share(function () use ($app) {
+                        'account' => $app->share(function () use ($app) {
                             return $app['storage']->getRepository(Entity\Account::class);
                         }),
                         'account_meta' => $app->share(function () use ($app) {
                             return $app['storage']->getRepository(Entity\AccountMeta::class);
                         }),
-                        'oauth'        => $app->share(function () use ($app) {
+                        'oauth' => $app->share(function () use ($app) {
                             return $app['storage']->getRepository(Entity\Oauth::class);
                         }),
-                        'provider'     => $app->share(function () use ($app) {
+                        'provider' => $app->share(function () use ($app) {
                             return $app['storage']->getRepository(Entity\Provider::class);
                         }),
-                        'token'        => $app->share(function () use ($app) {
+                        'token' => $app->share(function () use ($app) {
                             return $app['storage']->getRepository(Entity\Token::class);
                         }),
                         // @codingStandardsIgnoreEnd
@@ -274,27 +274,27 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             function ($app) {
                 return new Container(
                     [
-                        'associate'                => $app->share(
+                        'associate' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\AssociateType($app['members.config']);
                             }
                         ),
-                        'login_oauth'              => $app->share(
+                        'login_oauth' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\LoginOauthType($app['members.config']);
                             }
                         ),
-                        'login_password'           => $app->share(
+                        'login_password' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\LoginPasswordType($app['members.config']);
                             }
                         ),
-                        'logout'                   => $app->share(
+                        'logout' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\LogoutType($app['members.config']);
                             }
                         ),
-                        'profile_edit'             => $app->share(
+                        'profile_edit' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileEditType($app['members.config']);
                             }
@@ -304,12 +304,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                                 return new Form\Type\ProfileRecoveryRequestType($app['members.config']);
                             }
                         ),
-                        'profile_recovery_submit'  => $app->share(
+                        'profile_recovery_submit' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileRecoverySubmitType($app['members.config']);
                             }
                         ),
-                        'profile_register'         => $app->share(
+                        'profile_register' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileRegisterType(
                                     $app['members.config'],
@@ -318,7 +318,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                                 );
                             }
                         ),
-                        'profile_view'             => $app->share(
+                        'profile_view' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileViewType($app['members.config']);
                             }
