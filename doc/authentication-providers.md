@@ -8,6 +8,7 @@ Authentication Providers
       * [Google](#google)
       * [Facebook](#facebook)
       * [GitHub](#github)
+      * [Generic OAuth2](#generic-oauth2)
 
 
 ## Guide
@@ -21,6 +22,7 @@ Authentication Providers
 | `google`   | Google                                 |
 | `facebook` | Facebook                               |
 | `github`   | GitHub                                 |
+| `generic`  | Generic OAuth2 provider                |
 
 
 ### Set up
@@ -36,7 +38,7 @@ e.g. using default routes for the domain `example.com`, and configuring
 GitHub as the OAuth provider:
 
 ```
-https://example.com/authentication?provider=GitHub
+https://example.com/authentication?provider=github
 ```
 
 #### Obtain Provider Keys
@@ -111,9 +113,26 @@ providers:
 
 ```yaml
 providers:
+    github:
         enabled: true
         keys:
             client_id:
             client_secret:
         scopes: [ user ]
+```
+
+##### Generic OAuth2
+
+```yaml
+providers:
+    generic:
+        enabled: true
+        keys:
+            client_id: 
+            client_secret: 
+        scopes: [  ]
+        options:
+            urlAuthorize: https://oauth2.example.com/oauth/authorize
+            urlAccessToken: https://oauth2.example.com/oauth/token
+            urlResourceOwnerDetails: https://oauth2.example.com/oauth/me
 ```
