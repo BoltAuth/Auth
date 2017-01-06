@@ -84,19 +84,23 @@ class Local extends AbstractHandler
             ->addAccessToken('local', $accessToken)
             ->createAuthorisation($account->getGuid())
         ;
-
+        $this->setSession($accessToken);
         $request->query->set('code', Uuid::uuid4()->toString());
 
         try {
             parent::process($request, $grantType);
-            $this->finish($request);
-            $this->feedback->info('Login successful.');
         } catch (DisabledAccountException $ex) {
             $this->session->addRedirect($this->urlGenerator->generate('authenticationLogin'));
             if ($this->session->getAuthorisation()) {
                 $this->dispatchEvent(MembersEvents::MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
             }
+            $this->feedback->debug('Login failed: Account disabled?');
+
+            return $this->session->popRedirect()->getResponse();
         }
+
+        $this->finish($request);
+        $this->feedback->info('Login successful.');
 
         return $this->session->popRedirect()->getResponse();
     }
