@@ -142,16 +142,19 @@ class Authentication extends AbstractController
         $this->assertSecure($app, $request);
 
         $config = $this->getMembersConfig();
+        $loginRedirect = $config->getRedirectLogin();
+        $homepage = $app['url_generator']->generate('homepage');
+        $referer = $request->headers->get('referer');
 
         // Set the return redirect.
         if ($request->get('redirect')) {
             $redirect = $request->get('redirect');
-        } elseif ($config->getRedirectLogin()) {
-            $redirect = $request->get('redirect') ?: $config->getRedirectLogin();
-        } elseif ($request->headers->get('referer') !== $request->getUri()) {
-            $redirect = $request->headers->get('referer', $app['url_generator']->generate('homepage'));
+        } elseif ($loginRedirect) {
+            $redirect = $loginRedirect;
+        } elseif ($referer !== $request->getUri()) {
+            $redirect = $request->headers->get('referer');
         } else {
-            $redirect = $request->getUri();
+            $redirect = $homepage;
         }
         $this->getMembersSession()
             ->clearRedirects()
