@@ -144,19 +144,19 @@ class Authentication extends AbstractController
         $config = $this->getMembersConfig();
 
         // Set the return redirect.
-        if ($config->getRedirectLogin()) {
+        if ($request->get('redirect')) {
+            $redirect = $request->get('redirect');
+        } elseif ($config->getRedirectLogin()) {
             $redirect = $request->get('redirect') ?: $config->getRedirectLogin();
-            $this->getMembersSession()
-                ->clearRedirects()
-                ->addRedirect($redirect)
-            ;
         } elseif ($request->headers->get('referer') !== $request->getUri()) {
-            $redirect = $request->get('redirect') ?: $request->headers->get('referer', $app['resources']->getUrl('hosturl'));
-            $this->getMembersSession()
-                ->clearRedirects()
-                ->addRedirect($redirect)
-            ;
+            $redirect = $request->headers->get('referer', $app['url_generator']->generate('homepage'));
+        } else {
+            $redirect = $request->getUri();
         }
+        $this->getMembersSession()
+            ->clearRedirects()
+            ->addRedirect($redirect)
+        ;
 
         $builder = $this->getMembersFormsManager()->getFormLogin($request);
         /** @var Form $oauthForm */
