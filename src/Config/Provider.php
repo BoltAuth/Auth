@@ -29,6 +29,8 @@ class Provider
     protected $clientSecret;
     /** @var array */
     protected $scopes;
+    /** @var array */
+    protected $options;
 
     /**
      * Constructor.
@@ -46,6 +48,7 @@ class Provider
         $this->clientId = $providerConfig['keys']['client_id'];
         $this->clientSecret = $providerConfig['keys']['client_secret'];
         $this->scopes = $providerConfig['scopes'];
+        $this->options = $providerConfig['options'];
 
         if ($this->clientId === null || $this->clientSecret === null) {
             $this->enabled = false;
@@ -195,6 +198,26 @@ class Provider
     }
 
     /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return Provider
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
      * @param array $providerConfig
      *
      * @return array
@@ -212,6 +235,7 @@ class Provider
             ],
             'scopes'  => null,
             'enabled' => false,
+            'options' => [],
         ];
 
         return Arr::mergeRecursiveDistinct($default, $providerConfig);

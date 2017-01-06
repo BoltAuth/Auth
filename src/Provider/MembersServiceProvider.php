@@ -398,13 +398,6 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        // Generic OAuth provider object
-        $app['members.oauth.provider.generic'] = $app->protect(
-            function () {
-                return new Provider\Generic([]);
-            }
-        );
-
         // Local OAuth provider object
         $app['members.oauth.provider.local'] = $app->protect(
             function () {
