@@ -70,7 +70,6 @@ class Config
         foreach ($config['providers'] as $name => $provider) {
             $this->providers[strtolower($name)] = new Provider($name, $provider);
         }
-        $this->providers['generic'] = new Provider('Generic', []);
     }
 
     /**

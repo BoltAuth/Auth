@@ -165,7 +165,8 @@ class ProviderManager
             'clientSecret' => $providerConfig->getClientSecret(),
             'scope'        => $providerConfig->getScopes(),
             'redirectUri'  => $this->getCallbackUrl($providerName),
-        ];
+        ] + $providerConfig->getOptions();
+
         if ($providerName === 'facebook') {
             $options['graphApiVersion'] = 'v2.5';
         }
