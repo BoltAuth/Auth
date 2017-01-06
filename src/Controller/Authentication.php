@@ -159,6 +159,7 @@ class Authentication extends AbstractController
         }
 
         $builder = $this->getMembersFormsManager()->getFormLogin($request);
+        /** @var Form $oauthForm */
         $oauthForm = $builder->getForm(MembersForms::FORM_LOGIN_OAUTH);
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
@@ -167,6 +168,7 @@ class Authentication extends AbstractController
             }
         }
 
+        /** @var Form $associateForm */
         $associateForm = $builder->getForm(MembersForms::FORM_ASSOCIATE);
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
@@ -175,6 +177,7 @@ class Authentication extends AbstractController
             }
         }
 
+        /** @var Form $passwordForm */
         $passwordForm = $builder->getForm(MembersForms::FORM_LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
             $this->getMembersOauthProviderManager()->setProvider($app, 'local');
