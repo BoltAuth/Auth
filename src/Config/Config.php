@@ -99,6 +99,10 @@ class Config
      */
     public function getProvider($provider)
     {
+        if (!isset($this->providers[$provider])) {
+            throw new \BadMethodCallException(sprintf('Provider "%s" does not exist in configuration!', $provider));
+        }
+
         return $this->providers[$provider];
     }
 
