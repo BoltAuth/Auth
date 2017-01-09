@@ -8,6 +8,7 @@ use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
 use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
 use Bolt\Extension\Bolt\Members\Storage\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Ramsey\Uuid\Uuid;
@@ -168,19 +169,33 @@ class Membership extends AbstractController
             throw new HttpException(Response::HTTP_NOT_FOUND);
         }
 
+        $session = $app['members.session'];
+        $oauthMemberFinish = $session->hasAttribute('oauth.finalise')
+            ? $session->getAttribute('oauth.finalise')
+            : null
+        ;
+
         $builder = $this->getMembersFormsManager()->getFormProfileRegister($request, true);
         $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
 
         // Handle the form request data
         if ($form->isValid()) {
             $this->getMembersOauthProviderManager()->setProvider($app, 'local');
-
             /** @var Form\Entity\Profile $entity */
             $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
 
             try {
                 $this->getMembersRecordsProfile()->saveProfileRegisterForm($entity, $form, $this->getMembersOauthProvider(), 'local');
                 $this->getMembersFeedback()->debug(sprintf('Registered account %s (%s)', $entity->getEmail(), $entity->getGuid()));
+
+                if ($oauthMemberFinish) {
+                    /** @var ResourceOwnerInterface $resourceOwner */
+                    $resourceOwner = $oauthMemberFinish['resourceOwner'];
+                    $providerName = $oauthMemberFinish['providerName'];
+                    $guid = $this->getMembersSession()->getAuthorisation()->getGuid();
+                    $this->getMembersRecords()->createProviderEntity($guid, $providerName, $resourceOwner->getId());
+                    $session->removeAttribute('oauth.finalise');
+                }
 
                 // Redirect to our profile page.
                 $response = new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
@@ -192,7 +207,10 @@ class Membership extends AbstractController
             }
         }
 
-        $context = ['transitional' => $this->getMembersSession()->isTransitional()];
+        $context = [
+            'member'       => $oauthMemberFinish ? $oauthMemberFinish['resourceOwner'] : null,
+            'transitional' => $this->getMembersSession()->isTransitional()
+        ];
         $template = $this->getMembersConfig()->getTemplate('profile', 'register');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context);
 

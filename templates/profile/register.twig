@@ -29,8 +29,8 @@
 
             {{ form_errors(form_register) }}
 
-            {{ form_row(form_register.displayname) }}
-            {{ form_row(form_register.email) }}
+            {{ form_row(form_register.displayname, { 'value': member.name|default() } ) }}
+            {{ form_row(form_register.email, { 'value': member.email|default() } ) }}
 
             {% if transitional %}
                 {% do form_register.password.setRendered %}
