@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class Session
 {
     const COOKIE_AUTHORISATION = 'members';
+    const SESSION_ATTRIBUTES = 'members-session-attributes';
     const SESSION_AUTHORISATION = 'members-authorisation';
     const SESSION_STATE = 'members-oauth-state';
     const SESSION_TRANSITIONAL = 'members-transitional';
@@ -35,6 +36,8 @@ class Session
     protected $accessTokens;
     /** @var Storage\Entity\Provider */
     protected $transitionalProvider;
+    /** @var array */
+    protected $attribute;
 
     /** @var Storage\Records */
     private $records;
@@ -427,6 +430,63 @@ class Session
         if ($this->session->isStarted()) {
             $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect($this->homepageUrl)]);
         }
+    }
+
+    /**
+     * @param string $attribute
+     *
+     * @return bool
+     */
+    public function hasAttribute($attribute)
+    {
+        $attributes = $this->session->get(self::SESSION_ATTRIBUTES);
+        if (!is_array($attributes)) {
+            return false;
+        }
+
+        return isset($attributes[$attribute]);
+    }
+
+    /**
+     * @param string $attribute
+     *
+     * @return array
+     */
+    public function getAttribute($attribute)
+    {
+        $attributes = (array) $this->session->get(self::SESSION_ATTRIBUTES);
+        if (!isset($attributes[$attribute])) {
+            throw new \RuntimeException(sprintf('Requested attribute "%s" does not exist'), $attribute);
+        }
+
+        $value = $attributes[$attribute];
+        $attributes = empty($attributes) ? null : $attributes;
+        $this->session->set(self::SESSION_ATTRIBUTES, $attributes);
+
+        return $value;
+    }
+
+    /**
+     * @param string $attribute
+     */
+    public function removeAttribute($attribute)
+    {
+        $attributes = (array) $this->session->get(self::SESSION_ATTRIBUTES);
+        unset($attributes[$attribute]);
+
+        $this->session->set(self::SESSION_ATTRIBUTES, $attributes);
+    }
+
+    /**
+     * @param string $attribute
+     * @param string $value
+     */
+    public function setAttribute($attribute, $value)
+    {
+        $attributes = (array) $this->session->get(self::SESSION_ATTRIBUTES);
+        $attributes[$attribute] = $value;
+
+        $this->session->set(self::SESSION_ATTRIBUTES, $attributes);
     }
 
     /**

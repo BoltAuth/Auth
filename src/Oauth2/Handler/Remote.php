@@ -108,6 +108,8 @@ class Remote extends AbstractHandler
         try {
             $accessToken = $this->getAccessToken($grantType, $options);
             $resourceOwner = $this->getResourceOwner($accessToken);
+
+            $this->session->setAttribute('oauth.finalise', ['providerName' => $this->providerName, 'accessToken' => $accessToken, 'resourceOwner' => $resourceOwner]);
         } catch (\RuntimeException $e) {
             throw new DisabledAccountException('Exception encountered getting resource owner', $e->getCode(), $e);
         }

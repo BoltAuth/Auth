@@ -411,6 +411,8 @@ abstract class AbstractHandler
      *
      * @param string        $type          Either MembersEvents::MEMBER_LOGIN' or MembersEvents::MEMBER_LOGOUT
      * @param Authorisation $authorisation
+     *
+     * @throws \Exception
      */
     protected function dispatchEvent($type, Authorisation $authorisation)
     {
@@ -425,7 +427,7 @@ abstract class AbstractHandler
             $this->dispatcher->dispatch($type, $event);
         } catch (\Exception $e) {
             if ($this->config->isDebug()) {
-                dump($e);
+                throw($e);
             }
 
             $this->logger->critical('Members event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
