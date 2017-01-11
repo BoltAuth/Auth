@@ -109,7 +109,7 @@ class Remote extends AbstractHandler
             $accessToken = $this->getAccessToken($grantType, $options);
             $resourceOwner = $this->getResourceOwner($accessToken);
 
-            $this->session->setAttribute('oauth.finalise', [
+            $this->session->setAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA, [
                 'providerName'  => $this->providerName,
                 'accessToken'   => $accessToken,
                 'resourceOwner' => $resourceOwner

@@ -170,8 +170,8 @@ class Membership extends AbstractController
         }
 
         $session = $app['members.session'];
-        $oauthMemberFinish = $session->hasAttribute('oauth.finalise')
-            ? $session->getAttribute('oauth.finalise')
+        $oauthMemberFinish = $session->hasAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA)
+            ? $session->getAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA)
             : null
         ;
 
@@ -194,7 +194,7 @@ class Membership extends AbstractController
                     $providerName = $oauthMemberFinish['providerName'];
                     $guid = $this->getMembersSession()->getAuthorisation()->getGuid();
                     $this->getMembersRecords()->createProviderEntity($guid, $providerName, $resourceOwner->getId());
-                    $session->removeAttribute('oauth.finalise');
+                    $session->removeAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA);
                 }
 
                 // Redirect to our profile page.
