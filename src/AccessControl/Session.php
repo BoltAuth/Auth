@@ -28,6 +28,8 @@ class Session
     const SESSION_TRANSITIONAL = 'members-transitional';
     const REDIRECT_STACK = 'members-redirect-stack';
 
+    const SESSION_ATTRIBUTE_OAUTH_DATA = 'members-oauth-finalise';
+
     /** @var Authorisation */
     protected $authorisation;
     /** @var Redirect[] */
