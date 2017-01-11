@@ -28,6 +28,7 @@ class MembersExtension extends Extension
             new SimpleFunction('is_member',                     [MembersRuntime::class, 'isMember'],        $safe),
             new SimpleFunction('member',                        [MembersRuntime::class, 'getMember'],       $safe),
             new SimpleFunction('member_meta',                   [MembersRuntime::class, 'getMemberMeta'],   $safe),
+            new SimpleFunction('member_oauth',                  [MembersRuntime::class, 'getMemberOauth'],  $safe),
             new SimpleFunction('member_has_role',               [MembersRuntime::class, 'hasRole'],         $safe),
             new SimpleFunction('member_providers',              [MembersRuntime::class, 'getProviders'],    $safe),
             new SimpleFunction('members_auth_switcher',         [MembersRuntime::class, 'renderSwitcher'],  $safe + $env),

@@ -6,6 +6,7 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Storage;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
@@ -114,6 +115,34 @@ class MembersRuntime extends TwigExtension
         $meta = $this->records->getAccountMetaAll($guid);
 
         return $meta ?: null;
+    }
+
+    /**
+     * Fetch OAuth data from session if set.
+     *
+     * Data in session:
+     * [
+     *     'providerName'  => string
+     *     'accessToken'   => \League\OAuth2\Client\Token
+     *     'resourceOwner' => \League\OAuth2\Client\Provider\ResourceOwnerInterface
+     * ]
+     *
+     * @internal
+     *
+     * @return array|null
+     */
+    public function getMemberOauth()
+    {
+        if (!$this->session->hasAttribute(AccessControl\Session::SESSION_ATTRIBUTE_OAUTH_DATA)) {
+            return null;
+        }
+
+        $data = $this->session->getAttribute(AccessControl\Session::SESSION_ATTRIBUTE_OAUTH_DATA);
+        if (isset($data['resourceOwner']) && $data['resourceOwner'] instanceof ResourceOwnerInterface) {
+            return $data['resourceOwner'];
+        }
+
+        return null;
     }
 
     /**
