@@ -1,21 +1,19 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\EventListener;
+namespace Bolt\Extension\Bolt\Members\Handler;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
 use Swift_Mailer as SwiftMailer;
 use Swift_Mime_Message as SwiftMimeMessage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
 
 /**
- * Profile events listener.
+ * Profile handler base class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  *
@@ -23,88 +21,31 @@ use Twig_Environment as TwigEnvironment;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractProfileHandler implements EventSubscriberInterface
+abstract class AbstractProfileHandler
 {
     /** @var Config */
-    private $config;
+    protected $config;
     /** @var TwigEnvironment */
-    private $twig;
+    protected $twig;
     /** @var SwiftMailer */
-    private $mailer;
-    /** @var string */
-    private $siteUrl;
+    protected $mailer;
+    /** @var UrlGeneratorInterface */
+    protected $urlGenerator;
 
     /**
      * Constructor.
      *
-     * @param Config          $config
-     * @param TwigEnvironment $twig
-     * @param SwiftMailer     $mailer
-     * @param string          $siteUrl
+     * @param Config                $config
+     * @param TwigEnvironment       $twig
+     * @param SwiftMailer           $mailer
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, $siteUrl)
+    public function __construct(Config $config, TwigEnvironment $twig, SwiftMailer $mailer, UrlGeneratorInterface $urlGenerator)
     {
         $this->config = $config;
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->siteUrl = $siteUrl;
-    }
-
-    /**
-     * Profile registration event.
-     *
-     * @param MembersProfileEvent      $event
-     * @param string                   $eventName
-     * @param EventDispatcherInterface $dispatcher
-     */
-    public function onProfileRegister(MembersProfileEvent $event, $eventName, EventDispatcherInterface $dispatcher)
-    {
-        $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
-        $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
-        $subject = $this->twig->render($this->config->getTemplate('verification', 'subject'), ['member' => $event->getAccount()]);
-        $mailHtml = $this->getRegisterHtml($event);
-
-        /** @var SwiftMimeMessage $message */
-        $message = $this->mailer
-            ->createMessage('message')
-            ->setSubject($subject)
-            ->setBody(strip_tags($mailHtml))
-            ->addPart($mailHtml, 'text/html')
-        ;
-
-        try {
-            $message
-                ->setFrom($from)
-                ->setReplyTo($from)
-                ->setTo($email)
-            ;
-        } catch (\Swift_RfcComplianceException $e) {
-            // Dispatch an event
-            $event = new MembersNotificationFailureEvent($message, $e);
-            $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
-
-            return;
-        }
-
-        $event = new MembersNotificationEvent($message);
-        $this->queueMessage($message, $event, $dispatcher);
-    }
-
-    /**
-     * Password reset notification event.
-     *
-     * @param MembersNotificationEvent $event
-     * @param string                   $eventName
-     * @param EventDispatcherInterface $dispatcher
-     */
-    public function onProfileReset(MembersNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
-    {
-        if ($event->isPropagationStopped()) {
-            return;
-        }
-
-        $message = $event->getMessage();
-        $this->queueMessage($message, $event, $dispatcher);
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -114,7 +55,7 @@ abstract class AbstractProfileHandler implements EventSubscriberInterface
      *
      * @return array
      */
-    private function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event, EventDispatcherInterface $dispatcher)
+    protected function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event, EventDispatcherInterface $dispatcher)
     {
         $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
 
@@ -129,38 +70,5 @@ abstract class AbstractProfileHandler implements EventSubscriberInterface
         }
 
         return $failedRecipients;
-    }
-
-    /**
-     * Generate the HTML for the verification email.
-     *
-     * @param MembersProfileEvent $event
-     *
-     * @return string
-     */
-    private function getRegisterHtml(MembersProfileEvent $event)
-    {
-        $meta = $event->getMetaEntityNames();
-        $query = http_build_query(['code' => $meta[AccountVerification::KEY_NAME]]);
-        $context = [
-            'name'   => $event->getAccount()->getDisplayname(),
-            'email'  => $event->getAccount()->getEmail(),
-            'link'   => sprintf('%s/%s/profile/verify?%s', $this->siteUrl, $this->config->getUrlMembers(), $query),
-            'member' => $event->getAccount(),
-        ];
-        $mailHtml = $this->twig->render($this->config->getTemplate('verification', 'body'), $context);
-
-        return $mailHtml;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            MembersEvents::MEMBER_PROFILE_REGISTER => 'onProfileRegister',
-            MembersEvents::MEMBER_PROFILE_RESET    => 'onProfileReset',
-        ];
     }
 }
