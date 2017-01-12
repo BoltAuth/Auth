@@ -23,7 +23,7 @@ use Twig_Environment as TwigEnvironment;
  * @copyright Copyright (c) 2014-2016, Gawain Lynch
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class ProfileListener implements EventSubscriberInterface
+abstract class AbstractProfileHandler implements EventSubscriberInterface
 {
     /** @var Config */
     private $config;
