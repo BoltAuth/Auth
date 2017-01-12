@@ -7,6 +7,7 @@ use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
 use Bolt\Extension\Bolt\Members\EventListener;
+use Bolt\Extension\Bolt\Members\Handler as EventHandler;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
@@ -59,7 +60,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerForms($app);
         $this->registerOauthHandlers($app);
         $this->registerOauthProviders($app);
-        $this->registerEventListeners($app);
+        $this->registerEventHandlers($app);
 
         /** @deprecated. Do not use */
         $app['members.meta_fields'] = [];
@@ -432,15 +433,26 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         );
     }
 
-    private function registerEventListeners(Application $app)
+    private function registerEventHandlers(Application $app)
     {
-        $app['members.listener.profile'] = $app->share(
+        $app['members.event_handler.profile_register'] = $app->share(
             function ($app) {
-                return new EventListener\ProfileListener(
+                return new EventHandler\ProfileRegister(
                     $app['members.config'],
                     $app['twig'],
                     $app['mailer'],
-                    $app['resources']->getUrl('hosturl')
+                    $app['url_generator.lazy']
+                );
+            }
+        );
+
+        $app['members.event_handler.profile_reset'] = $app->share(
+            function ($app) {
+                return new EventHandler\ProfileReset(
+                    $app['members.config'],
+                    $app['twig'],
+                    $app['mailer'],
+                    $app['url_generator.lazy']
                 );
             }
         );
