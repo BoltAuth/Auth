@@ -6,10 +6,9 @@ use Bolt\Extension\Bolt\Members\AccessControl;
 use Bolt\Extension\Bolt\Members\Admin;
 use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Controller;
-use Bolt\Extension\Bolt\Members\EventListener;
-use Bolt\Extension\Bolt\Members\Handler as EventHandler;
 use Bolt\Extension\Bolt\Members\Feedback;
 use Bolt\Extension\Bolt\Members\Form;
+use Bolt\Extension\Bolt\Members\Handler as EventHandler;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
 use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
 use Bolt\Extension\Bolt\Members\Oauth2\Handler;
@@ -420,14 +419,14 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $app['members.oauth.provider.map'] = $app->share(
             function () {
                 return [
-                    'facebook'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Facebook',
-                    'generic'   => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Generic',
-                    'github'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\GitHub',
-                    'google'    => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Google',
-                    'instagram' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Instagram',
-                    'linkedin'  => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\LinkedIn',
-                    'local'     => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Local',
-                    'microsoft' => '\Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Microsoft',
+                    'facebook'  => Provider\Facebook::class,
+                    'generic'   => Provider\Generic::class,
+                    'github'    => Provider\GitHub::class,
+                    'google'    => Provider\Google::class,
+                    'instagram' => Provider\Instagram::class,
+                    'linkedin'  => Provider\LinkedIn::class,
+                    'local'     => Provider\Local::class,
+                    'microsoft' => Provider\Microsoft::class,
                 ];
             }
         );
