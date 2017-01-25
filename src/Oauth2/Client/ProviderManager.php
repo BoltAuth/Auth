@@ -156,7 +156,7 @@ class ProviderManager
         if (empty($providerConfig->getClientSecret())) {
             throw new Exception\ConfigurationException('Provider secret key required: ' . $providerName);
         }
-        if (empty($providerConfig->getScopes())) {
+        if (empty($providerConfig->getScopes()) && $providerName !== 'wpoauth') {
             throw new Exception\ConfigurationException('Provider scope(s) required: ' . $providerName);
         }
 
