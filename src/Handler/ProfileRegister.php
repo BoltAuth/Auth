@@ -99,7 +99,7 @@ class ProfileRegister extends AbstractProfileHandler
     {
         $template = $this->config->getTemplate('verification', 'subject');
         $context = [
-            'member' => $event->getAccount()
+            'member' => $event->getAccount(),
         ];
 
         return $this->twig->render($template, $context);

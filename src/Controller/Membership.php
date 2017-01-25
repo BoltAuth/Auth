@@ -209,7 +209,7 @@ class Membership extends AbstractController
 
         $context = [
             'member'       => $oauthMemberFinish ? $oauthMemberFinish['resourceOwner'] : null,
-            'transitional' => $this->getMembersSession()->isTransitional()
+            'transitional' => $this->getMembersSession()->isTransitional(),
         ];
         $template = $this->getMembersConfig()->getTemplate('profile', 'register');
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context);
