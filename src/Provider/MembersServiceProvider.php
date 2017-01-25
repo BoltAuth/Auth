@@ -427,6 +427,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     'linkedin'  => Provider\LinkedIn::class,
                     'local'     => Provider\Local::class,
                     'microsoft' => Provider\Microsoft::class,
+                    'wpoauth'   => Provider\WpOauth::class,
                 ];
             }
         );
