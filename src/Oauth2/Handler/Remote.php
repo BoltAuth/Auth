@@ -112,7 +112,7 @@ class Remote extends AbstractHandler
             $this->session->setAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA, [
                 'providerName'  => $this->providerName,
                 'accessToken'   => $accessToken,
-                'resourceOwner' => $resourceOwner
+                'resourceOwner' => $resourceOwner,
             ]);
         } catch (\RuntimeException $e) {
             throw new DisabledAccountException('Exception encountered getting resource owner', $e->getCode(), $e);

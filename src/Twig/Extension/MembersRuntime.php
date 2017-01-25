@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment as TwigEnvironment;
 use Twig_Extension as TwigExtension;
 use Twig_Markup as TwigMarkup;
-use Twig_SimpleFunction as TwigSimpleFunction;
 
 /**
  * Twig runtime functions.
