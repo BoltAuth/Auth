@@ -30,8 +30,6 @@ class Dropbox extends AbstractProvider
     /**
      * Get access token url to retrieve token
      *
-     * @param array $params
-     *
      * @return string
      */
     public function getBaseAccessTokenUrl(array $params)
@@ -87,9 +85,9 @@ class Dropbox extends AbstractProvider
     /**
      * Generate a user object from a successful user details request.
      *
-     * @param array $response
+     * @param object $response
      * @param AccessToken $token
-     * @return \League\OAuth2\Client\Provider\ResourceOwnerInterface
+     * @return League\OAuth2\Client\Provider\ResourceOwnerInterface
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {

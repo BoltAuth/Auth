@@ -128,11 +128,10 @@ class Instagram extends AbstractProvider
      * Check a provider response for errors.
      *
      * @link   https://instagram.com/developer/endpoints/
-     *
+     * @throws IdentityProviderException
      * @param  ResponseInterface $response
-     * @param  string            $data Parsed response data
-     *
-     * @throws Exception\IdentityProviderException
+     * @param  string $data Parsed response data
+     * @return void
      */
     protected function checkResponse(ResponseInterface $response, $data)
     {
