@@ -11,4 +11,14 @@ use League\OAuth2\Client\Provider\GenericResourceOwner as LeagueGenericResourceO
  */
 class WpOauthResourceOwner extends LeagueGenericResourceOwner
 {
+    // Seriously the dumbest fucking bullshit I have seen yet
+    private $responseResourceOwnerId = 'ID';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->response[$this->responseResourceOwnerId];
+    }
 }

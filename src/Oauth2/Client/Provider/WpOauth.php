@@ -17,6 +17,10 @@ class WpOauth extends LeagueGenericProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new WpOauthResourceOwner($response, $token->getResourceOwnerId());
+        if (!isset($response['ID'])) {
+            throw new \RuntimeException('Please ask your OAuth provider to uninstall WP-OAuth as it breaks specification, is completely insecure, and has a list of CVEs longer than the platform itself.');
+        }
+
+        return new WpOauthResourceOwner($response, $response['ID']);
     }
 }
