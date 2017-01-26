@@ -21,10 +21,13 @@ use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Grant\GrantFactory;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\ArrayAccessorTrait;
+use League\OAuth2\Client\Tool\QueryBuilderTrait;
 use League\OAuth2\Client\Tool\RequestFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RandomLib\Factory as RandomFactory;
+use RandomLib\Generator as RandomGenerator;
 use UnexpectedValueException;
 
 /**
@@ -34,6 +37,9 @@ use UnexpectedValueException;
  */
 abstract class AbstractProvider
 {
+    use ArrayAccessorTrait;
+    use QueryBuilderTrait;
+
     /**
      * @var string Key used in a token response to identify the resource owner.
      */
@@ -119,7 +125,8 @@ abstract class AbstractProvider
         $this->setRequestFactory($collaborators['requestFactory']);
 
         if (empty($collaborators['httpClient'])) {
-            $client_options = ['timeout'];
+            $client_options = $this->getAllowedClientOptions($options);
+
             $collaborators['httpClient'] = new HttpClient(
                 array_intersect_key($options, array_flip($client_options))
             );
@@ -130,6 +137,26 @@ abstract class AbstractProvider
             $collaborators['randomFactory'] = new RandomFactory();
         }
         $this->setRandomFactory($collaborators['randomFactory']);
+    }
+
+    /**
+     * Return the list of options that can be passed to the HttpClient
+     *
+     * @param array $options An array of options to set on this provider.
+     *     Options include `clientId`, `clientSecret`, `redirectUri`, and `state`.
+     *     Individual providers may introduce more options, as needed.
+     * @return array The options to pass to the HttpClient constructor
+     */
+    protected function getAllowedClientOptions(array $options)
+    {
+        $client_options = ['timeout', 'proxy'];
+
+        // Only allow turning off ssl verification is it's for a proxy
+        if (!empty($options['proxy'])) {
+            $client_options[] = 'verify';
+        }
+
+        return $client_options;
     }
 
     /**
@@ -276,7 +303,7 @@ abstract class AbstractProvider
             ->getRandomFactory()
             ->getMediumStrengthGenerator();
 
-        return $generator->generateString($length);
+        return $generator->generateString($length, RandomGenerator::CHAR_ALNUM);
     }
 
     /**
@@ -329,14 +356,11 @@ abstract class AbstractProvider
         // Store the state as it may need to be accessed later on.
         $this->state = $options['state'];
 
-        return [
-            'client_id'       => $this->clientId,
-            'redirect_uri'    => $this->redirectUri,
-            'state'           => $this->state,
-            'scope'           => $options['scope'],
-            'response_type'   => $options['response_type'],
-            'approval_prompt' => $options['approval_prompt'],
-        ];
+        $options['client_id'] = $this->clientId;
+        $options['redirect_uri'] = $this->redirectUri;
+        $options['state'] = $this->state;
+
+        return $options;
     }
 
     /**
@@ -347,7 +371,7 @@ abstract class AbstractProvider
      */
     protected function getAuthorizationQuery(array $params)
     {
-        return http_build_query($params);
+        return $this->buildQueryString($params);
     }
 
     /**
@@ -399,7 +423,7 @@ abstract class AbstractProvider
         $query = trim($query, '?&');
 
         if ($query) {
-            return $url.'?'.$query;
+            return $url . '?' . $query;
         }
 
         return $url;
@@ -433,7 +457,7 @@ abstract class AbstractProvider
      */
     protected function getAccessTokenQuery(array $params)
     {
-        return http_build_query($params);
+        return $this->buildQueryString($params);
     }
 
     /**
@@ -457,7 +481,6 @@ abstract class AbstractProvider
      * Returns the full URL to use when requesting an access token.
      *
      * @param array $params Query parameters
-     *
      * @return string
      */
     protected function getAccessTokenUrl(array $params)
@@ -480,7 +503,7 @@ abstract class AbstractProvider
      */
     protected function getAccessTokenBody(array $params)
     {
-        return http_build_query($params);
+        return $this->buildQueryString($params);
     }
 
     /**
@@ -504,7 +527,6 @@ abstract class AbstractProvider
      * Returns a prepared request for requesting an access token.
      *
      * @param array $params Query string parameters
-     *
      * @return RequestInterface
      */
     protected function getAccessTokenRequest(array $params)
@@ -662,7 +684,7 @@ abstract class AbstractProvider
      *
      * @throws UnexpectedValueException
      * @param  ResponseInterface $response
-     * @return string
+     * @return array
      */
     protected function parseResponse(ResponseInterface $response)
     {
@@ -711,8 +733,8 @@ abstract class AbstractProvider
     {
         if ($this->getAccessTokenResourceOwnerId() !== null) {
             $result['resource_owner_id'] = $this->getValueByKey(
-                $this->getAccessTokenResourceOwnerId(),
-                $result
+                $result,
+                $this->getAccessTokenResourceOwnerId()
             );
         }
         return $result;
@@ -818,36 +840,5 @@ abstract class AbstractProvider
         }
 
         return $this->getDefaultHeaders();
-    }
-
-    /**
-     * Returns a value by key using dot notation.
-     *
-     * @param  string $key
-     * @param  array $data
-     * @param  mixed|null $default
-     * @return mixed
-     */
-    protected function getValueByKey($key, array $data, $default = null)
-    {
-        if (!is_string($key) || empty($key) || !count($data)) {
-            return $default;
-        }
-
-        if (strpos($key, '.') !== false) {
-            $keys = explode('.', $key);
-
-            foreach ($keys as $innerKey) {
-                if (!array_key_exists($innerKey, $data)) {
-                    return $default;
-                }
-
-                $data = $data[$innerKey];
-            }
-
-            return $data;
-        }
-
-        return array_key_exists($key, $data) ? $data[$key] : $default;
     }
 }

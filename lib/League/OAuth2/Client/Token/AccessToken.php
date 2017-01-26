@@ -46,6 +46,11 @@ class AccessToken implements JsonSerializable
     protected $resourceOwnerId;
 
     /**
+     * @var array
+     */
+    protected $values = [];
+
+    /**
      * Constructs an access token.
      *
      * @param array $options An array of options returned by the service provider
@@ -71,12 +76,8 @@ class AccessToken implements JsonSerializable
         // We need to know when the token expires. Show preference to
         // 'expires_in' since it is defined in RFC6749 Section 5.1.
         // Defer to 'expires' if it is provided instead.
-        if (isset($options['expires_in'])) {
-            if (!is_numeric($options['expires_in'])) {
-                throw new \InvalidArgumentException('expires_in value must be an integer');
-            }
-
-            $this->expires = $options['expires_in'] != 0 ? time() + $options['expires_in'] : 0;
+        if (!empty($options['expires_in'])) {
+            $this->expires = time() + ((int) $options['expires_in']);
         } elseif (!empty($options['expires'])) {
             // Some providers supply the seconds until expiration rather than
             // the exact timestamp. Take a best guess at which we received.
@@ -88,12 +89,24 @@ class AccessToken implements JsonSerializable
 
             $this->expires = $expires;
         }
+
+        // Capure any additional values that might exist in the token but are
+        // not part of the standard response. Vendors will sometimes pass
+        // additional user data this way.
+        $this->values = array_diff_key($options, array_flip([
+            'access_token',
+            'resource_owner_id',
+            'refresh_token',
+            'expires_in',
+            'expires',
+        ]));
     }
 
     /**
      * Check if a value is an expiration timestamp or second value.
      *
-     * @return boolean
+     * @param integer $value
+     * @return bool
      */
     protected function isExpirationTimestamp($value)
     {
@@ -161,6 +174,16 @@ class AccessToken implements JsonSerializable
     }
 
     /**
+     * Returns additional vendor values stored in the token.
+     *
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->values;
+    }
+
+    /**
      * Returns the token key.
      *
      * @return string
@@ -178,7 +201,7 @@ class AccessToken implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        $parameters = [];
+        $parameters = $this->values;
 
         if ($this->accessToken) {
             $parameters['access_token'] = $this->accessToken;
@@ -189,7 +212,11 @@ class AccessToken implements JsonSerializable
         }
 
         if ($this->expires) {
-            $parameters['expires_in'] = $this->expires - time();
+            $parameters['expires'] = $this->expires;
+        }
+
+        if ($this->resourceOwnerId) {
+            $parameters['resource_owner_id'] = $this->resourceOwnerId;
         }
 
         return $parameters;
