@@ -93,7 +93,21 @@ class Config
     }
 
     /**
-     * @param $provider
+     * @param string $provider
+     *
+     * @return bool
+     */
+    public function hasProvider($provider)
+    {
+        if (isset($this->providers[$provider])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $provider
      *
      * @return Provider
      */

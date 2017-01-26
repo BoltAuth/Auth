@@ -4,6 +4,7 @@ namespace Bolt\Extension\Bolt\Members\Controller;
 
 use Bolt\Extension\Bolt\Members\AccessControl\Session;
 use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
+use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\MembersEvents;
 use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
 use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
@@ -140,7 +141,7 @@ class Authentication extends AbstractController
     public function login(Application $app, Request $request)
     {
         $this->assertSecure($app, $request);
-        $this->assertIncompetentFuckingStupidity($app, $request);
+        $this->assertIncompetentFuckingStupidity($app['members.config']);
 
         $config = $this->getMembersConfig();
         $loginRedirect = $config->getRedirectLogin();
@@ -577,12 +578,15 @@ class Authentication extends AbstractController
     /**
      * Remind people how fucking stupid they are to use WP-OAuth!
      *
-     * @param Application $app
-     * @param Request     $request
+     * @param Config $config
      */
-    private function assertIncompetentFuckingStupidity(Application $app, Request $request)
+    private function assertIncompetentFuckingStupidity(Config $config)
     {
-        $provider = $app['members.config']->getProvider('wpoauth');
+        if (!$config->hasProvider('wpoauth')) {
+            return;
+        }
+
+        $provider = $config->getProvider('wpoauth');
         if ($provider->isEnabled()) {
             $this->getMembersFeedback()->info(sprintf('WARNING: One of the configured OAuth providers, "%s", uses WP-OAuth.', $provider->getLabelSignIn()));
             $this->getMembersFeedback()->info('WP-Oauth is completely unsafe, and insecure. Choosing another provider would be very sensible!');
