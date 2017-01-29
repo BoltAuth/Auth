@@ -12,6 +12,7 @@ when you're happy with how it is working.
 * [Install the extension](#install-the-extension)
 * [Update database](#update-database)
 * [Enable a provider](#enable-a-provider)
+* [Configure outgoing mail](#configure-outgoing-mail)
 * [Enable registration](#enable-registration)
 * [Templates](#templates)
   * [Authentication](#authentication)
@@ -47,6 +48,14 @@ providers:
             client_secret: localdefault
         scopes: [ user ]
 ```
+
+
+#### Configure outgoing mail
+
+You should have already done this as part of your inital setup of bolt.  But
+double-check that bolt can send mail to users and members.  The Members plugin
+relies on outgoing mail to be working and may fail silently if it can't.  Look
+for the <tt>mailoptions</tt> setting in <tt>config.yml</tt>
 
 
 #### Enable registration
