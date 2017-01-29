@@ -59,8 +59,8 @@ registration:
     enabled: true
 ```
 
-**Note:** If you get 404 responses when trying to visit the registration URL,
-you potentially forgotten to enable this.
+**Note:** If you get 404 responses when trying to visit the registration URL
+then most likely you forgot to enable this setting.
 
 
 #### Templates
