@@ -36,7 +36,7 @@ set up.
 
 #### Enable a provider
 
-Set up the [Local provider](authentication-providers.md), and set `enbled: true` 
+Set up the [Local provider](authentication-providers.md), and set `enabled: true` 
 
 ```yaml
 providers:
