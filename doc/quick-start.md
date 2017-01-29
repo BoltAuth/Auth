@@ -11,7 +11,7 @@ when you're happy with how it is working.
 
 * [Install the extension](#install-the-extension)
 * [Update database](#update-database)
-* [Enable a provider](#enable-a-provider)
+* [Enable an authentication provider](#enable-an-authentication-provider)
 * [Configure outgoing mail](#configure-outgoing-mail)
 * [Enable registration](#enable-registration)
 * [Templates](#templates)
@@ -35,9 +35,9 @@ set up.
 ![Database update success](img/install-post-database-2.png)
 
 
-#### Enable a provider
+#### Enable an authentication provider
 
-Set up the [Local provider](authentication-providers.md), and set `enabled: true` 
+Set up the [Local authentication provider](authentication-providers.md), and set `enabled: true`
 
 ```yaml
 providers:
