@@ -35,6 +35,8 @@ class Config
     /** @var string */
     protected $notificationEmail;
     /** @var string */
+    protected $notificationEmailFormat;
+    /** @var string */
     protected $redirectLogin;
     /** @var string */
     protected $redirectLogout;
@@ -62,6 +64,7 @@ class Config
         $this->urlMembers = $config['urls']['members'];
         $this->notificationName = $config['notification']['name'];
         $this->notificationEmail = $config['notification']['email'];
+        $this->notificationEmailFormat = $config['notification']['format'];
         $this->redirectLogin = $config['redirects']['login'];
         $this->redirectLogout = $config['redirects']['logout'];
 
@@ -407,6 +410,26 @@ class Config
     }
 
     /**
+     * @return string
+     */
+    public function getNotificationEmailFormat()
+    {
+        return $this->notificationEmailFormat;
+    }
+
+    /**
+     * @param string $notificationEmailFormat
+     *
+     * @return Config
+     */
+    public function setNotificationEmailFormat($notificationEmailFormat)
+    {
+        $this->notificationEmailFormat = $notificationEmailFormat;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getFirewalls()
@@ -560,8 +583,9 @@ class Config
                 'auto'         => false,
             ],
             'notification' => [
-                'name'  => null,
-                'email' => null,
+                'name'   => null,
+                'email'  => null,
+                'format' => 'mixed',
             ],
             'redirects'    => [
                 'login'  => null,
@@ -608,11 +632,13 @@ class Config
                     ],
                     'recovery'   => [
                         'subject' => '@Members/authentication/recovery/subject.twig',
-                        'body'    => '@Members/authentication/recovery/body.twig',
+                        'html'    => '@Members/authentication/recovery/html.twig',
+                        'text'    => '@Members/authentication/recovery/text.twig',
                     ],
                     'verification'   => [
                         'subject' => '@Members/profile/registration/subject.twig',
-                        'body'    => '@Members/profile/registration/body.twig',
+                        'html'    => '@Members/profile/registration/html.twig',
+                        'text'    => '@Members/profile/registration/text.twig',
                     ],
                 ],
                 'labels'       => [

@@ -25,6 +25,11 @@ class Forms extends ParameterBag
 
         $templates = new ParameterBag();
         foreach ($parameters['templates'] as $type => $values) {
+            if (isset($values['body'])) {
+                // BC for splitting up HTML & text email templates
+                $parameters['templates'][$type]['html'] = $values['body'];
+                unset ($parameters['templates'][$type]['body']);
+            }
             $templates->set($type, new ParameterBag($parameters['templates'][$type]));
         }
         $this->set('templates', $templates);

@@ -64,10 +64,12 @@ theme directory.
             feedback: path/to/feedback/feedback.twig
         verification:
             subject: path/to/verification/subject.twig
-            body: path/to/verification/body.twig
+            html: path/to/verification/html.twig
+            text: path/to/verification/text.twig
         recovery:
             subject: path/to/recovery/subject.twig
-            body: path/to/recovery/body.twig
+            html: path/to/recovery/html.twig
+            text: path/to/recovery/text.twig
 ```
 
 You can find the installed defaults in the Members source directory:

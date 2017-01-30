@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Swift_Mime_Message as SwiftMimeMessage;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Authentication controller.
@@ -165,7 +167,7 @@ class Authentication extends AbstractController
 
         $builder = $this->getMembersFormsManager()->getFormLogin($request);
         /** @var Form $oauthForm */
-        $oauthForm = $builder->getForm(MembersForms::FORM_LOGIN_OAUTH);
+        $oauthForm = $builder->getForm(MembersForms::LOGIN_OAUTH);
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -174,7 +176,7 @@ class Authentication extends AbstractController
         }
 
         /** @var Form $associateForm */
-        $associateForm = $builder->getForm(MembersForms::FORM_ASSOCIATE);
+        $associateForm = $builder->getForm(MembersForms::ASSOCIATE);
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -183,7 +185,7 @@ class Authentication extends AbstractController
         }
 
         /** @var Form $passwordForm */
-        $passwordForm = $builder->getForm(MembersForms::FORM_LOGIN_PASSWORD);
+        $passwordForm = $builder->getForm(MembersForms::LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
             $this->getMembersOauthProviderManager()->setProvider($app, 'local');
 
@@ -328,7 +330,7 @@ class Authentication extends AbstractController
     private function resetPasswordSubmit(Application $app, Request $request, ParameterBag $context)
     {
         $builder = $this->getMembersFormsManager()->getFormProfileRecovery($request);
-        $form = $builder->getForm(MembersForms::FORM_PROFILE_RECOVER_SUBMIT);
+        $form = $builder->getForm(MembersForms::PROFILE_RECOVERY_SUBMIT);
         $context->set('stage', 'invalid');
 
         /** @var PasswordReset $passwordReset */
@@ -376,7 +378,7 @@ class Authentication extends AbstractController
     private function resetPasswordRequest(Application $app, Request $request, ParameterBag $context, Response $response)
     {
         $builder = $this->getMembersFormsManager()->getFormProfileRecovery($request);
-        $form = $builder->getForm(MembersForms::FORM_PROFILE_RECOVER_REQUEST);
+        $form = $builder->getForm(MembersForms::PROFILE_RECOVERY_REQUEST);
         $context->set('stage', 'email');
 
         if (!$form->isValid()) {
@@ -406,20 +408,19 @@ class Authentication extends AbstractController
         $mailer = $app['mailer'];
         $config = $this->getMembersConfig();
         $from = [$config->getNotificationEmail() => $config->getNotificationName()];
-        $mailHtml = $this->getResetHtml($account, $passwordReset, $app['twig'], $app['resources']->getUrl('rooturl'));
-
+        $subject = $app['twig']->render($config->getTemplate('recovery', 'subject'), ['member' => $account]);
         /** @var \Swift_Message $message */
-        $message = $mailer->createMessage('message')
-            ->setSubject($app['twig']->render($config->getTemplate('recovery', 'subject'), ['member' => $account]))
-            ->setBody(strip_tags($mailHtml))
-            ->addPart($mailHtml, 'text/html')
-        ;
+        $message = $mailer->createMessage('message');
+
         try {
             $message
+                ->setTo($email)
                 ->setFrom($from)
                 ->setReplyTo($from)
-                ->setTo($email)
+                ->setSubject($subject)
+                ->setMaxLineLength(10)
             ;
+            $this->setBody($message, $account, $passwordReset, $app['twig']);
 
             // Dispatch an event
             $event = new MembersNotificationEvent($message);
@@ -436,26 +437,38 @@ class Authentication extends AbstractController
     }
 
     /**
+     * Generate the HTML and/or text for the password reset email.
+     *
+     * @param SwiftMimeMessage       $message
      * @param Storage\Entity\Account $account
      * @param PasswordReset          $passwordReset
      * @param \Twig_Environment      $twig
-     * @param string                 $siteUrl
-     *
-     * @return string
      */
-    private function getResetHtml(Storage\Entity\Account $account, PasswordReset $passwordReset, \Twig_Environment $twig, $siteUrl)
+    private function setBody(SwiftMimeMessage $message, Storage\Entity\Account $account, PasswordReset $passwordReset, \Twig_Environment $twig)
     {
-        $config = $this->getMembersConfig();
-        $query = http_build_query(['code' => $passwordReset->getQueryCode()]);
+        $app = $this->getContainer();
+        $query = [
+            'code' => $passwordReset->getQueryCode()
+        ];
+        $link = $app['url_generator']->generate('authenticationPasswordReset', $query, UrlGeneratorInterface::ABSOLUTE_URL);
         $context = [
             'name'   => $account->getDisplayname(),
             'email'  => $account->getEmail(),
-            'link'   => sprintf('%s%s/reset?%s', $siteUrl, $config->getUrlAuthenticate(), $query),
+            'link'   => $link,
             'member' => $account,
         ];
-        $mailHtml = $twig->render($config->getTemplate('recovery', 'body'), $context);
 
-        return $mailHtml;
+        $config = $this->getMembersConfig();
+        $template = $config->getTemplate('recovery', 'text');
+        $bodyText = $twig->render($template, $context);
+        $message->setBody($bodyText);
+
+        if ($config->getNotificationEmailFormat() !== 'text') {
+            $template = $config->getTemplate('recovery', 'html');
+            $bodyHtml = $twig->render($template, $context);
+            /** @var \Swift_Message $message */
+            $message->addPart($bodyHtml, 'text/html');
+        }
     }
 
     /**

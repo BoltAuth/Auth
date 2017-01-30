@@ -33,22 +33,16 @@ class ProfileRegister extends AbstractProfileHandler
     {
         $from = [$this->config->getNotificationEmail() => $this->config->getNotificationName()];
         $email = [$event->getAccount()->getEmail() => $event->getAccount()->getDisplayname()];
-        $subject = $this->getSubject($event);
-        $mailHtml = $this->getBody($event);
 
         /** @var SwiftMimeMessage $message */
-        $message = $this->mailer
-            ->createMessage('message')
-            ->setSubject($subject)
-            ->setBody(strip_tags($mailHtml))
-            ->addPart($mailHtml, 'text/html')
-        ;
+        $message = $this->mailer->createMessage('message');
 
         try {
             $message
+                ->setTo($email)
                 ->setFrom($from)
                 ->setReplyTo($from)
-                ->setTo($email)
+                ->setSubject($this->getSubject($event))
             ;
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
@@ -58,20 +52,18 @@ class ProfileRegister extends AbstractProfileHandler
             return;
         }
 
+        $this->setBody($message, $event);
         $event = new MembersNotificationEvent($message);
         $this->queueMessage($message, $event, $dispatcher);
     }
 
     /**
-     * Generate the HTML for the verification email.
+     * Generate the HTML and/or text for the verification email.
      *
      * @param MembersProfileEvent $event
-     *
-     * @return string
      */
-    private function getBody(MembersProfileEvent $event)
+    private function setBody(SwiftMimeMessage $message, MembersProfileEvent $event)
     {
-        $template = $this->config->getTemplate('verification', 'body');
         $meta = $event->getMetaEntityNames();
         $link = $this->urlGenerator->generate(
             'membersProfileVerify',
@@ -85,7 +77,16 @@ class ProfileRegister extends AbstractProfileHandler
             'member' => $event->getAccount(),
         ];
 
-        return $this->twig->render($template, $context);
+        $template = $this->config->getTemplate('verification', 'text');
+        $bodyText = $this->twig->render($template, $context);
+        $message->setBody($bodyText);
+
+        if ($this->config->getNotificationEmailFormat() !== 'text') {
+            $template = $this->config->getTemplate('verification', 'html');
+            $bodyHtml = $this->twig->render($template, $context);
+            /** @var \Swift_Message $message */
+            $message->addPart($bodyHtml, 'text/html');
+        }
     }
 
     /**
