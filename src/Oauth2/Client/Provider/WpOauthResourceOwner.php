@@ -9,7 +9,7 @@ use League\OAuth2\Client\Provider\GenericResourceOwner as LeagueGenericResourceO
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class WpOauthResourceOwner extends LeagueGenericResourceOwner
+class WpOauthResourceOwner extends LeagueGenericResourceOwner implements ResourceOwnerInterface
 {
     // Seriously the dumbest fucking bullshit I have seen yet
     private $responseResourceOwnerId = 'ID';
@@ -20,5 +20,31 @@ class WpOauthResourceOwner extends LeagueGenericResourceOwner
     public function getId()
     {
         return $this->response[$this->responseResourceOwnerId];
+    }
+
+    /**
+     * Get user name
+     *
+     * @return string|null
+     */
+    public function getName()
+    {
+        return $this->response['display_name'] ?: null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAvatar()
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEmail()
+    {
+        return $this->response['email'];
     }
 }
