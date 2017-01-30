@@ -21,7 +21,6 @@ class LogoutType extends AbstractType
     public function getName()
     {
         return MembersForms::LOGOUT;
-
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

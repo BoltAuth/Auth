@@ -64,13 +64,13 @@ abstract class AbstractProfileRecoveryType extends AbstractType
                         'attr'  => [
                             'placeholder' => $this->config->getPlaceholder('password_first'),
                         ],
-                        'constraints' => $passwordConstraints,
+                        'constraints'     => $passwordConstraints,
                         'required'        => $this->requirePassword,
                     ],
                     'second_options'  => [
                         'label' => Trans::__($this->config->getLabel('password_second')),
                         'attr'  => [
-                            'placeholder' => $this->config->getPlaceholder('password_second'),
+                            'placeholder'     => $this->config->getPlaceholder('password_second'),
                             'required'        => $this->requirePassword,
                         ],
                         'constraints' => $passwordConstraints,

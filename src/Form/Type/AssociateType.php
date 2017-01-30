@@ -21,7 +21,6 @@ class AssociateType extends AbstractType
     public function getName()
     {
         return MembersForms::ASSOCIATE;
-
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
