@@ -245,12 +245,12 @@ class Backend extends AbstractController
     public function userAdd(Application $app, Request $request)
     {
         $builder = $app['members.forms.manager']->getFormProfileEdit($request, true, null);
-        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+        $form = $builder->getForm(Form\MembersForms::PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
             /** @var Form\Entity\Profile $entity */
-            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+            $entity = $builder->getEntity(Form\MembersForms::PROFILE_EDIT);
 
             // Create and store the account entity
             $account = new Storage\Entity\Account();
@@ -332,13 +332,13 @@ class Backend extends AbstractController
         }
 
         $builder = $app['members.forms.manager']->getFormProfileEdit($request, true, $guid);
-        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+        $form = $builder->getForm(Form\MembersForms::PROFILE_EDIT);
 
         // Handle the form request data
         if ($form->isValid()) {
 
             /** @var Form\Entity\Profile $entity */
-            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
+            $entity = $builder->getEntity(Form\MembersForms::PROFILE_EDIT);
             $account = $records->getAccountByGuid($entity->getGuid());
             if ($account === false) {
                 throw new \RuntimeException(sprintf('Unable to find account for %s', $entity->getGuid()));

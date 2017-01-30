@@ -2,7 +2,7 @@
  # Passed in variables:
  #
  #   * twigparent           — string    Template name to inherit from
- #   * form_profile         — FormView  Member profile form (Symfony\Component\Form\FormView)
+ #   * form_profile_edit         — FormView  Member profile form (Symfony\Component\Form\FormView)
  #   * form_associate       — FormView  Authentiction provider form (Symfony\Component\Form\FormView)
  #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
  #   * templates            — array
@@ -23,14 +23,14 @@
 
         <div class="small-12 columns">
 
-            {{ form_start(form_profile) }}
-                {{ form_row(form_profile.displayname) }}
-                {{ form_row(form_profile.email) }}
-                {{ form_row(form_profile.password.first) }}
-                {{ form_row(form_profile.password.second) }}
+            {{ form_start(form_profile_edit) }}
+                {{ form_row(form_profile_edit.displayname) }}
+                {{ form_row(form_profile_edit.email) }}
+                {{ form_row(form_profile_edit.password.first) }}
+                {{ form_row(form_profile_edit.password.second) }}
                 <br>
-                {{ form_row(form_profile.submit, {'attr': {'class': 'button btn btn-default'}}) }}
-            {{ form_end(form_profile) }}
+                {{ form_row(form_profile_edit.submit, {'attr': {'class': 'button btn btn-default'}}) }}
+            {{ form_end(form_profile_edit) }}
 
         </div>
 

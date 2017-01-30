@@ -137,10 +137,10 @@ class Membership extends AbstractController
 
         // Handle the form request data
         $resolvedBuild = $this->getMembersFormsManager()->getFormProfileEdit($request, true, $memberSession->getGuid());
-        if ($resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT)->isValid()) {
+        if ($resolvedBuild->getForm(Form\MembersForms::PROFILE_EDIT)->isValid()) {
             /** @var Form\Entity\Profile $entity */
-            $entity = $resolvedBuild->getEntity(Form\MembersForms::FORM_PROFILE_EDIT);
-            $form = $resolvedBuild->getForm(Form\MembersForms::FORM_PROFILE_EDIT);
+            $entity = $resolvedBuild->getEntity(Form\MembersForms::PROFILE_EDIT);
+            $form = $resolvedBuild->getForm(Form\MembersForms::PROFILE_EDIT);
             $this->getMembersRecordsProfile()->saveProfileForm($entity, $form);
         }
 
@@ -176,13 +176,13 @@ class Membership extends AbstractController
         ;
 
         $builder = $this->getMembersFormsManager()->getFormProfileRegister($request, true);
-        $form = $builder->getForm(Form\MembersForms::FORM_PROFILE_REGISTER);
+        $form = $builder->getForm(Form\MembersForms::PROFILE_REGISTER);
 
         // Handle the form request data
         if ($form->isValid()) {
             $this->getMembersOauthProviderManager()->setProvider($app, 'local');
             /** @var Form\Entity\Profile $entity */
-            $entity = $builder->getEntity(Form\MembersForms::FORM_PROFILE_REGISTER);
+            $entity = $builder->getEntity(Form\MembersForms::PROFILE_REGISTER);
 
             try {
                 $this->getMembersRecordsProfile()->saveProfileRegisterForm($entity, $form, $this->getMembersOauthProvider(), 'local');
@@ -323,7 +323,7 @@ class Membership extends AbstractController
         $builder = $this->getMembersFormsManager()->getFormProfileView($request, true, $guid);
 
         /** @var Entity\Account $account */
-        $account = $builder->getEntity(Form\MembersForms::FORM_PROFILE_VIEW);
+        $account = $builder->getEntity(Form\MembersForms::PROFILE_VIEW);
         $this->getMembersFeedback()->debug(sprintf('Viewing profile account %s (%s)', $account->getEmail(), $account->getGuid()));
 
         $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
