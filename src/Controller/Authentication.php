@@ -418,7 +418,6 @@ class Authentication extends AbstractController
                 ->setFrom($from)
                 ->setReplyTo($from)
                 ->setSubject($subject)
-                ->setMaxLineLength(10)
             ;
             $this->setBody($message, $account, $passwordReset, $app['twig']);
 
