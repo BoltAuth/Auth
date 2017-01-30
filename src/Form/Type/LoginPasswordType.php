@@ -22,7 +22,6 @@ class LoginPasswordType extends AbstractType
     public function getName()
     {
         return MembersForms::LOGIN_PASSWORD;
-
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -6,7 +6,6 @@ use Bolt\Extension\Bolt\Members\Config\Config;
 use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
 use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
 use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
-use Pimple as Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -35,7 +34,6 @@ class Generator
      * Constructor.
      *
      * @param Config                   $config
-     * @param Container                $formTypes
      * @param FormFactoryInterface     $formFactory
      * @param EventDispatcherInterface $dispatcher
      */

@@ -21,7 +21,6 @@ class LoginOauthType extends AbstractType
     public function getName()
     {
         return MembersForms::LOGIN_OAUTH;
-
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -18,13 +18,13 @@ use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Swift_Mime_Message as SwiftMimeMessage;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Swift_Mime_Message as SwiftMimeMessage;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -448,7 +448,7 @@ class Authentication extends AbstractController
     {
         $app = $this->getContainer();
         $query = [
-            'code' => $passwordReset->getQueryCode()
+            'code' => $passwordReset->getQueryCode(),
         ];
         $link = $app['url_generator']->generate('authenticationPasswordReset', $query, UrlGeneratorInterface::ABSOLUTE_URL);
         $context = [

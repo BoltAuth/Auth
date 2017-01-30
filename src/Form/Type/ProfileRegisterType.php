@@ -26,7 +26,6 @@ class ProfileRegisterType extends AbstractProfileType
     public function getName()
     {
         return MembersForms::PROFILE_REGISTER;
-
     }
 
     /**
