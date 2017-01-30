@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -17,6 +18,14 @@ class ProfileViewType extends AbstractProfileType
 {
     /** @var boolean */
     protected $requirePassword = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return MembersForms::PROFILE_VIEW;
+    }
 
     /**
      * {@inheritdoc}

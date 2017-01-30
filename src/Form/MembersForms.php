@@ -9,15 +9,15 @@ namespace Bolt\Extension\Bolt\Members\Form;
  */
 class MembersForms
 {
-    const FORM_ASSOCIATE = 'associate';
-    const FORM_LOGIN_OAUTH = 'login_oauth';
-    const FORM_LOGIN_PASSWORD = 'login_password';
-    const FORM_LOGOUT = 'logout';
-    const FORM_PROFILE_EDIT = 'profile_edit';
-    const FORM_PROFILE_RECOVER_REQUEST = 'profile_recovery_request';
-    const FORM_PROFILE_RECOVER_SUBMIT = 'profile_recovery_submit';
-    const FORM_PROFILE_REGISTER = 'profile_register';
-    const FORM_PROFILE_VIEW = 'profile_view';
+    const ASSOCIATE = 'form_associate';
+    const LOGIN_OAUTH = 'form_login_oauth';
+    const LOGIN_PASSWORD = 'form_login_password';
+    const LOGOUT = 'form_logout';
+    const PROFILE_EDIT = 'form_profile_edit';
+    const PROFILE_RECOVERY_REQUEST = 'form_profile_recovery_request';
+    const PROFILE_RECOVERY_SUBMIT = 'form_profile_recovery_submit';
+    const PROFILE_REGISTER = 'form_profile_register';
+    const PROFILE_VIEW = 'form_profile_view';
 
     /**
      * Singleton constructor.

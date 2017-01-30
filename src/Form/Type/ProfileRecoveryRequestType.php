@@ -2,6 +2,8 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
+
 /**
  * Password reset request type.
  *
@@ -21,6 +23,6 @@ class ProfileRecoveryRequestType extends AbstractProfileRecoveryType
      */
     public function getName()
     {
-        return 'profile_recovery';
+        return MembersForms::PROFILE_RECOVERY_REQUEST;
     }
 }

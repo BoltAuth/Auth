@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -19,7 +20,8 @@ class AssociateType extends AbstractType
 
     public function getName()
     {
-        return 'associate';
+        return MembersForms::ASSOCIATE;
+
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

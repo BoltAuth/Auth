@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -24,7 +25,8 @@ class ProfileRegisterType extends AbstractProfileType
      */
     public function getName()
     {
-        return 'register';
+        return MembersForms::PROFILE_REGISTER;
+
     }
 
     /**

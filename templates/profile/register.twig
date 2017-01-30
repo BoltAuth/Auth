@@ -1,16 +1,16 @@
 {#
  # Passed in variables:
  #
- #   * twigparent           — string    Template name to inherit from
- #   * form_associate       — FormView  Authentiction provider form (Symfony\Component\Form\FormView)
- #   * form_login_oauth     — FormView  OAuth login form (Symfony\Component\Form\FormView)
- #   * form_login_password  — FormView  Password login form (Symfony\Component\Form\FormView)
- #   * form_register        — FormView  New registrtion form (Symfony\Component\Form\FormView)
- #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
- #   * templates            — array
- #     * feedback           — string    Feedback messages template name
- #   * providers            — array     Authentication providers enabled in Members configuration
- #   * transitional         — boolean   If true, form is still in a transitional stage and doesn't require a password field
+ #   * twigparent            — string    Template name to inherit from
+ #   * form_associate        — FormView  Authentiction provider form (Symfony\Component\Form\FormView)
+ #   * form_login_oauth      — FormView  OAuth login form (Symfony\Component\Form\FormView)
+ #   * form_login_password   — FormView  Password login form (Symfony\Component\Form\FormView)
+ #   * form_profile_register — FormView  New registrtion form (Symfony\Component\Form\FormView)
+ #   * feedback              — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
+ #   * templates             — array
+ #     * feedback            — string    Feedback messages template name
+ #   * providers             — array     Authentication providers enabled in Members configuration
+ #   * transitional          — boolean   If true, form is still in a transitional stage and doesn't require a password field
  #}
 {% extends twigparent %}
 
@@ -25,24 +25,24 @@
 
         <div class="small-12 columns">
 
-            {{ form_start(form_register) }}
+            {{ form_start(form_profile_register) }}
 
-            {{ form_errors(form_register) }}
+            {{ form_errors(form_profile_register) }}
 
-            {{ form_row(form_register.displayname, { 'value': member.name|default() } ) }}
-            {{ form_row(form_register.email, { 'value': member.email|default() } ) }}
+            {{ form_row(form_profile_register.displayname, { 'value': member.name|default() } ) }}
+            {{ form_row(form_profile_register.email, { 'value': member.email|default() } ) }}
 
             {% if transitional %}
-                {% do form_register.password.setRendered %}
+                {% do form_profile_register.password.setRendered %}
             {% else %}
-                {{ form_widget(form_register.password.first, { 'attr': {'autocomplete': 'new-password'}}) }}
-                {{ form_widget(form_register.password.second, { 'attr': {'autocomplete': 'new-password'}}) }}
+                {{ form_widget(form_profile_register.password.first, { 'attr': {'autocomplete': 'new-password'}}) }}
+                {{ form_widget(form_profile_register.password.second, { 'attr': {'autocomplete': 'new-password'}}) }}
             {% endif %}
 
                 <br>
-            {{ form_row(form_register.submit, { 'attr': { 'class': 'button btn btn-default' }}) }}
+            {{ form_row(form_profile_register.submit, { 'attr': { 'class': 'button btn btn-default' }}) }}
 
-            {{ form_end(form_register) }}
+            {{ form_end(form_profile_register) }}
 
         </div>
 

@@ -28,14 +28,6 @@ abstract class AbstractProfileType extends AbstractType
     protected $requirePassword = true;
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'profile';
-    }
-
-    /**
      * Enable or disable requiring email address field and constraints.
      *
      * @param boolean $requireEmail

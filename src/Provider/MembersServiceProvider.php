@@ -345,7 +345,8 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
                     $app['members.session'],
                     $app['members.feedback'],
                     $app['members.records'],
-                    $app['members.form.generator']
+                    $app['members.form.generator'],
+                    $app['url_generator']
                 );
             }
         );

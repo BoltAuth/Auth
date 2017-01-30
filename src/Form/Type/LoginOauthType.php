@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -19,7 +20,8 @@ class LoginOauthType extends AbstractType
 
     public function getName()
     {
-        return 'login_oauth';
+        return MembersForms::LOGIN_OAUTH;
+
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

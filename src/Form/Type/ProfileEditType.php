@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Bolt\Members\Form\Type;
 
+use Bolt\Extension\Bolt\Members\Form\MembersForms;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +20,14 @@ class ProfileEditType extends AbstractProfileType
 {
     /** @var boolean */
     protected $requirePassword = true;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return MembersForms::PROFILE_EDIT;
+    }
 
     /**
      * {@inheritdoc}
