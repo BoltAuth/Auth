@@ -10,6 +10,7 @@ use Bolt\Extension\Bolt\Members\MembersExtension;
 use Bolt\Extension\Bolt\Members\Pager\Pager;
 use Bolt\Extension\Bolt\Members\Pager\PagerEntity;
 use Bolt\Extension\Bolt\Members\Storage;
+use Bolt\Version;
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
@@ -42,7 +43,11 @@ class Backend extends AbstractController
         $ctr = parent::connect($app);
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
-        $memberBaseUrl = '/extend/members';
+        $memberBaseUrl = Version::compare('3.2.999', '<')
+            ? '/extensions/members'
+            : '/extend/members'
+        ;
+
         $ctr->match($memberBaseUrl, [$this, 'admin'])
             ->bind('membersAdmin')
             ->method(Request::METHOD_GET)
