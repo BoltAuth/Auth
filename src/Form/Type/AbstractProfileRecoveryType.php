@@ -29,14 +29,6 @@ abstract class AbstractProfileRecoveryType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $passwordConstraints = [];
-        if ($this->requirePassword) {
-            $passwordConstraints = [
-                new Assert\NotBlank(),
-                new Assert\Length(['min' => 6]),
-            ];
-        }
-
         $builder
             ->add(
                 'email',
@@ -54,7 +46,15 @@ abstract class AbstractProfileRecoveryType extends AbstractType
                     ],
                 ]
             )
-            ->add(
+        ;
+
+        if ($this->requirePassword) {
+            $passwordConstraints = [
+                new Assert\NotBlank(),
+                new Assert\Length(['min' => 6]),
+            ];
+
+            $builder->add(
                 'password',
                 RepeatedType::class,
                 [
@@ -65,26 +65,28 @@ abstract class AbstractProfileRecoveryType extends AbstractType
                             'placeholder' => $this->config->getPlaceholder('password_first'),
                         ],
                         'constraints' => $passwordConstraints,
+                        'required'        => $this->requirePassword,
                     ],
                     'second_options'  => [
                         'label' => Trans::__($this->config->getLabel('password_second')),
                         'attr'  => [
                             'placeholder' => $this->config->getPlaceholder('password_second'),
+                            'required'        => $this->requirePassword,
                         ],
                         'constraints' => $passwordConstraints,
                     ],
                     'empty_data'      => null,
-                    'required'        => $this->requirePassword,
                 ]
-            )
-            ->add(
-                'submit',
-                SubmitType::class,
-                [
-                    'label'   => Trans::__($this->config->getLabel('profile_save')),
-                ]
-            )
-        ;
+            );
+        }
+
+        $builder->add(
+            'submit',
+            SubmitType::class,
+            [
+                'label'   => Trans::__($this->config->getLabel('profile_save')),
+            ]
+        );
     }
 
     /**
