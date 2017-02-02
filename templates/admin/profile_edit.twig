@@ -9,7 +9,7 @@
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Editing Membership Profile: {{ form_profile.vars.value.displayname|default('New User') }}
+    Editing Membership Profile: {{ form_profile_edit.vars.value.displayname|default('New User') }}
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -25,31 +25,31 @@
 
         <div class="col-md-9">
             {% block profile %}
-                {{ form_start(form_profile, {'attr': {'id': 'profile', 'class': 'row'}, 'action': null}) }}
+                {{ form_start(form_profile_edit, {'attr': {'id': 'profile', 'class': 'row'}, 'action': null}) }}
 
-                {{ form_label(form_profile.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-                {{ form_errors(form_profile.displayname) }}
-                {{ form_widget(form_profile.displayname, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form_profile_edit.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form_profile_edit.displayname) }}
+                {{ form_widget(form_profile_edit.displayname, { 'attr': {'class': 'form-control large'} }) }}
 
-                {{ form_label(form_profile.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-                {{ form_errors(form_profile.displayname) }}
-                {{ form_widget(form_profile.email, { 'attr': {'class': 'form-control large'} }) }}
+                {{ form_label(form_profile_edit.email, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form_profile_edit.displayname) }}
+                {{ form_widget(form_profile_edit.email, { 'attr': {'class': 'form-control large'} }) }}
 
-                {{ form_label(form_profile.password.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-                {{ form_errors(form_profile.password.first) }}
-                {{ form_widget(form_profile.password.first, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
+                {{ form_label(form_profile_edit.password.first, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form_profile_edit.password.first) }}
+                {{ form_widget(form_profile_edit.password.first, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
 
-                {{ form_label(form_profile.password.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
-                {{ form_errors(form_profile.password.second) }}
-                {{ form_widget(form_profile.password.second, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
+                {{ form_label(form_profile_edit.password.second, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
+                {{ form_errors(form_profile_edit.password.second) }}
+                {{ form_widget(form_profile_edit.password.second, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
 
                 {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
 
                 <br>
             <div class="hidden">
-                {{ form_row(form_profile.submit) }}
+                {{ form_row(form_profile_edit.submit) }}
             </div>
-                {{ form_end(form_profile) }}
+                {{ form_end(form_profile_edit) }}
             {% endblock profile %}
         </div>
 
