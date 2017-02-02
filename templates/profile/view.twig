@@ -32,16 +32,16 @@
         </div>
 
         <div class="small-9 columns">
-            {{ form_start(form_profile) }}
+            {{ form_start(form_profile_view) }}
 
-            {{ form_row(form_profile.displayname) }}
-            {{ form_row(form_profile.email) }}
+            {{ form_row(form_profile_view.displayname) }}
+            {{ form_row(form_profile_view.email) }}
 
-            {% do form_profile.password.setRendered %}
-            {% do form_profile.submit.setRendered %}
+            {% do form_profile_view.password.setRendered %}
+            {% do form_profile_view.submit.setRendered %}
 
 
-            {{ form_end(form_profile) }}
+            {{ form_end(form_profile_view) }}
         </div>
 
     </div>
