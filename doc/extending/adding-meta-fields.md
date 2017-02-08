@@ -52,7 +52,7 @@ The extension loading class will need a pre-save and form build events.
      */
     public function onRequest(FormBuilderEvent $event)
     {
-        if ($event->getName() !== MembersForms::FORM_PROFILE_EDIT && $event->getName() !== MembersForms::FORM_PROFILE_VIEW) {
+        if ($event->getName() !== MembersForms::PROFILE_EDIT && $event->getName() !== MembersForms::PROFILE_VIEW) {
             return;
         }
         $app = $this->getContainer();
@@ -79,6 +79,7 @@ use Bolt\Extension\Bolt\Members\Form\Type\ProfileEditType as MembersProfileEditT
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Bolt\Translation\Translator as Trans;
 
 class ProfileEditType extends MembersProfileEditType
 {
