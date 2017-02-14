@@ -1,8 +1,8 @@
 [Prefix your issue title with either [BUG] or [RFC]. This issue trackes is
-**not** for support questions. If you have a question, please seek the help of
+NOT for support questions. If you have a question, please seek the help of
 the community on one of these platforms: http://bolt.cm/community.
 
-**NOTE:** We are close to being finished with Members version 3.0.0. If you
+NOTE: We are close to being finished with Members version 3.0.0. If you
 have an issue, be sure to try the beta for 3.0.0, and see if the issue is still
 present there.
 
