@@ -11,7 +11,7 @@ use League\OAuth2\Client\Provider\GenericResourceOwner as LeagueGenericResourceO
  */
 class WpOauthResourceOwner extends LeagueGenericResourceOwner implements ResourceOwnerInterface
 {
-    // Seriously the dumbest fucking bullshit I have seen yet
+    // Dumb implementation detail of WPOauth, necessitating special workaround.
     private $responseResourceOwnerId = 'ID';
 
     /**
