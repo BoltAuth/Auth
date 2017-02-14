@@ -143,7 +143,7 @@ class Authentication extends AbstractController
     public function login(Application $app, Request $request)
     {
         $this->assertSecure($app, $request);
-        $this->assertIncompetentFuckingStupidity($app['members.config']);
+        $this->assertWPOauth($app['members.config']);
 
         $config = $this->getMembersConfig();
         $loginRedirect = $config->getRedirectLogin();
@@ -588,11 +588,11 @@ class Authentication extends AbstractController
     }
 
     /**
-     * Remind people how fucking stupid they are to use WP-OAuth!
+     * Remind people how stupid they are to use WP-OAuth!
      *
      * @param Config $config
      */
-    private function assertIncompetentFuckingStupidity(Config $config)
+    private function assertWPOauth(Config $config)
     {
         if (!$config->hasProvider('wpoauth')) {
             return;
@@ -600,8 +600,8 @@ class Authentication extends AbstractController
 
         $provider = $config->getProvider('wpoauth');
         if ($provider->isEnabled()) {
-            $this->getMembersFeedback()->info(sprintf('WARNING: One of the configured OAuth providers, "%s", uses WP-OAuth.', $provider->getLabelSignIn()));
-            $this->getMembersFeedback()->info('WP-Oauth is completely unsafe, and insecure. Choosing another provider would be very sensible!');
+            $msg = sprintf('One of the configured OAuth providers, "%s", uses WP-OAuth. WP-Oauth is unsafe and insecure. Choosing another provider would be very sensible!', $provider->getLabelSignIn());
+            $this->getMembersFeedback()->debug($msg);
         }
     }
 }
