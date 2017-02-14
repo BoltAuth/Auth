@@ -1,14 +1,18 @@
-Prefix your issue title with either [BUG] or [RFC]. If you open an [RFC] you
-are kindly expected to help out in the implementation of said feature request.
+Prefix your issue title with either [BUG] or [RFC]. If you open an [RFC] it is
+expected that you are willing to help out in the implementation of said feature
+request.
 
 This issue tracker is NOT for support questions. If you have a question, please
-seek the help of the community on one of these platforms:
-http://bolt.cm/community.
+join us in the community, on one of our social platforms like Slack, IRC or the
+forum: http://bolt.cm/community.
 
 NOTE: We are close to being finished with Members version 3.0.0. If you have an
 issue, be sure to try the beta for 3.0.0, and see if the issue is still present
 there.
 
+-----------
+
+A brief description of the issue goes here.
 
 Details
 -------
