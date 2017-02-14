@@ -52,7 +52,7 @@ providers:
 
 #### Configure outgoing mail
 
-You should have already done this as part of your inital setup of bolt.  But
+You should have already done this as part of your inital setup of Bolt.  But
 double-check that bolt can send mail to users and members.  The Members plugin
 relies on outgoing mail to be working and may fail silently if it can't.  Look
 for the <tt>mailoptions</tt> setting in <tt>config.yml</tt>
