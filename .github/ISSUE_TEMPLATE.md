@@ -1,16 +1,20 @@
-[Prefix your issue title with either [BUG] or [RFC]. This issue trackes is
-NOT for support questions. If you have a question, please seek the help of
-the community on one of these platforms: http://bolt.cm/community.
+Prefix your issue title with either [BUG] or [RFC]. If you open an [RFC] you
+are kindly expected to help out in the implementation of said feature request.
 
-NOTE: We are close to being finished with Members version 3.0.0. If you
-have an issue, be sure to try the beta for 3.0.0, and see if the issue is still
-present there.
+This issue tracker is NOT for support questions. If you have a question, please
+seek the help of the community on one of these platforms:
+http://bolt.cm/community.
+
+NOTE: We are close to being finished with Members version 3.0.0. If you have an
+issue, be sure to try the beta for 3.0.0, and see if the issue is still present
+there.
 
 
 Details
 -------
 
  - Relevant Bolt Members Version: [ 2.x | 3.x | master ]
+ - Relevant Bolt Version: [ 3.x ]
  - PHP version: [ 5.5 | 5.6 | 7.0 ]
  - For UX/UI issues: [ browser name and version ]
 
