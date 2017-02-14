@@ -11,7 +11,8 @@ when you're happy with how it is working.
 
 * [Install the extension](#install-the-extension)
 * [Update database](#update-database)
-* [Enable a provider](#enable-a-provider)
+* [Enable an authentication provider](#enable-an-authentication-provider)
+* [Configure outgoing mail](#configure-outgoing-mail)
 * [Enable registration](#enable-registration)
 * [Templates](#templates)
   * [Authentication](#authentication)
@@ -34,9 +35,9 @@ set up.
 ![Database update success](img/install-post-database-2.png)
 
 
-#### Enable a provider
+#### Enable an authentication provider
 
-Set up the [Local provider](authentication-providers.md), and set `enbled: true` 
+Set up the [Local authentication provider](authentication-providers.md), and set `enabled: true`
 
 ```yaml
 providers:
@@ -49,6 +50,14 @@ providers:
 ```
 
 
+#### Configure outgoing mail
+
+You should have already done this as part of your inital setup of Bolt.  But
+double-check that bolt can send mail to users and members.  The Members plugin
+relies on outgoing mail to be working and may fail silently if it can't.  Look
+for the <tt>mailoptions</tt> setting in <tt>config.yml</tt>
+
+
 #### Enable registration
 
 In order to register your first account, you need to enable registration in 
@@ -59,8 +68,8 @@ registration:
     enabled: true
 ```
 
-**Note:** If you get 404 responses when trying to visit the registration URL,
-you potentially forgotten to enable this.
+**Note:** If you get 404 responses when trying to visit the registration URL
+then most likely you forgot to enable this setting.
 
 
 #### Templates
