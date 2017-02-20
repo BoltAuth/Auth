@@ -16,7 +16,7 @@ debug: true
 
 ## Notification email addresses ###############################################
 #
-# Enabled notifications and set a working email address.
+# Enable notifications and set a working email address.
 # This is required for outgoing email to work on some servers
 #
 #notification:
