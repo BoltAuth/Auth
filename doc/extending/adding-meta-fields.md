@@ -91,7 +91,14 @@ class ProfileEditType extends MembersProfileEditType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('postcode', Type\TextType::class,   [
+            ->add('postcode', Type\TextType::class, [
+                'label_attr'  => [
+                    'class' => 'main col-xs-12'
+                ],
+                'attr'        => [
+                    'class'       => 'form-control large',
+                    'placeholder' => Trans::__('Your postcode...')
+                ],
                 'label'       => Trans::__('Postcode:'),
                 'constraints' => [
                 ],
