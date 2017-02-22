@@ -16,6 +16,9 @@ debug: true
 
 ## Notification email addresses ###############################################
 #
+# Enable notifications and set a working email address.
+# This is required for outgoing email to work on some servers
+#
 #notification:
 #    name: Site Admin              # Display name used as the sender name
 #    email: no-reply@example.com   # Email address as the sender address

@@ -57,6 +57,15 @@ double-check that bolt can send mail to users and members.  The Members plugin
 relies on outgoing mail to be working and may fail silently if it can't.  Look
 for the <tt>mailoptions</tt> setting in <tt>config.yml</tt>
 
+**Note:** On some servers it is required that you set a correct name and email 
+address for the notifications. If this is not configured your email may not be
+sent at all.
+
+```yaml
+notifications:
+    name: This is your email name
+    email: noreply@example.com
+```
 
 #### Enable registration
 
