@@ -96,7 +96,8 @@ class ProfileEditType extends MembersProfileEditType
                     'class' => 'main col-xs-12'
                 ],
                 'attr'        => [
-                    'class' => 'form-control large'
+                    'class'       => 'form-control large',
+                    'placeholder' => Trans::__('Your postcode...')
                 ],
                 'label'       => Trans::__('Postcode:'),
                 'constraints' => [
