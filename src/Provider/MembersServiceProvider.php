@@ -67,7 +67,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $app['session'] = $app->extend(
             'session',
             function (SessionInterface $session) use ($app) {
-                $session->registerBag($app['members.feedback']);
+                if (!$session->isStarted()) {
+                    $session->registerBag($app['members.feedback']);
+                }
 
                 return $session;
             }
