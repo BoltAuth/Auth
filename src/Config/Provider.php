@@ -238,6 +238,6 @@ class Provider
             'options' => [],
         ];
 
-        return Arr::mergeRecursiveDistinct($default, $providerConfig);
+        return array_replace_recursive($default, $providerConfig);
     }
 }
