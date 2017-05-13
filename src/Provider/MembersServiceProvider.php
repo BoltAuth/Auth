@@ -64,15 +64,16 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         /** @deprecated. Do not use */
         $app['members.meta_fields'] = [];
 
-        $app['session'] = $app->extend(
-            'session',
-            function (SessionInterface $session) use ($app) {
-                if (!$session->isStarted()) {
-                    $session->registerBag($app['members.feedback']);
+        $app['session'] = $app->share(
+            $app->extend(
+                'session',
+                function (SessionInterface $session) use ($app) {
+                    if (!$session->isStarted()) {
+                        $session->registerBag($app['members.feedback']);
+                    }
+                    return $session;
                 }
-
-                return $session;
-            }
+            )
         );
 
         if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
