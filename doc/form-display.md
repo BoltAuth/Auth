@@ -75,7 +75,7 @@ theme directory.
 You can find the installed defaults in the Auth source directory:
 
 ```
-{site root directory}/extensions/vendor/bolt/auth/
+{site root directory}/extensions/vendor/boltauth/auth/
 ```
 
 ### Labels

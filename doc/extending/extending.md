@@ -5,7 +5,7 @@ Auth is event driven and provides a number of dispatcher that your own
 extension can listen for, and affect the behaviour of different parts of the
 Auth extension. 
 
-There is an example repository called [Auth Addon Example](https://github.com/bolt/Auth-Addon-Example) 
+There is an example repository called [Auth Addon Example](https://github.com/BoltAuth/Auth-Addon-Example) 
 that shows some of the available behaviour.
 
 See:

@@ -556,7 +556,7 @@ class Authentication extends AbstractController
     private function displayExceptionPage(Application $app, \Exception $e)
     {
         $config = $this->getAuthConfig();
-        $ext = $app['extensions']->get('Bolt/Auth');
+        $ext = $app['extensions']->get('BoltAuth/Auth');
         $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
         $context = [
             'parent'    => $config->getTemplate('error', 'parent'),

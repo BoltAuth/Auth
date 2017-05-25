@@ -130,7 +130,7 @@ class Backend extends AbstractController
     private function addWebAssets(Application $app)
     {
         /** @var AuthExtension $extension */
-        $extension = $app['extensions']->get('Bolt/Auth');
+        $extension = $app['extensions']->get('BoltAuth/Auth');
         $dir = '/' . $extension->getWebDirectory()->getPath();
         $assets = [
             (new Stylesheet($dir . '/css/sweetalert.css'))->setZone(Zone::BACKEND)->setLate(false),
