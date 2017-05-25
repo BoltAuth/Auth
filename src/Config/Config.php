@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Config;
+namespace Bolt\Extension\BoltAuth\Auth\Config;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -25,13 +25,13 @@ class Config
     /** @var array */
     protected $rolesAdmin;
     /** @var array */
-    protected $rolesMember;
+    protected $rolesAuth;
     /** @var array */
     protected $rolesRegister;
     /** @var string */
     protected $urlAuthenticate;
     /** @var string */
-    protected $urlMembers;
+    protected $urlAuth;
     /** @var string */
     protected $notificationName;
     /** @var string */
@@ -60,10 +60,10 @@ class Config
         $this->debug = (boolean) $config['debug'];
         $this->registration = $config['registration'];
         $this->rolesAdmin = $config['roles']['admin'];
-        $this->rolesMember = $config['roles']['member'];
+        $this->rolesAuth = $config['roles']['auth'];
         $this->rolesRegister = $config['roles']['register'];
         $this->urlAuthenticate = $config['urls']['authenticate'];
-        $this->urlMembers = $config['urls']['members'];
+        $this->urlAuth = $config['urls']['auth'];
         $this->notificationName = $config['notification']['name'];
         $this->notificationEmail = $config['notification']['email'];
         $this->notificationEmailFormat = $config['notification']['format'];
@@ -211,7 +211,7 @@ class Config
     public function getTemplate($type, $key)
     {
         if ($key === 'default') {
-            return  sprintf('@Members/%s/_sub/%s.twig', $key, $key);
+            return  sprintf('@Auth/%s/_sub/%s.twig', $key, $key);
         }
 
         if (!$this->forms->get('templates')->has($type) || !$this->forms->get('templates')->get($type)->has($key)) {
@@ -314,19 +314,19 @@ class Config
     /**
      * @return array
      */
-    public function getRolesMember()
+    public function getRolesAuth()
     {
-        return (array) $this->rolesMember;
+        return (array) $this->rolesAuth;
     }
 
     /**
-     * @param array $rolesMember
+     * @param array $rolesAuth
      *
      * @return Config
      */
-    public function setRolesMember(array $rolesMember)
+    public function setRolesAuth(array $rolesAuth)
     {
-        $this->rolesMember = $rolesMember;
+        $this->rolesAuth = $rolesAuth;
 
         return $this;
     }
@@ -354,19 +354,19 @@ class Config
     /**
      * @return string
      */
-    public function getUrlMembers()
+    public function getUrlAuth()
     {
-        return $this->urlMembers;
+        return $this->urlAuth;
     }
 
     /**
-     * @param string $urlMembers
+     * @param string $urlAuth
      *
      * @return Config
      */
-    public function setUrlMembers($urlMembers)
+    public function setUrlAuth($urlAuth)
     {
-        $this->urlMembers = $urlMembers;
+        $this->urlAuth = $urlAuth;
 
         return $this;
     }
@@ -597,7 +597,7 @@ class Config
                 'admin'  => [
                     'root',
                 ],
-                'member' => [
+                'auth' => [
                     'admin'       => 'Administrator',
                     'participant' => 'Participant',
                 ],
@@ -607,40 +607,40 @@ class Config
             ],
             'urls'         => [
                 'authenticate' => 'authentication',
-                'members'      => 'membership',
+                'auth'      => 'auth',
             ],
             'forms'         => [
                 'templates' => [
                     'profile'        => [
-                        'parent'   => '@Members/profile/_profile.twig',
-                        'edit'     => '@Members/profile/edit.twig',
-                        'register' => '@Members/profile/register.twig',
-                        'verify'   => '@Members/profile/verify.twig',
-                        'view'     => '@Members/profile/view.twig',
+                        'parent'   => '@Auth/profile/_profile.twig',
+                        'edit'     => '@Auth/profile/edit.twig',
+                        'register' => '@Auth/profile/register.twig',
+                        'verify'   => '@Auth/profile/verify.twig',
+                        'view'     => '@Auth/profile/view.twig',
                     ],
                     'authentication' => [
-                        'parent'    => '@Members/authentication/_authentication.twig',
-                        'associate' => '@Members/authentication/associate.twig',
-                        'login'     => '@Members/authentication/login.twig',
-                        'logout'    => '@Members/authentication/logout.twig',
-                        'recovery'  => '@Members/authentication/recovery.twig',
+                        'parent'    => '@Auth/authentication/_authentication.twig',
+                        'associate' => '@Auth/authentication/associate.twig',
+                        'login'     => '@Auth/authentication/login.twig',
+                        'logout'    => '@Auth/authentication/logout.twig',
+                        'recovery'  => '@Auth/authentication/recovery.twig',
                     ],
                     'error'          => [
-                        'parent' => '@Members/error/_error.twig',
-                        'error'  => '@Members/error/error.twig',
+                        'parent' => '@Auth/error/_error.twig',
+                        'error'  => '@Auth/error/error.twig',
                     ],
                     'feedback'          => [
-                        'feedback'  => '@Members/feedback/feedback.twig',
+                        'feedback'  => '@Auth/feedback/feedback.twig',
                     ],
                     'recovery'   => [
-                        'subject' => '@Members/authentication/recovery/subject.twig',
-                        'html'    => '@Members/authentication/recovery/html.twig',
-                        'text'    => '@Members/authentication/recovery/text.twig',
+                        'subject' => '@Auth/authentication/recovery/subject.twig',
+                        'html'    => '@Auth/authentication/recovery/html.twig',
+                        'text'    => '@Auth/authentication/recovery/text.twig',
                     ],
                     'verification'   => [
-                        'subject' => '@Members/profile/registration/subject.twig',
-                        'html'    => '@Members/profile/registration/html.twig',
-                        'text'    => '@Members/profile/registration/text.twig',
+                        'subject' => '@Auth/profile/registration/subject.twig',
+                        'html'    => '@Auth/profile/registration/html.twig',
+                        'text'    => '@Auth/profile/registration/text.twig',
                     ],
                 ],
                 'labels'       => [

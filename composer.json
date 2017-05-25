@@ -1,13 +1,13 @@
 {
-    "name": "bolt/members",
-    "description": "Membership creation and management for Bolt",
+    "name": "boltauth/auth",
+    "description": "Auth management for Bolt",
     "type": "bolt-extension",
     "keywords": [
         "Facebook",
         "GitHub",
         "Google",
         "login",
-        "membership",
+        "auth",
         "oauth",
         "profiles"
     ],
@@ -39,20 +39,20 @@
     ],
     "autoload": {
         "psr-4": {
-            "Bolt\\Extension\\Bolt\\Members\\": "src",
+            "Bolt\\Extension\\BoltAuth\\Auth\\": "src",
             "League\\OAuth2\\Client\\": "lib/League/OAuth2/Client/",
             "Stevenmaguire\\OAuth2\\Client\\": "lib/League/OAuth2/Client/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Bolt\\Extension\\Bolt\\Members\\Tests\\": "tests",
+            "Bolt\\Extension\\BoltAuth\\Auth\\Tests\\": "tests",
             "Bolt\\Tests\\": "vendor/bolt/bolt/tests/phpunit/unit/"
         }
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\Bolt\\Members\\MembersExtension",
+        "bolt-class": "Bolt\\Extension\\BoltAuth\\Auth\\AuthExtension",
         "bolt-icon": "icon.png",
         "branch-alias": {
             "dev-master": "3.0.x-dev"

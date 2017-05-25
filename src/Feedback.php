@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\BoltAuth\Auth;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
@@ -17,13 +17,13 @@ use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
  */
 class Feedback implements SessionBagInterface
 {
-    const SESSION_KEY = 'members-feedback.cache';
+    const SESSION_KEY = 'auth-feedback.cache';
 
     /** @var array */
     protected $feedback;
 
     /** @var string */
-    private $name = 'members.feedback';
+    private $name = 'auth.feedback';
     /** @var string */
     private $storageKey;
     /** @var bool */

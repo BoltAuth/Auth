@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
-use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\EntityInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -19,7 +19,7 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 class FormBuilderEvent extends Event
 {
-    const BUILD = 'members.form.construction';
+    const BUILD = 'auth.form.construction';
 
     /** @var string */
     protected $name;

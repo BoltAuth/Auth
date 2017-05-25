@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\BoltAuth\Auth\Form;
 
 /**
- * Members form constants.
+ * Auth form constants.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -13,7 +13,7 @@ namespace Bolt\Extension\Bolt\Members\Form;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersForms
+class AuthForms
 {
     const ASSOCIATE = 'form_associate';
     const LOGIN_OAUTH = 'form_login_oauth';

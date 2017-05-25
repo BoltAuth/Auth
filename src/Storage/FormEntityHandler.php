@@ -1,14 +1,14 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage;
+namespace Bolt\Extension\BoltAuth\Auth\Storage;
 
-use Bolt\Extension\Bolt\Members\AccessControl;
-use Bolt\Extension\Bolt\Members\AccessControl\Validator\AccountVerification;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
-use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
-use Bolt\Extension\Bolt\Members\Storage;
+use Bolt\Extension\BoltAuth\Auth\AccessControl;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Validator\AccountVerification;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\Profile;
+use Bolt\Extension\BoltAuth\Auth\Storage;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Ramsey\Uuid\Uuid;
@@ -76,8 +76,8 @@ class FormEntityHandler
         $account->setEmail($form->get('email')->getData());
 
         // Dispatch the account profile pre-save event
-        $event = new MembersProfileEvent($account);
-        $this->eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_PRE_SAVE, $event);
+        $event = new AuthProfileEvent($account);
+        $this->eventDispatcher->dispatch(AuthEvents::AUTH_PROFILE_PRE_SAVE, $event);
 
         $this->records->saveAccount($account);
 
@@ -107,7 +107,7 @@ class FormEntityHandler
         }
 
         // Dispatch the account profile post-save event
-        $this->eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_POST_SAVE, $event);
+        $this->eventDispatcher->dispatch(AuthEvents::AUTH_PROFILE_POST_SAVE, $event);
 
         return $this;
     }
@@ -148,7 +148,7 @@ class FormEntityHandler
         $guid = $account->getGuid();
 
         // Create the event
-        $event = new MembersProfileEvent($account);
+        $event = new AuthProfileEvent($account);
         // Create verification meta
         $this->createAccountVerificationKey($event, $guid);
         // Create a local OAuth account record
@@ -173,7 +173,7 @@ class FormEntityHandler
         ;
 
         // Dispatch the account profile post-save event
-        $this->eventDispatcher->dispatch(MembersEvents::MEMBER_PROFILE_REGISTER, $event);
+        $this->eventDispatcher->dispatch(AuthEvents::AUTH_PROFILE_REGISTER, $event);
 
         return $this;
     }
@@ -243,10 +243,10 @@ class FormEntityHandler
     /**
      * Create account verification key profile meta.
      *
-     * @param MembersProfileEvent $event
+     * @param AuthProfileEvent $event
      * @param string              $guid
      */
-    protected function createAccountVerificationKey(MembersProfileEvent $event, $guid)
+    protected function createAccountVerificationKey(AuthProfileEvent $event, $guid)
     {
         $metaValue = sha1(Uuid::uuid4()->toString());
 

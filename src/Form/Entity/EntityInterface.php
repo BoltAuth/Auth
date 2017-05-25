@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Entity;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Entity;
 
 /**
  * Entity Interface.

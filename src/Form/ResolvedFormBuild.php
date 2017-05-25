@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\BoltAuth\Auth\Form;
 
-use Bolt\Extension\Bolt\Members\Form\Builder\MembersFormBuilderInterface;
-use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
+use Bolt\Extension\BoltAuth\Auth\Form\Builder\AuthFormBuilderInterface;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\EntityInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 class ResolvedFormBuild
 {
-    /** @var MembersFormBuilderInterface[] */
+    /** @var AuthFormBuilderInterface[] */
     private $formBuilder;
     /** @var FormInterface[] */
     protected $form;
@@ -31,12 +31,12 @@ class ResolvedFormBuild
      * Add a builder and form.
      *
      * @param string                      $formName
-     * @param MembersFormBuilderInterface $formBuilder
+     * @param AuthFormBuilderInterface $formBuilder
      * @param FormInterface               $form
      *
      * @return ResolvedFormBuild
      */
-    public function addBuild($formName, MembersFormBuilderInterface $formBuilder, FormInterface $form)
+    public function addBuild($formName, AuthFormBuilderInterface $formBuilder, FormInterface $form)
     {
         $this->formBuilder[$formName] = $formBuilder;
         $this->form[$formName] = $form;
@@ -47,7 +47,7 @@ class ResolvedFormBuild
     /**
      * @param $formName
      *
-     * @return MembersFormBuilderInterface
+     * @return AuthFormBuilderInterface
      */
     public function getFormBuilder($formName)
     {

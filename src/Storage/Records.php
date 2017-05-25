@@ -1,12 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage;
+namespace Bolt\Extension\BoltAuth\Auth\Storage;
 
 use Carbon\Carbon;
 use Pimple as Container;
 
 /**
- * Membership records.
+ * Auth records.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -53,7 +53,7 @@ class Records
     }
 
     /**
-     * Fetch all membership accounts.
+     * Fetch all auth accounts.
      *
      * @param string $orderBy
      * @param string $order
@@ -140,13 +140,13 @@ class Records
     }
 
     /**
-     * Search for member accounts.
+     * Search for auth accounts.
      *
      * @param string $term
      * @param string $orderBy
      * @param null   $order
      *
-     * @return array|\Bolt\Extension\Bolt\Members\Pager\Pager
+     * @return array|\Bolt\Extension\BoltAuth\Auth\Pager\Pager
      */
     public function searchAccount($term, $orderBy, $order)
     {

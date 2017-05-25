@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\Instagram as LeagueInstagram;
 use League\OAuth2\Client\Token\AccessToken;

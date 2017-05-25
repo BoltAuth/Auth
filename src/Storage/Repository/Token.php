@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use Bolt\Storage\Mapping\Type\CarbonDateTimeType;
 
 use Carbon\Carbon;
@@ -18,7 +18,7 @@ use Carbon\Carbon;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Token extends AbstractMembersRepository
+class Token extends AbstractAuthRepository
 {
     const ALIAS = 't';
 

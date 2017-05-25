@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
 /**
- * Members event constant class.
+ * Auth event constant class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -13,22 +13,22 @@ namespace Bolt\Extension\Bolt\Members\Event;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersEvents
+class AuthEvents
 {
-    const MEMBER_LOGIN = 'member.login';
-    const MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED = 'member.login.failed.account_disabled';
-    const MEMBER_LOGOUT = 'member.logout';
-    const MEMBER_ENABLE = 'member.enable';
-    const MEMBER_DISABLE = 'member.disable';
-    const MEMBER_PROFILE_EDIT = 'member.profile.edit';
-    const MEMBER_PROFILE_PRE_SAVE = 'member.profile.pre_save';
-    const MEMBER_PROFILE_POST_SAVE = 'member.profile.post_save';
-    const MEMBER_PROFILE_REGISTER = 'member.profile.register';
-    const MEMBER_PROFILE_RESET = 'member.profile.reset';
-    const MEMBER_PROFILE_VERIFY = 'member.profile.verify';
-    const MEMBER_ROLE = 'member.role';
-    const MEMBER_NOTIFICATION_PRE_SEND = 'member.notification.pre_send';
-    const MEMBER_NOTIFICATION_FAILURE = 'member.notification.failure';
+    const AUTH_LOGIN = 'auth.login';
+    const AUTH_LOGIN_FAILED_ACCOUNT_DISABLED = 'auth.login.failed.account_disabled';
+    const AUTH_LOGOUT = 'auth.logout';
+    const AUTH_ENABLE = 'auth.enable';
+    const AUTH_DISABLE = 'auth.disable';
+    const AUTH_PROFILE_EDIT = 'auth.profile.edit';
+    const AUTH_PROFILE_PRE_SAVE = 'auth.profile.pre_save';
+    const AUTH_PROFILE_POST_SAVE = 'auth.profile.post_save';
+    const AUTH_PROFILE_REGISTER = 'auth.profile.register';
+    const AUTH_PROFILE_RESET = 'auth.profile.reset';
+    const AUTH_PROFILE_VERIFY = 'auth.profile.verify';
+    const AUTH_ROLE = 'auth.role';
+    const AUTH_NOTIFICATION_PRE_SEND = 'auth.notification.pre_send';
+    const AUTH_NOTIFICATION_FAILURE = 'auth.notification.failure';
 
     /**
      * Singleton constructor.

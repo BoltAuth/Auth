@@ -1,10 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl\Validator;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl\Validator;
 
-use Bolt\Extension\Bolt\Members\Exception\AccountVerificationException;
-use Bolt\Extension\Bolt\Members\Storage;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\BoltAuth\Auth\Exception\AccountVerificationException;
+use Bolt\Extension\BoltAuth\Auth\Storage;
+use Bolt\Extension\BoltAuth\Auth\Storage\Records;
 
 /**
  * Verification class.

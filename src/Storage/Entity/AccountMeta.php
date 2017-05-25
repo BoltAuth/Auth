@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Entity;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 /**
  * Account meta entity class.

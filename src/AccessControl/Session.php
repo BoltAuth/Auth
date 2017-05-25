@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
-use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Storage;
+use Bolt\Extension\BoltAuth\Auth\Exception;
+use Bolt\Extension\BoltAuth\Auth\Storage;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
@@ -23,14 +23,14 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 class Session
 {
-    const COOKIE_AUTHORISATION = 'members';
-    const SESSION_ATTRIBUTES = 'members-session-attributes';
-    const SESSION_AUTHORISATION = 'members-authorisation';
-    const SESSION_STATE = 'members-oauth-state';
-    const SESSION_TRANSITIONAL = 'members-transitional';
-    const REDIRECT_STACK = 'members-redirect-stack';
+    const COOKIE_AUTHORISATION = 'auth';
+    const SESSION_ATTRIBUTES = 'auth-session-attributes';
+    const SESSION_AUTHORISATION = 'auth-authorisation';
+    const SESSION_STATE = 'auth-oauth-state';
+    const SESSION_TRANSITIONAL = 'auth-transitional';
+    const REDIRECT_STACK = 'auth-redirect-stack';
 
-    const SESSION_ATTRIBUTE_OAUTH_DATA = 'members-oauth-finalise';
+    const SESSION_ATTRIBUTE_OAUTH_DATA = 'auth-oauth-finalise';
 
     /** @var Authorisation */
     protected $authorisation;
@@ -162,10 +162,10 @@ class Session
     public function createAuthorisation($guid)
     {
         if ($this->accessTokens === null) {
-            throw new \RuntimeException(sprintf('Tokens not added to session for member GUID of %s', $guid));
+            throw new \RuntimeException(sprintf('Tokens not added to session for auth GUID of %s', $guid));
         }
         if ($this->isTransitional()) {
-            throw new \RuntimeException(sprintf('Transition still in progress for member GUID of %s', $guid));
+            throw new \RuntimeException(sprintf('Transition still in progress for auth GUID of %s', $guid));
         }
 
         $accountEntity = $this->records->getAccountByGuid($guid);
@@ -205,7 +205,7 @@ class Session
     }
 
     /**
-     * Check if the current logged-in session has a member role.
+     * Check if the current logged-in session has a auth role.
      *
      * @param string|array $role
      *

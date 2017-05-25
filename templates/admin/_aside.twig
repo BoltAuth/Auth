@@ -7,13 +7,13 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" href="members/add">
+                    <a class="btn btn-tertiary" href="auth/add">
                         <i class="fa fa-wrench"></i> {{ __('Add User') }}
                     </a>
                 </div>
 
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" data-action="members-user-del">
+                    <a class="btn btn-tertiary" data-action="auth-user-del">
                         <i class="fa fa-wrench"></i> {{ __('Delete User') }}
                     </a>
                 </div>
@@ -23,12 +23,12 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" data-action="members-user-enable">
+                    <a class="btn btn-tertiary" data-action="auth-user-enable">
                         <i class="fa fa-wrench"></i> {{ __('Enable') }}
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" data-action="members-user-disable">
+                    <a class="btn btn-tertiary" data-action="auth-user-disable">
                         <i class="fa fa-wrench"></i> {{ __('Disable') }}
                     </a>
                 </div>
@@ -39,12 +39,12 @@
             <h4><strong>{{ __('Roles') }}</strong></h4>
             <div class="row">
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" data-action="members-role-add">
+                    <a class="btn btn-tertiary" data-action="auth-role-add">
                         <i class="fa fa-check-square-o"></i> {{ __('Add role') }}
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a class="btn btn-tertiary" data-action="members-role-del">
+                    <a class="btn btn-tertiary" data-action="auth-role-del">
                         <i class="fa fa-minus-square-o"></i> {{ __('Remove role') }}
                     </a>
                 </div>
@@ -54,7 +54,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <select class="form-control members-select-roles" title="Select Roles">
+                    <select class="form-control auth-select-roles" title="Select Roles">
                         <option value=""></option>
                         {% for role in roles %}
                             <option value="{{ role.name }}">{{ role.displayname }}</option>

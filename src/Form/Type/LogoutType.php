@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,7 +22,7 @@ class LogoutType extends AbstractType
 {
     public function getName()
     {
-        return MembersForms::LOGOUT;
+        return AuthForms::LOGOUT;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -34,7 +34,7 @@ class LogoutType extends AbstractType
                 [
                     'label'   => Trans::__($this->config->getLabel('logout')),
                     'attr'    => [
-                        'class' => 'members-logout-button',
+                        'class' => 'auth-logout-button',
                         'href'  => sprintf('/%s/logout', $this->config->getUrlAuthenticate()),
                     ],
                 ]

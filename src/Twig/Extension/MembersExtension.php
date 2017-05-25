@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Twig\Extension;
+namespace Bolt\Extension\BoltAuth\Auth\Twig\Extension;
 
 use Twig_Extension as Extension;
 use Twig_SimpleFunction as SimpleFunction;
@@ -16,7 +16,7 @@ use Twig_SimpleFunction as SimpleFunction;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersExtension extends Extension
+class AuthExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -27,23 +27,23 @@ class MembersExtension extends Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new SimpleFunction('is_member',                     [MembersRuntime::class, 'isMember'],        $safe),
-            new SimpleFunction('member',                        [MembersRuntime::class, 'getMember'],       $safe),
-            new SimpleFunction('member_meta',                   [MembersRuntime::class, 'getMemberMeta'],   $safe),
-            new SimpleFunction('member_oauth',                  [MembersRuntime::class, 'getMemberOauth'],  $safe),
-            new SimpleFunction('member_has_role',               [MembersRuntime::class, 'hasRole'],         $safe),
-            new SimpleFunction('member_providers',              [MembersRuntime::class, 'getProviders'],    $safe),
-            new SimpleFunction('members_auth_switcher',         [MembersRuntime::class, 'renderSwitcher'],  $safe + $env),
-            new SimpleFunction('members_auth_associate',        [MembersRuntime::class, 'renderAssociate'], $safe + $env),
-            new SimpleFunction('members_auth_login',            [MembersRuntime::class, 'renderLogin'],     $safe + $env),
-            new SimpleFunction('members_auth_logout',           [MembersRuntime::class, 'renderLogout'],    $safe + $env),
-            new SimpleFunction('members_link_auth_login',       [MembersRuntime::class, 'getLinkLogin'],    $safe),
-            new SimpleFunction('members_link_auth_logout',      [MembersRuntime::class, 'getLinkLogout'],   $safe),
-            new SimpleFunction('members_link_auth_reset',       [MembersRuntime::class, 'getLinkReset'],    $safe),
-            new SimpleFunction('members_link_profile_edit',     [MembersRuntime::class, 'getLinkEdit'],     $safe),
-            new SimpleFunction('members_link_profile_register', [MembersRuntime::class, 'getLinkRegister'], $safe),
-            new SimpleFunction('members_profile_edit',          [MembersRuntime::class, 'renderEdit'],      $safe + $env),
-            new SimpleFunction('members_profile_register',      [MembersRuntime::class, 'renderRegister'],  $safe + $env),
+            new SimpleFunction('is_auth',                     [AuthRuntime::class, 'isAuth'],        $safe),
+            new SimpleFunction('auth',                        [AuthRuntime::class, 'getAuth'],       $safe),
+            new SimpleFunction('auth_meta',                   [AuthRuntime::class, 'getAuthMeta'],   $safe),
+            new SimpleFunction('auth_oauth',                  [AuthRuntime::class, 'getAuthOauth'],  $safe),
+            new SimpleFunction('auth_has_role',               [AuthRuntime::class, 'hasRole'],         $safe),
+            new SimpleFunction('auth_providers',              [AuthRuntime::class, 'getProviders'],    $safe),
+            new SimpleFunction('auth_auth_switcher',         [AuthRuntime::class, 'renderSwitcher'],  $safe + $env),
+            new SimpleFunction('auth_auth_associate',        [AuthRuntime::class, 'renderAssociate'], $safe + $env),
+            new SimpleFunction('auth_auth_login',            [AuthRuntime::class, 'renderLogin'],     $safe + $env),
+            new SimpleFunction('auth_auth_logout',           [AuthRuntime::class, 'renderLogout'],    $safe + $env),
+            new SimpleFunction('auth_link_auth_login',       [AuthRuntime::class, 'getLinkLogin'],    $safe),
+            new SimpleFunction('auth_link_auth_logout',      [AuthRuntime::class, 'getLinkLogout'],   $safe),
+            new SimpleFunction('auth_link_auth_reset',       [AuthRuntime::class, 'getLinkReset'],    $safe),
+            new SimpleFunction('auth_link_profile_edit',     [AuthRuntime::class, 'getLinkEdit'],     $safe),
+            new SimpleFunction('auth_link_profile_register', [AuthRuntime::class, 'getLinkRegister'], $safe),
+            new SimpleFunction('auth_profile_edit',          [AuthRuntime::class, 'renderEdit'],      $safe + $env),
+            new SimpleFunction('auth_profile_register',      [AuthRuntime::class, 'renderRegister'],  $safe + $env),
         ];
     }
 }

@@ -10,7 +10,7 @@ Twig Functions
     * [Renderers](#renderers-1)
     * [URL Generators](#url-generators-1)
   * [Restricting Access](#restricting-access)
-  * [Member Data](#member-data)
+  * [Auth Data](#auth-data)
 
 ## Guide
 
@@ -21,19 +21,19 @@ Twig Functions
 
 | Function                                 | Parameter | Description |
 |------------------------------------------|-----------|-------------|
-| `{{ members_auth_login() }}`             | string    | Render the login template
-| `{{ members_auth_logout() }}`            | string    | Render the logout template
-| `{{ members_auth_switcher() }}`          | string    | Render either the login or logout template depending on login state
-| `{{ members_auth_associate() }}`         | string    | Render the OAuth account association template
+| `{{ auth_auth_login() }}`             | string    | Render the login template
+| `{{ auth_auth_logout() }}`            | string    | Render the logout template
+| `{{ auth_auth_switcher() }}`          | string    | Render either the login or logout template depending on login state
+| `{{ auth_auth_associate() }}`         | string    | Render the OAuth account association template
 
 
 #### URL Generators 
 
 | Function                                 | Parameter | Description |
 |------------------------------------------|-----------|-------------|
-| `{{ members_link_auth_login() }}`        | integer   | Link to login
-| `{{ members_link_auth_logout() }}`       | integer   | Link to logout
-| `{{ members_link_auth_reset() }}`        | integer   | Link to password reset
+| `{{ auth_link_auth_login() }}`        | integer   | Link to login
+| `{{ auth_link_auth_logout() }}`       | integer   | Link to logout
+| `{{ auth_link_auth_reset() }}`        | integer   | Link to password reset
 
 All functions default to `2` if nothing supplied.
 
@@ -49,16 +49,16 @@ Valid parameter values:
 
 | Function                                 | Parameter | Description |
 |------------------------------------------|-----------|-------------|
-| `{{ members_profile_edit() }}`           | string    | Render the profile edit template
-| `{{ members_profile_register() }}`       | string    | Render the profile registration template
+| `{{ auth_profile_edit() }}`           | string    | Render the profile edit template
+| `{{ auth_profile_register() }}`       | string    | Render the profile registration template
 
 
 #### URL Generators
 
 | Function                                 | Parameter | Description |
 |------------------------------------------|-----------|-------------|
-| `{{ members_link_profile_edit() }}`      | integer   | Link to profile edit
-| `{{ members_link_profile_register() }}`  | integer   | Link to profile registration
+| `{{ auth_link_profile_edit() }}`      | integer   | Link to profile edit
+| `{{ auth_link_profile_register() }}`  | integer   | Link to profile registration
                                             
 All functions default to `2` if nothing supplied.
 
@@ -74,16 +74,16 @@ Valid parameter values:
 
 | Function                             | Description |
 |--------------------------------------|-------------|
-| `{{ is_member() }}`                  | Returns `true` if the broswer session is logged in
+| `{{ is_auth() }}`                  | Returns `true` if the broswer session is logged in
 
 
-### Member Data
+### Auth Data
 
 
 | Function                             | Parameter | Description |
 |--------------------------------------|-----------|-------------|
-| `{{ member() }}`                     |           | Returns an entity array of the member's account information
-| `{{ member_meta() }}`                |           | Returns an entity array of the member's meta data (if any) 
-| `{{ member_has_role() }}`            | string    | Returns `true` if the logged in user has the given Members roles  
-| `{{ member_providers() }}`           |           | Returns an array of providers connected to the logged in user account
+| `{{ auth() }}`                     |           | Returns an entity array of the auth's account information
+| `{{ auth_meta() }}`                |           | Returns an entity array of the auth's meta data (if any) 
+| `{{ auth_has_role() }}`            | string    | Returns `true` if the logged in user has the given Auth roles  
+| `{{ auth_providers() }}`           |           | Returns an array of providers connected to the logged in user account
 

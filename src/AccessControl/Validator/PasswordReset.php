@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl\Validator;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl\Validator;
 
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PasswordReset
 {
-    const COOKIE_NAME = 'members-password-reset';
+    const COOKIE_NAME = 'auth-password-reset';
 
     /** @var string */
     protected $cookieValue;

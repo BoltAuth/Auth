@@ -1,12 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\EventListener;
+namespace Bolt\Extension\BoltAuth\Auth\EventListener;
 
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
-use Bolt\Extension\Bolt\Members\Handler\ProfileRegister;
-use Bolt\Extension\Bolt\Members\Handler\ProfileReset;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent;
+use Bolt\Extension\BoltAuth\Auth\Handler\ProfileRegister;
+use Bolt\Extension\BoltAuth\Auth\Handler\ProfileReset;
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -43,19 +43,19 @@ class ProfileListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            MembersEvents::MEMBER_PROFILE_REGISTER => 'onProfileRegister',
-            MembersEvents::MEMBER_PROFILE_RESET    => 'onProfileReset',
+            AuthEvents::AUTH_PROFILE_REGISTER => 'onProfileRegister',
+            AuthEvents::AUTH_PROFILE_RESET    => 'onProfileReset',
         ];
     }
 
     /**
      * Profile registration event.
      *
-     * @param MembersProfileEvent      $event
+     * @param AuthProfileEvent      $event
      * @param string                   $eventName
      * @param EventDispatcherInterface $dispatcher
      */
-    public function onProfileRegister(MembersProfileEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function onProfileRegister(AuthProfileEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $this->getRegisterHandler()->handle($event, $eventName, $dispatcher);
     }
@@ -63,11 +63,11 @@ class ProfileListener implements EventSubscriberInterface
     /**
      * Password reset notification event.
      *
-     * @param MembersNotificationEvent $event
+     * @param AuthNotificationEvent $event
      * @param string                   $eventName
      * @param EventDispatcherInterface $dispatcher
      */
-    public function onProfileReset(MembersNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function onProfileReset(AuthNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $this->getResetHandler()->handle($event, $eventName, $dispatcher);
     }
@@ -77,7 +77,7 @@ class ProfileListener implements EventSubscriberInterface
      */
     private function getRegisterHandler()
     {
-        return $this->app['members.event_handler.profile_register'];
+        return $this->app['auth.event_handler.profile_register'];
     }
 
     /**
@@ -85,6 +85,6 @@ class ProfileListener implements EventSubscriberInterface
      */
     private function getResetHandler()
     {
-        return $this->app['members.event_handler.profile_reset'];
+        return $this->app['auth.event_handler.profile_reset'];
     }
 }

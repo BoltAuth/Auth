@@ -1,20 +1,20 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Controller;
+namespace Bolt\Extension\BoltAuth\Auth\Controller;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Feedback;
-use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
-use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
-use Bolt\Extension\Bolt\Members\Storage\FormEntityHandler;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Session;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Feedback;
+use Bolt\Extension\BoltAuth\Auth\Form;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\ProviderManager;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Handler\HandlerInterface;
+use Bolt\Extension\BoltAuth\Auth\Storage\FormEntityHandler;
+use Bolt\Extension\BoltAuth\Auth\Storage\Records;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Silex\Application;
 
 /**
- * Members services trait.
+ * Auth services trait.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -24,77 +24,77 @@ use Silex\Application;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-trait MembersServicesTrait
+trait AuthServicesTrait
 {
     /**
       * @return Config
       */
-     protected function getMembersConfig()
+     protected function getAuthConfig()
      {
-         return $this->getContainer()['members.config'];
+         return $this->getContainer()['auth.config'];
      }
 
     /**
      * @return Feedback
      */
-    protected function getMembersFeedback()
+    protected function getAuthFeedback()
     {
-        return $this->getContainer()['members.feedback'];
+        return $this->getContainer()['auth.feedback'];
     }
     /**
      * @return Form\Manager
      */
-    protected function getMembersFormsManager()
+    protected function getAuthFormsManager()
     {
-        return $this->getContainer()['members.forms.manager'];
+        return $this->getContainer()['auth.forms.manager'];
     }
 
     /**
      * @return HandlerInterface
      */
-    protected function getMembersOauthHandler()
+    protected function getAuthOauthHandler()
     {
-        return $this->getContainer()['members.oauth.handler'];
+        return $this->getContainer()['auth.oauth.handler'];
     }
 
     /**
      * @return AbstractProvider
      */
-    protected function getMembersOauthProvider()
+    protected function getAuthOauthProvider()
     {
-        return $this->getContainer()['members.oauth.provider'];
+        return $this->getContainer()['auth.oauth.provider'];
     }
 
     /**
      * @return ProviderManager
      */
-    protected function getMembersOauthProviderManager()
+    protected function getAuthOauthProviderManager()
     {
-        return $this->getContainer()['members.oauth.provider.manager'];
+        return $this->getContainer()['auth.oauth.provider.manager'];
     }
 
     /**
      * @return Records
      */
-    protected function getMembersRecords()
+    protected function getAuthRecords()
     {
-        return $this->getContainer()['members.records'];
+        return $this->getContainer()['auth.records'];
     }
 
     /**
      * @return FormEntityHandler
      */
-    protected function getMembersRecordsProfile()
+    protected function getAuthRecordsProfile()
     {
-        return $this->getContainer()['members.records.profile'];
+        return $this->getContainer()['auth.records.profile'];
     }
 
     /**
      * @return Session
      */
-    protected function getMembersSession()
+    protected function getAuthSession()
     {
-        return $this->getContainer()['members.session'];
+        return $this->getContainer()['auth.session'];
     }
 
     /**

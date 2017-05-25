@@ -1,14 +1,14 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members;
+namespace Bolt\Extension\BoltAuth\Auth;
 
 use Bolt\Events\ControllerEvents;
 use Bolt\Extension\AbstractExtension;
-use Bolt\Extension\Bolt\Members\AccessControl\SessionSubscriber;
-use Bolt\Extension\Bolt\Members\Provider\MembersServiceProvider;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Repository;
-use Bolt\Extension\Bolt\Members\Storage\Schema\Table;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\SessionSubscriber;
+use Bolt\Extension\BoltAuth\Auth\Provider\AuthServiceProvider;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Repository;
+use Bolt\Extension\BoltAuth\Auth\Storage\Schema\Table;
 use Bolt\Extension\ConfigTrait;
 use Bolt\Extension\ControllerMountTrait;
 use Bolt\Extension\DatabaseSchemaTrait;
@@ -23,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Membership management extension for Bolt
+ * Auth management extension for Bolt
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -33,7 +33,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
+class AuthExtension extends AbstractExtension implements ServiceProviderInterface, EventSubscriberInterface
 {
     use ConfigTrait;
     use ControllerMountTrait;
@@ -71,7 +71,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         $app = $this->getContainer();
         $dispatcher->addSubscriber($this);
-        $dispatcher->addSubscriber($app['members.admin']);
+        $dispatcher->addSubscriber($app['auth.admin']);
         $dispatcher->addSubscriber(new SessionSubscriber($app));
         $dispatcher->addSubscriber(new EventListener\ProfileListener($app));
     }
@@ -84,8 +84,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $app = $this->getContainer();
 
         return [
-            $app['members.config']->getUrlAuthenticate() => $app['members.controller.authentication'],
-            $app['members.config']->getUrlMembers()      => $app['members.controller.membership'],
+            $app['auth.config']->getUrlAuthenticate() => $app['auth.controller.authentication'],
+            $app['auth.config']->getUrlAuth()      => $app['auth.controller.auth'],
         ];
     }
 
@@ -97,7 +97,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $app = $this->getContainer();
 
         return [
-            '/' => $app['members.controller.backend'],
+            '/' => $app['auth.controller.backend'],
         ];
     }
 
@@ -110,8 +110,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
         $roles = isset($config['roles']['admin']) ? $config['roles']['admin'] : ['root'];
 
         return [
-            (new MenuEntry('members', 'members'))
-                ->setLabel(Trans::__('Members'))
+            (new MenuEntry('auth', 'auth'))
+                ->setLabel(Trans::__('Auth'))
                 ->setIcon('fa:users')
                 ->setPermission(implode('||', $roles)),
         ];
@@ -123,8 +123,8 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerTwigPaths()
     {
         return [
-            'templates'       => ['position' => 'append', 'namespace' => 'Members'],
-            'templates/admin' => ['position' => 'append', 'namespace' => 'MembersAdmin'],
+            'templates'       => ['position' => 'append', 'namespace' => 'Auth'],
+            'templates/admin' => ['position' => 'append', 'namespace' => 'AuthAdmin'],
         ];
     }
 
@@ -147,7 +147,7 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     {
         return [
             $this,
-            new MembersServiceProvider($this->getConfig()),
+            new AuthServiceProvider($this->getConfig()),
         ];
     }
 
@@ -157,11 +157,11 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerExtensionTables()
     {
         return [
-            'members_account'      => Table\Account::class,
-            'members_account_meta' => Table\AccountMeta::class,
-            'members_oauth'        => Table\Oauth::class,
-            'members_provider'     => Table\Provider::class,
-            'members_token'        => Table\Token::class,
+            'auth_account'      => Table\Account::class,
+            'auth_account_meta' => Table\AccountMeta::class,
+            'auth_oauth'        => Table\Oauth::class,
+            'auth_provider'     => Table\Provider::class,
+            'auth_token'        => Table\Token::class,
         ];
     }
 
@@ -171,11 +171,11 @@ class MembersExtension extends AbstractExtension implements ServiceProviderInter
     protected function registerRepositoryMappings()
     {
         return [
-            'members_account'      => [Entity\Account::class     => Repository\Account::class],
-            'members_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
-            'members_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
-            'members_provider'     => [Entity\Provider::class    => Repository\Provider::class],
-            'members_token'        => [Entity\Token::class       => Repository\Token::class],
+            'auth_account'      => [Entity\Account::class     => Repository\Account::class],
+            'auth_account_meta' => [Entity\AccountMeta::class => Repository\AccountMeta::class],
+            'auth_oauth'        => [Entity\Oauth::class       => Repository\Oauth::class],
+            'auth_provider'     => [Entity\Provider::class    => Repository\Provider::class],
+            'auth_token'        => [Entity\Token::class       => Repository\Token::class],
         ];
     }
 }

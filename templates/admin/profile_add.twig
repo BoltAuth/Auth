@@ -1,15 +1,15 @@
-{# Page: NavSecondary > Extensions > Members #}
+{# Page: NavSecondary > Extensions > Auth #}
 
 {% extends "_base/_page-nav.twig" %}
 
 {% block page_nav 'Extensions' %}
 
 {% block page_title %}
-    {{ __('Members') }}
+    {{ __('Auth') }}
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Editing Membership Profile: {{ form.vars.value.displayname|default('New User') }}
+    Editing Auth Profile: {{ form.vars.value.displayname|default('New User') }}
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -25,7 +25,7 @@
 
         <div class="col-md-9">
             {% block profile %}
-                {{ form_start(form_profile_edit, {'attr': {'id': 'profile', 'class': 'row'}, 'action': path('membersAdminUserAdd') }) }}
+                {{ form_start(form_profile_edit, {'attr': {'id': 'profile', 'class': 'row'}, 'action': path('authAdminUserAdd') }) }}
 
                 {{ form_label(form_profile_edit.displayname, null, {'label_attr': {'class': 'main col-xs-12'}}) }}
                 {{ form_errors(form_profile_edit.displayname) }}
@@ -43,7 +43,7 @@
                 {{ form_errors(form_profile_edit.password.second) }}
                 {{ form_widget(form_profile_edit.password.second, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'} }) }}
 
-                {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
+                {% include '@AuthAdmin/profile_edit_meta.twig' ignore missing %}
 
                 <br>
             <div class="hidden">
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="panel-body">
-                    {% include '@MembersAdmin/_aside-save.twig' %}
+                    {% include '@AuthAdmin/_aside-save.twig' %}
                 </div>
             </div>
 
@@ -69,7 +69,7 @@
 
                 <div class="panel-body">
                     <ul>
-                        {%- for provider in member_providers() %}
+                        {%- for provider in auth_providers() %}
                             <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
                         {% endfor -%}
                     </ul>

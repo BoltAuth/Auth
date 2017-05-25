@@ -1,15 +1,15 @@
-{# Page: NavSecondary > Extensions > Members #}
+{# Page: NavSecondary > Extensions > Auth #}
 
 {% extends "@bolt/_base/_page-nav.twig" %}
 
 {% block page_nav 'Extensions' %}
 
 {% block page_title %}
-    {{ __('Members') }}
+    {{ __('Auth') }}
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Editing Membership Profile: {{ form_profile_edit.vars.value.displayname|default('New User') }}
+    Editing Auth Profile: {{ form_profile_edit.vars.value.displayname|default('New User') }}
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -43,7 +43,7 @@
                 {{ form_errors(form_profile_edit.password.second) }}
                 {{ form_widget(form_profile_edit.password.second, { 'attr': {'class': 'form-control large', 'autocomplete': 'new-password'}, 'required': false }) }}
 
-                {% include '@MembersAdmin/profile_edit_meta.twig' ignore missing %}
+                {% include '@AuthAdmin/profile_edit_meta.twig' ignore missing %}
 
                 <br>
             <div class="hidden">
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="panel-body">
-                    {% include '@MembersAdmin/_aside-save.twig' %}
+                    {% include '@AuthAdmin/_aside-save.twig' %}
                 </div>
             </div>
 
@@ -68,7 +68,7 @@
                 <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
 
                 <div class="panel-body">
-                    {% for provider in member_providers(guid) %}
+                    {% for provider in auth_providers(guid) %}
                         {% set providericon = provider %}
                         {% if provider == 'local' %}{% set providericon = 'user' %}{% endif %}
                         <a href="#" type="button" class="btn btn-default btn-block btn-sm">

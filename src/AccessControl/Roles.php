@@ -1,10 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthRolesEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -70,7 +70,7 @@ class Roles
      */
     protected function buildPriorityRoles()
     {
-        foreach ($this->config->getRolesMember() as $name => $displayName) {
+        foreach ($this->config->getRolesAuth() as $name => $displayName) {
             $this->roles[$name] = new Role($name, $displayName);
         }
     }
@@ -80,8 +80,8 @@ class Roles
      */
     protected function buildEventRoles()
     {
-        $event = new MembersRolesEvent();
-        $this->dispatcher->dispatch(MembersEvents::MEMBER_ROLE, $event);
+        $event = new AuthRolesEvent();
+        $this->dispatcher->dispatch(AuthEvents::AUTH_ROLE, $event);
 
         foreach ((array) $event->getRoles() as $role) {
             if ($role instanceof Role) {

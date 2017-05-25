@@ -6,7 +6,7 @@
  #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
  #   * templates            — array
  #     * feedback           — string    Feedback messages template name
- #   * providers            — array     Authentication providers enabled in Members configuration
+ #   * providers            — array     Authentication providers enabled in Auth configuration
  #}
 {% extends twigparent %}
 
@@ -14,7 +14,7 @@
     {{ include(templates.feedback) }}
 
     <div class="logout">
-        <div class="row member-logout">
+        <div class="row auth-logout">
             {{ form_start(form_logout) }}
 
             {{ form_row(form_logout.logout) }}

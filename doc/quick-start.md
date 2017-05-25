@@ -2,10 +2,10 @@ Quick Start Guide
 -----------------
 
 
-The default Twig templates in Members have been done with Bolt's base theme
+The default Twig templates in Auth have been done with Bolt's base theme
 (currently`base-2016`) in mind. 
 
-If you are setting up Members for the first time, you may find it useful to 
+If you are setting up Auth for the first time, you may find it useful to 
 first test on a site set up to run the current base theme, and then switch over
 when you're happy with how it is working.
 
@@ -26,7 +26,7 @@ when you're happy with how it is working.
  
 See the [installation page](installation.md), and ensure you've updated the site's database 
 
-Enable [debug mode](debugging.md) to get additional feedback from Members during
+Enable [debug mode](debugging.md) to get additional feedback from Auth during
 set up.
 
 
@@ -53,7 +53,7 @@ providers:
 #### Configure outgoing mail
 
 You should have already done this as part of your inital setup of Bolt.  But
-double-check that bolt can send mail to users and members.  The Members plugin
+double-check that bolt can send mail to users and auth.  The Auth plugin
 relies on outgoing mail to be working and may fail silently if it can't.  Look
 for the <tt>mailoptions</tt> setting in <tt>config.yml</tt>
 
@@ -70,7 +70,7 @@ notifications:
 #### Enable registration
 
 In order to register your first account, you need to enable registration in 
-your Members configuration file, e.g.:
+your Auth configuration file, e.g.:
 
 ```yaml
 registration:
@@ -83,23 +83,23 @@ then most likely you forgot to enable this setting.
 
 #### Templates
 
-Templating is very configurable. At a minimum, Members needs "parent"
+Templating is very configurable. At a minimum, Auth needs "parent"
 templates to inherit layout from.  
 
 Usually the parent role is split in two groups, "authentication", and "profiles".
 
-By default, Members will use its own minimal parent templates that extend the
+By default, Auth will use its own minimal parent templates that extend the
 Bolt base theme's master template.
 
 However if you wish to create your own, just set the relative path to them in
-your theme directory in Members configuration file, e.g.:
+your theme directory in Auth configuration file, e.g.:
 
 ```yaml
 templates:
     authentication:
-        parent: members/_authentication.twig
+        parent: auth/_authentication.twig
     profile:
-        parent: members/_profile.twig
+        parent: auth/_profile.twig
 ```
 
 Finally add the blocks from the sections below to your desired position your
@@ -126,9 +126,9 @@ custom parent template.
 ##### Profiles
 
 ```twig
-    {# Membership profile edit & view forms #}
-    {% block members %}
-    {% endblock members %}
+    {# Auth profile edit & view forms #}
+    {% block auth %}
+    {% endblock auth %}
 ```
 
 
@@ -140,11 +140,11 @@ to a HTML field in a ConentType record … It will **not** work.
 Add the snippet below somewhere in a template for an existing URL, and browse to the URL. 
 
 ```twig
-    {% if is_member() %}
-        {% set member = member() %}
+    {% if is_auth() %}
+        {% set auth = auth() %}
 
-        <p>Hello, {{ member.displayname }}. You were last seen at {{ member.lastseen }},
-        logging on from {{ member.lastip }}, and your email is {{ member.email }}</p>
+        <p>Hello, {{ auth.displayname }}. You were last seen at {{ auth.lastseen }},
+        logging on from {{ auth.lastip }}, and your email is {{ auth.email }}</p>
     {% else %}
         <p>Welcome visitor from the Internet!</p>
     {% endif %}
@@ -160,7 +160,7 @@ personalised greeting.
 #### Registering your first user
 
 If everything so far has worked, you should now be able to visit the
-registration page, by default found at the URI `/membership/profile/register`
+registration page, by default found at the URI `/auth/profile/register`
 
 You will require a valid email address, e.g. DNS has a valid mail server 
 registered. Meaning `@example.com` won't work
@@ -173,5 +173,5 @@ The following links might be good next places to look:
 * [Form Display](form-display.md) gives details on customising Twig template rendering 
 * [Twig Functions](twig-functions.md) provides a list of available Twig template functions
 * [Authentication Providers](authentication-providers.md) for details on adding OAuth2 providers like Facebook & Google
-* [Routes & URLs](routes-urls.md) if you'd like to understand, or customise, some of the routes used by Members
-* [Example: Menu Entries](examples/menu.md) gives a small example of a menu for Members specific entries 
+* [Routes & URLs](routes-urls.md) if you'd like to understand, or customise, some of the routes used by Auth
+* [Example: Menu Entries](examples/menu.md) gives a small example of a menu for Auth specific entries 

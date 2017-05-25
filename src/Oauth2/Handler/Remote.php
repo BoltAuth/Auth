@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Exception\DisabledAccountException;
-use Bolt\Extension\Bolt\Members\Exception\MissingAccountException;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Session;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Exception\DisabledAccountException;
+use Bolt\Extension\BoltAuth\Auth\Exception\MissingAccountException;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\Provider\ResourceOwnerInterface;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,7 +77,7 @@ class Remote extends AbstractHandler
         } catch (DisabledAccountException $ex) {
             $this->session->addRedirect($this->urlGenerator->generate('authenticationLogin'));
             if ($this->session->getAuthorisation()) {
-                $this->dispatchEvent(MembersEvents::MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
+                $this->dispatchEvent(AuthEvents::AUTH_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
             }
             $this->feedback->debug(sprintf('Login failed: %s', $ex->getMessage()));
 
@@ -130,7 +130,7 @@ class Remote extends AbstractHandler
 
             return;
         }
-        $redirect = $this->urlGenerator->generate('membersProfileRegister');
+        $redirect = $this->urlGenerator->generate('authProfileRegister');
         $this->session->addRedirect($redirect);
 
         throw new MissingAccountException();
@@ -177,7 +177,7 @@ class Remote extends AbstractHandler
         $provider = $this->providerManager->getProvider($providerName);
 
         if ($providerName === 'google' && $approvalPrompt == 'force') {
-            /** @var \Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\Google $provider */
+            /** @var \Bolt\Extension\BoltAuth\Auth\Oauth2\Client\Provider\Google $provider */
             $provider->setAccessType('offline');
         }
 
