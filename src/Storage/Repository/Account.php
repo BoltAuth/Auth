@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
 use Bolt\Events\StorageEvent;
 use Bolt\Events\StorageEvents;
-use Bolt\Extension\Bolt\Members\Pager\Pager;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Pager\Pager;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use Bolt\Storage\QuerySet;
 use Ramsey\Uuid\Uuid;
 
@@ -20,7 +20,7 @@ use Ramsey\Uuid\Uuid;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Account extends AbstractMembersRepository
+class Account extends AbstractAuthRepository
 {
     const ALIAS = 'a';
 
@@ -49,7 +49,7 @@ class Account extends AbstractMembersRepository
      */
     public function insert($entity)
     {
-        /** @var \Bolt\Extension\Bolt\Members\Storage\Entity\Account $entity */
+        /** @var \Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account $entity */
         $entity->setGuid(Uuid::uuid4()->toString());
         $querySet = new QuerySet();
         $qb = $this->em->createQueryBuilder();
@@ -270,13 +270,13 @@ class Account extends AbstractMembersRepository
     }
 
     /**
-     * Search for member accounts.
+     * Search for auth accounts.
      *
      * @param string $term
      * @param string $orderBy
      * @param null   $order
      *
-     * @return array|\Bolt\Extension\Bolt\Members\Pager\Pager
+     * @return array|\Bolt\Extension\BoltAuth\Auth\Pager\Pager
      */
     public function search($term, $orderBy = 'displayname', $order = null)
     {

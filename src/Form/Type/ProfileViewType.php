@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -26,7 +26,7 @@ class ProfileViewType extends AbstractProfileType
      */
     public function getName()
     {
-        return MembersForms::PROFILE_VIEW;
+        return AuthForms::PROFILE_VIEW;
     }
 
     /**

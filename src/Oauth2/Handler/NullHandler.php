@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,7 +20,7 @@ class NullHandler implements HandlerInterface
     public function __construct()
     {
         if (php_sapi_name() !== 'cli') {
-            throw new \RuntimeException('Members OAuth authentication handler not set up!');
+            throw new \RuntimeException('Auth OAuth authentication handler not set up!');
         }
     }
 

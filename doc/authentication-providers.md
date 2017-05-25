@@ -31,7 +31,7 @@ Authentication Providers
 
 The URL for each provider will depend on:
   * Your web site is running HTTP or HTTPS (HTTPS is highly recommended)
-  * Authentication URI configured in Members
+  * Authentication URI configured in Auth
   * OAuth provider's name 
 
 e.g. using default routes for the domain `example.com`, and configuring

@@ -9,14 +9,14 @@
  #   * feedback              — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
  #   * templates             — array
  #     * feedback            — string    Feedback messages template name
- #   * providers             — array     Authentication providers enabled in Members configuration
+ #   * providers             — array     Authentication providers enabled in Auth configuration
  #   * transitional          — boolean   If true, form is still in a transitional stage and doesn't require a password field
  #}
 {% extends twigparent %}
 
-{% block members %}
+{% block auth %}
     <div class="row">
-        <h4>New Member</h4>
+        <h4>New Auth</h4>
     </div>
 
     {{ include(templates.feedback) }}
@@ -29,8 +29,8 @@
 
             {{ form_errors(form_profile_register) }}
 
-            {{ form_row(form_profile_register.displayname, { 'value': member.name|default() } ) }}
-            {{ form_row(form_profile_register.email, { 'value': member.email|default() } ) }}
+            {{ form_row(form_profile_register.displayname, { 'value': auth.name|default() } ) }}
+            {{ form_row(form_profile_register.email, { 'value': auth.email|default() } ) }}
 
             {% if transitional %}
                 {% do form_profile_register.password.setRendered %}

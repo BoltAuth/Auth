@@ -18,15 +18,15 @@ that adds custom roles via event.
 
 ### Extension Loader Class
 
-To add roles to Member via your extension, you can add a listener to the
-`MembersEvents::MEMBER_ROLE` event.
+To add roles to Auth via your extension, you can add a listener to the
+`AuthEvents::AUTH_ROLE` event.
  
 You will need the following use statements at the top of your PHP class file:
 
 ```php
-use Bolt\Extension\Bolt\Members\AccessControl\Role;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersRolesEvent;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Role;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthRolesEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 ```
 
@@ -36,18 +36,18 @@ pass in the callback that will be called when the event is triggered, e.g.
 ```php
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addListener(MembersEvents::MEMBER_ROLE, [$this, 'myCallbackRunction']);
+        $dispatcher->addListener(AuthEvents::AUTH_ROLE, [$this, 'myCallbackRunction']);
     }
 ```
 
 ### Callback Function
 
-The callback function will be passed a `MembersRolesEvent` object, you can
-then use the events `addRole()` function to add `\Bolt\Extension\Bolt\Members\AccessControl\Role` 
+The callback function will be passed a `AuthRolesEvent` object, you can
+then use the events `addRole()` function to add `\Bolt\Extension\BoltAuth\Auth\AccessControl\Role` 
 objects, e.g.
 
 ```php
-    public function myCallbackRunction(MembersRolesEvent $event)
+    public function myCallbackRunction(AuthRolesEvent $event)
     {
         $event->addRole(new Role('koala', 'Friendly Koalas'));
         $event->addRole(new Role('dropbear', 'Deady Drop Bears'));
@@ -55,5 +55,5 @@ objects, e.g.
 ```
 
 The `Role` class takes two parameters, programmatic name and a display name
-that will be used in the members admin pages in Bolt's backend admin section.
+that will be used in the auth admin pages in Bolt's backend admin section.
 

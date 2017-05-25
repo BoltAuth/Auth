@@ -1,19 +1,19 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Authorisation;
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\AccessControl\Transition;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersLoginEvent;
-use Bolt\Extension\Bolt\Members\Exception as Ex;
-use Bolt\Extension\Bolt\Members\Feedback;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider\ResourceOwnerInterface;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Authorisation;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Session;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Transition;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthLoginEvent;
+use Bolt\Extension\BoltAuth\Auth\Exception as Ex;
+use Bolt\Extension\BoltAuth\Auth\Feedback;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\Provider\ResourceOwnerInterface;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\ProviderManager;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Records;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -71,12 +71,12 @@ abstract class AbstractHandler
     public function __construct(Config $config, Application $app)
     {
         $this->config = $config;
-        $this->provider = $app['members.oauth.provider'];
-        $this->providerManager = $app['members.oauth.provider.manager'];
-        $this->providerName = $app['members.oauth.provider.name'];
-        $this->records = $app['members.records'];
-        $this->session = $app['members.session'];
-        $this->feedback = $app['members.feedback'];
+        $this->provider = $app['auth.oauth.provider'];
+        $this->providerManager = $app['auth.oauth.provider.manager'];
+        $this->providerName = $app['auth.oauth.provider.name'];
+        $this->records = $app['auth.records'];
+        $this->session = $app['auth.session'];
+        $this->feedback = $app['auth.feedback'];
         $this->logger = $app['logger.system'];
         $this->dispatcher = $app['dispatcher'];
         $this->urlGenerator = $app['url_generator'];
@@ -124,7 +124,7 @@ abstract class AbstractHandler
             $this->feedback->info('Logout was successful.');
             $this->setDebugMessage(sprintf('Logout was route complete for %s', $request->getRequestUri()));
         } else {
-            $this->setDebugMessage('Logout was no required. Members session not found.');
+            $this->setDebugMessage('Logout was no required. Auth session not found.');
         }
     }
 
@@ -179,7 +179,7 @@ abstract class AbstractHandler
         $this->records->saveProvider($provision);
 
         // Send the event
-        $this->dispatchEvent(MembersEvents::MEMBER_LOGIN, $this->session->getAuthorisation());
+        $this->dispatchEvent(AuthEvents::AUTH_LOGIN, $this->session->getAuthorisation());
     }
 
     /**
@@ -249,7 +249,7 @@ abstract class AbstractHandler
     protected function setSessionNewProvider($providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
     {
         if ($this->session->hasAuthorisation()) {
-            // Member is already in possession of another login, and the provider does NOT exist
+            // Auth is already in possession of another login, and the provider does NOT exist
             $this->createProviderTransition($accessToken, $resourceOwner);
 
             return;
@@ -289,7 +289,7 @@ abstract class AbstractHandler
     protected function setSessionExistingProvider($providerName, AccessToken $accessToken, ResourceOwnerInterface $resourceOwner)
     {
         if ($this->session->hasAuthorisation()) {
-            // Member is already in possession of another login, and the provider exists, add the access token
+            // Auth is already in possession of another login, and the provider exists, add the access token
             $this->session
                 ->getAuthorisation()
                 ->addAccessToken($providerName, $accessToken)
@@ -404,14 +404,14 @@ abstract class AbstractHandler
      */
     protected function setDebugMessage($message)
     {
-        $this->logger->debug('[Members][Handler]: ' . $message, ['event' => 'extensions']);
+        $this->logger->debug('[Auth][Handler]: ' . $message, ['event' => 'extensions']);
         $this->feedback->debug($message);
     }
 
     /**
      * Dispatch event to any listeners.
      *
-     * @param string        $type          Either MembersEvents::MEMBER_LOGIN' or MembersEvents::MEMBER_LOGOUT
+     * @param string        $type          Either AuthEvents::AUTH_LOGIN' or AuthEvents::AUTH_LOGOUT
      * @param Authorisation $authorisation
      *
      * @throws \Exception
@@ -422,7 +422,7 @@ abstract class AbstractHandler
             return;
         }
 
-        $event = new MembersLoginEvent();
+        $event = new AuthLoginEvent();
         $event->setAccount($authorisation->getAccount());
 
         try {
@@ -432,7 +432,7 @@ abstract class AbstractHandler
                 throw($e);
             }
 
-            $this->logger->critical('Members event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
+            $this->logger->critical('Auth event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Controller;
+namespace Bolt\Extension\BoltAuth\Auth\Controller;
 
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractController implements ControllerProviderInterface
 {
-    use MembersServicesTrait;
+    use AuthServicesTrait;
 
     /** @var Application */
     private $app;

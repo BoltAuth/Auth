@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Twig\Extension;
+namespace Bolt\Extension\BoltAuth\Auth\Twig\Extension;
 
-use Bolt\Extension\Bolt\Members\AccessControl;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Storage;
+use Bolt\Extension\BoltAuth\Auth\AccessControl;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Form;
+use Bolt\Extension\BoltAuth\Auth\Storage;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,7 +24,7 @@ use Twig_Markup as TwigMarkup;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersRuntime extends TwigExtension
+class AuthRuntime extends TwigExtension
 {
     /** @var Config */
     private $config;
@@ -61,23 +61,23 @@ class MembersRuntime extends TwigExtension
     }
 
     /**
-     * Check if the current session is a logged-in member.
+     * Check if the current session is a logged-in auth.
      *
      * @return bool
      */
-    public function isMember()
+    public function isAuth()
     {
         return $this->session->hasAuthorisation();
     }
 
     /**
-     * Return a member's account.
+     * Return a auth's account.
      *
      * @param string|null $guid
      *
-     * @return Storage\Entity\Member|null
+     * @return Storage\Entity\Auth|null
      */
-    public function getMember($guid = null)
+    public function getAuth($guid = null)
     {
         if ($guid === null) {
             if (!$this->session->hasAuthorisation()) {
@@ -89,22 +89,22 @@ class MembersRuntime extends TwigExtension
         $account = $this->records->getAccountByGuid($guid);
         if ($account) {
             $meta = $this->records->getAccountMetaAll($guid);
-            $member = new Storage\Entity\Member($account, $meta);
+            $auth = new Storage\Entity\Auth($account, $meta);
 
-            return $member;
+            return $auth;
         }
 
         return null;
     }
 
     /**
-     * Return a member's account meta data.
+     * Return a auth's account meta data.
      *
      * @param string|null $guid
      *
      * @return Storage\Entity\AccountMeta[]|null
      */
-    public function getMemberMeta($guid = null)
+    public function getAuthMeta($guid = null)
     {
         if ($guid === null) {
             if (!$this->session->hasAuthorisation()) {
@@ -132,7 +132,7 @@ class MembersRuntime extends TwigExtension
      *
      * @return array|null
      */
-    public function getMemberOauth()
+    public function getAuthOauth()
     {
         if (!$this->session->hasAttribute(AccessControl\Session::SESSION_ATTRIBUTE_OAUTH_DATA)) {
             return null;
@@ -147,7 +147,7 @@ class MembersRuntime extends TwigExtension
     }
 
     /**
-     * Check if the current logged-in session has a member role.
+     * Check if the current logged-in session has a auth role.
      *
      * @param string|array $role
      *
@@ -348,7 +348,7 @@ class MembersRuntime extends TwigExtension
      */
     public function getLinkEdit($format = UrlGeneratorInterface::RELATIVE_PATH)
     {
-        return $this->generator->generate('membersProfileEdit', [], $format);
+        return $this->generator->generate('authProfileEdit', [], $format);
     }
 
     /**
@@ -360,6 +360,6 @@ class MembersRuntime extends TwigExtension
      */
     public function getLinkRegister($format = UrlGeneratorInterface::RELATIVE_PATH)
     {
-        return $this->generator->generate('membersProfileRegister', [], $format);
+        return $this->generator->generate('authProfileRegister', [], $format);
     }
 }

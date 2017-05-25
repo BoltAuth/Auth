@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Entity;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 use Bolt\Storage\Entity\Entity;
 
 /**
- * Combined member entity.
+ * Combined auth entity.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -15,7 +15,7 @@ use Bolt\Storage\Entity\Entity;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Member extends Entity
+class Auth extends Entity
 {
     /** @var string */
     protected $guid;

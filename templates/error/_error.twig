@@ -4,22 +4,22 @@
  ### Installing in your theme:
  # Create a Twig template file in your theme directory, that inherits your page
  # layout and then add the following block:
- #     {% block members_error %}
- #     {% endblock members_error %}
+ #     {% block auth_error %}
+ #     {% endblock auth_error %}
  #
- ### Configuring Members to use your template parent:
+ ### Configuring Auth to use your template parent:
  #
  # Next step is to set the error_parent: template key to the relative path to
  # template file.
  #
  # For example if you have a theme directory 'koala' and you create the directory
- # themes/koala/extensions/members/ you can then put what templates files
+ # themes/koala/extensions/auth/ you can then put what templates files
  # you need there.
  #
- # In app/config/extensions/members.bolt.yml set the following to override
+ # In app/config/extensions/auth.bolt.yml set the following to override
  #
  #     template:
- #       error_parent: extensions/members/members_error.twig
+ #       error_parent: extensions/auth/auth_error.twig
  #}
-{% block members_error %}
-{% endblock members_error %}
+{% block auth_error %}
+{% endblock auth_error %}

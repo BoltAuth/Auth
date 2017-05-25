@@ -1,25 +1,25 @@
 
-col.members-column-check {
+col.auth-column-check {
     /*width: 10%;*/
 }
 
-col.members-column-enabled {
+col.auth-column-enabled {
     /*width: 30%;*/
 }
 
-col.members-column-guid {
+col.auth-column-guid {
     /*width: 30%;*/
 }
 
-col.members-column-displayname {
+col.auth-column-displayname {
     /*width: 10%;*/
 }
 
-col.members-column-lastseen {
+col.auth-column-lastseen {
     /*width: 10%;*/
 }
 
-col.members-column-roles {
+col.auth-column-roles {
     /*width: 10%;*/
 }
 

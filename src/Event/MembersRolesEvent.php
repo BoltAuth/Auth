@@ -1,12 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Role;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Role;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Members roles event class.
+ * Auth roles event class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersRolesEvent extends GenericEvent
+class AuthRolesEvent extends GenericEvent
 {
     /** @var Role[] */
     protected $roles;
@@ -32,7 +32,7 @@ class MembersRolesEvent extends GenericEvent
     /**
      * @param Role $role
      *
-     * @return MembersRolesEvent
+     * @return AuthRolesEvent
      */
     public function addRole(Role $role)
     {
@@ -44,7 +44,7 @@ class MembersRolesEvent extends GenericEvent
     /**
      * @param Role[] $roles
      *
-     * @return MembersRolesEvent
+     * @return AuthRolesEvent
      */
     public function setRoles(array $roles)
     {

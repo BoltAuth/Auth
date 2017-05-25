@@ -1,11 +1,11 @@
 Example: Menu Entries
 ---------------------
 
-Below is an example of a menu named "`members`" that you can use as a base to
+Below is an example of a menu named "`auth`" that you can use as a base to
 add to your `app/config/menu.yml` file for your site.
 
 ```yaml
-members:
+auth:
   -
     label: Authentication
     link: "#"
@@ -20,16 +20,16 @@ members:
         label: Logout
         path: authentication/logout
   -
-    label: Membership Profiles
+    label: Auth Profiles
     link: "#"
     submenu:
       -
         label: Registration
-        path: membership/profile/register
+        path: auth/profile/register
       -
         label: View your profile
-        path: membership/profile/view
+        path: auth/profile/view
       -
         label: Edit your profile
-        path: membership/profile/edit
+        path: auth/profile/edit
 ```

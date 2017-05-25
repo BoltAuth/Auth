@@ -1,10 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Client;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Client;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Oauth2\Handler\HandlerInterface;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Exception;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Handler\HandlerInterface;
 use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Psr\Log\LoggerInterface;
@@ -71,25 +71,25 @@ class ProviderManager
         $providerName = $providerName === 'submit' ? 'local' : $providerName;
         $this->providerName = $providerName;
 
-        $providerKey = 'members.oauth.provider.' . strtolower($providerName);
+        $providerKey = 'auth.oauth.provider.' . strtolower($providerName);
 
-        $app['members.oauth.provider'] = $app->share(
+        $app['auth.oauth.provider'] = $app->share(
             function ($app) use ($providerKey) {
                 return $app[$providerKey]([]);
             }
         );
 
-        $app['members.oauth.provider.name'] = $app->share(
+        $app['auth.oauth.provider.name'] = $app->share(
             function () use ($providerName) {
                 return $providerName;
             }
         );
 
         // Get the provider class name
-        if (!isset($app['members.oauth.provider.map'][$providerName])) {
+        if (!isset($app['auth.oauth.provider.map'][$providerName])) {
             throw new Exception\InvalidProviderException(Exception\InvalidProviderException::UNMAPPED_PROVIDER);
         }
-        $providerClass = $app['members.oauth.provider.map'][$providerName];
+        $providerClass = $app['auth.oauth.provider.map'][$providerName];
         if (!class_exists($providerClass)) {
             throw new Exception\InvalidProviderException(Exception\InvalidProviderException::INVALID_PROVIDER);
         }
@@ -98,7 +98,7 @@ class ProviderManager
 
         $this->provider = new $providerClass($options, $collaborators);
 
-        $app['logger.system']->debug('[Members][Provider]: Created provider name: ' . $providerName, ['event' => 'extensions']);
+        $app['logger.system']->debug('[Auth][Provider]: Created provider name: ' . $providerName, ['event' => 'extensions']);
 
         $this->setProviderHandler($app);
     }
@@ -114,7 +114,7 @@ class ProviderManager
      */
     public function getProvider($providerName)
     {
-        $this->logger->debug('[Members][Provider]: Fetching provider object: ' . $providerName);
+        $this->logger->debug('[Auth][Provider]: Fetching provider object: ' . $providerName);
 
         if ($this->provider === null) {
             throw new Exception\InvalidProviderException(Exception\InvalidProviderException::UNSET_PROVIDER);
@@ -203,29 +203,29 @@ class ProviderManager
     {
         $providerName = $this->getProviderName();
         if ($providerName === null) {
-            $app['logger.system']->debug('[Members][Provider]: Request was missing a provider.', ['event' => 'extensions']);
+            $app['logger.system']->debug('[Auth][Provider]: Request was missing a provider.', ['event' => 'extensions']);
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
         $providerConfig = $this->config->getProvider($providerName);
         if ($providerConfig === null) {
-            $app['logger.system']->debug('[Members][Provider]: Request provider did not match any configured providers.', ['event' => 'extensions']);
+            $app['logger.system']->debug('[Auth][Provider]: Request provider did not match any configured providers.', ['event' => 'extensions']);
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
         if (!$providerConfig->isEnabled() && $providerName !== 'Generic') {
-            $app['logger.system']->debug('[Members][Provider]: Request provider was disabled.', ['event' => 'extensions']);
+            $app['logger.system']->debug('[Auth][Provider]: Request provider was disabled.', ['event' => 'extensions']);
             throw new Exception\InvalidAuthorisationRequestException('Authentication configuration error. Unable to proceed!');
         }
 
         $handlerKey = $this->getHandlerKey($providerName);
-        $app['members.oauth.handler'] = $app->share(
+        $app['auth.oauth.handler'] = $app->share(
             function ($app) use ($handlerKey) {
                 return $app[$handlerKey]([]);
             }
         );
 
-        $this->providerHandler = $app['members.oauth.handler'];
+        $this->providerHandler = $app['auth.oauth.handler'];
     }
 
     /**
@@ -238,10 +238,10 @@ class ProviderManager
     protected function getHandlerKey($providerName)
     {
         if ($providerName === 'local') {
-            return 'members.oauth.handler.local';
+            return 'auth.oauth.handler.local';
         }
 
-        return 'members.oauth.handler.remote';
+        return 'auth.oauth.handler.remote';
     }
 
     /**
@@ -254,7 +254,7 @@ class ProviderManager
     protected function getCallbackUrl($providerName)
     {
         $url = $this->urlGenerator->generate('authenticationCallback', ['provider' => $providerName], UrlGeneratorInterface::ABSOLUTE_URL);
-        $this->logger->debug("[Members][Provider]: Setting callback URL: $url");
+        $this->logger->debug("[Auth][Provider]: Setting callback URL: $url");
 
         return $url;
     }

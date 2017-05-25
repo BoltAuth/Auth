@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Builder;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Builder;
 
-use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\EntityInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormTypeInterface;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractFormBuilder implements MembersFormBuilderInterface
+abstract class AbstractFormBuilder implements AuthFormBuilderInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;

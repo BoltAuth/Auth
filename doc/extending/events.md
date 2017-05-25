@@ -7,7 +7,7 @@ Extending: Events
   * [Dispatched Events](#dispatched-events)
     * [Login](#login)
     * [Login completion event](#login-completion-event)
-    * [Membership Role Data](#membership-role-data)
+    * [Auth Role Data](#auth-role-data)
       * [Role set up](#role-set-up)
     * [Profile](#profile)
       * [New profile registration](#new-profile-registration)
@@ -20,12 +20,12 @@ Extending: Events
   * [Form Builder](#form-builder)
   * [Controller Exceptions](#controller-exceptions)
   * [Event Classes](#event-classes)
-    * [MembersLoginEvent](#membersloginevent)
-    * [MembersNotificationEvent](#membersnotificationevent)
-    * [MembersNotificationFailureEvent](#membersnotificationfailureevent)
-    * [MembersProfileEvent](#membersprofileevent)
-    * [MembersRolesEvent](#membersrolesevent)
-    * [MembersLoginEvent](#membersloginevent-1)
+    * [AuthLoginEvent](#authloginevent)
+    * [AuthNotificationEvent](#authnotificationevent)
+    * [AuthNotificationFailureEvent](#authnotificationfailureevent)
+    * [AuthProfileEvent](#authprofileevent)
+    * [AuthRolesEvent](#authrolesevent)
+    * [AuthLoginEvent](#authloginevent-1)
     * [FormBuilderEvent](#formbuilderevent)
     * [ExceptionEvent](#exceptionevent)
 
@@ -42,20 +42,20 @@ Dispatched after all checks are validated.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_LOGIN`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersLoginEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_LOGIN`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthLoginEvent`
 
 
-#### Membership Role Data
+#### Auth Role Data
 
 ##### Role set up
 
-Membership access level roles.
+Auth access level roles.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_ROLE`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersRolesEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_ROLE`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthRolesEvent`
 
 
 #### Profile
@@ -64,8 +64,8 @@ Membership access level roles.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_PROFILE_REGISTER`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersProfileEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_PROFILE_REGISTER`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent`
 
 
 ##### New profile verification
@@ -74,8 +74,8 @@ Dispatched at successful verification of a new account.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_PROFILE_VERIFY`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersProfileEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_PROFILE_VERIFY`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent`
 
 
 ##### Save to storage
@@ -84,16 +84,16 @@ Prior to save of a profile form.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_PROFILE_PRE_SAVE`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersProfileEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_PROFILE_PRE_SAVE`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent`
 
 
 Post-save of a profile form.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_PROFILE_POST_SAVE`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersProfileEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_PROFILE_POST_SAVE`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent`
 
 
 #### Notifications
@@ -102,16 +102,16 @@ Post-save of a profile form.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_NOTIFICATION_PRE_SEND`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_NOTIFICATION_PRE_SEND`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent`
 
 
 ##### Notification email send failure.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_NOTIFICATION_FAILURE`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_NOTIFICATION_FAILURE`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationFailureEvent`
 
 
 ##### Password Reset
@@ -120,18 +120,18 @@ Account password reset request.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\MembersEvents::MEMBER_PROFILE_RESET`
-| Object | `Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\AuthEvents::AUTH_PROFILE_RESET`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent`
 
 
 ### Form Builder
 
-Dispatched when a builder is created for a Members form.
+Dispatched when a builder is created for a Auth form.
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\FormBuilderEvent::BUILD`
-| Object | `Bolt\Extension\Bolt\Members\Event\FormBuilderEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\FormBuilderEvent::BUILD`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\FormBuilderEvent`
 
 
 
@@ -143,28 +143,28 @@ ExceptionEvent::ERROR, new ExceptionEvent($e));
 
 | Event  |     |
 | -------| --- |
-| Name   | `Bolt\Extension\Bolt\Members\Event\ExceptionEvent::ERROR`
-| Object | `Bolt\Extension\Bolt\Members\Event\ExceptionEvent`
+| Name   | `Bolt\Extension\BoltAuth\Auth\Event\ExceptionEvent::ERROR`
+| Object | `Bolt\Extension\BoltAuth\Auth\Event\ExceptionEvent`
 
 
 
 ## Event Classes 
 
-### MembersLoginEvent
+### AuthLoginEvent
 
 | Property           | Type |
 | ------------------ | ---- |
-| `$account`         | `Bolt\Extension\Bolt\Members\Storage\Entity\Account`
+| `$account`         | `Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account`
 
 
-### MembersNotificationEvent
+### AuthNotificationEvent
 
 | Property           | Type |
 | ------------------ | ---- |
 | `$message`         | `Swift_Mime_Message`
 
 
-### MembersNotificationFailureEvent
+### AuthNotificationFailureEvent
 
 | Property           | Type |
 | ------------------ | ---- |
@@ -172,27 +172,27 @@ ExceptionEvent::ERROR, new ExceptionEvent($e));
 | `$exception`       | `Swift_SwiftException`
 
 
-### MembersProfileEvent
+### AuthProfileEvent
 
 | Property           | Type |
 | ------------------ | ---- |
-| `$account`         | `Bolt\Extension\Bolt\Members\Storage\Entity\Account`
-| `$metaEntities`    | `Bolt\Extension\Bolt\Members\Storage\Entity\AccountMeta[]`
+| `$account`         | `Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account`
+| `$metaEntities`    | `Bolt\Extension\BoltAuth\Auth\Storage\Entity\AccountMeta[]`
 | `$metaEntityNames` | `string[]`
 
 
-### MembersRolesEvent
+### AuthRolesEvent
 
 | Property           | Type |
 | ------------------ | ---- |
-| `$roles`           | `Bolt\Extension\Bolt\Members\AccessControl\Role[]`
+| `$roles`           | `Bolt\Extension\BoltAuth\Auth\AccessControl\Role[]`
 
 
-### MembersLoginEvent
+### AuthLoginEvent
 
 | Property           | Type |
 | ------------------ | ---- |
-| `$account`         | `Bolt\Extension\Bolt\Members\Storage\Entity\Account`
+| `$account`         | `Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account`
 
 
 ### FormBuilderEvent
@@ -201,7 +201,7 @@ ExceptionEvent::ERROR, new ExceptionEvent($e));
 | ------------------ | ---- |
 | `$name`            | `string`
 | `$type`            | `Symfony\Component\Form\FormTypeInterface`
-| `$entity`          | `Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface`
+| `$entity`          | `Bolt\Extension\BoltAuth\Auth\Form\Entity\EntityInterface`
 | `$entityClass`     | `string`
 
 

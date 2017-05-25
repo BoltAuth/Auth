@@ -2,16 +2,16 @@
  # Passed in variables:
  #
  #   * twigparent           — string    Template name to inherit from
- #   * form_profile_edit         — FormView  Member profile form (Symfony\Component\Form\FormView)
+ #   * form_profile_edit         — FormView  Auth profile form (Symfony\Component\Form\FormView)
  #   * form_associate       — FormView  Authentiction provider form (Symfony\Component\Form\FormView)
  #   * feedback             — Feedback  Informational, error, and debug feedback messages. @see feedback/feedback.twig
  #   * templates            — array
  #     * feedback           — string    Feedback messages template name
- #   * providers            — array     Authentication providers enabled in Members configuration
+ #   * providers            — array     Authentication providers enabled in Auth configuration
  #}
 {% extends twigparent %}
 
-{% block members %}
+{% block auth %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
         <h4>Edit Profile</h4>
@@ -38,7 +38,7 @@
             <h5>Registered Social Media Accounts</h5>
 
             <ul>
-                {%- for provider in member_providers() %}
+                {%- for provider in auth_providers() %}
                     <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
                 {% endfor -%}
             </ul>

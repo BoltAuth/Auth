@@ -10,10 +10,10 @@ Redirection
 
 ### Setting Custom Redirects
 
-URLs that a member will be redirected to after login/logout can be set in
+URLs that a auth will be redirected to after login/logout can be set in
 configuration via the `redirects:` key.
 
-If not set, members will be redirected to the referring page after login,
+If not set, auth will be redirected to the referring page after login,
 and the homepage after logout.
 
 #### Configuration
@@ -23,6 +23,6 @@ a relative or absolute URL.
 
 ```yaml
 redirects:
-    login:  /membership/profile
+    login:  /auth/profile
     logout: /authentication/login
 ```

@@ -1,10 +1,10 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Exception\DisabledAccountException;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Exception\DisabledAccountException;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use PasswordLib\Password\Implementation\Blowfish;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\Form;
@@ -42,7 +42,7 @@ class Local extends AbstractHandler
 
         $account = $this->records->getAccountByEmail($this->submittedForm->get('email')->getData());
         if (!$account instanceof Entity\Account) {
-            $this->setDebugMessage('Login email address does not match a stored member record.');
+            $this->setDebugMessage('Login email address does not match a stored auth record.');
 
             return null;
         }
@@ -51,7 +51,7 @@ class Local extends AbstractHandler
         if (!$oauth instanceof Entity\Oauth) {
             $this->feedback->info('Registration is required.');
 
-            return new RedirectResponse($this->urlGenerator->generate('membersProfileRegister'));
+            return new RedirectResponse($this->urlGenerator->generate('authProfileRegister'));
         }
 
         if (!$oauth->getEnabled()) {
@@ -94,7 +94,7 @@ class Local extends AbstractHandler
         } catch (DisabledAccountException $ex) {
             $this->session->addRedirect($this->urlGenerator->generate('authenticationLogin'));
             if ($this->session->getAuthorisation()) {
-                $this->dispatchEvent(MembersEvents::MEMBER_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
+                $this->dispatchEvent(AuthEvents::AUTH_LOGIN_FAILED_ACCOUNT_DISABLED, $this->session->getAuthorisation());
             }
             $this->feedback->debug('Login failed: Account disabled?');
 

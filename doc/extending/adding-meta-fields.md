@@ -15,9 +15,9 @@ Extending: Adding Meta Fields
 Ensure you have the following import statements at the top ofyour class file.
 
 ```php
-use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Event\FormBuilderEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 ```
 
@@ -29,16 +29,16 @@ The extension loading class will need a pre-save and form build events.
      */
     protected function subscribe(EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addListener(MembersEvents::MEMBER_PROFILE_PRE_SAVE, [$this, 'onProfileSave']);
+        $dispatcher->addListener(AuthEvents::AUTH_PROFILE_PRE_SAVE, [$this, 'onProfileSave']);
         $dispatcher->addListener(FormBuilderEvent::BUILD, [$this, 'onRequest']);
     }
 
     /**
-     * Tell Members what fields we want to persist.
+     * Tell Auth what fields we want to persist.
      *
-     * @param MembersProfileEvent $event
+     * @param AuthProfileEvent $event
      */
-    public function onProfileSave(MembersProfileEvent $event)
+    public function onProfileSave(AuthProfileEvent $event)
     {
         // Meta fields that we want to register
         $fields = [
@@ -52,13 +52,13 @@ The extension loading class will need a pre-save and form build events.
      */
     public function onRequest(FormBuilderEvent $event)
     {
-        if ($event->getName() !== MembersForms::PROFILE_EDIT && $event->getName() !== MembersForms::PROFILE_VIEW) {
+        if ($event->getName() !== AuthForms::PROFILE_EDIT && $event->getName() !== AuthForms::PROFILE_VIEW) {
             return;
         }
         $app = $this->getContainer();
 
-        // This is your custom Type class that extends \Bolt\Extension\Bolt\Members\Form\Type\ProfileEditType
-        $type = new \Bolt\Extension\AuthorName\ExtensionName\Form\Type\ProfileEditType($app['members.config']);
+        // This is your custom Type class that extends \Bolt\Extension\BoltAuth\Auth\Form\Type\ProfileEditType
+        $type = new \Bolt\Extension\AuthorName\ExtensionName\Form\Type\ProfileEditType($app['auth.config']);
 
         // This is the class name of your custom eneity
         $entityClassName = \Bolt\Extension\AuthorName\ExtensionName\Form\Entity\Profile::class;
@@ -75,13 +75,13 @@ Create the file `src/Form/Type/ProfileEditType.php` adding the desired
 
 
 ```php
-use Bolt\Extension\Bolt\Members\Form\Type\ProfileEditType as MembersProfileEditType;
+use Bolt\Extension\BoltAuth\Auth\Form\Type\ProfileEditType as AuthProfileEditType;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Bolt\Translation\Translator as Trans;
 
-class ProfileEditType extends MembersProfileEditType
+class ProfileEditType extends AuthProfileEditType
 {
     /**
      * {@inheritdoc}
@@ -116,7 +116,7 @@ Create the file `src/Form/Entity/Profile.php` adding the desired `postcode`
 field.
 
 ```php
-use Bolt\Extension\Bolt\Members\Form\Entity\Profile as BaseProfile;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\Profile as BaseProfile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Profile extends BaseProfile

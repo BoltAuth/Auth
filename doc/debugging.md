@@ -1,4 +1,4 @@
-Debugging Members
+Debugging Auth
 -----------------
 
 ## Index
@@ -10,7 +10,7 @@ Debugging Members
 
 ### Enabling debugging
 
-When setting up and configuring Members, you should enable `debug` in both your
+When setting up and configuring Auth, you should enable `debug` in both your
 Bolt configuration, and the extension configuration file as well. 
 
 #### Configuration

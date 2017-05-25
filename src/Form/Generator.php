@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form;
+namespace Bolt\Extension\BoltAuth\Auth\Form;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\FormBuilderEvent;
-use Bolt\Extension\Bolt\Members\Form\Entity\EntityInterface;
-use Bolt\Extension\Bolt\Members\Form\Entity\Profile;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\FormBuilderEvent;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\EntityInterface;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity\Profile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -155,39 +155,39 @@ class Generator
     {
         if ($this->formMap === null) {
             $this->formMap = [
-                MembersForms::ASSOCIATE => [
+                AuthForms::ASSOCIATE => [
                     'form' => Builder\Associate::class,
                     'type' => Type\AssociateType::class,
                 ],
-                MembersForms::LOGIN_OAUTH => [
+                AuthForms::LOGIN_OAUTH => [
                     'form' => Builder\LoginOauth::class,
                     'type' => Type\LoginOauthType::class,
                 ],
-                MembersForms::LOGIN_PASSWORD => [
+                AuthForms::LOGIN_PASSWORD => [
                     'form' => Builder\LoginPassword::class,
                     'type' => Type\LoginPasswordType::class,
                 ],
-                MembersForms::LOGOUT => [
+                AuthForms::LOGOUT => [
                     'form' => Builder\Logout::class,
                     'type' => Type\LogoutType::class,
                 ],
-                MembersForms::PROFILE_EDIT => [
+                AuthForms::PROFILE_EDIT => [
                     'form' => Builder\Profile::class,
                     'type' => Type\ProfileEditType::class,
                 ],
-                MembersForms::PROFILE_RECOVERY_REQUEST => [
+                AuthForms::PROFILE_RECOVERY_REQUEST => [
                     'form' => Builder\ProfileRecovery::class,
                     'type' => Type\ProfileRecoveryRequestType::class,
                 ],
-                MembersForms::PROFILE_RECOVERY_SUBMIT => [
+                AuthForms::PROFILE_RECOVERY_SUBMIT => [
                     'form' => Builder\ProfileRecovery::class,
                     'type' => Type\ProfileRecoverySubmitType::class,
                 ],
-                MembersForms::PROFILE_REGISTER => [
+                AuthForms::PROFILE_REGISTER => [
                     'form' => Builder\ProfileRegister::class,
                     'type' => Type\ProfileRegisterType::class,
                 ],
-                MembersForms::PROFILE_VIEW => [
+                AuthForms::PROFILE_VIEW => [
                     'form' => Builder\Profile::class,
                     'type' => Type\ProfileViewType::class,
                 ],

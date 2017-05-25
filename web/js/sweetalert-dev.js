@@ -50,7 +50,7 @@ var _setParameters = require('./modules/set-params');
 var _setParameters2 = _interopRequireWildcard(_setParameters);
 
 /*
- * Remember state in cases where opening and handling a modal will fiddle with it.
+ * Reauth state in cases where opening and handling a modal will fiddle with it.
  * (We also use window.previousActiveElement as a global variable)
  */
 var previousWindowKeyDown;

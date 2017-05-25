@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Exception;
+namespace Bolt\Extension\BoltAuth\Auth\Exception;
 
 class InvalidProviderException extends \Exception
 {

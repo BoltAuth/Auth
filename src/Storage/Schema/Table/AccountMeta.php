@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Schema\Table;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Schema\Table;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 
@@ -52,6 +52,6 @@ class AccountMeta extends BaseTable
      */
     protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint($this->tablePrefix . 'members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
+        $this->table->addForeignKeyConstraint($this->tablePrefix . 'auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
     }
 }

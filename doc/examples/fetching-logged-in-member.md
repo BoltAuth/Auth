@@ -1,18 +1,18 @@
-Example: Fetching logged in member
+Example: Fetching logged in auth
 ----------------------------------
 
 
 ```php
         // Get $app
 
-        /** @var \Bolt\Extension\Bolt\Members\AccessControl\Session $membersSession */
-        $membersSession = $app['members.session'];
-        if ($membersSession->hasAuthorisation()) {
-            /** @var \Bolt\Extension\Bolt\Members\AccessControl\Authorisation $auth */
-            $auth = $membersSession->getAuthorisation();
-            /** @var \Bolt\Extension\Bolt\Members\Storage\Entity\Account $account */
+        /** @var \Bolt\Extension\BoltAuth\Auth\AccessControl\Session $authSession */
+        $authSession = $app['auth.session'];
+        if ($authSession->hasAuthorisation()) {
+            /** @var \Bolt\Extension\BoltAuth\Auth\AccessControl\Authorisation $auth */
+            $auth = $authSession->getAuthorisation();
+            /** @var \Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account $account */
             $account = $auth->getAccount();
-            /** @var string $memberId */
-            $memberId = $account->getGuid();
+            /** @var string $authId */
+            $authId = $account->getGuid();
         }
 ```

@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 /**
  * Local Oauth repository.
@@ -15,7 +15,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Oauth extends AbstractMembersRepository
+class Oauth extends AbstractAuthRepository
 {
     const ALIAS = 'o';
 

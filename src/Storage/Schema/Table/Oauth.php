@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Schema\Table;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Schema\Table;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 
@@ -52,8 +52,8 @@ class Oauth extends BaseTable
      */
     protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_members_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
+        $this->table->addForeignKeyConstraint('bolt_auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
         // This breaks on MySQL
-        //$this->table->addForeignKeyConstraint('bolt_members_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], ['onDelete' => 'CASCADE']);
+        //$this->table->addForeignKeyConstraint('bolt_auth_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], ['onDelete' => 'CASCADE']);
     }
 }

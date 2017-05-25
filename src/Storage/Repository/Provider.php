@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 /**
  * Provider repository.
@@ -15,7 +15,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class Provider extends AbstractMembersRepository
+class Provider extends AbstractAuthRepository
 {
     const ALIAS = 'p';
 

@@ -5,7 +5,7 @@
  # If you wish to get them without flush, call .peek() instead of .get()
  #
  # Passed in variables:
- #   * feedback             — Feedback  Members feedback service (Bolt\Extension\Bolt\Members\Feedback)
+ #   * feedback             — Feedback  Auth feedback service (Bolt\Extension\BoltAuth\Auth\Feedback)
  #     * get                — array     Return, and remove from queue, messages pending display
  #     * poke               — array     Return, and preserve queing of, messages pending display
  #}
@@ -15,11 +15,11 @@
     <div class="row">
         <div class="small-12 columns">
 
-            <div class="panel members-feedback">
+            <div class="panel auth-feedback">
                 {% if feedback.debug|default(null) %}
-                    <div class="members-messages-debug">
+                    <div class="auth-messages-debug">
                         <h5>Debug Messages:</h5>
-                        <ul class="members-feedback-messages">
+                        <ul class="auth-feedback-messages">
                             {% for message in feedback.debug %}
                                 <li>{{ message }}</li>
                             {% endfor %}
@@ -28,9 +28,9 @@
                 {% endif %}
 
                 {% if feedback.error|default(null) %}
-                    <div class="members-messages-error">
+                    <div class="auth-messages-error">
                         <h5>Error Messages:</h5>
-                        <ul class="members-feedback-messages">
+                        <ul class="auth-feedback-messages">
                             {% for message in feedback.error %}
                                 <li>{{ message }}</li>
                             {% endfor %}
@@ -39,9 +39,9 @@
                 {% endif %}
 
                 {% if feedback.info|default(null) %}
-                    <div class="members-messages-info">
+                    <div class="auth-messages-info">
                         <h5>Informational Messages:</h5>
-                        <ul class="members-feedback-messages">
+                        <ul class="auth-feedback-messages">
                             {% for info in feedback.info %}
                                 <li>{{ info }}</li>
                             {% endfor %}

@@ -1,14 +1,14 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Pager;
+use Bolt\Extension\BoltAuth\Auth\Pager;
 use Bolt\Storage\Repository;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineDbalAdapter;
 
 /**
- * Base repository for Members.
+ * Base repository for Auth.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -18,7 +18,7 @@ use Pagerfanta\Adapter\DoctrineDbalAdapter;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-abstract class AbstractMembersRepository extends Repository
+abstract class AbstractAuthRepository extends Repository
 {
     const ALIAS = null;
 
@@ -50,7 +50,7 @@ abstract class AbstractMembersRepository extends Repository
     /**
      * @param boolean $pagerEnabled
      *
-     * @return AbstractMembersRepository
+     * @return AbstractAuthRepository
      */
     public function setPagerEnabled($pagerEnabled)
     {

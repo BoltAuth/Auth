@@ -1,21 +1,21 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Provider;
+namespace Bolt\Extension\BoltAuth\Auth\Provider;
 
-use Bolt\Extension\Bolt\Members\AccessControl;
-use Bolt\Extension\Bolt\Members\Admin;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Controller;
-use Bolt\Extension\Bolt\Members\Feedback;
-use Bolt\Extension\Bolt\Members\Form;
-use Bolt\Extension\Bolt\Members\Handler as EventHandler;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\Provider;
-use Bolt\Extension\Bolt\Members\Oauth2\Client\ProviderManager;
-use Bolt\Extension\Bolt\Members\Oauth2\Handler;
-use Bolt\Extension\Bolt\Members\Storage;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Records;
-use Bolt\Extension\Bolt\Members\Twig;
+use Bolt\Extension\BoltAuth\Auth\AccessControl;
+use Bolt\Extension\BoltAuth\Auth\Admin;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Controller;
+use Bolt\Extension\BoltAuth\Auth\Feedback;
+use Bolt\Extension\BoltAuth\Auth\Form;
+use Bolt\Extension\BoltAuth\Auth\Handler as EventHandler;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\Provider;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Client\ProviderManager;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
+use Bolt\Extension\BoltAuth\Auth\Storage;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Records;
+use Bolt\Extension\BoltAuth\Auth\Twig;
 use Bolt\Storage\Database\Schema\Comparison\IgnoredChange;
 use Bolt\Version as BoltVersion;
 use Pimple as Container;
@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Members service provider.
+ * Auth service provider.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -35,7 +35,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersServiceProvider implements ServiceProviderInterface, EventSubscriberInterface
+class AuthServiceProvider implements ServiceProviderInterface, EventSubscriberInterface
 {
     /** @var array */
     private $config;
@@ -64,14 +64,14 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         $this->registerEventHandlers($app);
 
         /** @deprecated. Do not use */
-        $app['members.meta_fields'] = [];
+        $app['auth.meta_fields'] = [];
 
         $app['session'] = $app->share(
             $app->extend(
                 'session',
                 function (SessionInterface $session) use ($app) {
                     if (!$session->isStarted()) {
-                        $session->registerBag($app['members.feedback']);
+                        $session->registerBag($app['auth.feedback']);
                     }
                     return $session;
                 }
@@ -91,12 +91,12 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         }
 
-        $app['twig.runtime.members'] = function ($app) {
-            return new Twig\Extension\MembersRuntime(
-                $app['members.config'],
-                $app['members.forms.manager'],
-                $app['members.records'],
-                $app['members.session'],
+        $app['twig.runtime.auth'] = function ($app) {
+            return new Twig\Extension\AuthRuntime(
+                $app['auth.config'],
+                $app['auth.forms.manager'],
+                $app['auth.records'],
+                $app['auth.session'],
                 $app['url_generator.lazy']
             );
         };
@@ -105,7 +105,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             'twig.runtimes',
             function (array $runtimes) {
                 return $runtimes + [
-                        Twig\Extension\MembersRuntime::class => 'twig.runtime.members',
+                        Twig\Extension\AuthRuntime::class => 'twig.runtime.auth',
                     ];
             }
         );
@@ -115,7 +115,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app->extend(
                 'twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(new Twig\Extension\MembersExtension());
+                    $twig->addExtension(new Twig\Extension\AuthExtension());
 
                     if (version_compare(BoltVersion::forComposer(), '3.3.0', '<')) {
                         $twig->addRuntimeLoader($app['twig.runtime_loader']);
@@ -130,7 +130,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             $app->extend(
                 'safe_twig',
                 function (\Twig_Environment $twig, $app) {
-                    $twig->addExtension(new Twig\Extension\MembersExtension());
+                    $twig->addExtension(new Twig\Extension\AuthExtension());
 
                     return $twig;
                 }
@@ -155,39 +155,39 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     }
 
     /**
-     * Register base services for Members.
+     * Register base services for Auth.
      *
      * @param Application $app
      */
     private function registerBase(Application $app)
     {
-        $app['members.config'] = $app->share(
+        $app['auth.config'] = $app->share(
             function () {
                 return new Config($this->config);
             }
         );
 
-        $app['members.feedback'] = $app->share(
+        $app['auth.feedback'] = $app->share(
             function ($app) {
-                return new Feedback('_members', $app['members.config']->isDebug());
+                return new Feedback('_auth', $app['auth.config']->isDebug());
             }
         );
 
-        $app['members.roles'] = $app->share(
+        $app['auth.roles'] = $app->share(
             function ($app) {
-                return new AccessControl\Roles($app['members.config'], $app['dispatcher']);
+                return new AccessControl\Roles($app['auth.config'], $app['dispatcher']);
             }
         );
 
-        $app['members.session'] = $app->share(
+        $app['auth.session'] = $app->share(
             function ($app) {
-                return new AccessControl\Session($app['members.records'], $app['session'], $app['url_generator']->generate('homepage'));
+                return new AccessControl\Session($app['auth.records'], $app['session'], $app['url_generator']->generate('homepage'));
             }
         );
 
-        $app['members.admin'] = $app->share(
+        $app['auth.admin'] = $app->share(
             function ($app) {
-                return new Admin\Manager($app['members.records'], $app['members.config'], $app['users'], $app['dispatcher']);
+                return new Admin\Manager($app['auth.records'], $app['auth.config'], $app['users'], $app['dispatcher']);
             }
         );
     }
@@ -199,21 +199,21 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerControllers(Application $app)
     {
-        $app['members.controller.authentication'] = $app->share(
+        $app['auth.controller.authentication'] = $app->share(
             function () {
                 return new Controller\Authentication();
             }
         );
 
-        $app['members.controller.backend'] = $app->share(
+        $app['auth.controller.backend'] = $app->share(
             function () {
                 return new Controller\Backend();
             }
         );
 
-        $app['members.controller.membership'] = $app->share(
+        $app['auth.controller.auth'] = $app->share(
             function () {
-                return new Controller\Membership();
+                return new Controller\Auth();
             }
         );
     }
@@ -225,7 +225,7 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
      */
     private function registerStorage(Application $app)
     {
-        $app['members.repositories'] = $app->share(
+        $app['auth.repositories'] = $app->share(
             function () use ($app) {
                 return new Container(
                     [
@@ -251,9 +251,9 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.records'] = $app->share(
+        $app['auth.records'] = $app->share(
             function () use ($app) {
-                return new Records($app['members.repositories']);
+                return new Records($app['auth.repositories']);
             }
         );
 
@@ -266,66 +266,66 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.records.profile'] = $app->share(
+        $app['auth.records.profile'] = $app->share(
             function ($app) {
-                return new Storage\FormEntityHandler($app['members.config'], $app['members.records'], $app['dispatcher'], $app['members.session']);
+                return new Storage\FormEntityHandler($app['auth.config'], $app['auth.records'], $app['dispatcher'], $app['auth.session']);
             }
         );
     }
 
     private function registerForms(Application $app)
     {
-        $app['members.form.types'] = $app->share(
+        $app['auth.form.types'] = $app->share(
             function ($app) {
                 return new Container(
                     [
                         'associate' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\AssociateType($app['members.config']);
+                                return new Form\Type\AssociateType($app['auth.config']);
                             }
                         ),
                         'login_oauth' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\LoginOauthType($app['members.config']);
+                                return new Form\Type\LoginOauthType($app['auth.config']);
                             }
                         ),
                         'login_password' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\LoginPasswordType($app['members.config']);
+                                return new Form\Type\LoginPasswordType($app['auth.config']);
                             }
                         ),
                         'logout' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\LogoutType($app['members.config']);
+                                return new Form\Type\LogoutType($app['auth.config']);
                             }
                         ),
                         'profile_edit' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\ProfileEditType($app['members.config']);
+                                return new Form\Type\ProfileEditType($app['auth.config']);
                             }
                         ),
                         'profile_recovery_request' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\ProfileRecoveryRequestType($app['members.config']);
+                                return new Form\Type\ProfileRecoveryRequestType($app['auth.config']);
                             }
                         ),
                         'profile_recovery_submit' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\ProfileRecoverySubmitType($app['members.config']);
+                                return new Form\Type\ProfileRecoverySubmitType($app['auth.config']);
                             }
                         ),
                         'profile_register' => $app->share(
                             function () use ($app) {
                                 return new Form\Type\ProfileRegisterType(
-                                    $app['members.config'],
-                                    $app['members.records'],
-                                    $app['members.session']
+                                    $app['auth.config'],
+                                    $app['auth.records'],
+                                    $app['auth.session']
                                 );
                             }
                         ),
                         'profile_view' => $app->share(
                             function () use ($app) {
-                                return new Form\Type\ProfileViewType($app['members.config']);
+                                return new Form\Type\ProfileViewType($app['auth.config']);
                             }
                         ),
                     ]
@@ -333,24 +333,24 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.form.generator'] = $app->share(
+        $app['auth.form.generator'] = $app->share(
             function ($app) {
                 return new Form\Generator(
-                    $app['members.config'],
+                    $app['auth.config'],
                     $app['form.factory'],
                     $app['dispatcher']
                 );
             }
         );
 
-        $app['members.forms.manager'] = $app->share(
+        $app['auth.forms.manager'] = $app->share(
             function ($app) {
                 return new Form\Manager(
-                    $app['members.config'],
-                    $app['members.session'],
-                    $app['members.feedback'],
-                    $app['members.records'],
-                    $app['members.form.generator'],
+                    $app['auth.config'],
+                    $app['auth.session'],
+                    $app['auth.feedback'],
+                    $app['auth.records'],
+                    $app['auth.form.generator'],
                     $app['url_generator']
                 );
             }
@@ -361,23 +361,23 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     {
         // Authentication handler service.
         // Will be chosen, and set, inside a request cycle
-        $app['members.oauth.handler'] = $app->share(
+        $app['auth.oauth.handler'] = $app->share(
             function () {
                 return new Handler\NullHandler();
             }
         );
 
         // Handler object for local authentication processing
-        $app['members.oauth.handler.local'] = $app->protect(
+        $app['auth.oauth.handler.local'] = $app->protect(
             function () use ($app) {
-                return new Handler\Local($app['members.config'], $app);
+                return new Handler\Local($app['auth.config'], $app);
             }
         );
 
         // Handler object for remote authentication processing
-        $app['members.oauth.handler.remote'] = $app->protect(
+        $app['auth.oauth.handler.remote'] = $app->protect(
             function () use ($app) {
-                return new Handler\Remote($app['members.config'], $app);
+                return new Handler\Remote($app['auth.config'], $app);
             }
         );
     }
@@ -385,27 +385,27 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
     private function registerOauthProviders(Application $app)
     {
         // Provider manager
-        $app['members.oauth.provider.manager'] = $app->share(
+        $app['auth.oauth.provider.manager'] = $app->share(
             function ($app) {
-                return new ProviderManager($app['members.config'], $app['guzzle.client'], $app['logger.system'], $app['url_generator.lazy']);
+                return new ProviderManager($app['auth.config'], $app['guzzle.client'], $app['logger.system'], $app['url_generator.lazy']);
             }
         );
 
         // OAuth provider service. Will be chosen, and set, inside a request cycle
-        $app['members.oauth.provider'] = $app->share(
+        $app['auth.oauth.provider'] = $app->share(
             function () {
-                throw new \RuntimeException('Members authentication provider not set up!');
+                throw new \RuntimeException('Auth authentication provider not set up!');
             }
         );
 
-        $app['members.oauth.provider.name'] = $app->share(
+        $app['auth.oauth.provider.name'] = $app->share(
             function () {
-                throw new \RuntimeException('Members authentication provider not set up!');
+                throw new \RuntimeException('Auth authentication provider not set up!');
             }
         );
 
         // Local OAuth provider object
-        $app['members.oauth.provider.local'] = $app->protect(
+        $app['auth.oauth.provider.local'] = $app->protect(
             function () {
                 return new Provider\Local([]);
             }
@@ -414,15 +414,15 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
         // Provider objects for each enabled provider
         foreach ($this->config['providers'] as $providerName => $providerConfig) {
             if ($providerConfig['enabled'] === true) {
-                $app['members.oauth.provider.' . strtolower($providerName)] = $app->protect(
+                $app['auth.oauth.provider.' . strtolower($providerName)] = $app->protect(
                     function () use ($app, $providerName) {
-                        return $app['members.oauth.provider.manager']->getProvider($providerName);
+                        return $app['auth.oauth.provider.manager']->getProvider($providerName);
                     }
                 );
             }
         }
 
-        $app['members.oauth.provider.map'] = $app->share(
+        $app['auth.oauth.provider.map'] = $app->share(
             function () {
                 return [
                     'facebook'  => Provider\Facebook::class,
@@ -441,10 +441,10 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
 
     private function registerEventHandlers(Application $app)
     {
-        $app['members.event_handler.profile_register'] = $app->share(
+        $app['auth.event_handler.profile_register'] = $app->share(
             function ($app) {
                 return new EventHandler\ProfileRegister(
-                    $app['members.config'],
+                    $app['auth.config'],
                     $app['twig'],
                     $app['mailer'],
                     $app['url_generator.lazy']
@@ -452,10 +452,10 @@ class MembersServiceProvider implements ServiceProviderInterface, EventSubscribe
             }
         );
 
-        $app['members.event_handler.profile_reset'] = $app->share(
+        $app['auth.event_handler.profile_reset'] = $app->share(
             function ($app) {
                 return new EventHandler\ProfileReset(
-                    $app['members.config'],
+                    $app['auth.config'],
                     $app['twig'],
                     $app['mailer'],
                     $app['url_generator.lazy']
