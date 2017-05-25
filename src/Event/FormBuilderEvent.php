@@ -9,7 +9,13 @@ use Symfony\Component\Form\FormTypeInterface;
 /**
  * Event fired prior to a form's construction.
  *
- * @author Gawain Lynch <gawain.lynch@gmail.com>
+ * Copyright (C) 2014-2016 Gawain Lynch
+ * Copyright (C) 2017 Svante Richter
+ *
+ * @author    Gawain Lynch <gawain.lynch@gmail.com>
+ * @copyright Copyright (c) 2014-2016, Gawain Lynch
+ *            Copyright (C) 2017 Svante Richter
+ * @license   https://opensource.org/licenses/MIT MIT
  */
 class FormBuilderEvent extends Event
 {
