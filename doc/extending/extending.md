@@ -1,11 +1,11 @@
-Extending Members
+Extending Auth
 -----------------
 
-Members is event driven and provides a number of dispatcher that your own
+Auth is event driven and provides a number of dispatcher that your own
 extension can listen for, and affect the behaviour of different parts of the
-Members extension. 
+Auth extension. 
 
-There is an example repository called [Members Addon Example](https://github.com/bolt/Members-Addon-Example) 
+There is an example repository called [Auth Addon Example](https://github.com/BoltAuth/Auth-Addon-Example) 
 that shows some of the available behaviour.
 
 See:

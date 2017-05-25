@@ -1,12 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Members profile event class.
+ * Auth profile event class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\Event;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersProfileEvent extends Event
+class AuthProfileEvent extends Event
 {
     /** @var Entity\Account */
     protected $account;
@@ -62,7 +62,7 @@ class MembersProfileEvent extends Event
      *
      * @param Entity\AccountMeta $metaEntity
      *
-     * @return MembersProfileEvent
+     * @return AuthProfileEvent
      */
     public function addMetaEntity(Entity\AccountMeta $metaEntity)
     {
@@ -89,7 +89,7 @@ class MembersProfileEvent extends Event
      *
      * @param array $metaFieldNames
      *
-     * @return MembersProfileEvent
+     * @return AuthProfileEvent
      */
     public function addMetaEntryNames(array $metaFieldNames)
     {

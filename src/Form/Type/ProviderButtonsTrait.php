@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -54,7 +54,7 @@ trait ProviderButtonsTrait
      */
     protected function getCssClass($name)
     {
-        return $this->getConfig()->getAddOn('zocial') ? "members-oauth-provider zocial $name" : "members-oauth-provider $name";
+        return $this->getConfig()->getAddOn('zocial') ? "auth-oauth-provider zocial $name" : "auth-oauth-provider $name";
     }
 
     /**

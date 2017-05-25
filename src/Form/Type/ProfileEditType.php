@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,7 +28,7 @@ class ProfileEditType extends AbstractProfileType
      */
     public function getName()
     {
-        return MembersForms::PROFILE_EDIT;
+        return AuthForms::PROFILE_EDIT;
     }
 
     /**

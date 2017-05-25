@@ -1,4 +1,4 @@
-Bolt Members — Site Membership Management for Bolt
+Bolt Auth — Site Auth Management for Bolt
 --------------------------------------------------
 
 If you're just starting out, you might be interested in the [Quick Start Guide](quick-start.md).
@@ -14,9 +14,9 @@ Table of Contents
 * [Authentication Providers](authentication-providers.md#authentication-providers)
   * [Supported Providers](authentication-providers.md#supported-providers)
   * [Set up](authentication-providers.md#set-up)
-* [Debugging Members](debugging.md#debugging-members)
+* [Debugging Auth](debugging.md#debugging-auth)
   * [Enabling debugging](debugging.md#enabling-debugging)
-* [Extending Members](extending/extending.md#extending-members)
+* [Extending Auth](extending/extending.md#extending-auth)
   * [Adding Meta Fields](extending/adding-meta-fields.md#extending-adding-meta-fields)
   * [Adding Roles](extending/adding-roles.md#extending-adding-roles)
   * [Events](extending/events.md#extending-events)
@@ -33,9 +33,9 @@ Table of Contents
   * [Base Routes](routes-urls.md#base-routes)
   * [Authentication Routes](routes-urls.md#authentication-routes)
   * [Authentication Callback Route](routes-urls.md#authentication-callback-route)
-  * [Membership Routes](routes-urls.md#membership-routes)
+  * [Auth Routes](routes-urls.md#auth-routes)
 * [Twig Functions](twig-functions.md#twig-functions)
   * [Authentication](twig-functions.md#authentication)
   * [Profiles](twig-functions.md#profiles)
   * [Restricting Access](twig-functions.md#restricting-access)
-  * [Member Data](twig-functions.md#member-data)
+  * [Auth Data](twig-functions.md#auth-data)

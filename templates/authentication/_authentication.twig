@@ -7,7 +7,7 @@
  #     {% block login %}
  #     {% endblock login %}
  #
- ### Configuring Members to use your template parent:
+ ### Configuring Auth to use your template parent:
  #
  # Next step is to set the template key to the relative path to template file.
  # authentication:
@@ -17,11 +17,11 @@
  # themes/koala/extensions/clientlogin/ you can then put what templates files
  # you need there.
  #
- # In app/config/extensions/members.bolt.yml set the following to override
+ # In app/config/extensions/auth.bolt.yml set the following to override
  #
  #     templates:
  #       authentication:
- #         parent: extensions/members/login.twig
+ #         parent: extensions/auth/login.twig
  #}
 {% extends "partials/_master.twig" %}
 

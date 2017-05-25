@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
 use Silex\Application;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -50,24 +50,24 @@ class SessionSubscriber implements EventSubscriberInterface
 
     public function persistData()
     {
-        $this->getMembersSession()->persistData();
+        $this->getAuthSession()->persistData();
     }
 
     public function saveRedirects()
     {
-        $this->getMembersSession()->saveRedirects();
+        $this->getAuthSession()->saveRedirects();
     }
 
     public function loadRedirects()
     {
-        $this->getMembersSession()->loadRedirects();
+        $this->getAuthSession()->loadRedirects();
     }
 
     /**
      * @return Session
      */
-    private function getMembersSession()
+    private function getAuthSession()
     {
-        return $this->app['members.session'];
+        return $this->app['auth.session'];
     }
 }

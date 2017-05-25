@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Schema\Table;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Schema\Table;
 
 use Bolt\Storage\Database\Schema\Table\BaseTable;
 

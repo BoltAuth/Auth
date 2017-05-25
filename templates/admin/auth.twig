@@ -1,15 +1,15 @@
-{# Page: NavSecondary > Extensions > Members #}
+{# Page: NavSecondary > Extensions > Auth #}
 
 {% extends "@bolt/_base/_page-nav.twig" %}
 
 {% block page_nav 'Extensions' %}
 
 {% block page_title %}
-    {{ __('Members') }}
+    {{ __('Auth') }}
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Manage Site Membership Roles
+    Manage Site Auth Roles
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -30,32 +30,32 @@
 
 {% block page_main %}
 
-    <div class="row members-bolt-container">
+    <div class="row auth-bolt-container">
         <div class="col-md-9">
 
             {% include '_sub/_messages.twig' %}
 
-            <section class="members-container">
+            <section class="auth-container">
 
                 <div class="row">
                     <div class="col-md-9">
-                        <h3>{{ __('Members') }}</h3>
+                        <h3>{{ __('Auth') }}</h3>
                     </div>
                     <div class="col-md-3">
-                        {{ include('@MembersAdmin/_search.twig') }}
+                        {{ include('@AuthAdmin/_search.twig') }}
                     </div>
                 </div>
 
-                <div class="members-list">
+                <div class="auth-list">
 
-                    <table class="dashboardlisting table" id="members-table">
+                    <table class="dashboardlisting table" id="auth-table">
                         <colgroup>
-                            <col class="members-column-check">
-                            <col class="members-column-displayname">
-                            <col class="members-column-email">
-                            <col class="members-column-roles">
-                            <col class="members-column-lastseen">
-                            <col class="members-column-guid">
+                            <col class="auth-column-check">
+                            <col class="auth-column-displayname">
+                            <col class="auth-column-email">
+                            <col class="auth-column-roles">
+                            <col class="auth-column-lastseen">
+                            <col class="auth-column-guid">
                         </colgroup>
                         <thead>
                         <tr>
@@ -67,32 +67,32 @@
                             <th></th>
                         </tr>
                         </thead>
-                        <tbody class="members-list-items">
-                        {% for member in members %}
-                            {% if member.enabled %}{% set enabled = '' %}{% else %}{% set enabled = 'strikeout' %}{% endif %}
-                            <tr class="{{ enabled }}" id="members-member[{{ member.guid }}]">
-                                <td class="member-cb">
+                        <tbody class="auth-list-items">
+                        {% for auth in auth %}
+                            {% if auth.enabled %}{% set enabled = '' %}{% else %}{% set enabled = 'strikeout' %}{% endif %}
+                            <tr class="{{ enabled }}" id="auth-auth[{{ auth.guid }}]">
+                                <td class="auth-cb">
                                     <label>
                                         <input type="checkbox"
-                                               id="form_members_{{ loop.index0 }}"
-                                               name="form[members][]"
-                                               value="{{ member.guid }}">
+                                               id="form_auth_{{ loop.index0 }}"
+                                               name="form[auth][]"
+                                               value="{{ auth.guid }}">
                                     </label>
                                 </td>
-                                <td class="members-displayname"><a href="members/edit/{{ member.guid }}">{{ member.displayname }}</a></td>
-                                <td class="members-email">{{ member.email }}</td>
-                                <td class="members-roles">
-                                    {% for role in member.roles|default(['-']) %}
+                                <td class="auth-displayname"><a href="auth/edit/{{ auth.guid }}">{{ auth.displayname }}</a></td>
+                                <td class="auth-email">{{ auth.email }}</td>
+                                <td class="auth-roles">
+                                    {% for role in auth.roles|default(['-']) %}
                                         {{ role }}<br>
                                     {% endfor %}
                                 </td>
-                                <td class="members-lastseen">
-                                    <time class="buic-moment" data-bolt-widget="buicMoment" datetime="{{ member.lastseen }}">{{ member.lastseen }}</time>
+                                <td class="auth-lastseen">
+                                    <time class="buic-moment" data-bolt-widget="buicMoment" datetime="{{ auth.lastseen }}">{{ auth.lastseen }}</time>
                                 </td>
-                                <td class="member-guid">
+                                <td class="auth-guid">
                                     {% spaceless %}
                                         <span class="info-pop pull-right" style="background-color: inherit !important;"
-                                              data-content="{{ member.guid }}"
+                                              data-content="{{ auth.guid }}"
                                               data-html="false" >
                                               <i class="fa fa-user-md"></i>
                                         </span>
@@ -110,18 +110,18 @@
             {% include '@bolt/components/pager.twig' with { 'context': pager } only %}
         </div>
 
-        {{ include('@MembersAdmin/_aside.twig') }}
+        {{ include('@AuthAdmin/_aside.twig') }}
 
     </div>
 
     <script>
-        var baseurl = "{{ paths.bolt }}extend/members/action";
+        var baseurl = "{{ paths.bolt }}extend/auth/action";
 
         var active_console;
         var active_interval;
 
         jQuery(document).ready(function($) {
-            var boltExt = new MembersAdmin();
+            var boltExt = new AuthAdmin();
             boltExt.setMessage('useradd', '{{__('Adding user...')}}' );
             boltExt.setMessage('userdel', '{{__('Removing user(s)...')}}');
             boltExt.setMessage('userenable', '{{__('Enabling user(s)...')}}' );

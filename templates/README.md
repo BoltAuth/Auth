@@ -1,4 +1,4 @@
-Members Templates
+Auth Templates
 =================
 
 Copy, and appropriately rename, templates found in the locations described

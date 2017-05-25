@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Entity;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 use League\OAuth2\Client\Token\AccessToken;
 

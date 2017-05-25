@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Pager;
+namespace Bolt\Extension\BoltAuth\Auth\Pager;
 
 use Bolt\Storage\Entity\Builder;
 use Pagerfanta\Adapter\AdapterInterface;
 use Pagerfanta\Pagerfanta;
 
 /**
- * Pager for membership data.
+ * Pager for auth data.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter

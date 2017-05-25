@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 use Bolt\Translation\Translator as Trans;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +23,7 @@ class LoginPasswordType extends AbstractType
 {
     public function getName()
     {
-        return MembersForms::LOGIN_PASSWORD;
+        return AuthForms::LOGIN_PASSWORD;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

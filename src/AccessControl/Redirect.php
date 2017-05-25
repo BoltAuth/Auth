@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

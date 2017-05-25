@@ -1,13 +1,13 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Admin;
+namespace Bolt\Extension\BoltAuth\Auth\Admin;
 
 use Bolt\Controller\Zone;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersProfileEvent;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
-use Bolt\Extension\Bolt\Members\Storage\Records;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthProfileEvent;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Records;
 use Bolt\Users;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Members admin class.
+ * Auth admin class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -53,7 +53,7 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * Add a new member account.
+     * Add a new auth account.
      *
      * @param Entity\Account $account
      *
@@ -65,7 +65,7 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * Delete a member account.
+     * Delete a auth account.
      *
      * @param string $guid
      *
@@ -77,7 +77,7 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * Enable a member account.
+     * Enable a auth account.
      *
      * @param string $guid
      *
@@ -87,14 +87,14 @@ class Manager implements EventSubscriberInterface
     {
         $account = $this->records->getAccountByGuid($guid);
         $account->setEnabled(true);
-        $event = new MembersProfileEvent($account);
-        $this->dispatcher->dispatch(MembersEvents::MEMBER_ENABLE, $event);
+        $event = new AuthProfileEvent($account);
+        $this->dispatcher->dispatch(AuthEvents::AUTH_ENABLE, $event);
 
         return $this->records->saveAccount($account);
     }
 
     /**
-     * Disable a member account.
+     * Disable a auth account.
      *
      * @param string $guid
      *
@@ -104,14 +104,14 @@ class Manager implements EventSubscriberInterface
     {
         $account = $this->records->getAccountByGuid($guid);
         $account->setEnabled(false);
-        $event = new MembersProfileEvent($account);
-        $this->dispatcher->dispatch(MembersEvents::MEMBER_DISABLE, $event);
+        $event = new AuthProfileEvent($account);
+        $this->dispatcher->dispatch(AuthEvents::AUTH_DISABLE, $event);
 
         return $this->records->saveAccount($account);
     }
 
     /**
-     * Add a new member account.
+     * Add a new auth account.
      *
      * @param string $guid
      * @param string $role
@@ -131,7 +131,7 @@ class Manager implements EventSubscriberInterface
     }
 
     /**
-     * Delete a member account.
+     * Delete a auth account.
      *
      * @param string $guid
      * @param string $role
@@ -153,7 +153,7 @@ class Manager implements EventSubscriberInterface
     }
 
     /***
-     * Enforce system roles for runtime modification of member properties.
+     * Enforce system roles for runtime modification of auth properties.
      *
      * @param GetResponseEvent $event
      *

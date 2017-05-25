@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
 
 /**

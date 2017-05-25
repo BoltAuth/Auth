@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Builder;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Builder;
 
-use Bolt\Extension\Bolt\Members\Form\Entity;
-use Bolt\Extension\Bolt\Members\Form\Type;
+use Bolt\Extension\BoltAuth\Auth\Form\Entity;
+use Bolt\Extension\BoltAuth\Auth\Form\Type;
 
 /**
  * Social media account association form.

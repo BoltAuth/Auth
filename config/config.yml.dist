@@ -1,9 +1,9 @@
 ##
-## Bolt Members configuration options
+## Bolt Auth configuration options
 ##
 ## Documentation:
 ##   * See the doc/ directory in this repository
-##   * Online https://github.com/bolt/Members/tree/master/doc
+##   * Online https://github.com/BoltAuth/Auth/tree/master/doc
 
 ## Debugging ##################################################################
 #
@@ -26,7 +26,7 @@ debug: true
 ## Access Control #############################################################
 #
 roles:
-    member:
+    auth:
         admin: Administrator
         moderator: Moderator
         participant: Participant

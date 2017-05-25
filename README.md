@@ -1,7 +1,7 @@
-Membership Extension for Bolt
+Auth Extension for Bolt
 =============================
 
-Members provides functionality to enable restricted access to parts of Bolt's 
+Auth provides functionality to enable restricted access to parts of Bolt's 
 front end.
 
 Requirements
@@ -17,4 +17,4 @@ Getting Started
 Refer to our [quick start guide](doc/quick-start.md) for a good place to start. 
 
 Full documentation is available [locally](doc/README.md), or on 
-[GitHub](https://github.com/bolt/Members/tree/master/doc).
+[GitHub](https://github.com/BoltAuth/Auth/tree/master/doc).

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Config;
+namespace Bolt\Extension\BoltAuth\Auth\Config;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 

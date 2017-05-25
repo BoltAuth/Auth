@@ -1,19 +1,19 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Controller;
+namespace Bolt\Extension\BoltAuth\Auth\Controller;
 
-use Bolt\Extension\Bolt\Members\AccessControl\Session;
-use Bolt\Extension\Bolt\Members\AccessControl\Validator\PasswordReset;
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersExceptionEvent as ExceptionEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
-use Bolt\Extension\Bolt\Members\Exception;
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
-use Bolt\Extension\Bolt\Members\Form\ResolvedFormBuild;
-use Bolt\Extension\Bolt\Members\Oauth2\Handler;
-use Bolt\Extension\Bolt\Members\Storage;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Session;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Validator\PasswordReset;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthExceptionEvent as ExceptionEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationFailureEvent;
+use Bolt\Extension\BoltAuth\Auth\Exception;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
+use Bolt\Extension\BoltAuth\Auth\Form\ResolvedFormBuild;
+use Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
+use Bolt\Extension\BoltAuth\Auth\Storage;
 use Carbon\Carbon;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Silex\Application;
@@ -40,7 +40,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Authentication extends AbstractController
 {
-    const FINAL_REDIRECT_KEY = 'members.auth.redirect';
+    const FINAL_REDIRECT_KEY = 'auth.auth.redirect';
 
     /**
      * {@inheritdoc}
@@ -50,19 +50,19 @@ class Authentication extends AbstractController
         /** @var $ctr ControllerCollection */
         $ctr = parent::connect($app);
 
-        // Member login
+        // Auth login
         $ctr->match('/login', [$this, 'login'])
             ->bind('authenticationLogin')
             ->method('GET|POST')
         ;
 
-        // Member login
+        // Auth login
         $ctr->match('/login/process', [$this, 'processLogin'])
             ->bind('authenticationProcessLogin')
             ->method('GET')
         ;
 
-        // Member logout
+        // Auth logout
         $ctr->match('/logout', [$this, 'logout'])
             ->bind('authenticationLogout')
             ->method('GET')
@@ -102,20 +102,20 @@ class Authentication extends AbstractController
      */
     public function after(Request $request, Response $response)
     {
-        if ($this->getMembersSession()->getAuthorisation() === null) {
+        if ($this->getAuthSession()->getAuthorisation() === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
 
             return;
         }
 
-        $cookie = $this->getMembersSession()->getAuthorisation()->getCookie();
+        $cookie = $this->getAuthSession()->getAuthorisation()->getCookie();
         if ($cookie === null) {
             $response->headers->clearCookie(Session::COOKIE_AUTHORISATION);
         } else {
             $response->headers->setCookie(new Cookie(Session::COOKIE_AUTHORISATION, $cookie, Carbon::now()->addDays(7)));
         }
 
-        $request->attributes->set('members-cookies', 'set');
+        $request->attributes->set('auth-cookies', 'set');
     }
 
     /**
@@ -127,8 +127,8 @@ class Authentication extends AbstractController
      */
     public function defaultRoute(Application $app)
     {
-        if ($this->getMembersSession()->hasAuthorisation()) {
-            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        if ($this->getAuthSession()->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('authProfileEdit'));
         }
 
         return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
@@ -145,9 +145,9 @@ class Authentication extends AbstractController
     public function login(Application $app, Request $request)
     {
         $this->assertSecure($app, $request);
-        $this->assertWPOauth($app['members.config']);
+        $this->assertWPOauth($app['auth.config']);
 
-        $config = $this->getMembersConfig();
+        $config = $this->getAuthConfig();
         $loginRedirect = $config->getRedirectLogin();
         $homepage = $app['url_generator']->generate('homepage');
         $referer = $request->headers->get('referer');
@@ -162,14 +162,14 @@ class Authentication extends AbstractController
         } else {
             $redirect = $homepage;
         }
-        $this->getMembersSession()
+        $this->getAuthSession()
             ->clearRedirects()
             ->addRedirect($redirect)
         ;
 
-        $builder = $this->getMembersFormsManager()->getFormLogin($request);
+        $builder = $this->getAuthFormsManager()->getFormLogin($request);
         /** @var Form $oauthForm */
-        $oauthForm = $builder->getForm(MembersForms::LOGIN_OAUTH);
+        $oauthForm = $builder->getForm(AuthForms::LOGIN_OAUTH);
         if ($oauthForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $oauthForm);
             if ($response instanceof Response) {
@@ -178,7 +178,7 @@ class Authentication extends AbstractController
         }
 
         /** @var Form $associateForm */
-        $associateForm = $builder->getForm(MembersForms::ASSOCIATE);
+        $associateForm = $builder->getForm(AuthForms::ASSOCIATE);
         if ($associateForm->isValid()) {
             $response = $this->processOauthForm($app, $request, $associateForm);
             if ($response instanceof Response) {
@@ -187,12 +187,12 @@ class Authentication extends AbstractController
         }
 
         /** @var Form $passwordForm */
-        $passwordForm = $builder->getForm(MembersForms::LOGIN_PASSWORD);
+        $passwordForm = $builder->getForm(AuthForms::LOGIN_PASSWORD);
         if ($passwordForm->isValid()) {
-            $this->getMembersOauthProviderManager()->setProvider($app, 'local');
+            $this->getAuthOauthProviderManager()->setProvider($app, 'local');
 
             /** @var Handler\Local $handler */
-            $handler = $this->getMembersOauthHandler();
+            $handler = $this->getAuthOauthHandler();
             $handler->setSubmittedForm($passwordForm);
 
             // Initial login checks
@@ -207,10 +207,10 @@ class Authentication extends AbstractController
                 return $response;
             }
 
-            $this->getMembersFeedback()->info('Login details are incorrect.');
+            $this->getAuthFeedback()->info('Login details are incorrect.');
         }
         $template = $config->getTemplate('authentication', 'login');
-        $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template);
+        $html = $this->getAuthFormsManager()->renderForms($builder, $app['twig'], $template);
 
         return new Response($html);
     }
@@ -228,12 +228,12 @@ class Authentication extends AbstractController
         $this->assertSecure($app, $request);
 
         try {
-            $this->getMembersOauthHandler()->login($request);
+            $this->getAuthOauthHandler()->login($request);
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
 
-        return $this->getMembersSession()->popRedirect()->getResponse();
+        return $this->getAuthSession()->popRedirect()->getResponse();
     }
 
     /**
@@ -246,22 +246,22 @@ class Authentication extends AbstractController
      */
     public function logout(Application $app, Request $request)
     {
-        $this->getMembersOauthProviderManager()->setProvider($app, 'local');
+        $this->getAuthOauthProviderManager()->setProvider($app, 'local');
 
         /** @var Handler\HandlerInterface $handler */
-        $handler = $this->getMembersOauthProviderManager()->getProviderHandler();
+        $handler = $this->getAuthOauthProviderManager()->getProviderHandler();
         try {
             $handler->logout($request);
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
 
-        $config = $this->getMembersConfig();
+        $config = $this->getAuthConfig();
         if ($config->getRedirectLogout()) {
             return new RedirectResponse($config->getRedirectLogout());
         }
 
-        return $this->getMembersSession()->popRedirect()->getResponse();
+        return $this->getAuthSession()->popRedirect()->getResponse();
     }
 
     /**
@@ -275,17 +275,17 @@ class Authentication extends AbstractController
     public function oauthCallback(Application $app, Request $request)
     {
         $providerName = $request->query->get('provider');
-        $this->getMembersOauthProviderManager()->setProvider($app, $providerName);
+        $this->getAuthOauthProviderManager()->setProvider($app, $providerName);
 
         try {
-            $this->getMembersOauthHandler()->process($request, 'authorization_code');
+            $this->getAuthOauthHandler()->process($request, 'authorization_code');
         } catch (\Exception $e) {
             return $this->getExceptionResponse($app, $e);
         }
-        $response = $this->getMembersSession()->popRedirect()->getResponse();
+        $response = $this->getAuthSession()->popRedirect()->getResponse();
 
         // Flush any pending redirects
-        $this->getMembersSession()->clearRedirects();
+        $this->getAuthSession()->clearRedirects();
 
         return $response;
     }
@@ -300,8 +300,8 @@ class Authentication extends AbstractController
      */
     public function resetPassword(Application $app, Request $request)
     {
-        if ($this->getMembersSession()->hasAuthorisation()) {
-            return new RedirectResponse($app['url_generator']->generate('membersProfileEdit'));
+        if ($this->getAuthSession()->hasAuthorisation()) {
+            return new RedirectResponse($app['url_generator']->generate('authProfileEdit'));
         }
 
         $response = new Response();
@@ -313,8 +313,8 @@ class Authentication extends AbstractController
             $builder = $this->resetPasswordRequest($app, $request, $context, $response);
         }
 
-        $template = $this->getMembersConfig()->getTemplate('authentication', 'recovery');
-        $html = $this->getMembersFormsManager()->renderForms($builder, $app['twig'], $template, $context->all());
+        $template = $this->getAuthConfig()->getTemplate('authentication', 'recovery');
+        $html = $this->getAuthFormsManager()->renderForms($builder, $app['twig'], $template, $context->all());
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));
 
         return $response;
@@ -331,8 +331,8 @@ class Authentication extends AbstractController
      */
     private function resetPasswordSubmit(Application $app, Request $request, ParameterBag $context)
     {
-        $builder = $this->getMembersFormsManager()->getFormProfileRecovery($request);
-        $form = $builder->getForm(MembersForms::PROFILE_RECOVERY_SUBMIT);
+        $builder = $this->getAuthFormsManager()->getFormProfileRecovery($request);
+        $form = $builder->getForm(AuthForms::PROFILE_RECOVERY_SUBMIT);
         $context->set('stage', 'invalid');
 
         /** @var PasswordReset $passwordReset */
@@ -342,23 +342,23 @@ class Authentication extends AbstractController
         }
 
         $guid = $passwordReset->getGuid();
-        $oauth = $this->getMembersRecords()->getOauthByGuid($guid);
-        $provider = $this->getMembersRecords()->getProvision($guid, 'local');
+        $oauth = $this->getAuthRecords()->getOauthByGuid($guid);
+        $provider = $this->getAuthRecords()->getProvision($guid, 'local');
         $context->set('stage', 'password');
 
         if ($form->isValid()) {
             // Password reset on an account that was registered via OAuth, sans a password
             if ($oauth === false) {
-                $oauth = $this->getMembersRecords()->createOauth($guid, $guid, true);
+                $oauth = $this->getAuthRecords()->createOauth($guid, $guid, true);
             }
             if ($provider === false) {
-                $this->getMembersRecords()->createProviderEntity($guid, 'local', $guid);
+                $this->getAuthRecords()->createProviderEntity($guid, 'local', $guid);
             }
 
             // Reset password
             $oauth->setPassword($form->get('password')->getData());
 
-            $this->getMembersRecords()->saveOauth($oauth);
+            $this->getAuthRecords()->saveOauth($oauth);
             $app['session']->remove(PasswordReset::COOKIE_NAME);
 
             $context->set('stage', 'reset');
@@ -379,8 +379,8 @@ class Authentication extends AbstractController
      */
     private function resetPasswordRequest(Application $app, Request $request, ParameterBag $context, Response $response)
     {
-        $builder = $this->getMembersFormsManager()->getFormProfileRecovery($request);
-        $form = $builder->getForm(MembersForms::PROFILE_RECOVERY_REQUEST);
+        $builder = $this->getAuthFormsManager()->getFormProfileRecovery($request);
+        $form = $builder->getForm(AuthForms::PROFILE_RECOVERY_REQUEST);
         $context->set('stage', 'email');
 
         if (!$form->isValid()) {
@@ -389,7 +389,7 @@ class Authentication extends AbstractController
 
         $email = $form->get('email')->getData();
         $context->set('email', $email);
-        $account = $this->getMembersRecords()->getAccountByEmail($email);
+        $account = $this->getAuthRecords()->getAccountByEmail($email);
         if ($account === false) {
             return $builder;
         }
@@ -408,9 +408,9 @@ class Authentication extends AbstractController
 
         /** @var \Swift_Mailer $mailer */
         $mailer = $app['mailer'];
-        $config = $this->getMembersConfig();
+        $config = $this->getAuthConfig();
         $from = [$config->getNotificationEmail() => $config->getNotificationName()];
-        $subject = $app['twig']->render($config->getTemplate('recovery', 'subject'), ['member' => $account]);
+        $subject = $app['twig']->render($config->getTemplate('recovery', 'subject'), ['auth' => $account]);
         /** @var \Swift_Message $message */
         $message = $mailer->createMessage('message');
 
@@ -424,12 +424,12 @@ class Authentication extends AbstractController
             $this->setBody($message, $account, $passwordReset, $app['twig']);
 
             // Dispatch an event
-            $event = new MembersNotificationEvent($message);
-            $app['dispatcher']->dispatch(MembersEvents::MEMBER_PROFILE_RESET, $event);
+            $event = new AuthNotificationEvent($message);
+            $app['dispatcher']->dispatch(AuthEvents::AUTH_PROFILE_RESET, $event);
         } catch (\Swift_RfcComplianceException $e) {
             // Dispatch an event
-            $event = new MembersNotificationFailureEvent($message, $e);
-            $app['dispatcher']->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+            $event = new AuthNotificationFailureEvent($message, $e);
+            $app['dispatcher']->dispatch(AuthEvents::AUTH_NOTIFICATION_FAILURE, $event);
         }
 
         $context->set('stage', 'submitted');
@@ -456,10 +456,10 @@ class Authentication extends AbstractController
             'name'   => $account->getDisplayname(),
             'email'  => $account->getEmail(),
             'link'   => $link,
-            'member' => $account,
+            'auth' => $account,
         ];
 
-        $config = $this->getMembersConfig();
+        $config = $this->getAuthConfig();
         $template = $config->getTemplate('recovery', 'text');
         $bodyText = $twig->render($template, $context);
         $message->setBody($bodyText);
@@ -486,10 +486,10 @@ class Authentication extends AbstractController
     private function processOauthForm(Application $app, Request $request, Form $form)
     {
         $providerName = $form->getClickedButton()->getName();
-        $enabledProviders = $this->getMembersConfig()->getEnabledProviders();
+        $enabledProviders = $this->getAuthConfig()->getEnabledProviders();
 
         if (array_key_exists($providerName, $enabledProviders)) {
-            $this->getMembersOauthProviderManager()->setProvider($app, $providerName);
+            $this->getAuthOauthProviderManager()->setProvider($app, $providerName);
 
             return $this->processLogin($app, $request);
         }
@@ -511,21 +511,21 @@ class Authentication extends AbstractController
 
         if ($e instanceof IdentityProviderException) {
             // Thrown by the OAuth2 library
-            $this->getMembersFeedback()->error('An exception occurred authenticating with the provider.');
+            $this->getAuthFeedback()->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof Exception\InvalidAuthorisationRequestException) {
             // Thrown deliberately internally
-            $this->getMembersFeedback()->error('An exception occurred authenticating with the provider.');
+            $this->getAuthFeedback()->error('An exception occurred authenticating with the provider.');
             // 'Access denied!'
             $response = new Response('', Response::HTTP_FORBIDDEN);
         } elseif ($e instanceof Exception\MissingAccountException) {
             // Thrown deliberately internally
-            $this->getMembersFeedback()->error('No registered account.');
-            $response = new RedirectResponse($app['url_generator']->generate('membersProfileRegister'));
+            $this->getAuthFeedback()->error('No registered account.');
+            $response = new RedirectResponse($app['url_generator']->generate('authProfileRegister'));
         } else {
             // Yeah, this can't be good…
-            $this->getMembersFeedback()->error('A server error occurred, we are very sorry and someone has been notified!');
+            $this->getAuthFeedback()->error('A server error occurred, we are very sorry and someone has been notified!');
             $response = new Response('', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -534,12 +534,12 @@ class Authentication extends AbstractController
             try {
                 $dispatcher->dispatch(ExceptionEvent::ERROR, new ExceptionEvent($e));
             } catch (\Exception $e) {
-                $this->getMembersFeedback()->debug(sprintf('Event dispatcher "%s" error: %s', ExceptionEvent::ERROR, $e->getMessage()));
-                $app['logger.system']->critical('[Members][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
+                $this->getAuthFeedback()->debug(sprintf('Event dispatcher "%s" error: %s', ExceptionEvent::ERROR, $e->getMessage()));
+                $app['logger.system']->critical('[Auth][Controller] Event dispatcher had an error', ['event' => 'exception', 'exception' => $e]);
             }
         }
 
-        $this->getMembersFeedback()->debug($e->getMessage());
+        $this->getAuthFeedback()->debug($e->getMessage());
         $response->setContent($this->displayExceptionPage($app, $e));
 
         return $response;
@@ -555,12 +555,12 @@ class Authentication extends AbstractController
      */
     private function displayExceptionPage(Application $app, \Exception $e)
     {
-        $config = $this->getMembersConfig();
-        $ext = $app['extensions']->get('Bolt/Members');
+        $config = $this->getAuthConfig();
+        $ext = $app['extensions']->get('BoltAuth/Auth');
         $app['twig.loader.bolt_filesystem']->addPath($ext->getBaseDirectory()->getFullPath() . '/templates/error/');
         $context = [
             'parent'    => $config->getTemplate('error', 'parent'),
-            'feedback'  => $this->getMembersFeedback()->get(),
+            'feedback'  => $this->getAuthFeedback()->get(),
             'exception' => $e,
         ];
         $html = $app['twig']->render($config->getTemplate('error', 'error'), $context);
@@ -583,8 +583,8 @@ class Authentication extends AbstractController
         }
 
         $msg = sprintf("Login route '%s' is not being served over HTTPS. This is insecure and vulnerable!", $request->getPathInfo());
-        $app['logger.system']->critical(sprintf('[Members][Controller]: %s', $msg), ['event' => 'extensions']);
-        $this->getMembersFeedback()->debug($msg);
+        $app['logger.system']->critical(sprintf('[Auth][Controller]: %s', $msg), ['event' => 'extensions']);
+        $this->getAuthFeedback()->debug($msg);
 
         return false;
     }
@@ -603,7 +603,7 @@ class Authentication extends AbstractController
         $provider = $config->getProvider('wpoauth');
         if ($provider->isEnabled()) {
             $msg = sprintf('One of the configured OAuth providers, "%s", uses WP-OAuth. WP-Oauth is unsafe and insecure. Choosing another provider would be very sensible!', $provider->getLabelSignIn());
-            $this->getMembersFeedback()->debug($msg);
+            $this->getAuthFeedback()->debug($msg);
         }
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Handler;
 
-use Bolt\Extension\Bolt\Members\Config\Config;
-use Bolt\Extension\Bolt\Members\Event\MembersEvents;
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationFailureEvent;
+use Bolt\Extension\BoltAuth\Auth\Config\Config;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthEvents;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationFailureEvent;
 use Swift_Mailer as SwiftMailer;
 use Swift_Mime_Message as SwiftMimeMessage;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -52,14 +52,14 @@ abstract class AbstractProfileHandler
 
     /**
      * @param SwiftMimeMessage         $message
-     * @param MembersNotificationEvent $event
+     * @param AuthNotificationEvent $event
      * @param EventDispatcherInterface $dispatcher
      *
      * @return array
      */
-    protected function queueMessage(SwiftMimeMessage $message, MembersNotificationEvent $event, EventDispatcherInterface $dispatcher)
+    protected function queueMessage(SwiftMimeMessage $message, AuthNotificationEvent $event, EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_PRE_SEND, $event);
+        $dispatcher->dispatch(AuthEvents::AUTH_NOTIFICATION_PRE_SEND, $event);
 
         $failedRecipients = [];
 
@@ -67,8 +67,8 @@ abstract class AbstractProfileHandler
             $this->mailer->send($message, $failedRecipients);
         } catch (\Swift_SwiftException $e) {
             // Dispatch an event
-            $event = new MembersNotificationFailureEvent($message, $e);
-            $dispatcher->dispatch(MembersEvents::MEMBER_NOTIFICATION_FAILURE, $event);
+            $event = new AuthNotificationFailureEvent($message, $e);
+            $dispatcher->dispatch(AuthEvents::AUTH_NOTIFICATION_FAILURE, $event);
         }
 
         return $failedRecipients;

@@ -27,10 +27,10 @@ var delay = (function() {
     };
 })();
 
-var MembersAdmin = Object.extend(
+var AuthAdmin = Object.extend(
     Object, {
 
-        selector: ".members-bolt-container",
+        selector: ".auth-bolt-container",
         messages: {},
         paths: {},
 
@@ -54,11 +54,11 @@ var MembersAdmin = Object.extend(
 
         doUserAdd: function(e) {
             var controller = this;
-            var selected_members = [];
+            var selected_auth = [];
 
             console.debug("Adding a user");
 
-            $.post(baseurl + '/userAdd', {member: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userAdd', {auth: selected_auth}, function(selected_auth) {})
                 .done(
                     function() {
                         swal({title: "", text: "Feature coming soon!", type: "info"});
@@ -74,20 +74,20 @@ var MembersAdmin = Object.extend(
 
         doUserDel: function(e) {
             var controller = this;
-            var selected_members = [];
+            var selected_auth = [];
 
             $.each(
-                $("input[name='form[members][]']:checked"), function() {
-                    selected_members.push($(this).val());
+                $("input[name='form[auth][]']:checked"), function() {
+                    selected_auth.push($(this).val());
                 }
             );
 
-            if (selected_members.length === 0) {
-                swal({title: "Nothing Selected!", text: "You need to choose at least one member.", type: "warning"});
+            if (selected_auth.length === 0) {
+                swal({title: "Nothing Selected!", text: "You need to choose at least one auth.", type: "warning"});
                 return;
             }
 
-            console.debug("Deleting user(s): " + selected_members);
+            console.debug("Deleting user(s): " + selected_auth);
 
             swal({
                 title: "Confim deletion",
@@ -98,7 +98,7 @@ var MembersAdmin = Object.extend(
                 confirmButtonText: "Yes!",
                 closeOnConfirm: false },
                 function(){
-                    $.post(baseurl + '/userDelete', {members: selected_members}, function(selected_members) {})
+                    $.post(baseurl + '/userDelete', {auth: selected_auth}, function(selected_auth) {})
                         .done(
                             function() {
                                 location.reload(true);
@@ -115,22 +115,22 @@ var MembersAdmin = Object.extend(
 
         doUserEnable: function(e) {
             var controller = this;
-            var selected_members = [];
+            var selected_auth = [];
 
             $.each(
-                $("input[name='form[members][]']:checked"), function() {
-                    selected_members.push($(this).val());
+                $("input[name='form[auth][]']:checked"), function() {
+                    selected_auth.push($(this).val());
                 }
             );
 
-            if (selected_members.length === 0) {
-                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
+            if (selected_auth.length === 0) {
+                swal({title: "Nothing Selected!", text: "You need to choose a auth.", type: "warning"});
                 return;
             }
 
-            console.debug("Enabling user(s): " + selected_members);
+            console.debug("Enabling user(s): " + selected_auth);
 
-            $.post(baseurl + '/userEnable', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userEnable', {auth: selected_auth}, function(selected_auth) {})
                 .done(
                     function() {
                         location.reload(true);
@@ -145,22 +145,22 @@ var MembersAdmin = Object.extend(
 
         doUserDisable: function(e) {
             var controller = this;
-            var selected_members = [];
+            var selected_auth = [];
 
             $.each(
-                $("input[name='form[members][]']:checked"), function() {
-                    selected_members.push($(this).val());
+                $("input[name='form[auth][]']:checked"), function() {
+                    selected_auth.push($(this).val());
                 }
             );
 
-            if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
+            if (selected_auth == '') {
+                swal({title: "Nothing Selected!", text: "You need to choose a auth.", type: "warning"});
                 return;
             }
 
-            console.debug("Disabling user(s): " + selected_members);
+            console.debug("Disabling user(s): " + selected_auth);
 
-            $.post(baseurl + '/userDisable', {members: selected_members}, function(selected_members) {})
+            $.post(baseurl + '/userDisable', {auth: selected_auth}, function(selected_auth) {})
                 .done(
                     function() {
                         location.reload(true);
@@ -175,17 +175,17 @@ var MembersAdmin = Object.extend(
 
         doRoleAdd: function(e) {
             var controller = this;
-            var selected_members = [];
-            var selected_role = $(".members-select-roles :selected").val();
+            var selected_auth = [];
+            var selected_role = $(".auth-select-roles :selected").val();
 
             $.each(
-                $("input[name='form[members][]']:checked"), function() {
-                    selected_members.push($(this).val());
+                $("input[name='form[auth][]']:checked"), function() {
+                    selected_auth.push($(this).val());
                 }
             );
 
-            if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
+            if (selected_auth == '') {
+                swal({title: "Nothing Selected!", text: "You need to choose a auth.", type: "warning"});
                 return;
             }
 
@@ -194,12 +194,12 @@ var MembersAdmin = Object.extend(
                 return;
             }
 
-            console.debug("Adding role '" + selected_role + "' to user(s): " + selected_members);
+            console.debug("Adding role '" + selected_role + "' to user(s): " + selected_auth);
 
             $.post(
                     baseurl + '/roleAdd',
-                {members: selected_members, role: selected_role},
-                function(selected_members, selected_role) {}
+                {auth: selected_auth, role: selected_role},
+                function(selected_auth, selected_role) {}
                 )
                 .done(
                     function() {
@@ -222,17 +222,17 @@ var MembersAdmin = Object.extend(
 
         doRoleDel: function(e) {
             var controller = this;
-            var selected_members = [];
-            var selected_role = $(".members-select-roles :selected").val();
+            var selected_auth = [];
+            var selected_role = $(".auth-select-roles :selected").val();
 
             $.each(
-                $("input[name='form[members][]']:checked"), function() {
-                    selected_members.push($(this).val());
+                $("input[name='form[auth][]']:checked"), function() {
+                    selected_auth.push($(this).val());
                 }
             );
 
-            if (selected_members == '') {
-                swal({title: "Nothing Selected!", text: "You need to choose a member.", type: "warning"});
+            if (selected_auth == '') {
+                swal({title: "Nothing Selected!", text: "You need to choose a auth.", type: "warning"});
                 return;
             }
 
@@ -241,12 +241,12 @@ var MembersAdmin = Object.extend(
                 return;
             }
 
-            console.debug("Removing role '" + selected_role + "' from user(s): " + selected_members);
+            console.debug("Removing role '" + selected_role + "' from user(s): " + selected_auth);
 
             $.post(
                     baseurl + '/roleDel',
-                {members: selected_members, role: selected_role},
-                function(selected_members, selected_role) {}
+                {auth: selected_auth, role: selected_role},
+                function(selected_auth, selected_role) {}
                 )
                 .done(
                     function() {
@@ -275,22 +275,22 @@ var MembersAdmin = Object.extend(
             click: function(e, t) {
                 var controller = e.data;
                 switch (jQuery(e.target).data('action')) {
-                    case "members-user-add"     :
+                    case "auth-user-add"     :
                         controller.doUserAdd(e.originalEvent);
                         break;
-                    case "members-user-del"     :
+                    case "auth-user-del"     :
                         controller.doUserDel(e.originalEvent);
                         break;
-                    case "members-user-enable"  :
+                    case "auth-user-enable"  :
                         controller.doUserEnable(e.originalEvent);
                         break;
-                    case "members-user-disable" :
+                    case "auth-user-disable" :
                         controller.doUserDisable(e.originalEvent);
                         break;
-                    case "members-role-add"     :
+                    case "auth-role-add"     :
                         controller.doRoleAdd(e.originalEvent);
                         break;
-                    case "members-role-del"     :
+                    case "auth-role-del"     :
                         controller.doRoleDel(e.originalEvent);
                         break;
                 }

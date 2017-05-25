@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Type;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Type;
 
-use Bolt\Extension\Bolt\Members\Form\MembersForms;
+use Bolt\Extension\BoltAuth\Auth\Form\AuthForms;
 
 /**
  * Password reset request type.
@@ -25,6 +25,6 @@ class ProfileRecoveryRequestType extends AbstractProfileRecoveryType
      */
     public function getName()
     {
-        return MembersForms::PROFILE_RECOVERY_REQUEST;
+        return AuthForms::PROFILE_RECOVERY_REQUEST;
     }
 }

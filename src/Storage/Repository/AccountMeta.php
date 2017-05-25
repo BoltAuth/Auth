@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Storage\Repository;
+namespace Bolt\Extension\BoltAuth\Auth\Storage\Repository;
 
-use Bolt\Extension\Bolt\Members\Pager\Pager;
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Pager\Pager;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 
 /**
  * Account meta repository.
@@ -16,7 +16,7 @@ use Bolt\Extension\Bolt\Members\Storage\Entity;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class AccountMeta extends AbstractMembersRepository
+class AccountMeta extends AbstractAuthRepository
 {
     const ALIAS = 'm';
 

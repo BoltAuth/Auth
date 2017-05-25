@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -15,9 +15,9 @@ use Symfony\Component\EventDispatcher\Event;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersExceptionEvent extends Event
+class AuthExceptionEvent extends Event
 {
-    const ERROR = 'members.Error';
+    const ERROR = 'auth.Error';
 
     /** @var \Exception */
     private $exception;

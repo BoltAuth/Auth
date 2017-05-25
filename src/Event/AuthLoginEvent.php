@@ -1,12 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
- * Members login event class.
+ * Auth login event class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersLoginEvent extends GenericEvent
+class AuthLoginEvent extends GenericEvent
 {
     /** @var Entity\Account */
     protected $account;
@@ -32,7 +32,7 @@ class MembersLoginEvent extends GenericEvent
     /**
      * @param Entity\Account $account
      *
-     * @return MembersLoginEvent
+     * @return AuthLoginEvent
      */
     public function setAccount(Entity\Account $account)
     {

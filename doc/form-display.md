@@ -33,7 +33,7 @@ forms:
 
 Twig template overrides can be specified via the `templates:` sub-key of the 
 `forms:` key. These parameters allow the overriding of certain, or all,
-templates use to render Members forms.
+templates use to render Auth forms.
 
 #### Configuration
 
@@ -58,8 +58,8 @@ theme directory.
             logout: path/to/authentication/logout.twig
             recovery: path/to/authentication/recovery.twig
         error:
-            parent: path/to/error/_members_error.twig
-            error: path/to/error/members_error.twig
+            parent: path/to/error/_auth_error.twig
+            error: path/to/error/auth_error.twig
         feedback:
             feedback: path/to/feedback/feedback.twig
         verification:
@@ -72,10 +72,10 @@ theme directory.
             text: path/to/recovery/text.twig
 ```
 
-You can find the installed defaults in the Members source directory:
+You can find the installed defaults in the Auth source directory:
 
 ```
-{site root directory}/extensions/vendor/bolt/members/
+{site root directory}/extensions/vendor/boltauth/auth/
 ```
 
 ### Labels
@@ -135,7 +135,7 @@ displayed to the user, so the form must be understandable without it.
 
 ### Add-ons
 
-Members has very limited ability to be extended visually by, currently it
+Auth has very limited ability to be extended visually by, currently it
 supports the Zocial Icons extension that gives some additional CSS handling
 to form buttons.
 

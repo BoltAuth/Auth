@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Handler;
 
-use Bolt\Extension\Bolt\Members\Event\MembersNotificationEvent;
+use Bolt\Extension\BoltAuth\Auth\Event\AuthNotificationEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -21,11 +21,11 @@ class ProfileReset extends AbstractProfileHandler
     /**
      * Password reset notification event.
      *
-     * @param MembersNotificationEvent $event
+     * @param AuthNotificationEvent $event
      * @param string                   $eventName
      * @param EventDispatcherInterface $dispatcher
      */
-    public function handle(MembersNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function handle(AuthNotificationEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         if ($event->isPropagationStopped()) {
             return;

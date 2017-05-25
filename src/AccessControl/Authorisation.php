@@ -1,8 +1,8 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\AccessControl;
+namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account;
 use Carbon\Carbon;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;

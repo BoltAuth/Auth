@@ -9,7 +9,7 @@ Routes & URLs
     * [Configuration](#configuration-1)
   * [Authentication Callback Route](#authentication-callback-route)
     * [Configuration](#configuration-2)
-  * [Membership Routes](#membership-routes)
+  * [Auth Routes](#auth-routes)
     * [Configuration](#configuration-3)
 
 ## Guide
@@ -19,7 +19,7 @@ Routes & URLs
 A default configuration will use the base URI:
 
   * `/authentication` — For login, logout, & password resets
-  * `/membership` — For registration, editing, & viewing profiles
+  * `/auth` — For registration, editing, & viewing profiles
 
 #### Configuration
 
@@ -28,7 +28,7 @@ The base `urls:` config key values each take a alpha string of characters.
 ```yaml
 urls:
     authenticate: authentication
-    members: membership
+    auth: auth
 ```
 
 ### Authentication Routes
@@ -90,19 +90,19 @@ https://example.com/authentication/oauth2/callback?provider=google
 deployed on. 
 
 
-### Membership Routes
+### Auth Routes
 
-Membership profile editing, viewing, and registration, occurs on the following
+Auth profile editing, viewing, and registration, occurs on the following
 routes:
 
 | URI                           | Description     |
 |-------------------------------|-----------------|
-| `/{members}/profile/register` | Registration    |
-| `/{members}/profile/edit`     | Profile editing |
-| `/{members}/profile/view`     | Profile viewing |
+| `/{auth}/profile/register` | Registration    |
+| `/{auth}/profile/edit`     | Profile editing |
+| `/{auth}/profile/view`     | Profile viewing |
 
 Where:
- * `{members}` — value set for the `members:` key in the `url:` config setting.
+ * `{auth}` — value set for the `auth:` key in the `url:` config setting.
 
 #### Configuration
 

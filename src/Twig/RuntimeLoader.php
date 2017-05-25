@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Twig;
+namespace Bolt\Extension\BoltAuth\Auth\Twig;
 
 use Pimple as Container;
 use Twig_RuntimeLoaderInterface as RuntimeLoaderInterface;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Form\Entity;
+namespace Bolt\Extension\BoltAuth\Auth\Form\Entity;
 
-use Bolt\Extension\Bolt\Members\Storage\Entity\Account;
+use Bolt\Extension\BoltAuth\Auth\Storage\Entity\Account;
 
 /**
- * Member profile data entity.
+ * Auth profile data entity.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter

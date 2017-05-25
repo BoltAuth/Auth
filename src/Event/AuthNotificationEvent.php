@@ -1,13 +1,12 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Event;
+namespace Bolt\Extension\BoltAuth\Auth\Event;
 
 use Swift_Mime_Message as SwiftMimeMessage;
-use Swift_SwiftException as SwiftException;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Members notification failure event class.
+ * Auth notification event class.
  *
  * Copyright (C) 2014-2016 Gawain Lynch
  * Copyright (C) 2017 Svante Richter
@@ -17,23 +16,19 @@ use Symfony\Component\EventDispatcher\Event;
  *            Copyright (C) 2017 Svante Richter
  * @license   https://opensource.org/licenses/MIT MIT
  */
-class MembersNotificationFailureEvent extends Event
+class AuthNotificationEvent extends Event
 {
     /** @var SwiftMimeMessage */
     protected $message;
-    /** @var SwiftException */
-    protected $exception;
 
     /**
      * Constructor.
      *
      * @param SwiftMimeMessage $message
-     * @param SwiftException   $exception
      */
-    public function __construct(SwiftMimeMessage $message, SwiftException $exception)
+    public function __construct(SwiftMimeMessage $message)
     {
         $this->message = $message;
-        $this->exception = $exception;
     }
 
     /**
@@ -42,13 +37,5 @@ class MembersNotificationFailureEvent extends Event
     public function getMessage()
     {
         return $this->message;
-    }
-
-    /**
-     * @return SwiftException
-     */
-    public function getException()
-    {
-        return $this->exception;
     }
 }

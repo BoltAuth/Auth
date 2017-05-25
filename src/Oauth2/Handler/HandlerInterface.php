@@ -1,9 +1,9 @@
 <?php
 
-namespace Bolt\Extension\Bolt\Members\Oauth2\Handler;
+namespace Bolt\Extension\BoltAuth\Auth\Oauth2\Handler;
 
-use Bolt\Extension\Bolt\Members\Exception\DisabledProviderException;
-use Bolt\Extension\Bolt\Members\Exception\InvalidAuthorisationRequestException;
+use Bolt\Extension\BoltAuth\Auth\Exception\DisabledProviderException;
+use Bolt\Extension\BoltAuth\Auth\Exception\InvalidAuthorisationRequestException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
