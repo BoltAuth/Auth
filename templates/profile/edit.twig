@@ -14,7 +14,7 @@
 {% block auth %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
-        <h4>Edit Profile</h4>
+        <h4>{{ __('Edit Profile') }}</h4>
     </div>
 
     {{ include(templates.feedback) }}
@@ -35,7 +35,7 @@
         </div>
 
         <div class="small-12 columns">
-            <h5>Registered Social Media Accounts</h5>
+            <h5>{{ __('Registered Social Media Accounts') }}</h5>
 
             <ul>
                 {%- for provider in auth_providers() %}
@@ -45,7 +45,7 @@
         </div>
 
         <div class="small-12 columns">
-            <h5>Add Social Media Account</h5>
+            <h5>{{ __('Add Social Media Accounts') }}</h5>
 
             {{ form_start(form_associate) }}
 

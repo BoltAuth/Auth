@@ -18,7 +18,7 @@
             <div class="panel auth-feedback">
                 {% if feedback.debug|default(null) %}
                     <div class="auth-messages-debug">
-                        <h5>Debug Messages:</h5>
+                        <h5>{{ __('Debug Messages') }}:</h5>
                         <ul class="auth-feedback-messages">
                             {% for message in feedback.debug %}
                                 <li>{{ message }}</li>
@@ -29,7 +29,7 @@
 
                 {% if feedback.error|default(null) %}
                     <div class="auth-messages-error">
-                        <h5>Error Messages:</h5>
+                        <h5>{{ __('Error Messages') }}:</h5>
                         <ul class="auth-feedback-messages">
                             {% for message in feedback.error %}
                                 <li>{{ message }}</li>
@@ -40,7 +40,7 @@
 
                 {% if feedback.info|default(null) %}
                     <div class="auth-messages-info">
-                        <h5>Informational Messages:</h5>
+                        <h5>{{ __('Informational Messages') }}:</h5>
                         <ul class="auth-feedback-messages">
                             {% for info in feedback.info %}
                                 <li>{{ info }}</li>

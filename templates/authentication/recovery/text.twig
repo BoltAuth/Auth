@@ -11,10 +11,10 @@
  #     * verified           — boolean   True if auth account is verified
  #     * roles              — array     Roles assigned to auth
  #}
-Dear {{ name }},
+{{ __('Dear') }} {{ name }},
 
-You or someone else has requested to reset your account password on {{ app.config.get('general/branding/name') }}.
+{{ __('You or someone else has requested to reset your account password on') }} {{ app.config.get('general/branding/name') }}.
 
-If this was not you, please delete this email.
+{{ __('If this was not you, please delete this email.') }}
 
-You can complete the process by following this link: {{ link }}
+{{ __('You can complete the process by') }} {{ __('following this link') }}: {{ link }}

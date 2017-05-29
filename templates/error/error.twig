@@ -6,7 +6,7 @@
 
 {% block auth_error %}
 <div class="errors">
-    </h1>We broke!</h1>
+    </h1>{{ __('We broke!') }}</h1>
 
     {{ dump(feedback) }}
     {#{ dump(exception.getResponse().getBody().__toString()|striptags) }#}
