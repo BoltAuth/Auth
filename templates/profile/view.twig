@@ -20,7 +20,7 @@
 {% block auth %}
 
     <div class="row">
-        <h4>Auth Profile — {{ auth.displayname }}</h4>
+        <h4>{{ __('Auth Profile') }} — {{ auth.displayname }}</h4>
     </div>
 
     {{ include(templates.feedback) }}

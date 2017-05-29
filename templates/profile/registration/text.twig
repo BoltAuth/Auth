@@ -11,8 +11,8 @@
  #     * verified           — boolean   True if auth account is verified
  #     * roles              — array     Roles assigned to auth
  #}
-Dear {{ name }},
+{{ __('Dear') }} {{ name }},
 
-Thank you for registering on {{ app.config.get('general/branding/name') }}.
+{{ __('Thank you for registering on') }} {{ app.config.get('general/branding/name') }}.
 
-Please confirm your email by following this link: {{ link }}
+{{ __('Please confirm your email by') }} {{ __('following this link') }}: {{ link }}
