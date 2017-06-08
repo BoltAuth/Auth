@@ -191,6 +191,54 @@ class AuthRuntime extends TwigExtension
     }
 
     /**
+     * Return an array of registered OAuth providers for an account with
+     * lst steen and last updated dates
+     *
+     * @param string $guid
+     *
+     * @return array
+     */
+    public function getProvidersDates($guid = null)
+    {
+        $providers = [];
+        if ($guid === null) {
+            $auth = $this->session->getAuthorisation();
+
+            if ($auth === null) {
+              return $providers;
+            }
+            $guid = $auth->getGuid();
+        }
+
+        $providerEntities = $this->records->getProvisionsByGuid($guid);
+        if ($providerEntities === false) {
+            return $providers;
+        }
+
+        /** @var Storage\Entity\Provider $providerEntity */
+        $providers['lastseen'] = null;
+        $providers['lastupdate'] = null;
+        foreach ($providerEntities as $providerEntity) {
+            $provider['name'] = $providerEntity->getProvider();
+            $provider['lastseen'] = $providerEntity->getLastSeen();
+            $provider['lastupdate'] = $providerEntity->getLastUpdate();
+
+            $providers[] = $provider;
+            if($providers['lastseen'] <= $provider['lastseen']) {
+              $providers['lastseen'] = $provider['lastseen'];
+            }
+            if($providers['lastupdate'] <= $provider['lastupdate']) {
+              $providers['lastupdate'] = $provider['lastupdate'];
+            }
+        }
+        if($providers['lastseen'] <= $provider['lastupdate']) {
+          $providers['lastseen'] = $provider['lastupdate'];
+        }
+
+        return $providers;
+    }
+
+    /**
      * Display login/logout button(s) depending on status.
      *
      * @param TwigEnvironment $twigEnvironment

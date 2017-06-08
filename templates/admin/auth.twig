@@ -69,6 +69,8 @@
                         </thead>
                         <tbody class="auth-list-items">
                         {% for auth in auth %}
+                            {% set auth_providers = auth_providers_dates(auth.guid) %}
+
                             {% if auth.enabled %}{% set enabled = '' %}{% else %}{% set enabled = 'strikeout' %}{% endif %}
                             <tr class="{{ enabled }}" id="auth-auth[{{ auth.guid }}]">
                                 <td class="auth-cb">
@@ -87,7 +89,7 @@
                                     {% endfor %}
                                 </td>
                                 <td class="auth-lastseen">
-                                    <time class="buic-moment" data-bolt-widget="buicMoment" datetime="{{ auth.lastseen }}">{{ auth.lastseen }}</time>
+                                    <time class="buic-moment" data-bolt-widget="buicMoment" datetime="{{ auth_providers.lastseen }}">{{ auth_providers.lastseen }}</time>
                                 </td>
                                 <td class="auth-guid">
                                     {% spaceless %}
