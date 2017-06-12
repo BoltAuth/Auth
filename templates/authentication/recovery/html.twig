@@ -11,11 +11,11 @@
  #     * verified           — boolean   True if auth account is verified
  #     * roles              — array     Roles assigned to auth
  #}
-<p>Dear {{ name }},</p>
+<p>{{ __('Dear') }} {{ name }},</p>
 
-<p>You or someone else has requested to reset your account password on {{ app.config.get('general/branding/name') }}.</p>
+<p>{{ __('You or someone else has requested to reset your account password on') }} {{ app.config.get('general/branding/name') }}.</p>
 
-<p><strong>If this was not you, please delete this email.</strong></p>
+<p><strong>{{ __('If this was not you, please delete this email.') }}</strong></p>
 
-<p>You can complete the process by <a href="{{ link }}">following this link</a>.</p>
+<p>{{ __('You can complete the process by') }} <a href="{{ link }}">{{ __('following this link') }}</a>.</p>
 

@@ -1,6 +1,6 @@
 <aside class="col-md-3">
     <div class="panel panel-default">
-        <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Admin Options</div>
+        <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>{{ __('Admin Options') }}</div>
         <div class="panel-body">
 
             <h4><strong>{{ __('Users') }}</strong></h4>
@@ -57,7 +57,7 @@
                     <select class="form-control auth-select-roles" title="Select Roles">
                         <option value=""></option>
                         {% for role in roles %}
-                            <option value="{{ role.name }}">{{ role.displayname }}</option>
+                            <option value="{{ role.name }}">{{ __(role.displayname) }}</option>
                         {% endfor %}
                     </select>
                 </div>

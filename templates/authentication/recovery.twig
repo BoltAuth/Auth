@@ -26,12 +26,12 @@
             {% elseif stage == 'password' %}
                 {{ _self.recovery_finish(form_profile_recovery_submit) }}
             {% elseif stage == 'submitted' %}
-                <p>An email has been sent to {{ email }}. Please follow the instructions to complete the process.</p>
+                <p>{{ __('An email has been sent to') }} {{ email }}. {{ __('Please follow the instructions to complete the process.') }}</p>
             {% elseif stage == 'reset' %}
-                <p>Password reset was successful!</p>
-                <p><a href="{{ link }}">Click here to go to the login page…</a></p>
+                <p>{{ __('Password reset was successful!') }}</p>
+                <p><a href="{{ link }}">{{ __('Click here to go to the login page…') }}</a></p>
             {% else %}
-                <p>Invalid request!</p>
+                <p>{{ (__'Invalid request!') }}</p>
             {% endif %}
 
         </div>
@@ -40,7 +40,7 @@
 {% endblock recovery %}
 
 {% macro recovery_start(form_profile_recovery) %}
-    <p>Enter the email address associated with your account:</p>
+    <p>{{ __('Enter the email address associated with your account:') }}</p>
 
     {{ form_start(form_profile_recovery) }}
 
@@ -52,7 +52,7 @@
 {% endmacro %}
 
 {% macro recovery_finish(form_profile_recovery) %}
-    <p>Enter a new password for your account</p>
+    <p>{{ __('Enter a new password for your account') }}</p>
 
     {{ form_start(form_profile_recovery) }}
 
