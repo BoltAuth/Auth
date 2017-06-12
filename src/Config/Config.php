@@ -211,7 +211,7 @@ class Config
     public function getTemplate($type, $key)
     {
         if ($key === 'default') {
-            return  sprintf('@Auth/%s/_sub/%s.twig', $key, $key);
+            return  sprintf('@Auth/%s/_sub/%s.twig', $type, $type);
         }
 
         if (!$this->forms->get('templates')->has($type) || !$this->forms->get('templates')->get($type)->has($key)) {
