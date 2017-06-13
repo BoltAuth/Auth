@@ -192,7 +192,7 @@ class AuthRuntime extends TwigExtension
 
     /**
      * Return an array of registered OAuth providers for an account with
-     * lst steen and last updated dates
+     * last seen and last updated dates.
      *
      * @param string $guid
      *
@@ -205,7 +205,7 @@ class AuthRuntime extends TwigExtension
             $auth = $this->session->getAuthorisation();
 
             if ($auth === null) {
-              return $providers;
+                return $providers;
             }
             $guid = $auth->getGuid();
         }
@@ -219,20 +219,21 @@ class AuthRuntime extends TwigExtension
         $providers['lastseen'] = null;
         $providers['lastupdate'] = null;
         foreach ($providerEntities as $providerEntity) {
-            $provider['name'] = $providerEntity->getProvider();
-            $provider['lastseen'] = $providerEntity->getLastSeen();
+            $provider['name']       = $providerEntity->getProvider();
+            $provider['lastseen']   = $providerEntity->getLastSeen();
             $provider['lastupdate'] = $providerEntity->getLastUpdate();
 
             $providers[] = $provider;
-            if($providers['lastseen'] <= $provider['lastseen']) {
-              $providers['lastseen'] = $provider['lastseen'];
+            if ($providers['lastseen'] <= $provider['lastseen']) {
+                 $providers['lastseen'] = $provider['lastseen'];
             }
-            if($providers['lastupdate'] <= $provider['lastupdate']) {
-              $providers['lastupdate'] = $provider['lastupdate'];
+            if ($providers['lastupdate'] <= $provider['lastupdate']) {
+                $providers['lastupdate'] = $provider['lastupdate'];
             }
         }
-        if($providers['lastseen'] <= $provider['lastupdate']) {
-          $providers['lastseen'] = $provider['lastupdate'];
+        // make an empty last seen date the same as the last update date
+        if (empty($providers['lastseen']) && !empty($provider['lastupdate'])) {
+            $providers['lastseen'] = $provider['lastupdate'];
         }
 
         return $providers;
