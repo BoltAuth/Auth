@@ -219,11 +219,9 @@ class AuthRuntime extends TwigExtension
         $providers['lastseen'] = null;
         $providers['lastupdate'] = null;
         foreach ($providerEntities as $providerEntity) {
-            $provider['name']       = $providerEntity->getProvider();
             $provider['lastseen']   = $providerEntity->getLastSeen();
             $provider['lastupdate'] = $providerEntity->getLastUpdate();
 
-            $providers[] = $provider;
             if ($providers['lastseen'] <= $provider['lastseen']) {
                  $providers['lastseen'] = $provider['lastseen'];
             }
