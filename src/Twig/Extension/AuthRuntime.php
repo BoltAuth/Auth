@@ -191,6 +191,51 @@ class AuthRuntime extends TwigExtension
     }
 
     /**
+     * Return last seen date from all OAuth providers for an account
+     *
+     * @param string $guid
+     *
+     * @return \DateTime
+     */
+    public function getProvidersLastSeen($guid = null)
+    {
+        if ($guid === null) {
+            $auth = $this->session->getAuthorisation();
+
+            if ($auth === null) {
+                return null;
+            }
+            $guid = $auth->getGuid();
+        }
+
+        $providerEntities = $this->records->getProvisionsByGuid($guid);
+        if ($providerEntities === false) {
+            return null;
+        }
+
+        /** @var Storage\Entity\Provider $providerEntity */
+        $lastseen = null;
+        $lastupdate = null;
+        foreach ($providerEntities as $providerEntity) {
+            $provider['lastseen']   = $providerEntity->getLastSeen();
+            $provider['lastupdate'] = $providerEntity->getLastUpdate();
+
+            if ($lastseen <= $provider['lastseen']) {
+                $lastseen = $provider['lastseen'];
+            }
+            if ($lastupdate <= $provider['lastupdate']) {
+                $lastupdate = $provider['lastupdate'];
+            }
+        }
+        // make an empty last seen date the same as the last update date
+        if (empty($lastseen) && !empty($lastupdate)) {
+            $lastseen = $lastupdate;
+        }
+
+        return $lastseen;
+    }
+
+    /**
      * Display login/logout button(s) depending on status.
      *
      * @param TwigEnvironment $twigEnvironment
