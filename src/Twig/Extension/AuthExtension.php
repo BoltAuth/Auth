@@ -27,13 +27,13 @@ class AuthExtension extends Extension
         $env  = ['needs_environment' => true];
 
         return [
-            new SimpleFunction('is_auth',                     [AuthRuntime::class, 'isAuth'],        $safe),
-            new SimpleFunction('auth',                        [AuthRuntime::class, 'getAuth'],       $safe),
-            new SimpleFunction('auth_meta',                   [AuthRuntime::class, 'getAuthMeta'],   $safe),
-            new SimpleFunction('auth_oauth',                  [AuthRuntime::class, 'getAuthOauth'],  $safe),
-            new SimpleFunction('auth_has_role',               [AuthRuntime::class, 'hasRole'],         $safe),
-            new SimpleFunction('auth_providers',              [AuthRuntime::class, 'getProviders'],    $safe),
-            new SimpleFunction('auth_lastseen',               [AuthRuntime::class, 'getProvidersLastSeen'],    $safe),
+            new SimpleFunction('is_auth',                    [AuthRuntime::class, 'isAuth'],          $safe),
+            new SimpleFunction('auth',                       [AuthRuntime::class, 'getAuth'],         $safe),
+            new SimpleFunction('auth_meta',                  [AuthRuntime::class, 'getAuthMeta'],     $safe),
+            new SimpleFunction('auth_oauth',                 [AuthRuntime::class, 'getAuthOauth'],    $safe),
+            new SimpleFunction('auth_has_role',              [AuthRuntime::class, 'hasRole'],         $safe),
+            new SimpleFunction('auth_providers',             [AuthRuntime::class, 'getProviders'],    $safe),
+            new SimpleFunction('auth_lastseen',              [AuthRuntime::class, 'getProvidersLastSeen'],    $safe),
             new SimpleFunction('auth_auth_switcher',         [AuthRuntime::class, 'renderSwitcher'],  $safe + $env),
             new SimpleFunction('auth_auth_associate',        [AuthRuntime::class, 'renderAssociate'], $safe + $env),
             new SimpleFunction('auth_auth_login',            [AuthRuntime::class, 'renderLogin'],     $safe + $env),

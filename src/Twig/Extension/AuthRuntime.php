@@ -195,23 +195,22 @@ class AuthRuntime extends TwigExtension
      *
      * @param string $guid
      *
-     * @return array
+     * @return \DateTime
      */
     public function getProvidersLastSeen($guid = null)
     {
-        $providers = [];
         if ($guid === null) {
             $auth = $this->session->getAuthorisation();
 
             if ($auth === null) {
-                return $providers;
+                return null;
             }
             $guid = $auth->getGuid();
         }
 
         $providerEntities = $this->records->getProvisionsByGuid($guid);
         if ($providerEntities === false) {
-            return $providers;
+            return null;
         }
 
         /** @var Storage\Entity\Provider $providerEntity */
@@ -225,7 +224,7 @@ class AuthRuntime extends TwigExtension
                 $lastseen = $provider['lastseen'];
             }
             if ($lastupdate <= $provider['lastupdate']) {
-              $lastupdate = $provider['lastupdate'];
+                $lastupdate = $provider['lastupdate'];
             }
         }
         // make an empty last seen date the same as the last update date
