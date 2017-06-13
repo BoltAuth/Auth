@@ -191,14 +191,13 @@ class AuthRuntime extends TwigExtension
     }
 
     /**
-     * Return an array of registered OAuth providers for an account with
-     * last seen and last updated dates.
+     * Return last seen date from all OAuth providers for an account
      *
      * @param string $guid
      *
      * @return array
      */
-    public function getProvidersDates($guid = null)
+    public function getProvidersLastSeen($guid = null)
     {
         $providers = [];
         if ($guid === null) {
@@ -216,25 +215,25 @@ class AuthRuntime extends TwigExtension
         }
 
         /** @var Storage\Entity\Provider $providerEntity */
-        $providers['lastseen'] = null;
-        $providers['lastupdate'] = null;
+        $lastseen = null;
+        $lastupdate = null;
         foreach ($providerEntities as $providerEntity) {
             $provider['lastseen']   = $providerEntity->getLastSeen();
             $provider['lastupdate'] = $providerEntity->getLastUpdate();
 
-            if ($providers['lastseen'] <= $provider['lastseen']) {
-                 $providers['lastseen'] = $provider['lastseen'];
+            if ($lastseen <= $provider['lastseen']) {
+                $lastseen = $provider['lastseen'];
             }
-            if ($providers['lastupdate'] <= $provider['lastupdate']) {
-                $providers['lastupdate'] = $provider['lastupdate'];
+            if ($lastupdate <= $provider['lastupdate']) {
+              $lastupdate = $provider['lastupdate'];
             }
         }
         // make an empty last seen date the same as the last update date
-        if (empty($providers['lastseen']) && !empty($provider['lastupdate'])) {
-            $providers['lastseen'] = $provider['lastupdate'];
+        if (empty($lastseen) && !empty($lastupdate)) {
+            $lastseen = $lastupdate;
         }
 
-        return $providers;
+        return $lastseen;
     }
 
     /**
