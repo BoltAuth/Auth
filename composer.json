@@ -52,10 +52,6 @@
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\BoltAuth\\Auth\\AuthExtension",
-        "bolt-icon": "icon.png",
-        "branch-alias": {
-            "dev-master": "3.0.x-dev"
-        }
+        "bolt-class": "Bolt\\Extension\\BoltAuth\\Auth\\AuthExtension"
     }
 }
