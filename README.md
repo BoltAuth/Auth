@@ -10,11 +10,9 @@ Requirements
 * Bolt 3.2+ (3.2.x-dev)
 * PHP 5.5.9+
 
-
-Getting Started
+Docs
 ---------------
 
-Refer to our [quick start guide](doc/quick-start.md) for a good place to start. 
-
-Full documentation is available [locally](doc/README.md), or on 
-[GitHub](https://github.com/BoltAuth/Auth/tree/master/doc).
+For docs please see our [docs website](https://boltauth.com/) or if you prefer
+to look at it locally you can checkout the repo directly from
+[here](https://github.com/boltauth/docs).
