@@ -52,6 +52,7 @@
     },
     "extra": {
         "bolt-assets": "web",
-        "bolt-class": "Bolt\\Extension\\BoltAuth\\Auth\\AuthExtension"
+        "bolt-class": "Bolt\\Extension\\BoltAuth\\Auth\\AuthExtension",
+        "bolt-icon": "fingerprint-user.svg.png"
     }
 }
