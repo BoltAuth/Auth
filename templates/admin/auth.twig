@@ -117,7 +117,7 @@
     </div>
 
     <script>
-        var baseurl = "{{ paths.bolt }}{{ authBaseUrl }}";
+        var baseurl = "{{ paths.bolt|trim('/', 'right') }}{{ authBaseUrl }}";
 
         var active_console;
         var active_interval;
