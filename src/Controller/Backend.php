@@ -36,6 +36,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Backend extends AbstractController
 {
+    protected $authBaseUrl;
+
     /**
      * {@inheritdoc}
      */
@@ -45,47 +47,47 @@ class Backend extends AbstractController
         $ctr = parent::connect($app);
         $ctr->value(Zone::KEY, Zone::BACKEND);
 
-        $authBaseUrl = Version::compare('3.2.999', '<')
+        $this->authBaseUrl = Version::compare('3.2.999', '<')
             ? '/extensions/auth'
             : '/extend/auth'
         ;
 
-        $ctr->match($authBaseUrl, [$this, 'admin'])
+        $ctr->match($this->authBaseUrl, [$this, 'admin'])
             ->bind('authAdmin')
             ->method(Request::METHOD_GET)
         ;
 
-        $ctr->match($authBaseUrl . '/add', [$this, 'userAdd'])
+        $ctr->match($this->authBaseUrl . '/add', [$this, 'userAdd'])
             ->bind('authAdminUserAdd')
             ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/action/userDelete', [$this, 'userDelete'])
+        $ctr->match($this->authBaseUrl . '/action/userDelete', [$this, 'userDelete'])
             ->bind('authAdminUserDel')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/action/userEnable', [$this, 'userEnable'])
+        $ctr->match($this->authBaseUrl . '/action/userEnable', [$this, 'userEnable'])
             ->bind('authAdminUserEnable')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/action/userDisable', [$this, 'userDisable'])
+        $ctr->match($this->authBaseUrl . '/action/userDisable', [$this, 'userDisable'])
             ->bind('authAdminUserDisable')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/action/roleAdd', [$this, 'roleAdd'])
+        $ctr->match($this->authBaseUrl . '/action/roleAdd', [$this, 'roleAdd'])
             ->bind('authAdminUserRoleAdd')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/action/roleDel', [$this, 'roleDel'])
+        $ctr->match($this->authBaseUrl . '/action/roleDel', [$this, 'roleDel'])
             ->bind('authAdminUserRoleDel')
             ->method(Request::METHOD_POST)
         ;
 
-        $ctr->match($authBaseUrl . '/edit/{guid}', [$this, 'userEdit'])
+        $ctr->match($this->authBaseUrl . '/edit/{guid}', [$this, 'userEdit'])
             ->bind('authAdminUserEdit')
             ->method(Request::METHOD_GET . '|' . Request::METHOD_POST)
         ;
@@ -202,6 +204,7 @@ class Backend extends AbstractController
 
         $html = $app['twig']->render('@AuthAdmin/auth.twig', [
             'auth' => $auth,
+            'authBaseUrl' => $this->authBaseUrl,
             'roles'   => $roles,
             'queries' => $queries,
             'pager'   => [
