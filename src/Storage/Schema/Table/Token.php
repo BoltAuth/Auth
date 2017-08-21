@@ -57,6 +57,6 @@ class Token extends BaseTable
      */
     protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
+        $this->table->addForeignKeyConstraint($this->tablePrefix . 'auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
     }
 }
