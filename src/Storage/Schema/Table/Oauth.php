@@ -52,7 +52,7 @@ class Oauth extends BaseTable
      */
     protected function addForeignKeyConstraints()
     {
-        $this->table->addForeignKeyConstraint('bolt_auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
+        $this->table->addForeignKeyConstraint($this->tablePrefix . 'auth_account', ['guid'], ['guid'], ['onDelete' => 'CASCADE']);
         // This breaks on MySQL
         //$this->table->addForeignKeyConstraint('bolt_auth_provider', ['guid', 'resource_owner_id'], ['guid', 'resource_owner_id'], ['onDelete' => 'CASCADE']);
     }
