@@ -6,10 +6,6 @@ This issue tracker is NOT for support questions. If you have a question, please
 join us in the community, on one of our social platforms like Slack, IRC or the
 forum: http://bolt.cm/community.
 
-NOTE: We are close to being finished with Auth version 3.0.0. If you have an
-issue, be sure to try the beta for 3.0.0, and see if the issue is still present
-there.
-
 -----------
 
 A brief description of the issue goes here.
