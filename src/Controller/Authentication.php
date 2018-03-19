@@ -157,8 +157,8 @@ class Authentication extends AbstractController
             $redirect = $request->get('redirect');
         } elseif ($loginRedirect) {
             $redirect = $loginRedirect;
-        } elseif ($referer !== $request->getUri()) {
-            $redirect = $request->headers->get('referer');
+        } elseif (null !== $referer && $referer !== $request->getUri()) {
+            $redirect = $referer;
         } else {
             $redirect = $homepage;
         }
