@@ -107,9 +107,9 @@ class Facebook extends AbstractProvider
         ];
 
         // backwards compatibility less than 2.8
-        if ((float) substr($this->graphApiVersion, 1) < 2.8) {
-            $fields[] = 'bio';
-        }
+        // if ((float) substr($this->graphApiVersion, 1) < 2.8) {
+        //     $fields[] = 'bio';
+        // }
 
         $appSecretProof = AppSecretProof::create($this->clientSecret, $token->getToken());
 
