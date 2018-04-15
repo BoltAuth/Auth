@@ -18,14 +18,16 @@
 {% block page_main %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <div class="row">
-        <h4>Edit Existing Profile</h4>
+        <div class="col-xs-12">
+            <h4>{{ __('Editing Existing Profile') }}</h4>
+        </div>
     </div>
 
     <div class="row profile">
 
         <div class="col-md-9">
             {% block profile %}
-                {{ form_start(form_profile_edit, {'attr': {'id': 'profile', 'class': 'row form-horizontal'}, 'action': null}) }}
+                {{ form_start(form_profile_edit, {'attr': {'id': 'profile', 'class': 'form-horizontal'}, 'action': null}) }}
                 <div class="form-group">
                     {{ form_label(form_profile_edit.displayname, null, {'label_attr': {'class': 'main col-sm-2 control-label'}}) }}
                     {{ form_errors(form_profile_edit.displayname) }}
