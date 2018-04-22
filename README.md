@@ -15,4 +15,4 @@ Docs
 
 For docs please see our [docs website](https://boltauth.com/) or if you prefer
 to look at it locally you can checkout the repo directly from
-[here](https://github.com/boltauth/docs).
+[here](http://github.com/boltauth/docs).
