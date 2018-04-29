@@ -1,0 +1,19 @@
+{% for element in form_profile_edit %}
+    {% if not element.rendered and element.vars.name not in ['submit', '_token'] %}
+        {% set fieldtype = element.vars.block_prefixes[1] %}
+        {% if fieldtype in ['datetime'] %}
+            <div class="form-group">
+                {{ form_label(element, null, {'label_attr': {'class': 'main col-sm-2 control-label'}}) }}
+                {{ form_errors(element) }}
+                {{ form_widget(element.date, {'attr': {'class': 'col-sm-3 form-group'}}) }}
+                {{ form_widget(element.time, {'attr': {'class': 'col-sm-3'}}) }}
+            </div>
+        {% else %}
+            <div class="form-group">
+                {{ form_label(element, null, {'label_attr': {'class': 'main col-sm-2 control-label'}}) }}
+                {{ form_errors(element) }}
+                {{ form_widget(element, { 'attr': {'class': 'form-control large col-sm-10 col-md-6 col-lg-4'}, 'required': false }) }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endfor %}
