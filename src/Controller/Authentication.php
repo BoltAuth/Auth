@@ -148,24 +148,27 @@ class Authentication extends AbstractController
         $this->assertWPOauth($app['auth.config']);
 
         $config = $this->getAuthConfig();
-        $loginRedirect = $config->getRedirectLogin();
-        $homepage = $app['url_generator']->generate('homepage');
-        $referer = $request->headers->get('referer');
 
-        // Set the return redirect.
-        if ($request->get('redirect')) {
-            $redirect = $request->get('redirect');
-        } elseif ($loginRedirect) {
-            $redirect = $loginRedirect;
-        } elseif (null !== $referer && $referer !== $request->getUri()) {
-            $redirect = $referer;
-        } else {
-            $redirect = $homepage;
+        // Sets the return redirect only if the method is GET.
+        if ($request->isMethod(Request::METHOD_GET)) {
+            $loginRedirect = $config->getRedirectLogin();
+            $homepage = $app['url_generator']->generate('homepage');
+            $referer = $request->headers->get('referer');
+
+            if ($request->get('redirect')) {
+                $redirect = $request->get('redirect');
+            } elseif ($loginRedirect) {
+                $redirect = $loginRedirect;
+            } elseif (null !== $referer && $referer !== $request->getUri()) {
+                $redirect = $referer;
+            } else {
+                $redirect = $homepage;
+            }
+            $this->getAuthSession()
+                 ->clearRedirects()
+                 ->addRedirect($redirect)
+            ;
         }
-        $this->getAuthSession()
-            ->clearRedirects()
-            ->addRedirect($redirect)
-        ;
 
         $builder = $this->getAuthFormsManager()->getFormLogin($request);
         /** @var Form $oauthForm */
