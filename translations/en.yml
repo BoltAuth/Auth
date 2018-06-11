@@ -1,3 +1,5 @@
+#--- Translation messages -----------------------------------------------------
+
 "New Auth": "New Auth"
 "Save Profile": "Save Profile"
 "Edit New Profile": "Edit New Profile"
@@ -57,3 +59,11 @@
 "following this link": "following this link"
 "Add Social Media Accounts": "Add Social Media Accounts"
 "Registered Social Media Accounts": "Registered Social Media Accounts"
+"Auth address confirmation": "Auth address confirmation"
+"Password Reset Request": "Password Reset Request"
+"Submit »": "Submit »"
+"Continue »": "Continue »"
+"Edit Profile": "Edit Profile"
+"Add Social Media Account": "Add Social Media Account"
+"Account Verification": "Account Verification"
+"Account verification code is invalid!": "Account verification code is invalid!"
