@@ -1,3 +1,16 @@
+#--- Untranslated messages ----------------------------------------------------
+
+"Auth address confirmation": "Auth address confirmation"
+"Password Reset Request": "Password Reset Request"
+"Submit »": "Submit »"
+"Continue »": "Continue »"
+"Edit Profile": "Edit Profile"
+"Add Social Media Account": "Add Social Media Account"
+"Account Verification": "Account Verification"
+"Account verification code is invalid!": "Account verification code is invalid!"
+
+#--- Translation messages -----------------------------------------------------
+
 "New Auth": "Skapa ny användare"
 "Save Profile": "Spara Profil"
 "Edit New Profile": "Redigera Profil"
