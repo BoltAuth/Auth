@@ -9,6 +9,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Session state class.
@@ -49,19 +50,24 @@ class Session
     private $session;
     /** @var string */
     private $homepageUrl;
+    /** @var UrlGeneratorInterface */
+    private $urlGenerator;
 
     /**
      * Constructor.
      *
-     * @param Storage\Records  $records
-     * @param SessionInterface $session
-     * @param string           $homepageUrl
+     * @param Storage\Records       $records
+     * @param SessionInterface      $session
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Storage\Records $records, SessionInterface $session, $homepageUrl)
-    {
+    public function __construct(
+        Storage\Records $records,
+        SessionInterface $session,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->records = $records;
         $this->session = $session;
-        $this->homepageUrl = $homepageUrl;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -390,14 +396,14 @@ class Session
     public function popRedirect()
     {
         if (empty($this->redirectStack)) {
-            return new Redirect($this->homepageUrl);
+            return new Redirect($this->getHomepageUrl());
         }
 
         $redirect = end($this->redirectStack);
         $key = key($this->redirectStack);
         unset($this->redirectStack[$key]);
         if (empty($this->redirectStack)) {
-            $redirect = new Redirect($this->homepageUrl);
+            $redirect = new Redirect($this->getHomepageUrl());
             $this->redirectStack[] = $redirect;
         }
 
@@ -411,7 +417,7 @@ class Session
      */
     public function clearRedirects()
     {
-        $this->redirectStack = [new Redirect($this->homepageUrl)];
+        $this->redirectStack = [new Redirect($this->getHomepageUrl())];
 
         return $this;
     }
@@ -432,7 +438,7 @@ class Session
     public function loadRedirects()
     {
         if ($this->session->isStarted()) {
-            $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect($this->homepageUrl)]);
+            $this->redirectStack = $this->session->get(self::REDIRECT_STACK, [new Redirect($this->getHomepageUrl())]);
         }
     }
 
@@ -511,5 +517,19 @@ class Session
         $tokenData['expiry'] = 3600;
 
         return new AccessToken($tokenData);
+    }
+
+    /**
+     * Return the homepage Url.
+     *
+     * @return string
+     */
+    private function getHomepageUrl()
+    {
+        if (null === $this->homepageUrl) {
+            $this->homepageUrl = $this->urlGenerator->generate('homepage');
+        }
+
+        return $this->homepageUrl;
     }
 }
