@@ -181,7 +181,7 @@ class AuthServiceProvider implements ServiceProviderInterface, EventSubscriberIn
 
         $app['auth.session'] = $app->share(
             function ($app) {
-                return new AccessControl\Session($app['auth.records'], $app['session'], $app['url_generator']->generate('homepage'));
+                return new AccessControl\Session($app['auth.records'], $app['session'], $app['url_generator']);
             }
         );
 
