@@ -124,21 +124,21 @@
 
         jQuery(document).ready(function($) {
             var boltExt = new AuthAdmin();
-            boltExt.setMessage('useradd', '{{__('Adding user...')}}' );
-            boltExt.setMessage('userdel', '{{__('Removing user(s)...')}}');
-            boltExt.setMessage('userenable', '{{__('Enabling user(s)...')}}' );
-            boltExt.setMessage('userdisable', '{{__('Disabling user(s)...')}}');
-            boltExt.setMessage('roleadd', '{{__('Adding role...')}}');
-            boltExt.setMessage('roledel', '{{__('Removing role...')}}');
-            boltExt.setMessage('authnotsellHeader', '{{__('Nothing Selected!')}}');
-            boltExt.setMessage('authnotsell', '{{__('You need to choose a auth.')}}');
-            boltExt.setMessage('rolenotsellHeader', '{{__('None role Selected!')}}');
-            boltExt.setMessage('rolenotsell', '{{__('You need to choose a role.')}}');
-            boltExt.setMessage('autherrorHeader', '{{__('Error!')}}');
-            boltExt.setMessage('autherror', '{{__('The server returned an error.')}}');
-            boltExt.setMessage('confirmdeleteHeader', '{{__('Confim deletion')}}');
-            boltExt.setMessage('confirmdelete', '{{__('Are you sure you want to delete these accounts?')}}');
-            boltExt.setMessage('confirmdeleteButton', '{{__('Yes!')}}');
+            boltExt.setMessage('useradd', '{{__('Adding user...')|escape}}' );
+            boltExt.setMessage('userdel', '{{__('Removing user(s)...')|escape}}');
+            boltExt.setMessage('userenable', '{{__('Enabling user(s)...')|escape}}' );
+            boltExt.setMessage('userdisable', '{{__('Disabling user(s)...')|escape}}');
+            boltExt.setMessage('roleadd', '{{__('Adding role...')|escape}}');
+            boltExt.setMessage('roledel', '{{__('Removing role...')|escape}}');
+            boltExt.setMessage('authnotsellHeader', '{{__('Nothing Selected!')|escape}}');
+            boltExt.setMessage('authnotsell', '{{__('You need to choose a auth.')|escape}}');
+            boltExt.setMessage('rolenotsellHeader', '{{__('None role Selected!')|escape}}');
+            boltExt.setMessage('rolenotsell', '{{__('You need to choose a role.')|escape}}');
+            boltExt.setMessage('autherrorHeader', '{{__('Error!')|escape}}');
+            boltExt.setMessage('autherror', '{{__('The server returned an error.')|escape}}');
+            boltExt.setMessage('confirmdeleteHeader', '{{__('Confim deletion')|escape}}');
+            boltExt.setMessage('confirmdelete', '{{__('Are you sure you want to delete these accounts?')|escape}}');
+            boltExt.setMessage('confirmdeleteButton', '{{__('Yes!')|escape}}');
         });
     </script>
 
