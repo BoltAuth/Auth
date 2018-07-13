@@ -270,6 +270,7 @@ class Backend extends AbstractController
             $oauth = new Storage\Entity\Oauth();
             $oauth->setGuid($account->getGuid());
             $oauth->setResourceOwnerId($account->getGuid());
+            $oauth->setPassword($entity->getPassword());
             $oauth->setEnabled(true);
             $app['auth.records']->saveOauth($oauth);
 
