@@ -13,23 +13,18 @@
 {% extends twigparent %}
 
 {% block auth %}
-    <div class="row">
-        <h4>{{ __('Account Verification') }}</h4>
-    </div>
+    <h4>{{ __('Account Verification') }}</h4>
 
     {{ include(templates.feedback) }}
 
-    <div class="row verify">
+    <div class="profile profile-verify">
 
-        <div class="small-12 columns">
+        {% if success %}
+            <p>{{ __('Your account has been successfully verified!') }}</p>
+        {% else %}
+            <p>{{ __('Account verification code is invalid!') }}</p>
+        {% endif %}
 
-            {% if success %}
-                <p>{{ __('Your account has been successfully verified!') }}</p>
-            {% else %}
-                <p>{{ __('Account verification code is invalid!') }}</p>
-            {% endif %}
-
-        </div>
 
     </div>
 {% endblock %}

@@ -15,19 +15,17 @@
     {{ include(templates.feedback) }}
 
     <div class="login">
-        <div class="row auth-login">
 
-            {% if providers.local is defined %}
-                {{ _self.password_login(form_login_password) }}
-            {% endif %}
+        {% if providers.local is defined %}
+            {{ _self.password_login(form_login_password) }}
+        {% endif %}
 
-            {{ _self.oauth_login(form_login_oauth, providers) }}
-        </div>
+        {{ _self.oauth_login(form_login_oauth, providers) }}
     </div>
 {% endblock login %}
 
 {% macro password_login(form_login_password) %}
-    <div class="small-6 columns auth-login-password">
+    <div class="login-password">
         {{ form_start(form_login_password) }}
 
         {{ form_row(form_login_password.email) }}
@@ -41,7 +39,7 @@
 
 
 {% macro oauth_login(form_login_oauth, providers) %}
-    <div class="small-6 columns auth-login-password">
+    <div class="login-oauth">
         {{ form_start(form_login_oauth) }}
 
         {% for provider in providers|keys %}

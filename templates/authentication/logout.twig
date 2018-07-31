@@ -14,12 +14,10 @@
     {{ include(templates.feedback) }}
 
     <div class="logout">
-        <div class="row auth-logout">
-            {{ form_start(form_logout) }}
+        {{ form_start(form_logout) }}
 
-            {{ form_row(form_logout.logout) }}
+        {{ form_row(form_logout.logout) }}
 
-            {{ form_end(form_logout) }}
-        </div>
+        {{ form_end(form_logout) }}
     </div>
 {% endblock logout %}
