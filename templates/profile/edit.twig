@@ -35,22 +35,25 @@
 
         <ul>
             {%- for provider in auth_providers() %}
-                <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
+                <li><i class="fa fa-{{ provider }}">{{ provider|title }}</i></li>
             {% endfor -%}
         </ul>
     </div>
 
-    <di class="profile profile-add-social">
+    <div class="profile profile-add-social">
         {% for provider in providers|keys %}
-            {% if provider != 'local' and provider not in auth_providers() %}
-                {% if loop.first %}<h5>{{ __('Add Social Media Account') }}</h5>{% endif %}
+            {% if loop.first %}
+                <h5>{{ __('Add Social Media Account') }}</h5>
                 {{ form_start(form_associate) }}
-                    {{ form_row(form_associate[provider]) }}
+            {% endif %}
+            {% if provider != 'local' and provider not in auth_providers() %}
+                {{ form_row(form_associate[provider], { 'attr': { 'class': 'button btn btn-default' }}) }}
+            {% else %}
+                <div><p>{{ provider|capitalize }} is already connected.</p></div>
+            {% endif %}
+            {% if loop.last %}
                 {{ form_end(form_associate) }}
             {% endif %}
         {% endfor %}
-
-        {{ form_end(form_associate) }}
     </div>
-
 {% endblock %}
