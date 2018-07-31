@@ -15,36 +15,32 @@
 {% extends twigparent %}
 
 {% block auth %}
-    <div class="row">
-        <h4>{{ __('New Auth') }}</h4>
-    </div>
+    <h4>{{ __('New Auth') }}</h4>
 
     {{ include(templates.feedback) }}
 
-    <div class="row register">
 
-        <div class="small-12 columns">
+    <div class="profile profile-register">
 
-            {{ form_start(form_profile_register) }}
+        {{ form_start(form_profile_register) }}
 
-            {{ form_errors(form_profile_register) }}
+        {{ form_errors(form_profile_register) }}
 
-            {{ form_row(form_profile_register.displayname, { 'value': auth.name|default() } ) }}
-            {{ form_row(form_profile_register.email, { 'value': auth.email|default() } ) }}
+        {{ form_row(form_profile_register.displayname, { 'value': auth.name|default() } ) }}
+        {{ form_row(form_profile_register.email, { 'value': auth.email|default() } ) }}
 
-            {% if transitional %}
-                {% do form_profile_register.password.setRendered %}
-            {% else %}
-                {{ form_widget(form_profile_register.password.first, { 'attr': {'autocomplete': 'new-password'}}) }}
-                {{ form_widget(form_profile_register.password.second, { 'attr': {'autocomplete': 'new-password'}}) }}
-            {% endif %}
+        {% if transitional %}
+            {% do form_profile_register.password.setRendered %}
+        {% else %}
+            {{ form_widget(form_profile_register.password.first, { 'attr': {'autocomplete': 'new-password'}}) }}
+            {{ form_widget(form_profile_register.password.second, { 'attr': {'autocomplete': 'new-password'}}) }}
+        {% endif %}
 
-                <br>
-            {{ form_row(form_profile_register.submit, { 'attr': { 'class': 'button btn btn-default' }}) }}
+            <br>
+        {{ form_row(form_profile_register.submit, { 'attr': { 'class': 'button btn btn-default' }}) }}
 
-            {{ form_end(form_profile_register) }}
-
-        </div>
+        {{ form_end(form_profile_register) }}
 
     </div>
+
 {% endblock %}
