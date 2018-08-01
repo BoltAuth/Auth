@@ -385,6 +385,18 @@ class AuthRuntime extends TwigExtension
     }
 
     /**
+     * Get the URL for profile viewing.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getLinkView($format = UrlGeneratorInterface::RELATIVE_PATH)
+    {
+        return $this->generator->generate('authProfileView', [], $format);
+    }
+
+    /**
      * Get the URL for profile editing.
      *
      * @param int $format
