@@ -21,6 +21,8 @@
         {% endif %}
 
         {{ _self.oauth_login(form_login_oauth, providers) }}
+
+        <a class="button" href="{{ auth_link_auth_reset() }}">Reset password</a>
     </div>
 {% endblock login %}
 
