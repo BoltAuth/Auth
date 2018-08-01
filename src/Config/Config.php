@@ -79,6 +79,7 @@ class Config
         $this->redirectLogout = $config['redirects']['logout'];
         $this->redirectRegister = $config['redirects']['register'];
         $this->redirectVerify = $config['redirects']['verify'];
+        $this->redirectReset = $config['redirects']['reset'];
         $this->redirectDelete = $config['redirects']['delete'];
 
         $this->forms = new Forms($config['forms']);
