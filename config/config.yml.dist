@@ -30,6 +30,10 @@ debug: true
 #redirects
 #    login: null                   # Redirect after succesfull login
 #    logout: null                  # Redirect after logout
+#    register: null                # Redirect after registration
+#    reset: null                   # Redirect after password reset
+#    verify: null                  # Redirect after verification
+#    delete: null                  # Redirect after account deletion
 
 ## urls #######################################################################
 #
