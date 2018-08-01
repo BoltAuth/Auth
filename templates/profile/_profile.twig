@@ -1,17 +1,41 @@
 {#
- # NOTE:
+ # This is just a default base, and example only.
  #
- # When overriding this template, Auth only needs the `auth` block:
+ ### Installing in your theme:
+ # Create a Twig template file in your theme directory, that inherits your page
+ # layout and then add the following blocks:
  #
  #   {% block auth %}
  #   {% endblock auth %}
+ #
+ ### Configuring Auth to use your template parent:
+ #
+ # Next step is to set the template key to the relative path to template file.
+ # authentication:
+ #   parent:
+ #
+ # For example if you have a theme directory 'koala' and you create the directory
+ # themes/koala/auth/ you can then put what templates files
+ # you need there.
+ #
+ # In app/config/extensions/auth.boltauth.yml set the following to override
+ #
+ #     templates:
+ #       profile:
+ #         parent: auth/_profile.twig
  #}
 
 {% extends "partials/_master.twig" %}
 
 {% block main %}
-
+<div class="boltform">
     {% block auth %}
     {% endblock auth %}
 
+    <ul>
+        <li><a href="{{ auth_link_profile_edit() }}">Edit profile</a></li>
+        <li><a href="{{ auth_link_profile_view() }}">View profile</a></li>
+        <li><a href="{{ auth_link_auth_logout() }}">Logout</a></li>
+    </ul>
+</div>
 {% endblock main %}

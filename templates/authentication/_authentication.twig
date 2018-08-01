@@ -3,9 +3,15 @@
  #
  ### Installing in your theme:
  # Create a Twig template file in your theme directory, that inherits your page
- # layout and then add the following block:
- #     {% block login %}
- #     {% endblock login %}
+ # layout and then add the following blocks:
+ #   {% block login %}
+ #   {% endblock login %}
+ #
+ #   {% block logout %}
+ #   {% endblock logout %}
+ #
+ #   {% block recovery %}
+ #   {% endblock recovery %}
  #
  ### Configuring Auth to use your template parent:
  #
@@ -14,19 +20,19 @@
  #   parent:
  #
  # For example if you have a theme directory 'koala' and you create the directory
- # themes/koala/extensions/clientlogin/ you can then put what templates files
+ # themes/koala/auth/ you can then put what templates files
  # you need there.
  #
- # In app/config/extensions/auth.bolt.yml set the following to override
+ # In app/config/extensions/auth.boltauth.yml set the following to override
  #
  #     templates:
  #       authentication:
- #         parent: extensions/auth/login.twig
+ #         parent: auth/_authentication.twig
  #}
 {% extends "partials/_master.twig" %}
 
 {% block main %}
-
+<div class="boltform">
     {% block login %}
     {% endblock login %}
 
@@ -35,5 +41,5 @@
 
     {% block recovery %}
     {% endblock recovery %}
-
+</div>
 {% endblock main %}

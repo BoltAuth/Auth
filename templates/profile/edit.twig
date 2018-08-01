@@ -12,50 +12,48 @@
 {% extends twigparent %}
 
 {% block auth %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <div class="row">
-        <h4>{{ __('Edit Profile') }}</h4>
-    </div>
+    <h4>{{ __('Edit Profile') }}</h4>
 
     {{ include(templates.feedback) }}
 
-    <div class="row profile">
 
-        <div class="small-12 columns">
+    <div class="profile profile-edit">
 
-            {{ form_start(form_profile_edit) }}
-                {{ form_errors(form_profile_edit) }}
-                {% for name, row in form_profile_edit if name not in ['submit', 'password'] %}
-                    <div class="auth_{{ row.vars.name }}">{{ form_row(row) }}</div>
-                {% endfor %}
-                {{ form_row(form_profile_edit.password) }}
-                {{ form_row(form_profile_edit.submit, {'attr': {'class': 'button btn btn-default'}}) }}
-            {{ form_end(form_profile_edit) }}
-
-        </div>
-
-        <div class="small-12 columns">
-            <h5>{{ __('Registered Social Media Accounts') }}</h5>
-
-            <ul>
-                {%- for provider in auth_providers() %}
-                    <li><i class="fa fa-{{ provider }}">  {{ provider|title }}</i></li>
-                {% endfor -%}
-            </ul>
-        </div>
-
-        <div class="small-12 columns">
-            {% for provider in providers|keys %}
-                {% if provider != 'local' and provider not in auth_providers() %}
-                    {% if loop.first %}<h5>{{ __('Add Social Media Account') }}</h5>{% endif %}
-                    {{ form_start(form_associate) }}
-                        {{ form_row(form_associate[provider]) }}
-                    {{ form_end(form_associate) }}
-                {% endif %}
+        {{ form_start(form_profile_edit) }}
+            {{ form_errors(form_profile_edit) }}
+            {% for name, row in form_profile_edit if name not in ['submit', 'password'] %}
+                <div class="auth_{{ row.vars.name }}">{{ form_row(row) }}</div>
             {% endfor %}
+            {{ form_row(form_profile_edit.password) }}
+            {{ form_row(form_profile_edit.submit, {'attr': {'class': 'button btn btn-default'}}) }}
+        {{ form_end(form_profile_edit) }}
 
-            {{ form_end(form_associate) }}
-        </div>
+    </div>
 
+    <div class="profile profile-registered-social">
+        <h5>{{ __('Registered Social Media Accounts') }}</h5>
+
+        <ul>
+            {%- for provider in auth_providers() %}
+                <li><i class="fa fa-{{ provider }}">{{ provider|title }}</i></li>
+            {% endfor -%}
+        </ul>
+    </div>
+
+    <div class="profile profile-add-social">
+        {% for provider in providers|keys %}
+            {% if loop.first %}
+                <h5>{{ __('Add Social Media Account') }}</h5>
+                {{ form_start(form_associate) }}
+            {% endif %}
+            {% if provider != 'local' and provider not in auth_providers() %}
+                {{ form_row(form_associate[provider], { 'attr': { 'class': 'button btn btn-default' }}) }}
+            {% else %}
+                <div><p>{{ provider|capitalize }} is already connected.</p></div>
+            {% endif %}
+            {% if loop.last %}
+                {{ form_end(form_associate) }}
+            {% endif %}
+        {% endfor %}
     </div>
 {% endblock %}
