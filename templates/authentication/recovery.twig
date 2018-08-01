@@ -47,6 +47,8 @@
     {{ form_row(form_profile_recovery.submit, { 'label': __('Submit »'), 'attr': { 'class': 'button btn btn-default' }}) }}
 
     {{ form_end(form_profile_recovery) }}
+
+    <a class="button" href="{{ auth_link_auth_login() }}">Back to login</a>
 {% endmacro %}
 
 {% macro recovery_finish(form_profile_recovery) %}
@@ -60,4 +62,6 @@
     {{ form_row(form_profile_recovery.submit, { 'label': __('Continue »'), 'attr': { 'class': 'button btn btn-default' }}) }}
 
     {{ form_end(form_profile_recovery) }}
+
+    <a class="button" href="{{ auth_link_auth_login() }}">Back to login</a>
 {% endmacro %}

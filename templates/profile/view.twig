@@ -24,9 +24,11 @@
 
     <div class="profile profile-view">
 
-        <div class="small-3 columns">
+        {% if auth.avatar %}
+        <div class="profile-image">
             <img alt="{{ auth.displayname }}" src="{{ auth.avatar }}">
         </div>
+        {% endif %}
 
         {{ form_start(form_profile_view) }}
 

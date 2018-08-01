@@ -31,5 +31,10 @@
 <div class="boltform">
     {% block auth %}
     {% endblock auth %}
+
+    <ul>
+        <li><a href="{{ auth_link_profile_edit() }}">Edit profile</a></li>
+        <li><a href="{{ auth_link_auth_logout() }}">Logout</a></li>
+    </ul>
 </div>
 {% endblock main %}
