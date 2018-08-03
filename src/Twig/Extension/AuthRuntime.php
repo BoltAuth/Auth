@@ -3,6 +3,7 @@
 namespace Bolt\Extension\BoltAuth\Auth\Twig\Extension;
 
 use Bolt\Extension\BoltAuth\Auth\AccessControl;
+use Bolt\Extension\BoltAuth\Auth\AccessControl\Session;
 use Bolt\Extension\BoltAuth\Auth\Config\Config;
 use Bolt\Extension\BoltAuth\Auth\Form;
 use Bolt\Extension\BoltAuth\Auth\Storage;
@@ -419,4 +420,41 @@ class AuthRuntime extends TwigExtension
     {
         return $this->generator->generate('authProfileRegister', [], $format);
     }
+
+
+    /**
+     * Get the all current feedback for Auth to use in twig.
+     *
+     * @param int $format
+     *
+     * @return string
+     */
+    public function getFeedback($peek = true)
+    {
+        if($peek) {
+            return $this->session->getFeedback()->peek();
+        } else {
+            return $this->session->getFeedback()->get();
+        }
+    }
+
+    /**
+     * Display all current feedback for Auth.
+     *
+     * @param TwigEnvironment $twigEnvironment
+     * @param string          $template
+     *
+     * @return TwigMarkup
+     */
+    public function renderFeedback(TwigEnvironment $twigEnvironment, $template = null)
+    {
+        $context = ['feedback' => $this->session->getFeedback()];
+        $template = $template ?: $this->config->getTemplate('feedback', 'feedback');
+        // use the profile view form because it should be read only and harmless
+        $form = $this->formManager->getFormProfileView(new Request());
+        $html = $this->formManager->renderForms($form, $twigEnvironment, $template, $context);
+
+        return new TwigMarkup($html, 'UTF-8');
+    }
+
 }
