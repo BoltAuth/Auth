@@ -7,7 +7,7 @@
  # Passed in variables:
  #   * feedback             — Feedback  Auth feedback service (Bolt\Extension\BoltAuth\Auth\Feedback)
  #     * get                — array     Return, and remove from queue, messages pending display
- #     * poke               — array     Return, and preserve queing of, messages pending display
+ #     * peek               — array     Return, and preserve queing of, messages pending display
  #}
 
 {% set feedback = feedback.get|default(null) %}
