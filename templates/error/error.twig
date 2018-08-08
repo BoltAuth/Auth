@@ -5,12 +5,12 @@
  #}
 
 {% block auth_error %}
-<div class="errors">
-    </h1>{{ __('We broke!') }}</h1>
+    <div class="errors">
+        </h1>{{ __('We broke!') }}</h1>
 
-    {{ dump(feedback) }}
-    {#{ dump(exception.getResponse().getBody().__toString()|striptags) }#}
-    {{ dump(exception) }}
+        {{ dump(feedback) }}
+        {#{ dump(exception.getResponse().getBody().__toString()|striptags) }#}
+        {{ dump(exception) }}
 
-</div>
+    </div>
 {% endblock auth_error %}
