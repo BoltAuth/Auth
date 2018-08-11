@@ -199,6 +199,11 @@ class Auth extends AbstractController
                     $session->removeAttribute(Session::SESSION_ATTRIBUTE_OAUTH_DATA);
                 }
 
+                // if redirect:register is set in extension configuration redirect there
+                if ($this->getAuthConfig()->getRedirectRegister() != null) {
+                    return new RedirectResponse($this->getAuthConfig()->getRedirectRegister());
+                }
+
                 // Redirect to our profile page.
                 $response = new RedirectResponse($app['url_generator']->generate('authProfileEdit'));
 
@@ -258,6 +263,11 @@ class Auth extends AbstractController
             $event = new AuthProfileEvent($verification->getAccount());
             $app['dispatcher']->dispatch(AuthEvents::AUTH_PROFILE_VERIFY, $event);
             $session->set($sessionKey, $verification);
+
+            // if redirect:verify is set in extension configuration redirect there
+            if ($this->getAuthConfig()->getRedirectVerify() != null) {
+                return new RedirectResponse($this->getAuthConfig()->getRedirectVerify());
+            }
 
             return new RedirectResponse($app['url_generator']->generate('authProfileVerify'));
         }

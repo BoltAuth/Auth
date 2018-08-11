@@ -19,22 +19,20 @@
 {% block recovery %}
     {{ include(templates.feedback) }}
 
-    <div class="logout">
-        <div class="row auth-recovery">
-            {%  if stage == 'email' %}
-                {{ _self.recovery_start(form_profile_recovery_request) }}
-            {% elseif stage == 'password' %}
-                {{ _self.recovery_finish(form_profile_recovery_submit) }}
-            {% elseif stage == 'submitted' %}
-                <p>{{ __('An email has been sent to') }} {{ email }}. {{ __('Please follow the instructions to complete the process.') }}</p>
-            {% elseif stage == 'reset' %}
-                <p>{{ __('Password reset was successful!') }}</p>
-                <p><a href="{{ link }}">{{ __('Click here to go to the login page…') }}</a></p>
-            {% else %}
-                <p>{{ __('Invalid request!') }}</p>
-            {% endif %}
+    <div class="login login-recovery">
+        {%  if stage == 'email' %}
+            {{ _self.recovery_start(form_profile_recovery_request) }}
+        {% elseif stage == 'password' %}
+            {{ _self.recovery_finish(form_profile_recovery_submit) }}
+        {% elseif stage == 'submitted' %}
+            <p>{{ __('An email has been sent to') }} {{ email }}. {{ __('Please follow the instructions to complete the process.') }}</p>
+        {% elseif stage == 'reset' %}
+            <p>{{ __('Password reset was successful!') }}</p>
+            <p><a href="{{ link }}">{{ __('Click here to go to the login page…') }}</a></p>
+        {% else %}
+            <p>{{ __('Invalid request!') }}</p>
+        {% endif %}
 
-        </div>
     </div>
 
 {% endblock recovery %}
@@ -49,6 +47,8 @@
     {{ form_row(form_profile_recovery.submit, { 'label': __('Submit »'), 'attr': { 'class': 'button btn btn-default' }}) }}
 
     {{ form_end(form_profile_recovery) }}
+
+    <a class="button" href="{{ auth_link_auth_login() }}">Back to login</a>
 {% endmacro %}
 
 {% macro recovery_finish(form_profile_recovery) %}
@@ -62,4 +62,6 @@
     {{ form_row(form_profile_recovery.submit, { 'label': __('Continue »'), 'attr': { 'class': 'button btn btn-default' }}) }}
 
     {{ form_end(form_profile_recovery) }}
+
+    <a class="button" href="{{ auth_link_auth_login() }}">Back to login</a>
 {% endmacro %}

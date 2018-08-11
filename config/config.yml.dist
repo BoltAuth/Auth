@@ -13,6 +13,7 @@ debug: true
 #
 #registration:
 #    enabled: true
+#    auto: false
 
 ## Notification email addresses ###############################################
 #
@@ -22,9 +23,34 @@ debug: true
 #notification:
 #    name: Site Admin              # Display name used as the sender name
 #    email: no-reply@example.com   # Email address as the sender address
+#    format: mixed                 # html, plain or mixed
+
+## redirects ##################################################################
+#
+#redirects
+#    login: null                   # Redirect after succesfull login
+#    logout: null                  # Redirect after logout
+#    register: null                # Redirect after registration
+#    reset: null                   # Redirect after password reset
+#    verify: null                  # Redirect after verification
+#    delete: null                  # Redirect after account deletion
+
+## urls #######################################################################
+#
+#urls:
+#    authenticate: authentication  # The {authenticate} mentioned in the docs
+#                                  # for paths like /{authenticate}/login
+#    auth: auth                    # The {auth} mentioned in the docs for
+#                                  # for paths like /{auth}/profile
 
 ## Access Control #############################################################
 #
+#roles:
+#    admin: root
+#    auth:
+#        admin: Administrator
+#        participant: Participant
+#    register: participant
 roles:
     auth:
         admin: Administrator
@@ -46,6 +72,49 @@ providers:
 
 ## Form Configuration #########################################################
 #
-#forms:
+# Default values for the forms are set to the following templates and labels
+#
 #    templates:
+#        profile:
+#            parent: '@Auth/profile/_profile.twig'
+#            edit: '@Auth/profile/edit.twig'
+#            register: '@Auth/profile/register.twig'
+#            verify: '@Auth/profile/verify.twig'
+#        authentication:
+#            parent: '@Auth/authentication/_authentication.twig'
+#            associate: '@Auth/authentication/associate.twig'
+#            login: '@Auth/authentication/login.twig'
+#            logout: '@Auth/authentication/logout.twig'
+#            recovery: '@Auth/authentication/recovery.twig'
+#        error:
+#            parent: '@Auth/error/_error.twig'
+#            error: '@Auth/error/error.twig'
+#        feedback:
+#            feedback: '@Auth/feedback/feedback.twig'
+#        recovery:
+#            subject: '@Auth/authentication/recovery/subject.twig'
+#            html: '@Auth/authentication/recovery/html.twig'
+#            text: '@Auth/authentication/recovery/text.twig'
+#        verification:
+#            subject: '@Auth/profile/registration/subject.twig'
+#            html: '@Auth/profile/registration/html.twig'
+#            text: '@Auth/profile/registration/text.twig'
+#    labels:
+#        login: 'Login'
+#        logout: 'Logout'
+#        displayname: 'Public Name'
+#        email: 'Email Address'
+#        password_first: 'Password'
+#        password_second: 'Repeat Password'
+#        profile_save: 'Save & Continue'
+#    placeholders:
+#        displayname: 'The name you would like to display publicly…'
+#        email: 'Your email address…'
+#        password_first: 'Enter your password…'
+#        password_second: 'Repeat the above password…'
+#    addons:
+#        zocial: false
 
+## Firewalls ##################################################################
+#
+#firewalls: null

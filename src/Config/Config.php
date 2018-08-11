@@ -42,6 +42,14 @@ class Config
     protected $redirectLogin;
     /** @var string */
     protected $redirectLogout;
+    /** @var string */
+    protected $redirectRegister;
+    /** @var string */
+    protected $redirectReset;
+    /** @var string */
+    protected $redirectVerify;
+    /** @var string */
+    protected $redirectDelete;
     /** @var  Forms */
     protected $forms;
     /** @var array */
@@ -69,6 +77,10 @@ class Config
         $this->notificationEmailFormat = $config['notification']['format'];
         $this->redirectLogin = $config['redirects']['login'];
         $this->redirectLogout = $config['redirects']['logout'];
+        $this->redirectRegister = $config['redirects']['register'];
+        $this->redirectVerify = $config['redirects']['verify'];
+        $this->redirectReset = $config['redirects']['reset'];
+        $this->redirectDelete = $config['redirects']['delete'];
 
         $this->forms = new Forms($config['forms']);
 
@@ -198,6 +210,87 @@ class Config
     public function setRedirectLogout($redirectLogout)
     {
         $this->redirectLogout = $redirectLogout;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectRegister()
+    {
+        return $this->redirectRegister;
+    }
+
+    /**
+     * @param string $redirectRegister
+     *
+     * @return Config
+     */
+    public function setRedirectRegister($redirectRegister)
+    {
+        $this->redirectRegister = $redirectRegister;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectReset()
+    {
+        return $this->redirectReset;
+    }
+
+    /**
+     * @param string $redirectReset
+     *
+     * @return Config
+     */
+    public function setRedirectReset($redirectReset)
+    {
+        $this->redirectReset = $redirectReset;
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getRedirectVerify()
+    {
+        return $this->redirectVerify;
+    }
+
+    /**
+     * @param string $redirectVerify
+     *
+     * @return Config
+     */
+    public function setRedirectVerify($redirectVerify)
+    {
+        $this->redirectVerify = $redirectVerify;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectDelete()
+    {
+        return $this->redirectDelete;
+    }
+
+    /**
+     * @param string $redirectDelete
+     *
+     * @return Config
+     */
+    public function setRedirectDelete($redirectDelete)
+    {
+        $this->redirectDelete = $redirectDelete;
 
         return $this;
     }
@@ -590,8 +683,11 @@ class Config
                 'format' => 'mixed',
             ],
             'redirects'    => [
-                'login'  => null,
-                'logout' => null,
+                'login'    => null,
+                'logout'   => null,
+                'register' => null,
+                'verify'   => null,
+                'delete'   => null,
             ],
             'roles'        => [
                 'admin'  => [

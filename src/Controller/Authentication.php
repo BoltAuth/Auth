@@ -316,6 +316,11 @@ class Authentication extends AbstractController
             $builder = $this->resetPasswordRequest($app, $request, $context, $response);
         }
 
+        // if stage is complete and redirect:reset is set in extension configuration redirect there
+        if ($context->get('stage') == 'submitted' && $this->getAuthConfig()->getRedirectReset() != null) {
+            return new RedirectResponse($this->getAuthConfig()->getRedirectReset());
+        }
+
         $template = $this->getAuthConfig()->getTemplate('authentication', 'recovery');
         $html = $this->getAuthFormsManager()->renderForms($builder, $app['twig'], $template, $context->all());
         $response->setContent(new \Twig_Markup($html, 'UTF-8'));

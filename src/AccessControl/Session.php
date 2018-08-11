@@ -4,6 +4,7 @@ namespace Bolt\Extension\BoltAuth\Auth\AccessControl;
 
 use Bolt\Extension\BoltAuth\Auth\Exception;
 use Bolt\Extension\BoltAuth\Auth\Storage;
+use Bolt\Extension\BoltAuth\Auth\Feedback;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use Ramsey\Uuid\Uuid;
@@ -497,6 +498,17 @@ class Session
         $attributes[$attribute] = $value;
 
         $this->session->set(self::SESSION_ATTRIBUTES, $attributes);
+    }
+
+
+    /**
+     * Return feedback if it exists in the session flashbag
+     *
+     * @return Feedback
+     */
+    public function getFeedback()
+    {
+        return $this->session->getBag('auth.feedback');
     }
 
     /**
