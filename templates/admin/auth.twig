@@ -109,7 +109,7 @@
             </section>
             <hr />
 
-            {% include 'partials/_sub_pager.twig' with { 'pager': pager.pager, 'class' : '' , 'surr' : pager.surr } only %}
+            {% include '@bolt/components/pager.twig' with { 'pager': pager.pager, 'surround' : pager.surr } only %}
         </div>
 
         {{ include('@AuthAdmin/_aside.twig') }}
