@@ -171,8 +171,8 @@ class Account extends AbstractAuthRepository
     {
         $qb = $this->createQueryBuilder();
         $qb->select('*')
-            ->where('email = :email')
-            ->setParameter('email', $email)
+            ->where('lower(email) = :email')
+            ->setParameter('email', strtolower($email))
         ;
 
         return $qb;
