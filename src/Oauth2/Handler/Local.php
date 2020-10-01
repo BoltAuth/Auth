@@ -49,13 +49,13 @@ class Local extends AbstractHandler
 
         $oauth = $this->records->getOauthByGuid($account->getGuid());
         if (!$oauth instanceof Entity\Oauth) {
-            $this->feedback->info('Registration is required.');
+            $this->feedback->error('Registration is required.');
 
             return new RedirectResponse($this->urlGenerator->generate('authProfileRegister'));
         }
 
         if (!$oauth->getEnabled()) {
-            $this->feedback->info('Account disabled.');
+            $this->feedback->error('Account disabled.');
 
             return new RedirectResponse($this->urlGenerator->generate('authenticationLogin'));
         }
