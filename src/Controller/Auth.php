@@ -131,7 +131,7 @@ class Auth extends AbstractController
         $authSession = $this->getAuthSession()->getAuthorisation();
         if ($authSession === null) {
             $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-            $this->getAuthFeedback()->info('Login required to edit your profile');
+            $this->getAuthFeedback()->error('Login required to edit your profile');
 
             return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
         }
@@ -323,7 +323,7 @@ class Auth extends AbstractController
             $authSession = $this->getAuthSession()->getAuthorisation();
             if ($authSession === null) {
                 $app['session']->set(Authentication::FINAL_REDIRECT_KEY, $request->getUri());
-                $this->getAuthFeedback()->info('Login required to view your profile');
+                $this->getAuthFeedback()->error('Login required to view your profile');
 
                 return new RedirectResponse($app['url_generator']->generate('authenticationLogin'));
             }
