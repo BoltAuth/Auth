@@ -107,7 +107,7 @@ class Feedback implements SessionBagInterface
     public function set($state, $message)
     {
         if (empty($state) || !in_array($state, ['debug', 'error', 'info'])) {
-            throw new \InvalidArgumentException("Feedback state can only be 'error', 'message', or 'debug'.");
+            throw new \InvalidArgumentException("Feedback state can only be 'error', 'info', or 'debug'.");
         }
 
         // Don't log debug messages when not debugging

@@ -210,7 +210,7 @@ class Authentication extends AbstractController
                 return $response;
             }
 
-            $this->getAuthFeedback()->info('Login details are incorrect.');
+            $this->getAuthFeedback()->error('Login details are incorrect.');
         }
         $template = $config->getTemplate('authentication', 'login');
         $html = $this->getAuthFormsManager()->renderForms($builder, $app['twig'], $template);
