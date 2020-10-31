@@ -9,7 +9,7 @@
 {% endblock page_title %}
 
 {% block page_subtitle %}
-    Editing Auth Profile: {{ form_profile_edit.vars.value.displayname|default('New User') }}
+    {{ __('Editing Auth Profile') }}: {{ form_profile_edit.vars.value.displayname|default(__('New User')) }}
 {% endblock page_subtitle %}
 
 {# clear default messages, because we use them in a different spot, in this template #}
@@ -62,7 +62,7 @@
         <aside class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-cog fa-fw"></i> Actions
+                    <i class="fa fa-cog fa-fw"></i> {{ __('Actions') }}
                 </div>
 
                 <div class="panel-body">
@@ -71,7 +71,7 @@
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><i class="fa fa-cog fa-fw"></i>Linked Social Media Accounts</div>
+                <div class="panel-heading"><i class="fa fa-cog fa-fw"></i> {{ __('Linked Social Media Accounts') }}</div>
 
                 <div class="panel-body">
                     {% for provider in auth_providers(guid) %}

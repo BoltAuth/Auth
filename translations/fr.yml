@@ -1,3 +1,18 @@
+#--- Untranslated messages ----------------------------------------------------
+
+"Disable": "Disable"
+"Editing Existing Profile": "Editing Existing Profile"
+"Email Address": "Email Address"
+"Enter your password…": "Enter your password…"
+"Login details are incorrect.": "Login details are incorrect."
+"Password": "Password"
+"Public Name": "Public Name"
+"Repeat Password": "Repeat Password"
+"Repeat the above password…": "Repeat the above password…"
+"Save & Continue": "Save & Continue"
+"The name you would like to display publicly…": "The name you would like to display publicly…"
+"Your email address…": "Your email address…"
+
 #--- Translation messages -----------------------------------------------------
 
 "New Auth": "Créer un nouvel utilisateur"
@@ -56,7 +71,7 @@
 "Informational Messages": "Messages d'information "
 "Thank you for registering on": "Merci de votre inscription sur"
 "Please confirm your email by": "Veuillez confirmer votre e-mail en"
-"following this link": "cliquant sur ce lien "
+"following this link": "cliquant sur ce lien"
 "Add Social Media Accounts": "Ajouter des comptes de réseaux sociaux"
 "Registered Social Media Accounts": "Comptes de réseaux sociaux enregistrés"
 "Auth address confirmation": "Confirmation de votre adresse e-mail "
