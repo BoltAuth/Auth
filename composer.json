@@ -22,12 +22,7 @@
         "phpunit/phpunit": "^4.7"
     },
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Svante Richter",
-            "email": "svante.richter@gmail.com"
-        }
-    ],
+    "authors": [],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": [
