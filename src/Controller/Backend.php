@@ -280,6 +280,9 @@ class Backend extends AbstractController
             $provider->setLastupdate(Carbon::now());
             $app['auth.records']->saveProvider($provider);
 
+            // Trigger EDIT FORM in case of custom fields (AuthFields).
+            $app['auth.records.profile']->saveProfileForm($account, $form);
+
             return new RedirectResponse($app['url_generator']->generate('authAdmin'));
         }
 
