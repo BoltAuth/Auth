@@ -13,6 +13,6 @@ Requirements
 Docs
 ---------------
 
-For docs please see our [docs website](http://boltauth.com/) or if you prefer
+For docs please see our [docs website](https://boltauth.github.io/docs/quick-start.html) or if you prefer
 to look at it locally you can checkout the repo directly from
 [here](https://github.com/boltauth/docs).
